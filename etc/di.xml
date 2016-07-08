@@ -3,7 +3,7 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="list_components_command" xsi:type="object">CtiDigital\Configurator\Console\Command\ListComponentsCommand</item>
+                <item name="configurator" xsi:type="object">CtiDigital\Configurator\Console\Command\ConfiguratorCommand</item>
             </argument>
         </arguments>
     </type>

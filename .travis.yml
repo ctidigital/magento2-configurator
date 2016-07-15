@@ -12,14 +12,9 @@ env:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
 
-before_script:
-- sleep 60
-script:
-- wget https://github.com/magento/magento2/archive/2.1.0.zip
-- unzip -qq 2.1.0.zip
-- cd magento2-2.1.0/
+install:
 - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
-- composer require --prefer-source --no-interaction ctidigital/magento2-configurator:dev-master
+- composer install --prefer-dist
 notifications:
   hipchat:
     rooms:

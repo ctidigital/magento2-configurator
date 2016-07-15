@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <preference for="CtiDigital\Configurator\Model\ConfiguratorAdapterInterface"
                 type="CtiDigital\Configurator\Model\ConfiguratorAdapterInterface\Proxy"/>
@@ -7,7 +8,9 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="configurator" xsi:type="object">CtiDigital\Configurator\Console\Command\ConfiguratorCommand</item>
+                <item name="configurator" xsi:type="object">
+                    CtiDigital\Configurator\Console\Command\ConfiguratorCommand
+                </item>
             </argument>
         </arguments>
     </type>

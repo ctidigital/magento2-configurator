@@ -15,6 +15,8 @@ env:
 install:
 - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
 - composer install --prefer-dist
+script:
+- vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/CtiDigital/Configurator/Test/Unit/
 notifications:
   hipchat:
     rooms:

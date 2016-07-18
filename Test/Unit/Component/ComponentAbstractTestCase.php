@@ -1,10 +1,13 @@
 <?php
 
-namespace CtiDigital\Configurator\Model\Component;
+namespace CtiDigital\Configurator\Test\Unit\Component;
+
+use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 
 abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
 {
 
+    /* @var $component ComponentAbstract */
     protected $component;
 
     abstract protected function componentSetUp();
@@ -19,6 +22,7 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ComponentAbstract::class, $this->component);
     }
 
+    /*
     public function testItHasAnAlias()
     {
         $this->assertClassHasAttribute('alias', $this->component);
@@ -28,4 +32,5 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
     {
         $this->assertClassHasAttribute('name', $this->component);
     }
+    */
 }

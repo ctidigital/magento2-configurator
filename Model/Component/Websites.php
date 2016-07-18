@@ -12,10 +12,18 @@ class Websites extends ComponentAbstract
     protected $name = 'Websites';
 
     /**
+     * @todo 
+     */
+    protected function canParseAndProcess()
+    {
+        return $this::ENABLED;
+    }
+
+    /**
      * @param null $path
      * @return mixed
      */
-    protected function parse($path = null)
+    protected function parseData($path = null)
     {
         try {
             return Yaml::parse(file_get_contents($path));
@@ -24,7 +32,7 @@ class Websites extends ComponentAbstract
         }
     }
 
-    protected function process($data = null)
+    protected function processData($data = null)
     {
 
     }

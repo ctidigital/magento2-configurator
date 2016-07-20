@@ -15,7 +15,9 @@ install:
 - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
 - composer install --prefer-dist
 script:
-- ls -alh
+- ls -al
+- ls -al vendor/
+- ls -al vendor/bin/
 - php vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/ctidigital/magento2-configurator/Test/Unit/
 notifications:
   hipchat:

@@ -20,13 +20,13 @@ class Websites extends ComponentAbstract
     }
 
     /**
-     * @param null $path
+     * @param null $source
      * @return mixed
      */
-    protected function parseData($path = null)
+    protected function parseData($source = null)
     {
         try {
-            return Yaml::parse(file_get_contents($path));
+            return Yaml::parse(file_get_contents($source));
         } catch (ComponentException $e) {
             // @todo Handle Exception
         }

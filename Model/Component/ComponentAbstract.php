@@ -2,6 +2,8 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
+use CtiDigital\Configurator\Model\Exception\ComponentException;
+
 abstract class ComponentAbstract
 {
 
@@ -10,13 +12,27 @@ abstract class ComponentAbstract
 
     protected $alias;
     protected $name;
+    protected $source;
+    protected $parsedData;
+
+    /**
+     * Obtain the source of the data.
+     * Most likely to be a file path from the master.yaml
+     *
+     * @param $source
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
+    }
 
     /**
      * This is a human friendly component name for logging purposes.
      *
      * @return string
      */
-    protected function getComponentName() {
+    public function getComponentName()
+    {
         return $this->name;
     }
 
@@ -26,8 +42,37 @@ abstract class ComponentAbstract
      *
      * @return string
      */
-    protected function getComponentAlias() {
+    public function getComponentAlias()
+    {
         return $this->alias;
+    }
+
+    /**
+     * The function that runs the component (and every other component)
+     */
+    public function process()
+    {
+
+        try {
+
+            // Check if a component can be parsed and processed
+            if (!$this->canParseAndProcess()) {
+                return; // @todo show some kind of logging
+            }
+            
+//            $this->eventManager->dispatch('configurator_process_component_before',array('object'=>$this));
+//            $this->eventManager->dispatch('configurator_process_component_before'.$this->alias,array('object'=>$this));
+
+            $this->parsedData = $this->parseData($this->source);
+            $this->processData($this->parsedData);
+
+//            $this->eventManager->dispatch('configurator_process_component_after',array('object'=>$this));
+//            $this->eventManager->dispatch('configurator_process_component_after'.$this->alias,array('object'=>$this));
+
+        } catch (ComponentException $e) {
+            //  @todo handle this gracefully
+        }
+
     }
 
     /**

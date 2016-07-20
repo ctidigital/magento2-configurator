@@ -10,5 +10,6 @@ class WebsitesTest extends ComponentAbstractTestCase
     protected function componentSetUp()
     {
         $this->component = new Websites();
+        $this->className = Websites::class;
     }
 }

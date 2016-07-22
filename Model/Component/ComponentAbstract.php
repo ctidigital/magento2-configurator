@@ -20,10 +20,12 @@ abstract class ComponentAbstract
      * Most likely to be a file path from the master.yaml
      *
      * @param $source
+     * @return ComponentAbstract
      */
     public function setSource($source)
     {
         $this->source = $source;
+        return $this;
     }
 
     /**
@@ -59,11 +61,16 @@ abstract class ComponentAbstract
             if (!$this->canParseAndProcess()) {
                 return; // @todo show some kind of logging
             }
-            
-//            $this->eventManager->dispatch('configurator_process_component_before',array('object'=>$this));
-//            $this->eventManager->dispatch('configurator_process_component_before'.$this->alias,array('object'=>$this));
+
+            // @todo Include some events to dispatch.
+//            $this->eventManager->dispatch('configurator_parse_component_before',array('object'=>$this));
+//            $this->eventManager->dispatch('configurator_parse_component_before'.$this->alias,array('object'=>$this));
 
             $this->parsedData = $this->parseData($this->source);
+
+//            $this->eventManager->dispatch('configurator_process_component_before',array('object'=>$this,'source'=>$this->source));
+//            $this->eventManager->dispatch('configurator_process_component_before'.$this->alias,array('object'=>$this,'source'=>$this->source));
+
             $this->processData($this->parsedData);
 
 //            $this->eventManager->dispatch('configurator_process_component_after',array('object'=>$this));

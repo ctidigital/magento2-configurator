@@ -1,10 +1,8 @@
 <?php
 
-namespace CtiDigital\Configurator\Console;
+namespace CtiDigital\Configurator\Model;
 
-use CtiDigital\Configurator\Model\ConfiguratorListInterface;
-
-class ComponentListTest implements \PHPUnit_Framework_TestCase
+class ComponentListTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -13,14 +11,21 @@ class ComponentListTest implements \PHPUnit_Framework_TestCase
     private $componentList;
 
     /**
-     * @var ConfiguratorListInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentListInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configuratorList;
+    private $componentListInterface;
 
     protected function setUp()
     {
-        $this->configuratorList = $this->getMock(ConfiguratorListInterface::class);
+        $this->componentListInterface = $this->getMock(ComponentListInterface::class);
 
-        $this->componentList = new ComponentList($this->configuratorComponentList);
+        $this->componentListInterface->method('getComponents')->willReturn(array('websites'));
+
+        $this->componentList = new ComponentList($this->componentListInterface->getComponents());
+    }
+
+    public function testComponentListIsArray()
+    {
+        $this->assertTrue(is_array($this->componentList->getComponents()));
     }
 }

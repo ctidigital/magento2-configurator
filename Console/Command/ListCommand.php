@@ -30,6 +30,7 @@ class ListCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
+            
             $output->writeln('<comment>To do</comment>');
         } catch (ConfiguratorAdapterException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');

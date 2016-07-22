@@ -43,5 +43,4 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
             sprintf('No name specified in component %s', $this->className)
         );
     }
-
 }

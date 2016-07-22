@@ -1,9 +1,7 @@
 <?php
-namespace CtiDigital\Configurator\Console;
+namespace CtiDigital\Configurator\model;
 
-use CtiDigital\Configurator\Model\ConfiguratorListInterface;
-
-class ComponentList implements ConfiguratorListInterface
+class ComponentList implements ComponentListInterface
 {
     /**
      * @var string[]

@@ -1,12 +1,12 @@
 <?php
 namespace CtiDigital\Configurator\Model;
 
-interface ConfiguratorListInterface
+interface ComponentListInterface
 {
     /**
      * Gets list of command instances
      *
-     * @return \Symfony\Component\Console\Command\Command[]
+     * @return \CtiDigital\Configurator\Model\Component\ComponentAbstract[]
      */
     public function getComponents();
 }

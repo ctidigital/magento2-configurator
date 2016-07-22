@@ -12,4 +12,12 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="CtiDigital\Configurator\Console\ComponentList">
+        <arguments>
+            <argument name="components" xsi:type="array">
+                <item name="websites" xsi:type="object">CtiDigital\Configurator\Model\Component\Websites</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

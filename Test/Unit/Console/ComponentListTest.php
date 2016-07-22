@@ -19,6 +19,7 @@ class ComponentListTest extends \PHPUnit_Framework_TestCase
     {
         $this->componentListInterface = $this->getMock(ComponentListInterface::class);
 
+        // @todo use data (or similar) from di.xml preferably
         $this->componentListInterface->method('getComponents')->willReturn(array('websites'));
 
         $this->componentList = new ComponentList($this->componentListInterface->getComponents());

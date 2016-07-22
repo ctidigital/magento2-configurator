@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\model;
+namespace CtiDigital\Configurator\Model;
 
 class ComponentList implements ComponentListInterface
 {

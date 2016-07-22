@@ -2,7 +2,9 @@
 
 namespace CtiDigital\Configurator\Console\Command;
 
+use CtiDigital\Configurator\Model\ComponentList;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,8 +32,18 @@ class ListCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            
-            $output->writeln('<comment>To do</comment>');
+            $componentList = new ComponentList();
+
+            if (empty($componentList->getComponents())) {
+                throw new ComponentException('No registered components found');
+            }
+
+            $count = 1;
+
+            foreach ($componentList->getComponents() as $component) {
+                $output->writeln('<comment>'.$count.')'.$component.'</comment>');
+                $count++;
+            }
         } catch (ConfiguratorAdapterException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
         }

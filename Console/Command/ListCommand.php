@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ConfiguratorCommand extends Command
+class ListCommand extends Command
 {
     /**
      * @var ConfiguratorAdapterInterface
@@ -23,8 +23,8 @@ class ConfiguratorCommand extends Command
 
     protected function configure()
     {
-        $this->setName('configurator');
-        $this->setDescription('List configurator commands');
+        $this->setName('configurator:list');
+        $this->setDescription('List configurator components');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

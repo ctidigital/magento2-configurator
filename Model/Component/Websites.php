@@ -12,7 +12,7 @@ class Websites extends ComponentAbstract
     protected $name = 'Websites';
 
     /**
-     * @todo 
+     * @todo
      */
     protected function canParseAndProcess()
     {

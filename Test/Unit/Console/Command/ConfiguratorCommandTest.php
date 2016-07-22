@@ -46,6 +46,6 @@ class ConfiguratorCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testItHasTheCorrectName()
     {
-        $this->assertSame('configurator',$this->command->getName());
+        $this->assertSame('configurator', $this->command->getName());
     }
 }

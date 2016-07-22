@@ -68,8 +68,13 @@ abstract class ComponentAbstract
 
             $this->parsedData = $this->parseData($this->source);
 
-//            $this->eventManager->dispatch('configurator_process_component_before',array('object'=>$this,'source'=>$this->source));
-//            $this->eventManager->dispatch('configurator_process_component_before'.$this->alias,array('object'=>$this,'source'=>$this->source));
+//            $this->eventManager->dispatch(
+//                'configurator_process_component_before',
+//                array('object'=>$this,'source'=>$this->source)
+//            );
+//            $this->eventManager->dispatch('configurator_process_component_before'.$this->alias,
+//                array('object'=>$this,'source'=>$this->source)
+//            );
 
             $this->processData($this->parsedData);
 

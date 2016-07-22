@@ -9,7 +9,7 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
 
     /* @var $component ComponentAbstract */
     protected $component;
-    
+
     /* @var $className String */
     protected $className;
 
@@ -31,7 +31,8 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
         $this->assertClassHasAttribute('alias', $this->className);
         $this->assertNotEmpty(
             $this->component->getComponentAlias(),
-            sprintf('No alias specified in component %s',$this->className));
+            sprintf('No alias specified in component %s', $this->className)
+        );
     }
 
     public function testItHasAName()
@@ -39,7 +40,8 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
         $this->assertClassHasAttribute('name', $this->className);
         $this->assertNotEmpty(
             $this->component->getComponentName(),
-            sprintf('No name specified in component %s',$this->className));
+            sprintf('No name specified in component %s', $this->className)
+        );
     }
 
 }

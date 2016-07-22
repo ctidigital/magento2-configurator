@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\Console;
+namespace CtiDigital\Configurator\Model;
 
 interface ConfiguratorListInterface
 {

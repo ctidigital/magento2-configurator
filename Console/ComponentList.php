@@ -1,6 +1,8 @@
 <?php
 namespace CtiDigital\Configurator\Console;
 
+use CtiDigital\Configurator\Model\ConfiguratorListInterface;
+
 class ComponentList implements ConfiguratorListInterface
 {
     /**

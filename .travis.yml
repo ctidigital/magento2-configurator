@@ -17,7 +17,7 @@ script:
 - ls -al
 - ls -al vendor/
 - ls -al vendor/bin/
-- php vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/ctidigital/magento2-configurator/Test/Unit/
+- php vendor/bin/phpunit -c phpunit_config.xml Test/Unit/
 notifications:
   hipchat:
     rooms:

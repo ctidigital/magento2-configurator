@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
+         colors="true"
+         debug="true"
+         verbose="true"
+         bootstrap="./framework/bootstrap.php"
+>
+    <testsuite name="Magento Unit Tests">
+        <directory suffix="Test.php">../../../vendor/ctidigital/magento2-configurator/Test/Unit</directory>
+    </testsuite>
+    <php>
+        <ini name="date.timezone" value="Europe/London"/>
+        <ini name="xdebug.max_nesting_level" value="200"/>
+    </php>
+    <filter>
+        <whitelist addUncoveredFilesFromWhiteList="true">
+            <directory suffix=".php">../../../vendor/ctidigital/magento2-configurator</directory>
+            <exclude>
+                <directory>../../../app/code/*/*/Test</directory>
+                <directory>../../../lib/internal/*/*/Test</directory>
+                <directory>../../../lib/internal/*/*/*/Test</directory>
+                <directory>../../../setup/src/*/*/Test</directory>
+                <directory>../../../update/app/code/*/*/Test</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+    </logging>
+</phpunit>

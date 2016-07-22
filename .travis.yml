@@ -11,13 +11,16 @@ env:
     - TEST_SUITE=unit
 
 install:
-- echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
-- composer install --prefer-dist
+  - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
+  - composer install --prefer-dist
 script:
-- ls -al
-- ls -al vendor/
-- ls -al vendor/bin/
-- php vendor/bin/phpunit -c phpunit_config.xml Test/Unit/
+  - ls -al
+  - ls -al vendor/
+  - ls -al vendor/bin/
+  - php vendor/bin/phpcs --standard=PSR4 Helper/ Model/ Test/
+  - php vendor/bin/phpmd Helper/,Model/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode
+  - php vendor/bin/phpcpd Helper/ Model/ Test/
+  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 notifications:
   hipchat:
     rooms:

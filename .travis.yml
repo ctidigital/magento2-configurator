@@ -17,9 +17,12 @@ script:
   - ls -al
   - ls -al vendor/
   - ls -al vendor/bin/
-  - php vendor/bin/phpcs --standard=PSR4 Helper/ Model/ Test/
+  - php vendor/bin/phpcs --standard=PSR2 Helper/ Model/ Test/
   - php vendor/bin/phpmd Helper/,Model/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode
   - php vendor/bin/phpcpd Helper/ Model/ Test/
+  - ls -al
+  - ls -al build/
+  - ls -al build/logs/
   - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 notifications:
   hipchat:

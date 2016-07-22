@@ -26,7 +26,8 @@ class Websites extends ComponentAbstract
     protected function parseData($source = null)
     {
         try {
-            return Yaml::parse(file_get_contents($source));
+            $parser = new Yaml();
+            return $parser->parse(file_get_contents($source));
         } catch (ComponentException $e) {
             // @todo Handle Exception
         }

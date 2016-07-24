@@ -135,4 +135,3 @@ class Processor
         return $component;
     }
 }
-

@@ -19,22 +19,22 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $environment = 'stage';
         $this->processor->setEnvironment($environment);
-        $this->assertEquals($environment,$this->processor->getEnvironment());
+        $this->assertEquals($environment, $this->processor->getEnvironment());
     }
-    
+
     public function testICanAddASingleComponent()
     {
         $component = 'websites';
         $this->processor->addComponent($component);
-        $this->assertArrayHasKey($component,$this->processor->getComponents());
+        $this->assertArrayHasKey($component, $this->processor->getComponents());
     }
 
     public function testICanAddMultipleComponents()
     {
-        $components = ['website','config'];
+        $components = ['website', 'config'];
         foreach ($components as $component) {
             $this->processor->addComponent($component);
         }
-        $this->assertCount(2,$this->processor->getComponents());
+        $this->assertCount(2, $this->processor->getComponents());
     }
 }

@@ -14,9 +14,9 @@ install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - composer install --prefer-dist
 script:
-  - php vendor/bin/phpcs --standard=PSR2 Helper/ Model/ Test/
-  - php vendor/bin/phpmd Helper/,Model/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode
-  - php vendor/bin/phpcpd Helper/ Model/ Test/
+  - php vendor/bin/phpcs --standard=PSR2 Model/ Test/
+  - php vendor/bin/phpmd ,Model/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode
+  - php vendor/bin/phpcpd Model/ Test/
   - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/
 notifications:
   hipchat:

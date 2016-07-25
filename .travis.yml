@@ -9,15 +9,16 @@ env:
     - secure: "ENxjSyl25GVMEvUurGuSd7mtKQPLmU6xvJUr7iV2pfnmZJV0jjjLk+9Vs81sy+6N6/PieeyWkDKlxBvXBaPrKPF2vN/yhlwrY4oPWfqOHCD3nbkf2j6bmrhFoJ6uQD9PNZqirZQ7E3Ok+8bQYPfzEpU/qyW+fBV5V2S7bwOo4KZsQaSAtkUMMH+5roDo7aorWBIKz2XAf3+UU5lUW8/8wrzECh2d/Cl2G/7D59Gtn7uKRSjCBorRtk3/cFexF3f/LLA6IMM6ME9WmriNcZP7xhNyUExZKkFyeb5Z8278eIvZ8I9TRtzUGb2o0waqKwgsAr2/QrtmBXPveIQM3xxzKTksh0hw6jc5PChu4SPVhCDP0B9irVR7uFY+NPipy1EFGfBDo0DTZa+vp5QeRqu8T/e/qivvT1TJL5iqYvwPT5xW1Xk8UQM5T2KfdtXr1/B63TPkRhXrztwZXqVygy/8nZ/3Cut6RtfQW+4QukRFLhmnAIGsf+9oqVWyjxeybyyGFc7bhdt67aFlW8qzmqvzbtWaIYw/zoTjUZzuMBsHjo9jIJNIwkJHaL0EqZFyoCAZWauRj1dHgU3geRA22cUS/S4UTXueIGqpxBt8PAGCNf86v07iVWj/d1gWW6NR0w1TxRevM4X29I9fxRbQQcOFeGEt9i8o6uUEfztZbkC3o4c="
   matrix:
     - TEST_SUITE=unit
+    - TEST_SUITE=phpcs
 
 install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - composer install --prefer-dist
 script:
-  - php vendor/bin/phpcs --standard=PSR2 Model/ Test/
-  - php vendor/bin/phpmd Model/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode
-  - php vendor/bin/phpcpd Model/ Test/
-  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcs --standard=PSR2 Model/ Test/; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpmd Model/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Test/; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/; fi"
 notifications:
   hipchat:
     rooms:

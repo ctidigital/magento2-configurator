@@ -91,27 +91,27 @@ class Processor
     public function run()
     {
         // If the components list is empty, then the user would want to run all components in the master.yaml
-        if (empty($this->components)) {
+        //if (empty($this->components)) {
 
-            // Read master yaml
-            // Validate master yaml
-            // Loop through components and run them individually in the master.yaml order
-            // Include any other attributes that comes through the master.yaml
+        // Read master yaml
+        // Validate master yaml
+        // Loop through components and run them individually in the master.yaml order
+        // Include any other attributes that comes through the master.yaml
 
-        } else {
+        //} else {
 
-            // Loop through the specified components
-            foreach ($this->components as $componentClass) {
+        // Loop through the specified components
+        foreach ($this->components as $componentClass) {
 
-                // Find component in the master.yaml and its associated settings
-                $source = '';
+            // Find component in the master.yaml and its associated settings
+            $source = '';
 
-                /* @var $component ComponentAbstract */
-                $component = new $componentClass;
-                $component->setSource($source)->process();
+            /* @var $component ComponentAbstract */
+            $component = new $componentClass;
+            $component->setSource($source)->process();
 
-            }
         }
+        //}
     }
 
     /**
@@ -122,7 +122,9 @@ class Processor
      */
     private function isValidComponent($component)
     {
-        return true;
+        if ($component) {
+            return true;
+        }
     }
 
     /**

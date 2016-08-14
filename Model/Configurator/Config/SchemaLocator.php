@@ -36,5 +36,4 @@ class SchemaLocator implements SchemaLocatorInterface
     {
         return null;
     }
-
 }

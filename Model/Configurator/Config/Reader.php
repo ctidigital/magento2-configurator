@@ -9,8 +9,6 @@ use Magento\Framework\Config\ValidationStateInterface;
 class Reader extends Filesystem
 {
 
-    protected $_idAttributes = array('/config/component' => 'name');
-
     /**
      * Reader constructor.
      * @param FileResolverInterface $fileResolver
@@ -30,8 +28,12 @@ class Reader extends Filesystem
         $fileName,
         array $idAttributes,
         $domDocumentClass,
-        $defaultScope)
+        $defaultScope
+    )
     {
+
+        $this->_idAttributes = array('/config/component' => 'name');
+
         parent::__construct(
             $fileResolver,
             $converter,

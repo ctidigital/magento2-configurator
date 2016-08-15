@@ -29,8 +29,7 @@ class Reader extends Filesystem
         array $idAttributes,
         $domDocumentClass,
         $defaultScope
-    )
-    {
+    ) {
 
         $this->_idAttributes = array('/config/component' => 'name');
 

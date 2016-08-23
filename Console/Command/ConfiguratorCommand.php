@@ -27,6 +27,12 @@ class ConfiguratorCommand extends Command
         $this->setDescription('List configurator commands');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     * @SuppressWarnings(PHPMD)
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {

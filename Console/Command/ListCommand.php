@@ -33,6 +33,12 @@ class ListCommand extends Command
         $this->setDescription('List configurator components');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     * @SuppressWarnings(PHPMD)
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {

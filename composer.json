@@ -11,11 +11,7 @@
   "require": {
     "php": "~5.6.0|~7.0.0",
     "symfony/yaml": ">2.8.0",
-    "magento/module-backend": "100.*.*",
-    "magento/module-catalog": "100.*.*",
-    "magento/module-eav": "100.*.*",
-    "magento/module-layered-navigation": "100.*.*",
-    "magento/framework": "100.*.*"
+    "magento/framework": "100.1.*"
   },
   "require-dev": {
     "phpunit/phpunit": "4.1.0",

@@ -25,10 +25,10 @@ class Reader extends Filesystem
         Converter $converter,
         SchemaLocator $schemaLocator,
         ValidationStateInterface $validationState,
-        $fileName,
-        array $idAttributes,
-        $domDocumentClass,
-        $defaultScope
+        $fileName = 'configurator.xml',
+        $idAttributes = [],
+        $domDocumentClass = 'Magento\Framework\Config\Dom',
+        $defaultScope = 'global'
     ) {
 
         $this->_idAttributes = array('/config/component' => 'name');

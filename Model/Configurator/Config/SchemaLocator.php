@@ -4,14 +4,13 @@ namespace CtiDigital\Configurator\Model\Configurator\Config;
 
 use Magento\Framework\Config\SchemaLocatorInterface;
 use Magento\Framework\Module\Dir;
-use Magento\Framework\Module\Dir\Reader;
 
 class SchemaLocator implements SchemaLocatorInterface
 {
 
     protected $schema;
 
-    public function __construct(Reader $reader)
+    public function __construct(\Magento\Framework\Module\Dir\Reader $reader)
     {
         $this->schema =
             $reader->getModuleDir(Dir::MODULE_ETC_DIR, 'CtiDigital_Configurator')

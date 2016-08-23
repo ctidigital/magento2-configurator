@@ -3,6 +3,8 @@
 
     <preference for="CtiDigital\Configurator\Model\ConfiguratorAdapterInterface"
                 type="CtiDigital\Configurator\Model\ConfiguratorAdapterInterface\Proxy"/>
+    <preference for="CtiDigital\Configurator\Model\Configurator\ConfigInterface"
+                type="CtiDigital\Configurator\Model\Configurator\Config" />
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>

@@ -7,6 +7,7 @@ use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
+use Magento\Framework\App\ObjectManagerFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,11 +19,23 @@ class ListCommand extends Command
      */
     private $configuratorAdapter;
 
+    /**
+     * @var ConfigInterface|CtiDigital\Configurator\Console\Command\ListCommand
+     */
     private $configInterface;
 
-    public function __construct(ConfiguratorAdapterInterface $configuratorAdapter, ConfigInterface $config)
-    {
+    /**
+     * @var CtiDigital\Configurator\Console\Command\ListCommand
+     */
+    private $objectManagerFactory;
+
+    public function __construct(
+        ConfiguratorAdapterInterface $configuratorAdapter,
+        ConfigInterface $config,
+        ObjectManagerFactory $objectManagerFactory
+    ) {
         parent::__construct();
+        $this->objectManagerFactory = $objectManagerFactory;
         $this->configuratorAdapter = $configuratorAdapter;
         $this->configInterface = $config;
     }
@@ -43,8 +56,15 @@ class ListCommand extends Command
     {
         try {
 
+            $objectManager = $this->objectManagerFactory->create(array());
+
+            $count = 1;
             foreach ($this->configInterface->getAllComponents() as $component) {
-                $output->writeln('<comment>' . $count . ')' . $component . '</comment>');
+
+                /* @var \CtiDigital\Configurator\Model\Component\ComponentAbstract $componentClass */
+                $componentClass = $objectManager->create($component['class']);
+                $comment = $count . ') ' . $componentClass->getComponentAlias() . ' ' . $component['class'];
+                $output->writeln('<comment>' . $comment . '</comment>');
                 $count++;
             }
         } catch (ConfiguratorAdapterException $e) {

@@ -2,5 +2,5 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:CtiDigital_Configurator:etc/configurator.xsd">
 
-    <component name="websites" class="CtiDigital\Configurator\Model\Component\Website" />
+    <component name="websites" class="CtiDigital\Configurator\Model\Component\Websites" />
 </config>

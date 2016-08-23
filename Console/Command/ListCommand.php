@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Model\ComponentList;
+use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
@@ -17,10 +18,13 @@ class ListCommand extends Command
      */
     private $configuratorAdapter;
 
-    public function __construct(ConfiguratorAdapterInterface $configuratorAdapter)
+    private $configInterface;
+
+    public function __construct(ConfiguratorAdapterInterface $configuratorAdapter, ConfigInterface $config)
     {
         parent::__construct();
         $this->configuratorAdapter = $configuratorAdapter;
+        $this->configInterface = $config;
     }
 
     protected function configure()
@@ -32,16 +36,9 @@ class ListCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $componentList = new ComponentList();
 
-            if (empty($componentList->getComponents())) {
-                throw new ComponentException('No registered components found');
-            }
-
-            $count = 1;
-
-            foreach ($componentList->getComponents() as $component) {
-                $output->writeln('<comment>'.$count.')'.$component.'</comment>');
+            foreach ($this->configInterface->getAllComponents() as $component) {
+                $output->writeln('<comment>' . $count . ')' . $component . '</comment>');
                 $count++;
             }
         } catch (ConfiguratorAdapterException $e) {

@@ -2,6 +2,7 @@
 
 namespace CtiDigital\Configurator\Console\Command;
 
+use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,11 +31,15 @@ class ListCommandTest extends \PHPUnit_Framework_TestCase
      */
     private $listCommandAdapter;
 
+
+    private $configInterface;
+
     protected function setUp()
     {
         $this->listCommandAdapter = $this->getMock(ConfiguratorAdapterInterface::class);
+        $this->configInterface = $this->getMock(ConfigInterface::class);
 
-        $this->command = new ListCommand($this->listCommandAdapter);
+        $this->command = new ListCommand($this->listCommandAdapter,$this->configInterface);
         $this->mockInput = $this->getMock(InputInterface::class);
         $this->mockOutput = $this->getMock(OutputInterface::class);
     }

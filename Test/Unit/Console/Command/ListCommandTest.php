@@ -39,7 +39,7 @@ class ListCommandTest extends \PHPUnit_Framework_TestCase
         $this->listCommandAdapter = $this->getMock(ConfiguratorAdapterInterface::class);
         $this->configInterface = $this->getMock(ConfigInterface::class);
 
-        $this->command = new ListCommand($this->listCommandAdapter,$this->configInterface);
+        $this->command = new ListCommand($this->listCommandAdapter, $this->configInterface);
         $this->mockInput = $this->getMock(InputInterface::class);
         $this->mockOutput = $this->getMock(OutputInterface::class);
     }

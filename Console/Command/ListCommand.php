@@ -63,7 +63,10 @@ class ListCommand extends Command
 
                 /* @var \CtiDigital\Configurator\Model\Component\ComponentAbstract $componentClass */
                 $componentClass = $objectManager->create($component['class']);
-                $comment = $count . ') ' . $componentClass->getComponentAlias() . ' ' . $component['class'];
+                $comment =
+                    str_pad($count.')', 3)
+                    . str_pad($componentClass->getComponentAlias(), 20)
+                    . ' - ' . $componentClass->getDescription();
                 $output->writeln('<comment>' . $comment . '</comment>');
                 $count++;
             }

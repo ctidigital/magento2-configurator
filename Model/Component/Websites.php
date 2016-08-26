@@ -10,6 +10,7 @@ class Websites extends ComponentAbstract
 
     protected $alias = 'websites';
     protected $name = 'Websites';
+    protected $description = 'Component to manage Websites, Stores and Store Views';
 
     /**
      * @todo

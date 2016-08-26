@@ -14,6 +14,7 @@ abstract class ComponentAbstract
     protected $name;
     protected $source;
     protected $parsedData;
+    protected $description = 'Unknown Component';
 
     /**
      * Obtain the source of the data.
@@ -47,6 +48,16 @@ abstract class ComponentAbstract
     public function getComponentAlias()
     {
         return $this->alias;
+    }
+
+    /**
+     * Gets a small description of the component used for when listing the component
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

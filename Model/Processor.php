@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
+use Symfony\Component\Yaml\Parser;
 
 class Processor
 {
@@ -91,27 +92,45 @@ class Processor
     public function run()
     {
         // If the components list is empty, then the user would want to run all components in the master.yaml
-        //if (empty($this->components)) {
+        if (empty($this->components)) {
 
-        // Read master yaml
-        // Validate master yaml
-        // Loop through components and run them individually in the master.yaml order
-        // Include any other attributes that comes through the master.yaml
+            try {
 
-        //} else {
+                // Read master yaml
+                $masterPath = BP . '/app/etc/master.yaml';
+                if (!file_exists($masterPath)) {
+                    throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
+                }
 
-        // Loop through the specified components
-        foreach ($this->components as $componentClass) {
+                $yamlContents = file_get_contents($masterPath);
 
-            // Find component in the master.yaml and its associated settings
-            $source = '';
+                $yaml = new Parser();
 
-            /* @var $component ComponentAbstract */
-            $component = new $componentClass;
-            $component->setSource($source)->process();
+                $data = $yaml->parse($yamlContents);
 
+                print_r($data);
+            // Validate master yaml
+            // Loop through components and run them individually in the master.yaml order
+            // Include any other attributes that comes through the master.yaml
+
+            } catch (ComponentException $e) {
+                echo $e->getMessage();
+            }
+
+        } else {
+
+            // Loop through the specified components
+            foreach ($this->components as $componentClass) {
+
+                // Find component in the master.yaml and its associated settings
+                $source = '';
+
+                /* @var $component ComponentAbstract */
+                $component = new $componentClass;
+                $component->setSource($source)->process();
+
+            }
         }
-        //}
     }
 
     /**
@@ -127,13 +146,4 @@ class Processor
         }
     }
 
-    /**
-     * @param $component
-     * @return ComponentAbstract
-     * @todo Actually map the component name to name found in di.xml
-     */
-    private function mapComponentNameToClass($component)
-    {
-        return $component;
-    }
 }

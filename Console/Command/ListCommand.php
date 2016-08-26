@@ -5,7 +5,6 @@ namespace CtiDigital\Configurator\Console\Command;
 use CtiDigital\Configurator\Model\ComponentList;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
 use Magento\Framework\App\ObjectManagerFactory;
 use Symfony\Component\Console\Command\Command;

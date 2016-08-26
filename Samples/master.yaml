@@ -1,0 +1,18 @@
+websites:
+  enabled: 1
+  method: code
+  sources:
+      - ../configurator/websites/websites.yaml
+  env:
+      local:
+        mode: maintain
+        log: debug
+      qa:
+        mode: maintain
+        log: notice
+      stage:
+        mode: create
+        log: warning
+      live:
+        mode: create
+        log: error

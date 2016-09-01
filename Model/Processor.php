@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Parser;
 
 class Processor
@@ -22,8 +23,12 @@ class Processor
     /**
      * @var mixed
      */
-    protected $logLevel;
+    protected $log;
 
+    public function __construct(OutputInterface $output)
+    {
+        $this->log = new Logging($output);
+    }
 
     /**
      * @param string $environment
@@ -52,17 +57,6 @@ class Processor
     }
 
     /**
-     * @param mixed $logLevel
-     *
-     * @todo Introduce log levels to provide more tidy CLI console logging. Usage of PHP CLImate.
-     */
-    public function setLogLevel($logLevel)
-    {
-        $this->logLevel = $logLevel;
-    }
-
-
-    /**
      * @return string
      */
     public function getEnvironment()
@@ -76,14 +70,6 @@ class Processor
     public function getComponents()
     {
         return $this->components;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLogLevel()
-    {
-        return $this->logLevel;
     }
 
     /**
@@ -101,17 +87,16 @@ class Processor
                 if (!file_exists($masterPath)) {
                     throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
                 }
-
                 $yamlContents = file_get_contents($masterPath);
-
                 $yaml = new Parser();
+                $master = $yaml->parse($yamlContents);
+                print_r($master);
 
-                $data = $yaml->parse($yamlContents);
+                // Validate master yaml
+                $this->validateMasterYaml($master);
 
-                print_r($data);
-            // Validate master yaml
-            // Loop through components and run them individually in the master.yaml order
-            // Include any other attributes that comes through the master.yaml
+                // Loop through components and run them individually in the master.yaml order
+                // Include any other attributes that comes through the master.yaml
 
             } catch (ComponentException $e) {
                 echo $e->getMessage();
@@ -143,6 +128,31 @@ class Processor
     {
         if ($component) {
             return true;
+        }
+    }
+
+    private function validateMasterYaml($master)
+    {
+        try {
+            foreach ($master as $componentAlias => $componentConfiguration) {
+
+                // Check it has a enabled node
+                if (!isset($componentConfiguration['enabled'])) {
+                    throw new ComponentException(
+                        sprintf('It appears %s does not have a "enabled" node. This is required', $componentAlias)
+                    );
+                }
+
+                // Check it has at least 1 data source
+
+
+                // Check the component exist
+
+
+                //
+            }
+        } catch (ComponentException $e) {
+            $this->log->logError($e->getMessage());
         }
     }
 

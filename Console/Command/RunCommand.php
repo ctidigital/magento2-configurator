@@ -51,7 +51,7 @@ class RunCommand extends Command
                 $output->writeln('<info>Starting Configurator</info>');
             }
 
-            $processor = new Processor();
+            $processor = new Processor($output);
             $processor->run();
 
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {

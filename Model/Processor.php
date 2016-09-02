@@ -51,7 +51,7 @@ class Processor
     public function addComponent($componentName)
     {
         try {
-            if (!$this->isValidComponent($componentname)) {
+            if (!$this->isValidComponent($componentName)) {
                 throw new ComponentException(
                     sprintf('%s component does not appear to be a valid component.', $componentName)
                 );
@@ -105,11 +105,13 @@ class Processor
                 $this->validateMasterYaml($master);
 
                 // Loop through components and run them individually in the master.yaml order
-                foreach ($master as $componentAlias => $componentConfiguration) {
+                foreach ($master as $componentAlias => $componentConfig) {
 
                     $componentClass = $this->configInterface->getComponentByName($componentAlias);
+
+                    /* @var ComponentAbstract $component */
                     $component = new $componentClass($this->log);
-                    foreach ($componentConfiguration['sources'] as $i => $source) {
+                    foreach ($componentConfig['sources'] as $source) {
                         $component->setSource($source)->process();
                     }
 
@@ -121,19 +123,6 @@ class Processor
                 $this->log->logError($e->getMessage());
             }
 
-        } else {
-
-            // Loop through the specified components
-            foreach ($this->components as $componentClass) {
-
-                // Find component in the master.yaml and its associated settings
-                $source = '';
-
-                /* @var $component ComponentAbstract */
-                $component = new $componentClass;
-                $component->setSource($source)->process();
-
-            }
         }
     }
 
@@ -161,10 +150,10 @@ class Processor
     private function validateMasterYaml($master)
     {
         try {
-            foreach ($master as $componentAlias => $componentConfiguration) {
+            foreach ($master as $componentAlias => $componentConfig) {
 
                 // Check it has a enabled node
-                if (!isset($componentConfiguration['enabled'])) {
+                if (!isset($componentConfig['enabled'])) {
                     throw new ComponentException(
                         sprintf('It appears %s does not have a "enabled" node. This is required.', $componentAlias)
                     );
@@ -172,14 +161,14 @@ class Processor
 
                 // Check it has at least 1 data source
                 $sourceCount = 0;
-                if (isset($componentConfiguration['sources'])) {
-                    foreach ($componentConfiguration['sources'] as $i => $source) {
+                if (isset($componentConfig['sources'])) {
+                    foreach ($componentConfig['sources'] as $i => $source) {
                         $sourceCount++;
                     }
                 }
 
-                if (isset($componentConfiguration['env'])) {
-                    foreach ($componentConfiguration['env'] as $env => $envData) {
+                if (isset($componentConfig['env'])) {
+                    foreach ($componentConfig['env'] as $envData) {
 
                         if (isset($envData['sources'])) {
                             foreach ($envData['sources'] as $i => $source) {

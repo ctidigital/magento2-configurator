@@ -9,7 +9,7 @@ class WebsitesTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $this->component = new Websites();
+        $this->component = new Websites($this->logInterface);
         $this->className = Websites::class;
     }
 }

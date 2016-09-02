@@ -13,11 +13,17 @@ class Websites extends ComponentAbstract
     protected $description = 'Component to manage Websites, Stores and Store Views';
 
     /**
-     * @todo
+     * @return bool
      */
     protected function canParseAndProcess()
     {
-        return $this::ENABLED;
+        $path = BP . '/' . $this->source;
+        if (!file_exists($path)) {
+            throw new ComponentException(
+                sprintf("Could not find file in path %s", $path)
+            );
+        }
+        return true;
     }
 
     /**
@@ -30,12 +36,12 @@ class Websites extends ComponentAbstract
             $parser = new Yaml();
             return $parser->parse(file_get_contents($source));
         } catch (ComponentException $e) {
-            // @todo Handle Exception
+            $this->log->logError($e->getMessage());
         }
     }
 
     protected function processData($data = null)
     {
-
+        $this->log->logInfo(print_r($data));
     }
 }

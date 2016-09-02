@@ -2,7 +2,7 @@ websites:
   enabled: 1
   method: code
   sources:
-      - ../configurator/websites/websites.yaml
+      - ../configurator/websites.yaml
   env:
       local:
         mode: maintain

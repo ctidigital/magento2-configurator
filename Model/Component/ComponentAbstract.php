@@ -3,6 +3,8 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Model\LoggingInterface;
+use Magento\Framework\Profiler\Driver\Standard\OutputInterface;
 
 abstract class ComponentAbstract
 {
@@ -10,11 +12,17 @@ abstract class ComponentAbstract
     const ENABLED = 1;
     const DISABLED = 0;
 
+    protected $log;
     protected $alias;
     protected $name;
     protected $source;
     protected $parsedData;
     protected $description = 'Unknown Component';
+
+    public function __construct(LoggingInterface $log)
+    {
+        $this->log = $log;
+    }
 
     /**
      * Obtain the source of the data.
@@ -93,7 +101,7 @@ abstract class ComponentAbstract
 //            $this->eventManager->dispatch('configurator_process_component_after'.$this->alias,array('object'=>$this));
 
         } catch (ComponentException $e) {
-            //  @todo handle this gracefully
+            $this->log->logError($e->getMessage());
         }
 
     }

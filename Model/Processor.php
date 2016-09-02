@@ -57,7 +57,8 @@ class Processor
                 );
             }
 
-            $this->components[$componentName] = $this->configInterface->getComponentByName($componentName);
+            $componentClass = $this->configInterface->getComponentByName($componentName);
+            $this->components[$componentName] = new $componentClass($this->log);
         } catch (ComponentException $e) {
             throw $e;
         }
@@ -97,7 +98,8 @@ class Processor
                 $yamlContents = file_get_contents($masterPath);
                 $yaml = new Parser();
                 $master = $yaml->parse($yamlContents);
-                print_r($master);
+
+                //print_r($master);
 
                 // Validate master yaml
                 $this->validateMasterYaml($master);
@@ -105,8 +107,9 @@ class Processor
                 // Loop through components and run them individually in the master.yaml order
                 foreach ($master as $componentAlias => $componentConfiguration) {
 
-                    $component = $this->configInterface->getComponentByName($componentAlias);
-                    foreach ($componentConfiguration['sources'] as $i=>$source) {
+                    $componentClass = $this->configInterface->getComponentByName($componentAlias);
+                    $component = new $componentClass($this->log);
+                    foreach ($componentConfiguration['sources'] as $i => $source) {
                         $component->setSource($source)->process();
                     }
 
@@ -142,7 +145,8 @@ class Processor
      */
     private function isValidComponent($componentName)
     {
-        $component = $this->configInterface->getComponentByName($componentName);
+        $componentClass = $this->configInterface->getComponentByName($componentName);
+        $component = new $componentClass($this->log);
         if ($component instanceof ComponentAbstract) {
             return true;
         }

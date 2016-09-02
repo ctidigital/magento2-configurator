@@ -4,13 +4,8 @@ namespace CtiDigital\Configurator\Model;
 
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Logging
+class Logging implements LoggingInterface
 {
-
-    const LEVEL_INFO = 'info';
-    const LEVEL_COMMENT = 'comment';
-    const LEVEL_QUESTION = 'question';
-    const LEVEL_ERROR = 'error';
 
     protected $output;
 
@@ -29,17 +24,17 @@ class Logging
         $this->log($message,$this::LEVEL_ERROR);
     }
 
-    public function logQuestion()
+    public function logQuestion($message)
     {
         $this->log($message,$this::LEVEL_QUESTION);
     }
 
-    public function logComment()
+    public function logComment($message)
     {
         $this->log($message,$this::LEVEL_COMMENT);
     }
 
-    public function logInfo()
+    public function logInfo($message)
     {
         $this->log($message,$this::LEVEL_INFO);
     }

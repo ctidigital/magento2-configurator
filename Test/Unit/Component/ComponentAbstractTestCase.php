@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
+use CtiDigital\Configurator\Model\LoggingInterface;
 
 abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -13,10 +14,14 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
     /* @var $className String */
     protected $className;
 
+    /* @var $logInterface LoggingInterface */
+    protected $logInterface;
+
     abstract protected function componentSetUp();
 
     protected function setUp()
     {
+        $this->logInterface = $this->getMock(LoggingInterface::class);
         $this->componentSetUp();
     }
 

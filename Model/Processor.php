@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
+use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Parser;
@@ -21,13 +22,19 @@ class Processor
     protected $components = array();
 
     /**
+     * @var ConfigInterface
+     */
+    protected $configInterface;
+
+    /**
      * @var mixed
      */
     protected $log;
 
-    public function __construct(OutputInterface $output)
+    public function __construct(ConfigInterface $configInterface, OutputInterface $output)
     {
         $this->log = new Logging($output);
+        $this->configInterface = $configInterface;
     }
 
     /**
@@ -39,18 +46,18 @@ class Processor
     }
 
     /**
-     * @param string $component
+     * @param string $componentName
      */
-    public function addComponent($component)
+    public function addComponent($componentName)
     {
         try {
-            if (!$this->isValidComponent($component)) {
+            if (!$this->isValidComponent($componentname)) {
                 throw new ComponentException(
-                    sprintf('%s component does not appear to be a valid component.', $component)
+                    sprintf('%s component does not appear to be a valid component.', $componentName)
                 );
             }
 
-            $this->components[$component] = $this->mapComponentNameToClass($component);
+            $this->components[$componentName] = $this->configInterface->getComponentByName($componentName);
         } catch (ComponentException $e) {
             throw $e;
         }
@@ -96,10 +103,19 @@ class Processor
                 $this->validateMasterYaml($master);
 
                 // Loop through components and run them individually in the master.yaml order
-                // Include any other attributes that comes through the master.yaml
+                foreach ($master as $componentAlias => $componentConfiguration) {
+
+                    $component = $this->configInterface->getComponentByName($componentAlias);
+                    foreach ($componentConfiguration['sources'] as $i=>$source) {
+                        $component->setSource($source)->process();
+                    }
+
+                    // Include any other attributes that comes through the master.yaml
+                }
+
 
             } catch (ComponentException $e) {
-                echo $e->getMessage();
+                $this->log->logError($e->getMessage());
             }
 
         } else {
@@ -119,18 +135,25 @@ class Processor
     }
 
     /**
-     * @todo validate the component to see it actually exists
+     * See if the component in master yaml exists
      *
-     * @param $component
+     * @param $componentName
      * @return bool
      */
-    private function isValidComponent($component)
+    private function isValidComponent($componentName)
     {
-        if ($component) {
+        $component = $this->configInterface->getComponentByName($componentName);
+        if ($component instanceof ComponentAbstract) {
             return true;
         }
+        return false;
     }
 
+    /**
+     * Basic validation of master yaml requirements
+     *
+     * @param $master
+     */
     private function validateMasterYaml($master)
     {
         try {
@@ -139,17 +162,45 @@ class Processor
                 // Check it has a enabled node
                 if (!isset($componentConfiguration['enabled'])) {
                     throw new ComponentException(
-                        sprintf('It appears %s does not have a "enabled" node. This is required', $componentAlias)
+                        sprintf('It appears %s does not have a "enabled" node. This is required.', $componentAlias)
                     );
                 }
 
                 // Check it has at least 1 data source
+                $sourceCount = 0;
+                if (isset($componentConfiguration['sources'])) {
+                    foreach ($componentConfiguration['sources'] as $i => $source) {
+                        $sourceCount++;
+                    }
+                }
 
+                if (isset($componentConfiguration['env'])) {
+                    foreach ($componentConfiguration['env'] as $env => $envData) {
+
+                        if (isset($envData['sources'])) {
+                            foreach ($envData['sources'] as $i => $source) {
+                                $sourceCount++;
+                            }
+                        }
+                    }
+                }
+
+                if ($sourceCount < 1) {
+                    throw new ComponentException(
+                        sprintf('It appears there are no data sources for the %s component.', $componentAlias)
+                    );
+                }
 
                 // Check the component exist
+                if (!$this->isValidComponent($componentAlias)) {
+                    throw new ComponentException(
+                        sprintf(
+                            '%s not a valid component. Please verify using bin/magento component:list.',
+                            $componentAlias
+                        )
+                    );
+                }
 
-
-                //
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());

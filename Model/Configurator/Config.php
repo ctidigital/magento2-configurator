@@ -21,6 +21,7 @@ class Config extends Data implements ConfigInterface
 
     public function getComponentByName($name)
     {
-        // TODO: Implement getComponentByName() method.
+        $componentClassName = $this->get('components/' . $name . '/class');
+        return new $componentClassName;
     }
 }

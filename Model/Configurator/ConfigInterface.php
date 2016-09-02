@@ -2,6 +2,8 @@
 
 namespace CtiDigital\Configurator\Model\Configurator;
 
+use CtiDigital\Configurator\Model\Component\ComponentAbstract;
+
 interface ConfigInterface
 {
 
@@ -15,7 +17,7 @@ interface ConfigInterface
      * Gets a single component by its name
      *
      * @param String $name
-     * @return mixed
+     * @return ComponentAbstract
      */
     public function getComponentByName($name);
 }

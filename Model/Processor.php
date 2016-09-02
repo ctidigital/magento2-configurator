@@ -210,5 +210,4 @@ class Processor
             $this->log->logError($e->getMessage());
         }
     }
-
 }

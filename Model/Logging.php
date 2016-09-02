@@ -14,29 +14,28 @@ class Logging implements LoggingInterface
         $this->output = $output;
     }
 
-    public function log($message,$level)
+    public function log($message, $level)
     {
-        $this->output->writeln('<'.$level.'>'.$message.'<'.$level.'>');
+        $this->output->writeln('<' . $level . '>' . $message . '<' . $level . '>');
     }
 
     public function logError($message)
     {
-        $this->log($message,$this::LEVEL_ERROR);
+        $this->log($message, $this::LEVEL_ERROR);
     }
 
     public function logQuestion($message)
     {
-        $this->log($message,$this::LEVEL_QUESTION);
+        $this->log($message, $this::LEVEL_QUESTION);
     }
 
     public function logComment($message)
     {
-        $this->log($message,$this::LEVEL_COMMENT);
+        $this->log($message, $this::LEVEL_COMMENT);
     }
 
     public function logInfo($message)
     {
-        $this->log($message,$this::LEVEL_INFO);
+        $this->log($message, $this::LEVEL_INFO);
     }
-
 }

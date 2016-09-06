@@ -42,6 +42,35 @@ class Websites extends ComponentAbstract
 
     protected function processData($data = null)
     {
-        $this->log->logInfo(print_r($data));
+        try {
+            if (!isset ($data['websites'])) {
+                throw new ComponentException(
+                    sprintf(
+                        "No websites found. Are you sure this component '%s' should be enabled?",
+                        $this->getComponentAlias()
+                    )
+                );
+            }
+            foreach ($data['websites'] as $code => $website) {
+                $this->processWebsite($code, $website);
+            }
+        } catch (ComponentException $e) {
+            $this->log->logError($e->getMessage());
+        }
+    }
+
+    protected function processWebsite($code, $website)
+    {
+        $this->log->logInfo(sprintf("Checking if the website with code '%s' already exists", $code));
+    }
+
+    protected function processStoreGroup($storeView)
+    {
+
+    }
+
+    protected function processStoreView($code, $storeView)
+    {
+
     }
 }

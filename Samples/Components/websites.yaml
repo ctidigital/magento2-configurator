@@ -1,11 +1,23 @@
 websites:
   base:
-    name: Configurator's Default Website UK
+    name: Configurator's Website UK
     store_groups:
       -
-        name: Configurator's Website Store
+        name: Main Website Store
         root_category_id: 2
+        default_store: default
         store_views:
           default:
             name: Configurator's Store View
-            status: 1
+            is_active: 1
+  usa:
+    name: Configurator's Website US
+    store_groups:
+      -
+        name: Configurator's Website Store US
+        root_category_id: 2
+        default_store: usa_en_us
+        store_views:
+          usa_en_us:
+            name: Configurator's USA Store View
+            is_active: 1

@@ -75,6 +75,10 @@ class Websites extends ComponentAbstract
                         // Process the store view
                         $this->processStoreView($code, $storeViewData, $storeGroup);
                     }
+
+                    // As the store may not be created yet, associated the default store to the store group
+                    // has to be completed after all stores for the store group have been created.
+                    $this->setDefaultStore($storeGroup,$storeGroupData);
                 }
             }
         } catch (ComponentException $e) {
@@ -103,6 +107,7 @@ class Websites extends ComponentAbstract
                 $canSave = true;
                 $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code));
                 $website->setData($websiteData);
+                $website->setCode($code);
             }
 
             // Loop through other website data attributes
@@ -225,6 +230,7 @@ class Websites extends ComponentAbstract
                 $canSave = true;
                 $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code));
                 $storeView->setData($storeViewData);
+                $storeView->setCode($code);
             }
 
             // Check if the store group is the correct one
@@ -269,6 +275,50 @@ class Websites extends ComponentAbstract
                 $this->log->logInfo(sprintf("Saved store view '%s'", $code));
             }
             return $storeView;
+        } catch (ComponentException $e) {
+            $this->log->logError($e->getMessage());
+        }
+    }
+
+    protected function setDefaultStore(Group $storeGroup, $storeGroupData)
+    {
+        try {
+            $this->log->logComment(sprintf("Setting default store for the store group '%s", $storeGroup->getName()));
+            $storeFactory = new StoreFactory($this->objectManager, \Magento\Store\Model\Store::class);
+            $storeView = $storeFactory->create();
+            $storeView->load($storeGroupData['default_store'], 'code');
+
+            if (!$storeView->getId()) {
+                throw new ComponentException(
+                    sprintf("Cannot find store view with code %s",$storeGroupData['default_store'])
+                );
+            }
+
+            if ($storeView->getStoreGroupId() != $storeGroup->getId()) {
+                throw new ComponentException(
+                    sprintf(
+                        "This store view code %s does not belong to %s",
+                        $storeGroupData['default_store'],
+                        $storeGroup->getName()
+                    )
+                );
+            }
+
+            // Figure out if it needs changing
+            if ($storeGroup->getDefaultStoreId() == $storeView->getId()) {
+                $this->log->logComment(sprintf("No change with the default store for '%s", $storeGroup->getName()));
+            } else {
+                $storeGroup->setDefaultStoreId($storeView->getId());
+                $storeGroup->getResource()->save($storeGroup);
+                $this->log->logInfo(
+                    sprintf(
+                        "Set default store view '%s' for store group '%s",
+                        $storeView->getCode(),
+                        $storeGroup->getName()
+                    )
+                );
+            }
+
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }

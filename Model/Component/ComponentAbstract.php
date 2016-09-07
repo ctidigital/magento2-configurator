@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\LoggingInterface;
-use Magento\Framework\Profiler\Driver\Standard\OutputInterface;
+use Magento\Framework\ObjectManagerInterface;
 
 abstract class ComponentAbstract
 {
@@ -17,11 +17,13 @@ abstract class ComponentAbstract
     protected $name;
     protected $source;
     protected $parsedData;
+    protected $objectManager;
     protected $description = 'Unknown Component';
 
-    public function __construct(LoggingInterface $log)
+    public function __construct(LoggingInterface $log, ObjectManagerInterface $objectManager)
     {
         $this->log = $log;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -85,9 +87,9 @@ abstract class ComponentAbstract
 //            $this->eventManager->dispatch('configurator_parse_component_before',array('object'=>$this));
 //            $this->eventManager->dispatch('configurator_parse_component_before'.$this->alias,array('object'=>$this));
 
-            $this->log->logInfo(sprintf("Starting to parse data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Starting to parse data for %s",$this->getComponentName()));
             $this->parsedData = $this->parseData($this->source);
-            $this->log->logInfo(sprintf("Finished parsing data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Finished parsing data for %s",$this->getComponentName()));
 
 //            $this->eventManager->dispatch(
 //                'configurator_process_component_before',
@@ -97,9 +99,9 @@ abstract class ComponentAbstract
 //                array('object'=>$this,'source'=>$this->source)
 //            );
 
-            $this->log->logInfo(sprintf("Starting to process data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Starting to process data for %s",$this->getComponentName()));
             $this->processData($this->parsedData);
-            $this->log->logInfo(sprintf("Finished processing data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Finished processing data for %s",$this->getComponentName()));
 
 //            $this->eventManager->dispatch('configurator_process_component_after',array('object'=>$this));
 //            $this->eventManager->dispatch('configurator_process_component_after'.$this->alias,array('object'=>$this));

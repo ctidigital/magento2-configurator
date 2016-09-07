@@ -5,6 +5,7 @@ namespace CtiDigital\Configurator\Model;
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
+use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Parser;
 
@@ -31,10 +32,19 @@ class Processor
      */
     protected $log;
 
-    public function __construct(ConfigInterface $configInterface, OutputInterface $output)
-    {
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    public function __construct(
+        ConfigInterface $configInterface,
+        OutputInterface $output,
+        ObjectManagerInterface $objectManager
+    ) {
         $this->log = new Logging($output);
         $this->configInterface = $configInterface;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -110,7 +120,7 @@ class Processor
                     $componentClass = $this->configInterface->getComponentByName($componentAlias);
 
                     /* @var ComponentAbstract $component */
-                    $component = new $componentClass($this->log);
+                    $component = new $componentClass($this->log, $this->objectManager);
                     foreach ($componentConfig['sources'] as $source) {
                         $component->setSource($source)->process();
                     }
@@ -135,7 +145,7 @@ class Processor
     private function isValidComponent($componentName)
     {
         $componentClass = $this->configInterface->getComponentByName($componentName);
-        $component = new $componentClass($this->log);
+        $component = new $componentClass($this->log, $this->objectManager);
         if ($component instanceof ComponentAbstract) {
             return true;
         }

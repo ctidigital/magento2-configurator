@@ -69,11 +69,18 @@ class RunCommand extends Command
 
             $environment = $input->getOption('env');
 
+            $logLevel = OutputInterface::VERBOSITY_NORMAL;
+            $verbose = $input->getOption('verbose');
+
             if ($environment == null) {
                 throw new ConfiguratorAdapterException('Please specify an environment using --env="<environment>"');
             }
 
-            $processor = new Processor($this->configInterface, $output, $this->objectManager);
+            if ($verbose) {
+                $logLevel = OutputInterface::VERBOSITY_VERBOSE;
+            }
+
+            $processor = new Processor($this->configInterface, $output, $this->objectManager, $logLevel);
             $processor->setEnvironment($environment);
             $processor->run();
 

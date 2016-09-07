@@ -40,9 +40,10 @@ class Processor
     public function __construct(
         ConfigInterface $configInterface,
         OutputInterface $output,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        $logLevel = OutputInterface::VERBOSITY_NORMAL
     ) {
-        $this->log = new Logging($output);
+        $this->log = new Logging($output, $logLevel);
         $this->configInterface = $configInterface;
         $this->objectManager = $objectManager;
     }
@@ -130,7 +131,7 @@ class Processor
 
                         // If not, continue to next component
                         $this->log->logComment(
-                            sprintf("No environment node for '%s' component",$component->getComponentName())
+                            sprintf("No environment node for '%s' component", $component->getComponentName())
                         );
                         continue;
                     }
@@ -162,7 +163,6 @@ class Processor
                         );
                         continue;
                     }
-
 
 
                 }

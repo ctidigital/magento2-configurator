@@ -87,9 +87,9 @@ abstract class ComponentAbstract
 //            $this->eventManager->dispatch('configurator_parse_component_before',array('object'=>$this));
 //            $this->eventManager->dispatch('configurator_parse_component_before'.$this->alias,array('object'=>$this));
 
-            $this->log->logComment(sprintf("Starting to parse data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Starting to parse data for %s", $this->getComponentName()));
             $this->parsedData = $this->parseData($this->source);
-            $this->log->logComment(sprintf("Finished parsing data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Finished parsing data for %s", $this->getComponentName()));
 
 //            $this->eventManager->dispatch(
 //                'configurator_process_component_before',
@@ -99,9 +99,9 @@ abstract class ComponentAbstract
 //                array('object'=>$this,'source'=>$this->source)
 //            );
 
-            $this->log->logComment(sprintf("Starting to process data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Starting to process data for %s", $this->getComponentName()));
             $this->processData($this->parsedData);
-            $this->log->logComment(sprintf("Finished processing data for %s",$this->getComponentName()));
+            $this->log->logComment(sprintf("Finished processing data for %s", $this->getComponentName()));
 
 //            $this->eventManager->dispatch('configurator_process_component_after',array('object'=>$this));
 //            $this->eventManager->dispatch('configurator_process_component_after'.$this->alias,array('object'=>$this));

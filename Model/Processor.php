@@ -28,7 +28,7 @@ class Processor
     protected $configInterface;
 
     /**
-     * @var mixed
+     * @var LoggingInterface
      */
     protected $log;
 
@@ -125,7 +125,46 @@ class Processor
                         $component->setSource($source)->process();
                     }
 
-                    // Include any other attributes that comes through the master.yaml
+                    // Check if there are environment specific nodes placed
+                    if (!isset($componentConfig['env'])) {
+
+                        // If not, continue to next component
+                        $this->log->logComment(
+                            sprintf("No environment node for '%s' component",$component->getComponentName())
+                        );
+                        continue;
+                    }
+
+                    // Check if there is a node for this particular environment
+                    if (!isset($componentConfig['env'][$this->getEnvironment()])) {
+
+                        // If not, continue to next component
+                        $this->log->logComment(
+                            sprintf(
+                                "No '%s' environment specific node for '%s' component",
+                                $this->getEnvironment(),
+                                $component->getComponentName()
+                            )
+                        );
+                        continue;
+                    }
+
+                    // Check if there are sources for the environment
+                    if (!isset($componentConfig['env'][$this->getEnvironment()]['sources'])) {
+
+                        // If not continue
+                        $this->log->logComment(
+                            sprintf(
+                                "No '%s' environment specific sources for '%s' component",
+                                $this->getEnvironment(),
+                                $component->getComponentName()
+                            )
+                        );
+                        continue;
+                    }
+
+
+
                 }
 
 

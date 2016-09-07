@@ -5,14 +5,10 @@ websites:
       - ../configurator/websites.yaml
   env:
       local:
-        mode: maintain
-        log: debug
+        log: info
       qa:
-        mode: maintain
         log: notice
       stage:
-        mode: create
         log: warning
       live:
-        mode: create
         log: error

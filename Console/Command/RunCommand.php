@@ -30,15 +30,19 @@ class RunCommand extends Command
      */
     private $objectManager;
 
+    private $processor;
+
     public function __construct(
         ConfiguratorAdapterInterface $configuratorAdapter,
         ConfigInterface $config,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        Processor $processor
     ) {
         parent::__construct();
         $this->configuratorAdapter = $configuratorAdapter;
         $this->configInterface = $config;
         $this->objectManager = $objectManager;
+        $this->processor = $processor;
     }
 
     protected function configure()
@@ -80,9 +84,8 @@ class RunCommand extends Command
                 $logLevel = OutputInterface::VERBOSITY_VERBOSE;
             }
 
-            $processor = new Processor($this->configInterface, $output, $this->objectManager, $logLevel);
-            $processor->setEnvironment($environment);
-            $processor->run();
+            $this->processor->setEnvironment($environment);
+            $this->processor->run();
 
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Finished Configurator</comment>');

@@ -20,7 +20,10 @@ abstract class ComponentAbstract
     protected $objectManager;
     protected $description = 'Unknown Component';
 
-    public function __construct(LoggingInterface $log, ObjectManagerInterface $objectManager)
+    public function __construct(
+        LoggingInterface $log,
+        ObjectManagerInterface $objectManager
+    )
     {
         $this->log = $log;
         $this->objectManager = $objectManager;

@@ -78,7 +78,7 @@ class Websites extends ComponentAbstract
 
                     // As the store may not be created yet, associated the default store to the store group
                     // has to be completed after all stores for the store group have been created.
-                    $this->setDefaultStore($storeGroup,$storeGroupData);
+                    $this->setDefaultStore($storeGroup, $storeGroupData);
                 }
             }
         } catch (ComponentException $e) {
@@ -152,14 +152,25 @@ class Websites extends ComponentAbstract
     {
         try {
 
-            $this->log->logComment(
-                sprintf("Checking if the store group with name '%s' already exists", $storeGroupData['name'])
-            );
+            if (isset($storeGroupData['group_id'])) {
+                $this->log->logComment(
+                    sprintf("Checking if the store group with id '%s' already exists", $storeGroupData['group_id'])
+                );
+            } else {
+                $this->log->logComment(
+                    sprintf("Checking if the store group with name '%s' already exists", $storeGroupData['name'])
+                );
+            }
 
             // Attempt to load the Store Group via the object manager
             $groupFactory = new GroupFactory($this->objectManager, \Magento\Store\Model\Group::class);
             $storeGroup = $groupFactory->create();
-            $storeGroup->load($storeGroupData['name'], 'name');
+
+            if (isset($storeGroupData['group_id'])) {
+                $storeGroup->load($storeGroupData['group_id']);
+            } else {
+                $storeGroup->load($storeGroupData['name'], 'name');
+            }
 
             $canSave = false;
 
@@ -290,7 +301,7 @@ class Websites extends ComponentAbstract
 
             if (!$storeView->getId()) {
                 throw new ComponentException(
-                    sprintf("Cannot find store view with code %s",$storeGroupData['default_store'])
+                    sprintf("Cannot find store view with code %s", $storeGroupData['default_store'])
                 );
             }
 

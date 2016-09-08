@@ -52,7 +52,7 @@ class RunCommand extends Command
             ->setDescription('Run configurator components')
             ->setDefinition(
                 new InputDefinition(array(
-                    new InputOption('env','e', InputOption::VALUE_REQUIRED, 'Specify environment configuration')
+                    new InputOption('env', 'e', InputOption::VALUE_REQUIRED, 'Specify environment configuration')
                 ))
             );
     }

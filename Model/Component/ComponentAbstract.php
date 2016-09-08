@@ -23,8 +23,7 @@ abstract class ComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->log = $log;
         $this->objectManager = $objectManager;
     }

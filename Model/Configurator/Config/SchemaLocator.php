@@ -23,7 +23,7 @@ class SchemaLocator implements SchemaLocatorInterface
      */
     public function getSchema()
     {
-        $this->schema;
+        return $this->schema;
     }
 
     /**

@@ -17,6 +17,17 @@ class Logging implements LoggingInterface
         $this->level = $level;
     }
 
+    public function setLogLevel($level = OutputInterface::VERBOSITY_NORMAL)
+    {
+        $this->level = $level;
+        return $this;
+    }
+
+    public function getLogLevel()
+    {
+        return $this->level;
+    }
+
     public function log($message, $level, $nest = 0)
     {
         $this->output->writeln('<' . $level . '>' . $message . '<' . $level . '>');

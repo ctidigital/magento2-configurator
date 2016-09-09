@@ -48,12 +48,20 @@ class Processor
         $state->setAreaCode('adminhtml');
     }
 
+
+    public function getLogger()
+    {
+        return $this->log;
+    }
+
     /**
      * @param string $environment
+     * @return Processor
      */
     public function setEnvironment($environment)
     {
         $this->environment = $environment;
+        return $this;
     }
 
     /**

@@ -85,6 +85,7 @@ class RunCommand extends Command
             }
 
             $this->processor->setEnvironment($environment);
+            $this->processor->getLogger()->setLogLevel($logLevel);
             $this->processor->run();
 
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {

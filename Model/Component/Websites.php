@@ -88,10 +88,12 @@ class Websites extends ComponentAbstract
 
     protected function processWebsite($code, $websiteData)
     {
+        $logNest = 1;
+
         try {
 
             // Load website via ObjectManager
-            $this->log->logComment(sprintf("Checking if the website with code '%s' already exists", $code));
+            $this->log->logQuestion(sprintf("Does the the website with code '%s' already exist?", $code), $logNest);
             $websiteFactory = new WebsiteFactory($this->objectManager, \Magento\Store\Model\Website::class);
             $website = $websiteFactory->create();
             $website->load($code, 'code');
@@ -100,12 +102,12 @@ class Websites extends ComponentAbstract
 
             // Check if it exists
             if ($website->getId()) {
-                $this->log->logComment(sprintf("Website already exists with code '%s'", $code));
+                $this->log->logComment(sprintf("Website already exists with code '%s'", $code), $logNest);
             } else {
 
                 // If it does not exist, just set the existing data up with the website
                 $canSave = true;
-                $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code));
+                $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code), $logNest);
                 $website->setData($websiteData);
                 $website->setCode($code);
             }
@@ -122,16 +124,19 @@ class Websites extends ComponentAbstract
                 if (isset($websiteData[$key]) && $websiteData[$key] != $value) {
 
                     // Set the new data
-                    $this->log->logInfo(sprintf("Change '%s' from '%s' to '%s'", $key, $value, $websiteData[$key]));
+                    $this->log->logInfo(
+                        sprintf("Change '%s' from '%s' to '%s'", $key, $value, $websiteData[$key]),
+                        $logNest
+                    );
                     $website->setData($key, $websiteData[$key]);
                     $canSave = true;
                 } else {
 
                     // Skip setting the data
                     if ($website->getId()) {
-                        $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value));
+                        $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value), $logNest);
                     } else {
-                        $this->log->logInfo(sprintf("New setting for '%s' - '%s'", $key, $value));
+                        $this->log->logInfo(sprintf("New setting for '%s' - '%s'", $key, $value), $logNest);
                     }
                 }
             }
@@ -140,25 +145,29 @@ class Websites extends ComponentAbstract
 
                 // Save the website
                 $website->getResource()->save($website);
-                $this->log->logInfo(sprintf("Saved website '%s'", $code));
+                $this->log->logInfo(sprintf("Saved website '%s'", $code, $logNest));
             }
             return $website;
         } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
+            $this->log->logError($e->getMessage(), $logNest);
         }
     }
 
     protected function processStoreGroup($storeGroupData, Website $website)
     {
+        $logNest = 2;
+
         try {
 
             if (isset($storeGroupData['group_id'])) {
-                $this->log->logComment(
-                    sprintf("Checking if the store group with id '%s' already exists", $storeGroupData['group_id'])
+                $this->log->logQuestion(
+                    sprintf("Does the store group with id '%s' already exist?", $storeGroupData['group_id']),
+                    $logNest
                 );
             } else {
-                $this->log->logComment(
-                    sprintf("Checking if the store group with name '%s' already exists", $storeGroupData['name'])
+                $this->log->logQuestion(
+                    sprintf("Does the store group with name '%s' already exist?", $storeGroupData['name']),
+                    $logNest
                 );
             }
 
@@ -176,11 +185,17 @@ class Websites extends ComponentAbstract
 
             // Check if the store group already exists
             if ($storeGroup->getId()) {
-                $this->log->logComment(sprintf("Store group already exists with name '%s'", $storeGroupData['name']));
+                $this->log->logComment(
+                    sprintf("Store group already exists with name '%s'", $storeGroupData['name']),
+                    $logNest
+                );
             } else {
 
                 // Create a new store group and set the basic data from source
-                $this->log->logComment(sprintf("Creating a new website with name '%s'", $storeGroupData['name']));
+                $this->log->logComment(
+                    sprintf("Creating a new website with name '%s'", $storeGroupData['name']),
+                    $logNest
+                );
                 $storeGroup->setData($storeGroupData);
                 $storeGroup->setWebsite($website);
                 $canSave = true;
@@ -194,14 +209,17 @@ class Websites extends ComponentAbstract
 
                 // Set data if the data from source exists and is not the same as what is on magento's
                 if (isset($storeGroupData[$key]) && $storeGroupData[$key] != $value) {
-                    $this->log->logInfo(sprintf("Change '%s' from '%s' to '%s'", $key, $value, $storeGroupData[$key]));
+                    $this->log->logInfo(
+                        sprintf("Change '%s' from '%s' to '%s'", $key, $value, $storeGroupData[$key]),
+                        $logNest
+                    );
                     $storeGroup->setData($key, $storeGroupData[$key]);
                     $canSave = true;
                 } else {
                     if ($storeGroup->getId()) {
-                        $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value));
+                        $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value), $logNest);
                     } else {
-                        $this->log->logInfo(sprintf("New setting for '%s' - '%s'", $key, $value));
+                        $this->log->logInfo(sprintf("New setting for '%s' - '%s'", $key, $value), $logNest);
                     }
                 }
 
@@ -211,21 +229,23 @@ class Websites extends ComponentAbstract
 
                 // Save the store group
                 $storeGroup->getResource()->save($storeGroup);
-                $this->log->logInfo(sprintf("Saved store group '%s'", $storeGroup->getName()));
+                $this->log->logInfo(sprintf("Saved store group '%s'", $storeGroup->getName()), $logNest);
             }
 
             return $storeGroup;
         } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
+            $this->log->logError($e->getMessage(), $logNest);
         }
     }
 
     protected function processStoreView($code, $storeViewData, Group $storeGroup)
     {
+        $logNest = 3;
+
         try {
 
             // Load store view via ObjectManager
-            $this->log->logComment(sprintf("Checking if the website with code '%s' already exists", $code));
+            $this->log->logQuestion(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
             $storeFactory = new StoreFactory($this->objectManager, \Magento\Store\Model\Store::class);
             $storeView = $storeFactory->create();
             $storeView->load($code, 'code');
@@ -234,12 +254,12 @@ class Websites extends ComponentAbstract
 
             // Check if it exists
             if ($storeView->getId()) {
-                $this->log->logComment(sprintf("Store view already exists with code '%s'", $code));
+                $this->log->logComment(sprintf("Store view already exists with code '%s'", $code), $logNest);
             } else {
 
                 // If it does not exist, just set the existing data up with the store view
                 $canSave = true;
-                $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code));
+                $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code), $logNest);
                 $storeView->setData($storeViewData);
                 $storeView->setCode($code);
             }
@@ -265,16 +285,19 @@ class Websites extends ComponentAbstract
                 if (isset($storeViewData[$key]) && $storeViewData[$key] != $value) {
 
                     // Set the new data
-                    $this->log->logInfo(sprintf("Change '%s' from '%s' to '%s'", $key, $value, $storeViewData[$key]));
+                    $this->log->logInfo(
+                        sprintf("Change '%s' from '%s' to '%s'", $key, $value, $storeViewData[$key]),
+                        $logNest
+                    );
                     $storeView->setData($key, $storeViewData[$key]);
                     $canSave = true;
                 } else {
 
                     // Skip setting the data
                     if ($storeView->getId()) {
-                        $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value));
+                        $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value), $logNest);
                     } else {
-                        $this->log->logInfo(sprintf("New setting for '%s' - '%s'", $key, $value));
+                        $this->log->logInfo(sprintf("New setting for '%s' - '%s'", $key, $value), $logNest);
                     }
                 }
             }
@@ -283,18 +306,23 @@ class Websites extends ComponentAbstract
 
                 // Save the store view
                 $storeView->getResource()->save($storeView);
-                $this->log->logInfo(sprintf("Saved store view '%s'", $code));
+                $this->log->logInfo(sprintf("Saved store view '%s'", $code), $logNest);
             }
             return $storeView;
         } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
+            $this->log->logError($e->getMessage(), $logNest);
         }
     }
 
     protected function setDefaultStore(Group $storeGroup, $storeGroupData)
     {
+        $logNest = 2;
+
         try {
-            $this->log->logComment(sprintf("Setting default store for the store group '%s", $storeGroup->getName()));
+            $this->log->logComment(
+                sprintf("Setting default store for the store group '%s", $storeGroup->getName()),
+                $logNest
+            );
             $storeFactory = new StoreFactory($this->objectManager, \Magento\Store\Model\Store::class);
             $storeView = $storeFactory->create();
             $storeView->load($storeGroupData['default_store'], 'code');
@@ -317,7 +345,10 @@ class Websites extends ComponentAbstract
 
             // Figure out if it needs changing
             if ($storeGroup->getDefaultStoreId() == $storeView->getId()) {
-                $this->log->logComment(sprintf("No change with the default store for '%s", $storeGroup->getName()));
+                $this->log->logComment(
+                    sprintf("No change with the default store for '%s", $storeGroup->getName()),
+                    $logNest
+                );
             } else {
                 $storeGroup->setDefaultStoreId($storeView->getId());
                 $storeGroup->getResource()->save($storeGroup);
@@ -326,12 +357,13 @@ class Websites extends ComponentAbstract
                         "Set default store view '%s' for store group '%s",
                         $storeView->getCode(),
                         $storeGroup->getName()
-                    )
+                    ),
+                    $logNest
                 );
             }
 
         } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
+            $this->log->logError($e->getMessage(), $logNest);
         }
     }
 }

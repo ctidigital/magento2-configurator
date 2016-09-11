@@ -9,13 +9,13 @@ interface LoggingInterface
     const LEVEL_QUESTION = 'question';
     const LEVEL_ERROR = 'error';
 
-    public function log($message, $level);
+    public function log($message, $level, $nest = 0);
 
-    public function logError($message);
+    public function logError($message, $nest = 0);
 
-    public function logQuestion($message);
+    public function logQuestion($message, $nest = 0);
 
-    public function logComment($message);
+    public function logComment($message, $nest = 0);
 
-    public function logInfo($message);
+    public function logInfo($message, $nest = 0);
 }

@@ -6,6 +6,7 @@ use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Profiler\Driver\Standard\OutputInterface;
 use Symfony\Component\Yaml\Parser;
 
 class Processor
@@ -113,6 +114,8 @@ class Processor
                 $masterPath = BP . '/app/etc/master.yaml';
                 if (!file_exists($masterPath)) {
                     throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
+                } else {
+                    $this->log->logComment(sprintf("Found Master YAML"));
                 }
                 $yamlContents = file_get_contents($masterPath);
                 $yaml = new Parser();
@@ -125,6 +128,8 @@ class Processor
 
                 // Loop through components and run them individually in the master.yaml order
                 foreach ($master as $componentAlias => $componentConfig) {
+
+                    $this->log->logComment(sprintf("Loading component %s", $componentAlias));
 
                     $componentClass = $this->configInterface->getComponentByName($componentAlias);
 
@@ -191,7 +196,11 @@ class Processor
      */
     private function isValidComponent($componentName)
     {
+        if ($this->log->getLogLevel() > \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_NORMAL) {
+            $this->log->logQuestion(sprintf("Does the %s component exist?", $componentName));
+        }
         $componentClass = $this->configInterface->getComponentByName($componentName);
+        $this->log->logComment(sprintf("The %s component has %s class name.", $componentName, $componentClass));
         $component = $this->objectManager->create($componentClass);
         if ($component instanceof ComponentAbstract) {
             return true;

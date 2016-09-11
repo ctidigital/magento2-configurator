@@ -38,6 +38,12 @@ class Websites extends ComponentAbstract
     protected function parseData($source = null)
     {
         try {
+            if ($source == null) {
+                throw new ComponentException(
+                    sprintf('The %s component requires to have a file source definition.', $this->alias)
+                );
+            }
+            
             $parser = new Yaml();
             return $parser->parse(file_get_contents($source));
         } catch (ComponentException $e) {
@@ -93,7 +99,7 @@ class Websites extends ComponentAbstract
         try {
 
             // Load website via ObjectManager
-            $this->log->logQuestion(sprintf("Does the the website with code '%s' already exist?", $code), $logNest);
+            $this->log->logQuestion(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
             $websiteFactory = new WebsiteFactory($this->objectManager, \Magento\Store\Model\Website::class);
             $website = $websiteFactory->create();
             $website->load($code, 'code');
@@ -102,6 +108,7 @@ class Websites extends ComponentAbstract
 
             // Check if it exists
             if ($website->getId()) {
+                $this->log->logInfo("Yes",$logNest);
                 $this->log->logComment(sprintf("Website already exists with code '%s'", $code), $logNest);
             } else {
 
@@ -185,6 +192,7 @@ class Websites extends ComponentAbstract
 
             // Check if the store group already exists
             if ($storeGroup->getId()) {
+                $this->log->logInfo("Yes",$logNest);
                 $this->log->logComment(
                     sprintf("Store group already exists with name '%s'", $storeGroupData['name']),
                     $logNest
@@ -254,6 +262,7 @@ class Websites extends ComponentAbstract
 
             // Check if it exists
             if ($storeView->getId()) {
+                $this->log->logInfo("Yes",$logNest);
                 $this->log->logComment(sprintf("Store view already exists with code '%s'", $code), $logNest);
             } else {
 

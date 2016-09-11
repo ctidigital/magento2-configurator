@@ -3,5 +3,6 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:CtiDigital_Configurator:etc/configurator.xsd">
 
     <component name="websites" class="CtiDigital\Configurator\Model\Component\Websites" />
+    <component name="config" class="CtiDigital\Configurator\Model\Component\Config" />
     <component name="products" class="CtiDigital\Configurator\Model\Component\Products" />
 </config>

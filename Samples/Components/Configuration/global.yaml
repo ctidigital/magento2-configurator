@@ -1,0 +1,4 @@
+global:
+  -
+    path: general/country/default
+    value: US

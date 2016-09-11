@@ -1,0 +1,10 @@
+websites:
+  base:
+    -
+      path: general/country/default
+      value: GB
+stores:
+  default:
+    -
+      path: general/locale/code
+      value: en_GB

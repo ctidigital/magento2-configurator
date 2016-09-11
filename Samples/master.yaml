@@ -12,3 +12,9 @@ websites:
         log: warning
       live:
         log: error
+config:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Configuration/global.yaml
+    - ../configurator/Configuration/base-website-config.yaml

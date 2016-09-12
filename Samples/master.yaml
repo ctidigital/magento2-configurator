@@ -18,3 +18,13 @@ config:
   sources:
     - ../configurator/Configuration/global.yaml
     - ../configurator/Configuration/base-website-config.yaml
+products:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Products/simple.csv
+    - ../configurable/Products/configurable.csv
+  env:
+    local:
+      mode: maintain
+      log: debug

@@ -1,0 +1,2 @@
+attribute_set_code,product_websites,product_type,sku,name,short_description,description,price,url_key,visibility,meta_title,meta_keywords,meta_description,associated_products,configurable_attributes
+"Default","base","configurable",configurable_product,"Configurable","Configurable short description","Configurable full description","9.99","configurable","catalog, search","Configurable Product Title","Configurable Product meta keywords","Configurable product description","configurable_product_1,configurable_product_2","color"

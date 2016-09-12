@@ -16,15 +16,15 @@ class Products extends ComponentAbstract
     protected $name = 'Products';
     protected $description = 'Component to import products using a CSV file.';
     protected $type;
-    protected $importModel;
+    protected $importerFactory;
 
     public function __construct(
         \CtiDigital\Configurator\Model\LoggingInterface $log,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \FireGento\FastSimpleImport\Model\Importer $import
+        \FireGento\FastSimpleImport\Model\ImporterFactory $importerFactory
     ) {
         parent::__construct($log, $objectManager);
-        $this->importModel = $import;
+        $this->importerFactory = $importerFactory;
     }
 
     protected function canParseAndProcess()
@@ -81,11 +81,12 @@ class Products extends ComponentAbstract
             }
 
             try {
-                $this->importModel->processImport($productsArray);
-                $this->log->logInfo($this->importModel->getLogTrace());
+                $import = $this->importerFactory->create();
+                $import->processImport($productsArray);
+                $this->log->logInfo($import->getLogTrace());
             } catch (\Exception $e) {
-                $this->log->logError($this->importModel->getErrorMessages());
-                $this->log->logError($this->importModel->getLogTrace());
+                $this->log->logError($import->getErrorMessages());
+                $this->log->logError($import->getLogTrace());
             }
         }
     }

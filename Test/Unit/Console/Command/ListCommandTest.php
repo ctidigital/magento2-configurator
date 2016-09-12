@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\ObjectManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,16 +39,15 @@ class ListCommandTest extends \PHPUnit_Framework_TestCase
     private $configInterface;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $objectManager = array();
 
     protected function setUp()
     {
-        $this->markTestSkipped("Need to get object manager working in TDD");
-        $this->objectManager = ObjectManager::getInstance();
         $this->listCommandAdapter = $this->getMock(ConfiguratorAdapterInterface::class);
         $this->configInterface = $this->getMock(ConfigInterface::class);
+        $this->objectManager = $this->getMock(ObjectManagerInterface::class);
 
         $this->command = new ListCommand(
             $this->listCommandAdapter,

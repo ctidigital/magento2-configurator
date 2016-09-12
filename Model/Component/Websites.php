@@ -5,6 +5,7 @@ namespace CtiDigital\Configurator\Model\Component;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\Website;
 use Magento\Store\Model\WebsiteFactory;
@@ -43,7 +44,7 @@ class Websites extends ComponentAbstract
                     sprintf('The %s component requires to have a file source definition.', $this->alias)
                 );
             }
-            
+
             $parser = new Yaml();
             return $parser->parse(file_get_contents($source));
         } catch (ComponentException $e) {
@@ -92,6 +93,12 @@ class Websites extends ComponentAbstract
         }
     }
 
+    /**
+     * @param string $code
+     * @param array $websiteData
+     * @return Website
+     * @SuppressWarnings(PHPMD)
+     */
     protected function processWebsite($code, $websiteData)
     {
         $logNest = 1;
@@ -108,7 +115,7 @@ class Websites extends ComponentAbstract
 
             // Check if it exists
             if ($website->getId()) {
-                $this->log->logInfo("Yes",$logNest);
+                $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(sprintf("Website already exists with code '%s'", $code), $logNest);
             } else {
 
@@ -160,6 +167,12 @@ class Websites extends ComponentAbstract
         }
     }
 
+    /**
+     * @param array $storeGroupData
+     * @param Website $website
+     * @return Group
+     * @SuppressWarnings(PHPMD)
+     */
     protected function processStoreGroup($storeGroupData, Website $website)
     {
         $logNest = 2;
@@ -192,7 +205,7 @@ class Websites extends ComponentAbstract
 
             // Check if the store group already exists
             if ($storeGroup->getId()) {
-                $this->log->logInfo("Yes",$logNest);
+                $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(
                     sprintf("Store group already exists with name '%s'", $storeGroupData['name']),
                     $logNest
@@ -246,6 +259,13 @@ class Websites extends ComponentAbstract
         }
     }
 
+    /**
+     * @param $code
+     * @param $storeViewData
+     * @param Group $storeGroup
+     * @return Store
+     * @SuppressWarnings(PHPMD)
+     */
     protected function processStoreView($code, $storeViewData, Group $storeGroup)
     {
         $logNest = 3;
@@ -262,7 +282,7 @@ class Websites extends ComponentAbstract
 
             // Check if it exists
             if ($storeView->getId()) {
-                $this->log->logInfo("Yes",$logNest);
+                $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(sprintf("Store view already exists with code '%s'", $code), $logNest);
             } else {
 
@@ -323,6 +343,11 @@ class Websites extends ComponentAbstract
         }
     }
 
+    /**
+     * @param Group $storeGroup
+     * @param $storeGroupData
+     * @SuppressWarnings(PHPMD)
+     */
     protected function setDefaultStore(Group $storeGroup, $storeGroupData)
     {
         $logNest = 2;

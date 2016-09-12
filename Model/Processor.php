@@ -6,7 +6,6 @@ use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Profiler\Driver\Standard\OutputInterface;
 use Symfony\Component\Yaml\Parser;
 
 class Processor
@@ -40,7 +39,7 @@ class Processor
     public function __construct(
         ConfigInterface $configInterface,
         ObjectManagerInterface $objectManager,
-        Logging $logging,
+        LoggingInterface $logging,
         \Magento\Framework\App\State $state
     ) {
         $this->log = $logging;
@@ -53,16 +52,6 @@ class Processor
     public function getLogger()
     {
         return $this->log;
-    }
-
-    /**
-     * @param string $environment
-     * @return Processor
-     */
-    public function setEnvironment($environment)
-    {
-        $this->environment = $environment;
-        return $this;
     }
 
     /**
@@ -85,19 +74,29 @@ class Processor
     }
 
     /**
-     * @return string
-     */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
-
-    /**
      * @return array
      */
     public function getComponents()
     {
         return $this->components;
+    }
+
+    /**
+     * @param string $environment
+     * @return Processor
+     */
+    public function setEnvironment($environment)
+    {
+        $this->environment = $environment;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
     }
 
     /**
@@ -114,9 +113,8 @@ class Processor
                 $masterPath = BP . '/app/etc/master.yaml';
                 if (!file_exists($masterPath)) {
                     throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
-                } else {
-                    $this->log->logComment(sprintf("Found Master YAML"));
                 }
+                $this->log->logComment(sprintf("Found Master YAML"));
                 $yamlContents = file_get_contents($masterPath);
                 $yaml = new Parser();
                 $master = $yaml->parse($yamlContents);
@@ -212,6 +210,7 @@ class Processor
      * Basic validation of master yaml requirements
      *
      * @param $master
+     * @SuppressWarnings(PHPMD)
      */
     private function validateMasterYaml($master)
     {

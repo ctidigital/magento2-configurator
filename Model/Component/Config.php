@@ -7,7 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class Config extends ComponentAbstract
 {
-    
+
     protected $alias = 'config';
     protected $name = 'Configuration';
     protected $description = 'The component that sets the store/system configuration values';
@@ -40,11 +40,15 @@ class Config extends ComponentAbstract
         }
     }
 
+    /**
+     * @param array $data
+     * @SuppressWarnings(PHPMD)
+     */
     protected function processData($data = null)
     {
         try {
-            $validScopes = array('global','websites','stores');
-            foreach ($data as $scope=>$configurations) {
+            $validScopes = array('global', 'websites', 'stores');
+            foreach ($data as $scope => $configurations) {
 
                 if (!in_array($scope, $validScopes)) {
                     throw new ComponentException(sprintf("This is not a valid scope '%s' in your config.", $scope));
@@ -57,17 +61,17 @@ class Config extends ComponentAbstract
                 }
 
                 if ($scope == "websites") {
-                    foreach ($configurations as $code=>$websiteConfigurations) {
+                    foreach ($configurations as $code => $websiteConfigurations) {
                         foreach ($websiteConfigurations as $configuration) {
-                            $this->setWebsiteConfig($configuration['path'], $configuration['value'] , $code);
+                            $this->setWebsiteConfig($configuration['path'], $configuration['value'], $code);
                         }
                     }
                 }
 
                 if ($scope == "stores") {
-                    foreach ($configurations as $code=>$storeConfigurations) {
+                    foreach ($configurations as $code => $storeConfigurations) {
                         foreach ($storeConfigurations as $configuration) {
-                            $this->setStoreConfig($configuration['path'], $configuration['value'] , $code);
+                            $this->setStoreConfig($configuration['path'], $configuration['value'], $code);
                         }
                     }
                 }
@@ -80,18 +84,29 @@ class Config extends ComponentAbstract
     private function setGlobalConfig($path, $value, $encrypted = 0)
     {
         $this->log->logComment(sprintf("Global Config: %s = %s", $path, $value));
+
+        if ($encrypted) {
+            $this->log->logError("There is no encryption support just yet");
+        }
     }
 
     private function setWebsiteConfig($path, $value, $code, $encrypted = 0)
     {
         $logNest = 1;
         $this->log->logComment(sprintf("Website '%s' Config: %s = %s", $code, $path, $value), $logNest);
+
+        if ($encrypted) {
+            $this->log->logError("There is no encryption support just yet");
+        }
     }
 
     private function setStoreConfig($path, $value, $code, $encrypted = 0)
     {
         $logNest = 2;
         $this->log->logComment(sprintf("Store '%s' Config: %s = %s", $code, $path, $value), $logNest);
-    }
 
+        if ($encrypted) {
+            $this->log->logError("There is no encryption support just yet");
+        }
+    }
 }

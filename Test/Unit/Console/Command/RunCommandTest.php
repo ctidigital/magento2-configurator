@@ -4,10 +4,21 @@ namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\Processor;
+use Magento\Framework\Config\ScopeInterface;
+use Magento\Framework\App\State;
+use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class RunCommandTest
+ * @package CtiDigital\Configurator\Console\Command
+ * @SuppressWarnings(PHPMD)
+ */
 class RunCommandTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -36,14 +47,45 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
      */
     private $configInterface;
 
+    /**
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $objectManager;
+
+    /**
+     * @var Processor|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $processor;
+
+    /**
+     * @var LoggingInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $loggingInterface;
+
     protected function setUp()
     {
         $this->runCommandAdapter = $this->getMock(ConfiguratorAdapterInterface::class);
         $this->configInterface = $this->getMock(ConfigInterface::class);
+        $this->objectManager = $this->getMock(ObjectManagerInterface::class);
+        $consoleOutput = $this->getMock(ConsoleOutputInterface::class);
+        $scopeInterface = $this->getMock(ScopeInterface::class);
+        $state = $this->getMock(State::class, array(), array($scopeInterface));
+        $this->loggingInterface = $this->getMock(LoggingInterface::class, array(), array(
+            $consoleOutput
+        ));
+
+        $this->processor = $this->getMock(Processor::class, array(), array(
+            $this->configInterface,
+            $this->objectManager,
+            $this->loggingInterface,
+            $state
+        ));
 
         $this->command = new RunCommand(
             $this->runCommandAdapter,
-            $this->configInterface
+            $this->configInterface,
+            $this->objectManager,
+            $this->processor
         );
 
         $this->mockInput = $this->getMock(InputInterface::class);

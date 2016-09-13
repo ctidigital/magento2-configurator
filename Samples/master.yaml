@@ -23,7 +23,7 @@ products:
   method: code
   sources:
     - ../configurator/Products/simple.csv
-    - ../configurable/Products/configurable.csv
+    - ../configurator/Products/configurable.csv
   env:
     local:
       mode: maintain

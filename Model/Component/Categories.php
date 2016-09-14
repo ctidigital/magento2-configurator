@@ -16,7 +16,8 @@ class Categories extends ComponentAbstract
         'name',
         'is_active',
         'position',
-        'include_in_menu'
+        'include_in_menu',
+        'description'
     ];
 
     public function __construct(
@@ -142,7 +143,6 @@ class Categories extends ComponentAbstract
                         $category->setCustomAttribute($attribute, $value);
                 }
             }
-
             // Set the category to be active
             if (!(isset($categoryValues['is_active']))) {
                 $category->setIsActive(true);

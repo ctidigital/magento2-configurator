@@ -47,12 +47,28 @@ class RunCommand extends Command
 
     protected function configure()
     {
+        $environmentOption = new InputOption(
+            'env',
+            'e',
+            InputOption::VALUE_REQUIRED,
+            'Specify environment configuration'
+        );
+
+        $componentOption = new InputOption(
+            'component',
+            'c',
+            InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+            'Test',
+            array()
+        );
+
         $this
             ->setName('configurator:run')
             ->setDescription('Run configurator components')
             ->setDefinition(
                 new InputDefinition(array(
-                    new InputOption('env', 'e', InputOption::VALUE_REQUIRED, 'Specify environment configuration')
+                    $environmentOption,
+                    $componentOption
                 ))
             );
     }
@@ -67,11 +83,12 @@ class RunCommand extends Command
     {
         try {
 
-            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
+            if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Starting Configurator</comment>');
             }
 
             $environment = $input->getOption('env');
+            $components = $input->getOption('component');
 
             $logLevel = OutputInterface::VERBOSITY_NORMAL;
             $verbose = $input->getOption('verbose');
@@ -85,10 +102,15 @@ class RunCommand extends Command
             }
 
             $this->processor->setEnvironment($environment);
+
+            foreach($components as $component) {
+                $this->processor->addComponent($component);
+            }
+
             $this->processor->getLogger()->setLogLevel($logLevel);
             $this->processor->run();
 
-            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
+            if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Finished Configurator</comment>');
             }
 

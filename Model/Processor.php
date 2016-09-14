@@ -56,21 +56,12 @@ class Processor
 
     /**
      * @param string $componentName
+     * @return Processor
      */
     public function addComponent($componentName)
     {
-        try {
-            if (!$this->isValidComponent($componentName)) {
-                throw new ComponentException(
-                    sprintf('%s component does not appear to be a valid component.', $componentName)
-                );
-            }
-
-            $componentClass = $this->configInterface->getComponentByName($componentName);
-            $this->components[$componentName] = new $componentClass($this->log);
-        } catch (ComponentException $e) {
-            throw $e;
-        }
+        $this->components[$componentName] = $componentName;
+        return $this;
     }
 
     /**
@@ -107,83 +98,123 @@ class Processor
         // If the components list is empty, then the user would want to run all components in the master.yaml
         if (empty($this->components)) {
 
-            try {
-
-                // Read master yaml
-                $masterPath = BP . '/app/etc/master.yaml';
-                if (!file_exists($masterPath)) {
-                    throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
-                }
-                $this->log->logComment(sprintf("Found Master YAML"));
-                $yamlContents = file_get_contents($masterPath);
-                $yaml = new Parser();
-                $master = $yaml->parse($yamlContents);
-
-                //print_r($master);
-
-                // Validate master yaml
-                $this->validateMasterYaml($master);
-
-                // Loop through components and run them individually in the master.yaml order
-                foreach ($master as $componentAlias => $componentConfig) {
-
-                    $this->log->logComment(sprintf("Loading component %s", $componentAlias));
-
-                    $componentClass = $this->configInterface->getComponentByName($componentAlias);
-
-                    /* @var ComponentAbstract $component */
-                    $component = $this->objectManager->create($componentClass);
-                    foreach ($componentConfig['sources'] as $source) {
-                        $component->setSource($source)->process();
-                    }
-
-                    // Check if there are environment specific nodes placed
-                    if (!isset($componentConfig['env'])) {
-
-                        // If not, continue to next component
-                        $this->log->logComment(
-                            sprintf("No environment node for '%s' component", $component->getComponentName())
-                        );
-                        continue;
-                    }
-
-                    // Check if there is a node for this particular environment
-                    if (!isset($componentConfig['env'][$this->getEnvironment()])) {
-
-                        // If not, continue to next component
-                        $this->log->logComment(
-                            sprintf(
-                                "No '%s' environment specific node for '%s' component",
-                                $this->getEnvironment(),
-                                $component->getComponentName()
-                            )
-                        );
-                        continue;
-                    }
-
-                    // Check if there are sources for the environment
-                    if (!isset($componentConfig['env'][$this->getEnvironment()]['sources'])) {
-
-                        // If not continue
-                        $this->log->logComment(
-                            sprintf(
-                                "No '%s' environment specific sources for '%s' component",
-                                $this->getEnvironment(),
-                                $component->getComponentName()
-                            )
-                        );
-                        continue;
-                    }
-
-
-                }
-
-
-            } catch (ComponentException $e) {
-                $this->log->logError($e->getMessage());
-            }
-
+            $this->runAllComponents();
+            return;
         }
+
+        $this->runIndividualComponents();
+    }
+
+    private function runIndividualComponents()
+    {
+        try {
+
+            // Get the master yaml
+            $master = $this->getMasterYaml();
+
+            // Loop through the components
+            foreach ($this->components as $componentAlias) {
+
+                // Get the config for the component from the master yaml array
+                $masterConfig = $master[$componentAlias];
+
+                // Run that component
+                $this->runComponent($componentAlias, $masterConfig);
+            }
+        } catch (ComponentException $e) {
+            $this->log->logError($e->getMessage());
+        }
+    }
+
+    private function runAllComponents()
+    {
+        try {
+
+            // Get the master yaml
+            $master = $this->getMasterYaml();
+
+            // Loop through components and run them individually in the master.yaml order
+            foreach ($master as $componentAlias => $componentConfig) {
+
+                // Run the component in question
+                $this->runComponent($componentAlias, $componentConfig);
+            }
+        } catch (ComponentException $e) {
+            $this->log->logError($e->getMessage());
+        }
+    }
+
+    private function runComponent($componentAlias, $componentConfig)
+    {
+        $this->log->logComment(sprintf("Loading component %s", $componentAlias));
+
+        $componentClass = $this->configInterface->getComponentByName($componentAlias);
+
+        /* @var ComponentAbstract $component */
+        $component = $this->objectManager->create($componentClass);
+        foreach ($componentConfig['sources'] as $source) {
+            $component->setSource($source)->process();
+        }
+
+        // Check if there are environment specific nodes placed
+        if (!isset($componentConfig['env'])) {
+
+            // If not, continue to next component
+            $this->log->logComment(
+                sprintf("No environment node for '%s' component", $component->getComponentName())
+            );
+            return;
+        }
+
+        // Check if there is a node for this particular environment
+        if (!isset($componentConfig['env'][$this->getEnvironment()])) {
+
+            // If not, continue to next component
+            $this->log->logComment(
+                sprintf(
+                    "No '%s' environment specific node for '%s' component",
+                    $this->getEnvironment(),
+                    $component->getComponentName()
+                )
+            );
+            return;
+        }
+
+        // Check if there are sources for the environment
+        if (!isset($componentConfig['env'][$this->getEnvironment()]['sources'])) {
+
+            // If not continue
+            $this->log->logComment(
+                sprintf(
+                    "No '%s' environment specific sources for '%s' component",
+                    $this->getEnvironment(),
+                    $component->getComponentName()
+                )
+            );
+            return;
+        }
+
+    }
+
+    /**
+     * @return array
+     */
+    private function getMasterYaml()
+    {
+        // Read master yaml
+        $masterPath = BP . '/app/etc/master.yaml';
+        if (!file_exists($masterPath)) {
+            throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
+        }
+        $this->log->logComment(sprintf("Found Master YAML"));
+        $yamlContents = file_get_contents($masterPath);
+        $yaml = new Parser();
+        $master = $yaml->parse($yamlContents);
+
+        // Validate master yaml
+        $this->validateMasterYaml($master);
+
+        return $master;
     }
 
     /**
@@ -198,6 +229,12 @@ class Processor
             $this->log->logQuestion(sprintf("Does the %s component exist?", $componentName));
         }
         $componentClass = $this->configInterface->getComponentByName($componentName);
+
+        if (!$componentClass) {
+            $this->log->logError(sprintf("The %s component has no class name.", $componentName));
+            return false;
+        }
+
         $this->log->logComment(sprintf("The %s component has %s class name.", $componentName, $componentClass));
         $component = $this->objectManager->create($componentClass);
         if ($component instanceof ComponentAbstract) {

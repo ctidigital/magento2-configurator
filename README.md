@@ -24,6 +24,17 @@ php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctid
 php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
+## Getting Started
+1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)
+2. Enable Modules `CtiDigital_Configurator`,`FireGento_FastSimpleImport`.
+3. Run `bin/magento configurator:run --env="<environment>"`
+
+### Usage
+
+* Listing available components `bin/magento configurator:list`
+* Running individual components `bin/magento configurator:run --env="<environment>" --components="config"`
+* Extra logs `bin/magento configurator:run --env="<environment>" -v`
+
 ## Roadmap for components to do
 
 | Component                 | Code Written       | Tests Written | Sample Files       |

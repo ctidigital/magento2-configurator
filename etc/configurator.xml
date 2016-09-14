@@ -4,5 +4,6 @@
 
     <component name="websites" class="CtiDigital\Configurator\Model\Component\Websites" />
     <component name="config" class="CtiDigital\Configurator\Model\Component\Config" />
+    <component name="categories" class="CtiDigital\Configurator\Model\Component\Categories" />
     <component name="products" class="CtiDigital\Configurator\Model\Component\Products" />
 </config>

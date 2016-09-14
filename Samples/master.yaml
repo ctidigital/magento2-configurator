@@ -18,6 +18,15 @@ config:
   sources:
     - ../configurator/Configuration/global.yaml
     - ../configurator/Configuration/base-website-config.yaml
+categories:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Categories/categories.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
 products:
   enabled: 1
   method: code

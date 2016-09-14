@@ -1,0 +1,52 @@
+categories:
+  -
+    store_group: Main Website Store
+    categories:
+      -
+        name: Category 1
+        description: "A description"
+        url_key: "category-1"
+        categories:
+          -
+            name: "Sub Category 1"
+            description: "Sub Category 1 description"
+            url_key: "sub-category-1"
+          -
+            name: "Sub Category 2"
+            description: "Sub Category 2 description"
+            url_key: "sub-category-2"
+          -
+            name: "Sub Category 3"
+            description: "Sub Category 3 description"
+            url_key: "sub-category-3"
+      -
+        name: Category 2
+        description: "A description"
+        url_key: "category-2"
+      -
+        name: Category 3
+        description: "A description"
+        url_key: "category-3"
+        categories:
+          -
+            name: "Sub Category 4"
+            description: "Sub Category 4 description"
+            url_key: "sub-category-4"
+            categories:
+              -
+                name: "Sub Category 5"
+                description: "Sub Category 5 description"
+                url_key: "sub-category-5"
+          -
+            name: "Sub Category 6"
+            description: "Sub Category 6 description"
+            url_key: "sub-category-6"
+            categories:
+              -
+                name: "Sub Category 7"
+                description: "Sub Category 7 description"
+                url_key: "sub-category-7"
+              -
+                name: "Sub Category 8"
+                description: "Sub Category 8 description"
+                url_key: "sub-category-8"

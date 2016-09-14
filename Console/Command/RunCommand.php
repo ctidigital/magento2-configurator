@@ -103,7 +103,7 @@ class RunCommand extends Command
 
             $this->processor->setEnvironment($environment);
 
-            foreach($components as $component) {
+            foreach ($components as $component) {
                 $this->processor->addComponent($component);
             }
 

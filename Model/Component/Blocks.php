@@ -4,6 +4,11 @@ namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\LoggingInterface;
+use Magento\Cms\Api\BlockRepositoryInterface;
+use Magento\Cms\Api\Data\BlockInterface;
+use Magento\Cms\Api\Data\BlockInterfaceFactory;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -15,14 +20,47 @@ class Blocks extends ComponentAbstract
     protected $description = 'Component to create/maintain blocks.';
 
     /**
-     * @var \Magento\Cms\Model\BlockFactory
+     * @var BlockInterfaceFactory
      */
-    protected $blockFactory;
+    protected $blockInterfaceFactory;
 
-    public function __construct(LoggingInterface $log, ObjectManagerInterface $objectManager)
-    {
+    /**
+     * @var BlockRepositoryInterface
+     */
+    protected $blockRepositoryInterface;
+
+    /**
+     * @var FilterBuilder
+     */
+    protected $filterBuilder;
+
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    protected $searchCriteriaBuilder;
+
+    /**
+     * @var BlockInterface
+     */
+    protected $blockInterface;
+
+    public function __construct(
+        LoggingInterface $log,
+        ObjectManagerInterface $objectManager,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        FilterBuilder $filterBuilder,
+        BlockRepositoryInterface $blockRepositoryInterface,
+        BlockInterfaceFactory $blockInterfaceFactory,
+        BlockInterface $blockInterface
+    ) {
+
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->filterBuilder = $filterBuilder;
+        $this->blockInterfaceFactory = $blockInterfaceFactory;
+        $this->blockRepositoryInterface = $blockRepositoryInterface;
+        $this->blockInterface = $blockInterface;
+
         parent::__construct($log, $objectManager);
-        $this->blockFactory = $this->objectManager->create(\Magento\Cms\Model\BlockFactory::class);
     }
 
     protected function canParseAndProcess()
@@ -69,13 +107,37 @@ class Blocks extends ComponentAbstract
         }
     }
 
-    private function processBlock($identifier, $data)
+    private function processBlock($identifier, $blockData)
     {
         try {
-            
+
+            foreach ($blockData['block'] as $data) {
+
+                $this->log->logInfo(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
+
+                $searchCriteria = $this->searchCriteriaBuilder->addFilter('identifier', 'test')->create();
+
+                $blocks = $this->blockRepositoryInterface->getList($searchCriteria);
+
+                if ($blocks->getTotalCount()) {
+                    if (isset($data['stores'])) {
+                        $this->getBlockToProcess($blocks, $data['stores']);
+                    }
+                }
+
+                print_r($data);
+            }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
     }
 
+
+    private function getBlockToProcess(\Magento\Framework\Api\SearchResults $blocks, $stores)
+    {
+        foreach ($blocks->getItems() as $block) {
+            print_r($block);
+            print_r($stores);
+        }
+    }
 }

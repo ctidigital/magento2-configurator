@@ -1,16 +1,20 @@
 all_stores_identifier:
-  stores:
-    0:
+  block:
+    -
       source: ../configurator/Block/allstores.html
       title: All stores
       is_active: 1
 certain_stores_identifier:
-  stores:
-    default:
+  block:
+    -
       source: ../configurator/Block/uk.html
       title: UK Block
       is_active: 1
-    usa_en_us:
+      stores:
+        - default
+    -
       source: ../configurator/Block/us.html
       title: US Block
       is_active: 1
+      stores:
+        - usa_en_us

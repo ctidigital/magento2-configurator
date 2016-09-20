@@ -133,7 +133,7 @@ class Blocks extends ComponentAbstract
     }
 
 
-    private function getBlockToProcess(\Magento\Framework\Api\SearchResults $blocks, $stores)
+    private function getBlockToProcess(\Magento\Cms\Api\Data\BlockSearchResultsInterface $blocks, $stores)
     {
         foreach ($blocks->getItems() as $block) {
             print_r($block);

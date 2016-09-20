@@ -115,7 +115,9 @@ class Blocks extends ComponentAbstract
 
                 $this->log->logInfo(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
 
-                $searchCriteria = $this->searchCriteriaBuilder->addFilter('identifier', 'test')->create();
+                $searchCriteria = $this->searchCriteriaBuilder
+                    //->addFilter('identifier', $identifier)
+                    ->create();
 
                 $blocks = $this->blockRepositoryInterface->getList($searchCriteria);
 
@@ -133,9 +135,11 @@ class Blocks extends ComponentAbstract
     }
 
 
-    private function getBlockToProcess(\Magento\Cms\Api\Data\BlockSearchResultsInterface $blocks, $stores)
+    private function getBlockToProcess(\Magento\Framework\Api\SearchResults $blocks, $stores)
     {
-        foreach ($blocks->getItems() as $block) {
+        $items = $blocks->getItems();
+        foreach ($blocks->getItems() as $id=>$blockData) {
+            $block = $this->blockRepositoryInterface->getById($id);
             print_r($block);
             print_r($stores);
         }

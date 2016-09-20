@@ -8,7 +8,6 @@ use Magento\Cms\Api\BlockRepositoryInterface;
 use Magento\Cms\Api\Data\BlockInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -20,14 +19,9 @@ class Blocks extends ComponentAbstract
     protected $description = 'Component to create/maintain blocks.';
 
     /**
-     * @var BlockInterfaceFactory
-     */
-    protected $blockInterfaceFactory;
-
-    /**
      * @var BlockRepositoryInterface
      */
-    protected $blockRepositoryInterface;
+    protected $blockRepository;
 
     /**
      * @var FilterBuilder
@@ -35,30 +29,29 @@ class Blocks extends ComponentAbstract
     protected $filterBuilder;
 
     /**
-     * @var SearchCriteriaBuilder
+     * @var \Magento\Framework\Api\SearchCriteriaBuilder
      */
-    protected $searchCriteriaBuilder;
+    protected $searchBuilder;
 
     /**
-     * @var BlockInterface
+     * Blocks constructor.
+     * @param LoggingInterface $log
+     * @param ObjectManagerInterface $objectManager
+     * @param \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param BlockRepositoryInterface $blockRepoInterface
+     * @param BlockInterfaceFactory $blockInterfaceFactory
+     * @SuppressWarnings(PHPMD)
      */
-    protected $blockInterface;
-
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        FilterBuilder $filterBuilder,
-        BlockRepositoryInterface $blockRepositoryInterface,
-        BlockInterfaceFactory $blockInterfaceFactory,
-        BlockInterface $blockInterface
+        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
+        BlockRepositoryInterface $blockRepoInterface,
+        BlockInterfaceFactory $blockInterfaceFactory
     ) {
 
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->filterBuilder = $filterBuilder;
-        $this->blockInterfaceFactory = $blockInterfaceFactory;
-        $this->blockRepositoryInterface = $blockRepositoryInterface;
-        $this->blockInterface = $blockInterface;
+        $this->searchBuilder = $searchCriteriaBuilder;
+        $this->blockRepository = $blockRepoInterface;
 
         parent::__construct($log, $objectManager);
     }
@@ -115,11 +108,11 @@ class Blocks extends ComponentAbstract
 
                 $this->log->logInfo(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
 
-                $searchCriteria = $this->searchCriteriaBuilder
-                    //->addFilter('identifier', $identifier)
+                $searchCriteria = $this->searchBuilder
+                    ->addFilter('identifier', $identifier)
                     ->create();
 
-                $blocks = $this->blockRepositoryInterface->getList($searchCriteria);
+                $blocks = $this->blockRepository->getList($searchCriteria);
 
                 if ($blocks->getTotalCount()) {
                     if (isset($data['stores'])) {
@@ -137,9 +130,8 @@ class Blocks extends ComponentAbstract
 
     private function getBlockToProcess(\Magento\Framework\Api\SearchResults $blocks, $stores)
     {
-        $items = $blocks->getItems();
-        foreach ($blocks->getItems() as $id=>$blockData) {
-            $block = $this->blockRepositoryInterface->getById($id);
+        //$items = $blocks->getItems();
+        foreach ($blocks->getItems() as $block) {
             print_r($block);
             print_r($stores);
         }

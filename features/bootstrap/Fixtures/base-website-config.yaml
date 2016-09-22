@@ -1,0 +1,39 @@
+websites:
+  hu:
+    -
+      path: general/store_information/name
+      value: Magyar bolt
+  uk:
+    -
+      path: general/store_information/name
+      value: Angol bolt
+
+stores:
+  default:
+    -
+      path: general/locale/code
+      value: hu_HU
+    -
+      path: general/store_information/name
+      value: Defaut bolt
+  de_ch:
+    -
+      path: general/locale/code
+      value: de_CH
+    -
+      path: general/store_information/name
+      value: Német nyelvű svájci bolt
+  fr_ch:
+    -
+      path: general/locale/code
+      value: fr_CH
+    -
+      path: general/store_information/name
+      value: Francia nyelvű svájci bolt
+  it_ch:
+    -
+      path: general/locale/code
+      value: it_CH
+    -
+      path: general/store_information/name
+      value: Olasz nyelvű svájci bolt

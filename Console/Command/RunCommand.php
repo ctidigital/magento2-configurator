@@ -58,8 +58,15 @@ class RunCommand extends Command
             'component',
             'c',
             InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-            'Test',
+            'Specify component(s) to manage',
             array()
+        );
+
+        $fileOption = new InputOption(
+            'file',
+            'f',
+            InputOption::VALUE_OPTIONAL,
+            'Specify master yaml file path'
         );
 
         $this
@@ -68,7 +75,8 @@ class RunCommand extends Command
             ->setDefinition(
                 new InputDefinition(array(
                     $environmentOption,
-                    $componentOption
+                    $componentOption,
+                    $fileOption
                 ))
             );
     }
@@ -88,7 +96,9 @@ class RunCommand extends Command
             }
 
             $environment = $input->getOption('env');
+            $masterYamlPath = $input->getOption('file');
             $components = $input->getOption('component');
+
 
             $logLevel = OutputInterface::VERBOSITY_NORMAL;
             $verbose = $input->getOption('verbose');
@@ -102,6 +112,10 @@ class RunCommand extends Command
             }
 
             $this->processor->setEnvironment($environment);
+
+            if (! empty($masterYamlPath)) {
+                $this->processor->setMasterYamlPath($masterYamlPath);
+            }
 
             foreach ($components as $component) {
                 $this->processor->addComponent($component);

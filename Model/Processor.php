@@ -10,6 +10,17 @@ use Symfony\Component\Yaml\Parser;
 
 class Processor
 {
+    /**
+     * Default configuration file path relative to Magento's root directory
+     */
+    const DEFAULT_MASTER_FILE_PATH = '/app/etc/master.yaml';
+
+    /**
+     * master yaml file path
+     *
+     * @var string
+     */
+    protected $_masterYamlPath;
 
     /**
      * @var string
@@ -88,6 +99,31 @@ class Processor
     public function getEnvironment()
     {
         return $this->environment;
+    }
+
+    /**
+     * @param string $masterYamlPath
+     * @return $this
+     */
+    public function setMasterYamlPath($masterYamlPath)
+    {
+        $this->_masterYamlPath = $masterYamlPath;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMasterYamlPath()
+    {
+        if (! empty($this->_masterYamlPath)) {
+            return $this->_masterYamlPath;
+        }
+
+        $this->_masterYamlPath = BP . self::DEFAULT_MASTER_FILE_PATH;
+
+        return $this->_masterYamlPath;
     }
 
     /**
@@ -208,7 +244,7 @@ class Processor
     private function getMasterYaml()
     {
         // Read master yaml
-        $masterPath = BP . '/app/etc/master.yaml';
+        $masterPath = $this->getMasterYamlPath();
         if (!file_exists($masterPath)) {
             throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
         }

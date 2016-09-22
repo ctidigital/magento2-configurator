@@ -97,32 +97,83 @@ class Blocks extends ComponentAbstract
         }
     }
 
+    /**
+     * @param $identifier
+     * @param $blockData
+     * @SuppressWarnings(PHPMD)
+     */
     private function processBlock($identifier, $blockData)
     {
         try {
 
             foreach ($blockData['block'] as $data) {
 
-                $this->log->logInfo(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
+                $this->log->logComment(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
 
                 $blocks = $this->blockFactory->create()->getCollection()->addFieldToFilter('identifier', $identifier);
 
+                $canSave = false;
+
                 if ($blocks->count()) {
-                    $block = $this->getBlockToProcess($blocks, $data['stores']);
+                    if (!isset($data['stores'])) {
+                        $stores = array();
+                    }
+                    $block = $this->getBlockToProcess($blocks, $stores);
                 } else {
                     $block = $this->blockFactory->create();
+                    $block->setIdentifier($identifier);
+                    $canSave = true;
                 }
 
+
                 foreach ($data as $key => $value) {
-                    $this->log->logInfo(sprintf(
+
+                    // Check if content is from a file source
+                    if ($key == "source") {
+                        $key = 'content';
+                        $value = file_get_contents(BP . '/' . $value);
+                    }
+
+                    // Log the old value if any
+                    $this->log->logComment(sprintf(
                         "Checking block %s, key %s => %s",
-                        $identifier.'('.$block->getId().')',
+                        $identifier . '(' . $block->getId() . ')',
                         $key,
                         $block->getData($key)
                     ));
+
+                    // Check if there is a difference in value
                     if ($block->getData($key) != $value) {
-                        $this->get
+
+                        $canSave = true;
+                        $block->setData($key, $value);
+
+                        $logValue = $value;
+
+                        if (is_array($value)) {
+                            $logValue = implode(",", $value);
+                        }
+
+                        $this->log->logInfo(sprintf(
+                            "Set block %s, key %s => %s",
+                            $identifier . '(' . $block->getId() . ')',
+                            $key,
+                            $logValue
+                        ));
                     }
+                }
+
+                if (!isset($data['stores'])) {
+
+                    $block->setStoreId(0);
+                }
+
+                if ($canSave) {
+                    $block->save();
+                    $this->log->logComment(sprintf(
+                        "Save block %s",
+                        $identifier . '(' . $block->getId() . ')'
+                    ));
                 }
 
                 print_r($data);

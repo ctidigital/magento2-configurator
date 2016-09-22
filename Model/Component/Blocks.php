@@ -7,6 +7,7 @@ use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Cms\Api\BlockRepositoryInterface;
 use Magento\Cms\Api\Data\BlockInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
+use Magento\Cms\Model\BlockFactory;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -19,9 +20,9 @@ class Blocks extends ComponentAbstract
     protected $description = 'Component to create/maintain blocks.';
 
     /**
-     * @var BlockRepositoryInterface
+     * @var BlockFactory
      */
-    protected $blockRepository;
+    protected $blockFactory;
 
     /**
      * @var FilterBuilder
@@ -45,14 +46,10 @@ class Blocks extends ComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
-        BlockRepositoryInterface $blockRepoInterface,
-        BlockInterfaceFactory $blockInterfaceFactory
+        BlockFactory $blockFactory
     ) {
 
-        $this->searchBuilder = $searchCriteriaBuilder;
-        $this->blockRepository = $blockRepoInterface;
-
+        $this->blockFactory = $blockFactory;
         parent::__construct($log, $objectManager);
     }
 
@@ -108,15 +105,23 @@ class Blocks extends ComponentAbstract
 
                 $this->log->logInfo(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
 
-                $searchCriteria = $this->searchBuilder
-                    ->addFilter('identifier', $identifier)
-                    ->create();
+                $blocks = $this->blockFactory->create()->getCollection()->addFieldToFilter('identifier', $identifier);
 
-                $blocks = $this->blockRepository->getList($searchCriteria);
+                if ($blocks->count()) {
+                    $block = $this->getBlockToProcess($blocks, $data['stores']);
+                } else {
+                    $block = $this->blockFactory->create();
+                }
 
-                if ($blocks->getTotalCount()) {
-                    if (isset($data['stores'])) {
-                        $this->getBlockToProcess($blocks, $data['stores']);
+                foreach ($data as $key => $value) {
+                    $this->log->logInfo(sprintf(
+                        "Checking block %s, key %s => %s",
+                        $identifier.'('.$block->getId().')',
+                        $key,
+                        $block->getData($key)
+                    ));
+                    if ($block->getData($key) != $value) {
+                        $this->get
                     }
                 }
 
@@ -128,12 +133,17 @@ class Blocks extends ComponentAbstract
     }
 
 
-    private function getBlockToProcess(\Magento\Framework\Api\SearchResults $blocks, $stores)
+    private function getBlockToProcess(\Magento\Cms\Model\ResourceModel\Block\Collection $blocks, $stores = array())
     {
-        //$items = $blocks->getItems();
+        // If there is only 1 block and there are no stores specified
+        if ($blocks->count() == 1 && empty($stores)) {
+
+            // Return that one block
+            return $blocks->getFirstItem();
+        }
+
         foreach ($blocks->getItems() as $block) {
-            print_r($block);
-            print_r($stores);
+            print_r($block->getId());
         }
     }
 }

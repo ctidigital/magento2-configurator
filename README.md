@@ -41,6 +41,7 @@ php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital
 |---------------------------|--------------------|---------------|--------------------|
 | Websites                  | :white_check_mark: | :x:           | :white_check_mark: |
 | System Configuration      | :white_check_mark: | :x:           | :white_check_mark: |
+| Blocks                    | :white_check_mark: | :x:           | :white_check_mark: |
 | Attribute Sets            | :x:                | :x:           | :x:                |
 | Attributes                | :x:                | :x:           | :x:                |
 | Categories                | :x:                | :x:           | :x:                |
@@ -48,7 +49,6 @@ php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital
 | Admin Roles               | :x:                | :x:           | :x:                |
 | Admin Users               | :x:                | :x:           | :x:                |
 | Pages                     | :x:                | :x:           | :x:                |
-| Blocks                    | :white_check_mark: | :x:           | :white_check_mark: |
 | Customers                 | :x:                | :x:           | :x:                |
 | Media                     | :x:                | :x:           | :x:                |
 | Widgets                   | :x:                | :x:           | :x:                |

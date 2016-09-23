@@ -4,11 +4,9 @@ namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\LoggingInterface;
-use Magento\Cms\Api\BlockRepositoryInterface;
-use Magento\Cms\Api\Data\BlockInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
-use Magento\Cms\Model\BlockFactory;
-use Magento\Framework\Api\FilterBuilder;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\StoreFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -20,14 +18,14 @@ class Blocks extends ComponentAbstract
     protected $description = 'Component to create/maintain blocks.';
 
     /**
-     * @var BlockFactory
+     * @var BlockInterfaceFactory
      */
     protected $blockFactory;
 
     /**
-     * @var FilterBuilder
+     * @var \Magento\Store\Model\Store\Interceptor
      */
-    protected $filterBuilder;
+    protected $storeManager;
 
     /**
      * @var \Magento\Framework\Api\SearchCriteriaBuilder
@@ -38,19 +36,19 @@ class Blocks extends ComponentAbstract
      * Blocks constructor.
      * @param LoggingInterface $log
      * @param ObjectManagerInterface $objectManager
-     * @param \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param BlockRepositoryInterface $blockRepoInterface
-     * @param BlockInterfaceFactory $blockInterfaceFactory
-     * @SuppressWarnings(PHPMD)
+     * @param BlockInterfaceFactory $blockFactory
      */
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        BlockFactory $blockFactory
+        BlockInterfaceFactory $blockFactory
     ) {
 
-        $this->blockFactory = $blockFactory;
         parent::__construct($log, $objectManager);
+
+        $this->blockFactory = $blockFactory;
+        $this->storeManager = $this->objectManager->create(\Magento\Store\Model\Store::class);
+
     }
 
     protected function canParseAndProcess()
@@ -106,26 +104,39 @@ class Blocks extends ComponentAbstract
     {
         try {
 
+            // Loop through the block data
             foreach ($blockData['block'] as $data) {
 
                 $this->log->logComment(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
 
+                // Load a collection blocks
                 $blocks = $this->blockFactory->create()->getCollection()->addFieldToFilter('identifier', $identifier);
 
+                // Set initial vars
                 $canSave = false;
+                $block = null;
 
+                // Check if there are existing blocks
                 if ($blocks->count()) {
-                    if (!isset($data['stores'])) {
-                        $stores = array();
+                    $stores = array();
+
+                    // Check if stores are specified
+                    if (isset($data['stores'])) {
+                        $stores = $data['stores'];
                     }
-                    $block = $this->getBlockToProcess($blocks, $stores);
-                } else {
+
+                    // Find the exact block to process
+                    $block = $this->getBlockToProcess($identifier, $blocks, $stores);
+                }
+
+                // If there is still no block to play with, create a new block object.
+                if (is_null($block)) {
                     $block = $this->blockFactory->create();
                     $block->setIdentifier($identifier);
                     $canSave = true;
                 }
 
-
+                // Loop through each attribute of the data array
                 foreach ($data as $key => $value) {
 
                     // Check if content is from a file source
@@ -134,49 +145,57 @@ class Blocks extends ComponentAbstract
                         $value = file_get_contents(BP . '/' . $value);
                     }
 
+                    // Skip stores
+                    if ($key == "stores") {
+                        continue;
+                    }
+
                     // Log the old value if any
                     $this->log->logComment(sprintf(
                         "Checking block %s, key %s => %s",
-                        $identifier . '(' . $block->getId() . ')',
+                        $identifier . ' (' . $block->getId() . ')',
                         $key,
                         $block->getData($key)
-                    ));
+                    ), 1);
 
                     // Check if there is a difference in value
                     if ($block->getData($key) != $value) {
 
+                        // If there is, allow the block to be saved
                         $canSave = true;
                         $block->setData($key, $value);
 
-                        $logValue = $value;
-
-                        if (is_array($value)) {
-                            $logValue = implode(",", $value);
-                        }
-
                         $this->log->logInfo(sprintf(
                             "Set block %s, key %s => %s",
-                            $identifier . '(' . $block->getId() . ')',
+                            $identifier . ' (' . $block->getId() . ')',
                             $key,
-                            $logValue
-                        ));
+                            $value
+                        ), 1);
                     }
                 }
 
-                if (!isset($data['stores'])) {
-
-                    $block->setStoreId(0);
+                // Process stores
+                // @todo compare stores to see if a save is required
+                $block->setStoreId(0);
+                if (isset($data['stores'])) {
+                    $block->unsetData('store_id');
+                    $block->unsetData('store_data');
+                    $stores = array();
+                    foreach ($data['stores'] as $code) {
+                        $stores[] = $this->getStoreByCode($code)->getId();
+                    }
+                    $block->setStores($stores);
                 }
 
+                // If we can save the block
                 if ($canSave) {
                     $block->save();
-                    $this->log->logComment(sprintf(
+                    $this->log->logInfo(sprintf(
                         "Save block %s",
-                        $identifier . '(' . $block->getId() . ')'
+                        $identifier . ' (' . $block->getId() . ')'
                     ));
                 }
 
-                print_r($data);
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
@@ -184,17 +203,64 @@ class Blocks extends ComponentAbstract
     }
 
 
-    private function getBlockToProcess(\Magento\Cms\Model\ResourceModel\Block\Collection $blocks, $stores = array())
-    {
-        // If there is only 1 block and there are no stores specified
-        if ($blocks->count() == 1 && empty($stores)) {
+    /**
+     * Find the block to process given the identifier, block collection and optionally stores
+     *
+     * @param String $identifier
+     * @param \Magento\Cms\Model\ResourceModel\Block\Collection $blocks
+     * @param array $stores
+     * @return \Magento\Cms\Model\Block|null
+     */
+    private function getBlockToProcess(
+        $identifier,
+        \Magento\Cms\Model\ResourceModel\Block\Collection $blocks,
+        $stores = array()
+    ) {
+
+        // If there is only 1 block and stores hasn't been specified
+        if ($blocks->count() == 1 && count($stores) == 0) {
 
             // Return that one block
             return $blocks->getFirstItem();
         }
 
-        foreach ($blocks->getItems() as $block) {
-            print_r($block->getId());
+        // If we do have stores specified
+        if (count($stores) > 0) {
+
+            // Use first store as filter to get the block ID.
+            // Ideally, we would want to do something more intelligent here.
+            $store = $this->getStoreByCode($stores[0]);
+            $blocks = $this->blockFactory->create()->getCollection()
+                ->addStoreFilter($store, false)
+                ->addFieldToFilter('identifier', $identifier);
+
+            // We should have no more than 1 block unless something funky is happening. Return the first block anyway.
+            if ($blocks->count() >= 1) {
+                return $blocks->getFirstItem();
+            }
         }
+
+        // In all other scenarios, return null as we can't find the block.
+        return null;
+    }
+
+    /**
+     * @param String $code
+     * @return \Magento\Store\Model\Store
+     */
+    private function getStoreByCode($code)
+    {
+
+        // Load the store object
+        $store = $this->storeManager->load($code, 'code');
+
+        // Check if we get back a store ID.
+        if (!$store->getId()) {
+
+            // If not, stop the process by throwing an exception
+            throw new ComponentException(sprintf("No store with code '%s' found", $code));
+        }
+
+        return $store;
     }
 }

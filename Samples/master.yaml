@@ -37,3 +37,12 @@ products:
     local:
       mode: maintain
       log: debug
+blocks:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Blocks/blocks.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug

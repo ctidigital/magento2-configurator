@@ -116,6 +116,12 @@ class Processor
             foreach ($this->components as $componentAlias) {
 
                 // Get the config for the component from the master yaml array
+                if (!isset($master[$componentAlias])) {
+                    throw new ComponentException(
+                        sprintf("No master yaml definition with the alias '%s' found", $componentAlias)
+                    );
+                }
+
                 $masterConfig = $master[$componentAlias];
 
                 // Run that component

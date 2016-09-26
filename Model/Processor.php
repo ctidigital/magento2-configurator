@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
+use CtiDigital\Configurator\Model\Exception\CommandFailedException;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Parser;
@@ -165,6 +166,7 @@ class Processor
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
+            throw new CommandFailedException();
         }
     }
 
@@ -183,6 +185,7 @@ class Processor
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
+            throw new CommandFailedException();
         }
     }
 

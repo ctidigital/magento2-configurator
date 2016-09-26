@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Model\Exception\CommandFailedException;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
 use CtiDigital\Configurator\Model\Processor;
 use Magento\Framework\ObjectManagerInterface;
@@ -84,7 +85,7 @@ class RunCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int|null
      * @SuppressWarnings(PHPMD)
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -130,6 +131,9 @@ class RunCommand extends Command
 
         } catch (ConfiguratorAdapterException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+            return 1;
+        } catch (CommandFailedException $e) {
+            return $e->getCode();
         }
     }
 }

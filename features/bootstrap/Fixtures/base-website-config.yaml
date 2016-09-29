@@ -2,38 +2,38 @@ websites:
   hu:
     -
       path: general/store_information/name
-      value: Magyar bolt
+      value: Hungarian store
   uk:
     -
       path: general/store_information/name
-      value: Angol bolt
+      value: English store
 
 stores:
   default:
     -
       path: general/locale/code
-      value: hu_HU
+      value: de_CH
     -
       path: general/store_information/name
-      value: Defaut bolt
+      value: Defaut store
   de_ch:
     -
       path: general/locale/code
       value: de_CH
     -
       path: general/store_information/name
-      value: Német nyelvű svájci bolt
+      value: Swiss store in German
   fr_ch:
     -
       path: general/locale/code
       value: fr_CH
     -
       path: general/store_information/name
-      value: Francia nyelvű svájci bolt
+      value: Swiss store in Franch
   it_ch:
     -
       path: general/locale/code
       value: it_CH
     -
       path: general/store_information/name
-      value: Olasz nyelvű svájci bolt
+      value: Swiss store in Italian

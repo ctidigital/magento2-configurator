@@ -5,3 +5,6 @@ global:
   -
     path: general/locale/code
     value: hu_HU
+  -
+    path: general/store_information/name
+    value: Defaut store

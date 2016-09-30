@@ -18,13 +18,17 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
     /* @var $logInterface LoggingInterface */
     protected $logInterface;
 
-    /* @var $objectManager \Magento\Framework\ObjectManagerInterface */
+    /* @var $testObjectManager \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
+    protected $testObjectManager;
+
+    /** @var $objectManager \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
 
     abstract protected function componentSetUp();
 
     protected function setUp()
     {
+        $this->testObjectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->objectManager = $this->getMock(ObjectManagerInterface::class);
         $this->logInterface = $this->getMock(LoggingInterface::class);
         $this->componentSetUp();

@@ -2,6 +2,8 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
+use CtiDigital\Configurator\Model\LoggingInterface;
+use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
@@ -17,6 +19,17 @@ class Websites extends ComponentAbstract
     protected $alias = 'websites';
     protected $name = 'Websites';
     protected $description = 'Component to manage Websites, Stores and Store Views';
+    protected $indexer;
+    protected $reindex = false;
+
+    public function __construct(
+        LoggingInterface $log,
+        ObjectManagerInterface $objectManager,
+        \Magento\Indexer\Model\IndexerFactory $indexerFactory
+    ) {
+        $this->indexer = $indexerFactory;
+        parent::__construct($log, $objectManager);
+    }
 
     /**
      * @return bool
@@ -88,6 +101,13 @@ class Websites extends ComponentAbstract
                     $this->setDefaultStore($storeGroup, $storeGroupData);
                 }
             }
+
+            if ($this->reindex === true) {
+                $this->log->logInfo('Running a reindex of the catalog_product_price table.');
+                $indexProcess = $this->indexer->create();
+                $indexProcess->load('catalog_product_price');
+                $indexProcess->reindexAll();
+            }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -118,7 +138,7 @@ class Websites extends ComponentAbstract
                 $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(sprintf("Website already exists with code '%s'", $code), $logNest);
             } else {
-
+                $this->reindex = true;
                 // If it does not exist, just set the existing data up with the website
                 $canSave = true;
                 $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code), $logNest);
@@ -220,6 +240,7 @@ class Websites extends ComponentAbstract
                 $storeGroup->setData($storeGroupData);
                 $storeGroup->setWebsite($website);
                 $canSave = true;
+                $this->reindex = true;
             }
 
             foreach ($storeGroup->getData() as $key => $value) {
@@ -288,6 +309,7 @@ class Websites extends ComponentAbstract
 
                 // If it does not exist, just set the existing data up with the store view
                 $canSave = true;
+                $this->reindex = true;
                 $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code), $logNest);
                 $storeView->setData($storeViewData);
                 $storeView->setCode($code);

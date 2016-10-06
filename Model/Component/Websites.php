@@ -2,6 +2,8 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
+use CtiDigital\Configurator\Model\LoggingInterface;
+use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
@@ -11,46 +13,24 @@ use Magento\Store\Model\Website;
 use Magento\Store\Model\WebsiteFactory;
 use Symfony\Component\Yaml\Yaml;
 
-class Websites extends ComponentAbstract
+class Websites extends YamlComponentAbstract
 {
 
     protected $alias = 'websites';
     protected $name = 'Websites';
     protected $description = 'Component to manage Websites, Stores and Store Views';
+    protected $indexer;
+    protected $reindex = false;
 
-    /**
-     * @return bool
-     */
-    protected function canParseAndProcess()
-    {
-        $path = BP . '/' . $this->source;
-        if (!file_exists($path)) {
-            throw new ComponentException(
-                sprintf("Could not find file in path %s", $path)
-            );
-        }
-        return true;
+    public function __construct(
+        LoggingInterface $log,
+        ObjectManagerInterface $objectManager,
+        \Magento\Indexer\Model\IndexerFactory $indexerFactory
+    ) {
+        $this->indexer = $indexerFactory;
+        parent::__construct($log, $objectManager);
     }
 
-    /**
-     * @param null $source
-     * @return mixed
-     */
-    protected function parseData($source = null)
-    {
-        try {
-            if ($source == null) {
-                throw new ComponentException(
-                    sprintf('The %s component requires to have a file source definition.', $this->alias)
-                );
-            }
-
-            $parser = new Yaml();
-            return $parser->parse(file_get_contents($source));
-        } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
-        }
-    }
 
     protected function processData($data = null)
     {
@@ -88,6 +68,13 @@ class Websites extends ComponentAbstract
                     $this->setDefaultStore($storeGroup, $storeGroupData);
                 }
             }
+
+            if ($this->reindex === true) {
+                $this->log->logInfo('Running a reindex of the catalog_product_price table.');
+                $indexProcess = $this->indexer->create();
+                $indexProcess->load('catalog_product_price');
+                $indexProcess->reindexAll();
+            }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -118,7 +105,7 @@ class Websites extends ComponentAbstract
                 $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(sprintf("Website already exists with code '%s'", $code), $logNest);
             } else {
-
+                $this->reindex = true;
                 // If it does not exist, just set the existing data up with the website
                 $canSave = true;
                 $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code), $logNest);
@@ -220,6 +207,7 @@ class Websites extends ComponentAbstract
                 $storeGroup->setData($storeGroupData);
                 $storeGroup->setWebsite($website);
                 $canSave = true;
+                $this->reindex = true;
             }
 
             foreach ($storeGroup->getData() as $key => $value) {
@@ -288,6 +276,7 @@ class Websites extends ComponentAbstract
 
                 // If it does not exist, just set the existing data up with the store view
                 $canSave = true;
+                $this->reindex = true;
                 $this->log->logComment(sprintf("Creating a new Website with code '%s'", $code), $logNest);
                 $storeView->setData($storeViewData);
                 $storeView->setCode($code);

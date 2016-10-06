@@ -128,10 +128,10 @@ abstract class ComponentAbstract
      * Whether it be from many files or an external database, parsing (pre-processing)
      * the data is done here.
      *
-     * @param $data
+     * @param $source
      * @return mixed
      */
-    abstract protected function parseData($data = null);
+    abstract protected function parseData($source = null);
 
     /**
      * This method should be used to process the data and populate the Magento Database.

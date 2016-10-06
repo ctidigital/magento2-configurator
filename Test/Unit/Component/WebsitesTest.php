@@ -9,7 +9,7 @@ class WebsitesTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $this->component = new Websites($this->logInterface, $this->objectManager);
+        $this->component = $this->testObjectManager->getObject('CtiDigital\Configurator\Model\Component\Websites');
         $this->className = Websites::class;
     }
 }

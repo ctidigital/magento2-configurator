@@ -19,7 +19,7 @@
     "squizlabs/php_codesniffer": "1.5.3",
     "sebastian/phpcpd": "2.0.0",
     "satooshi/php-coveralls": "^1.0",
-    "magento/mtf": "dev-develop"
+    "phpunit/phpunit": "4.1.0"
   },
   "version": "0.4.0-dev",
   "autoload": {

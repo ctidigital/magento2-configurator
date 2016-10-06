@@ -7,7 +7,6 @@ use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
-use Magento\Framework\Filesystem;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -37,8 +36,6 @@ class Pages extends YamlComponentAbstract
     /** @var Component */
     protected $componentHelper;
 
-    /** @var Filesystem */
-    protected $filesystem;
 
     /**
      * Pages constructor.
@@ -47,21 +44,18 @@ class Pages extends YamlComponentAbstract
      * @param PageRepositoryInterface $pageRepository
      * @param PageInterfaceFactory $pageFactory
      * @param Component $componentHelper
-     * @param Filesystem $filesystem
-     * @internal param StoreManagerInterface $storeManager
      */
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         PageRepositoryInterface $pageRepository,
         PageInterfaceFactory $pageFactory,
-        Component $componentHelper,
-        Filesystem $filesystem
-    ) {
+        Component $componentHelper
+    )
+    {
         $this->pageFactory = $pageFactory;
         $this->pageRepository = $pageRepository;
         $this->componentHelper = $componentHelper;
-        $this->filesystem = $filesystem;
         parent::__construct($log, $objectManager);
     }
 

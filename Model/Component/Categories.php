@@ -5,7 +5,7 @@ namespace CtiDigital\Configurator\Model\Component;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Symfony\Component\Yaml\Yaml;
 
-class Categories extends ComponentAbstract
+class Categories extends YamlComponentAbstract
 {
     protected $alias = 'categories';
     protected $name = 'Categories';
@@ -29,27 +29,6 @@ class Categories extends ComponentAbstract
         $this->category = $category;
         $this->groupFactory = $groupFactory;
         parent::__construct($log, $objectManager);
-    }
-
-    public function canParseAndProcess()
-    {
-        $path = BP . '/' . $this->source;
-        if (!file_exists($path)) {
-            throw new ComponentException(
-                sprintf("Could not find file in path %s", $path)
-            );
-        }
-        return true;
-    }
-
-    public function parseData($source = null)
-    {
-        try {
-            $yamlParser = new Yaml();
-            return $yamlParser->parse(file_get_contents($source));
-        } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
-        }
     }
 
     public function processData($data = null)

@@ -9,7 +9,7 @@ use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\WebsiteFactory;
 use Symfony\Component\Yaml\Yaml;
 
-class Config extends ComponentAbstract
+class Config extends YamlComponentAbstract
 {
 
     protected $alias = 'config';
@@ -32,34 +32,6 @@ class Config extends ComponentAbstract
 
         $this->configResource = $this->objectManager->create(\Magento\Config\Model\ResourceModel\Config::class);
         $this->scopeConfig = $this->objectManager->create(\Magento\Framework\App\Config::class);
-    }
-
-    protected function canParseAndProcess()
-    {
-        $path = BP . '/' . $this->source;
-        if (!file_exists($path)) {
-            throw new ComponentException(
-                sprintf("Could not find file in path %s", $path)
-            );
-        }
-        return true;
-    }
-
-    protected function parseData($source = null)
-    {
-
-        try {
-            if ($source == null) {
-                throw new ComponentException(
-                    sprintf('The %s component requires to have a file source definition.', $this->alias)
-                );
-            }
-
-            $parser = new Yaml();
-            return $parser->parse(file_get_contents($source));
-        } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
-        }
     }
 
     /**

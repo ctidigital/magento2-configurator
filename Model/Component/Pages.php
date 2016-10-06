@@ -128,6 +128,7 @@ class Pages extends ComponentAbstract
      *
      * @param $identifier
      * @param $data
+     * @SuppressWarnings(PHPMD)
      */
     protected function processPage($identifier, $data)
     {

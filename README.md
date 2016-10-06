@@ -48,7 +48,7 @@ php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital
 | Products                  | :x:                | :x:           | :x:                |
 | Admin Roles               | :x:                | :x:           | :x:                |
 | Admin Users               | :x:                | :x:           | :x:                |
-| Pages                     | :x:                | :x:           | :x:                |
+| Pages                     | :white_check_mark: | :x:           | :white_check_mark: |
 | Customers                 | :x:                | :x:           | :x:                |
 | Media                     | :x:                | :x:           | :x:                |
 | Widgets                   | :x:                | :x:           | :x:                |

@@ -1,0 +1,42 @@
+all_stores_identifier:
+  page:
+    -
+      source: ../configurator/Pages/allstores.html
+      title: All stores Update 2
+      meta_title:
+      meta_keywords:
+      meta_description:
+      content_heading:
+      content:
+      sort_order:
+      layout_update_xml:
+      custom_theme:
+      custom_root_template:
+      custom_layout_update_xml:
+      custom_theme_from:
+      custom_theme_to:
+      page_layout: 1column
+      is_active: 1
+      stores:
+        - usa_en_us
+certain_stores_identifier:
+  page:
+    -
+      source: ../configurator/Pages/uk.html
+      title: UK Page Update 2
+      is_active: 1
+      page_layout: 1column
+      stores:
+        - default
+    -
+      source: ../configurator/Pages/us.html
+      title: US Page Update 2
+      page_layout: 1column
+      is_active: 1
+      stores:
+        - usa_en_us
+inline_content_page:
+  page:
+    -
+      content: Page Content
+      title: Inline Content Page

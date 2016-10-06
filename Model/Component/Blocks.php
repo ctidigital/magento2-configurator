@@ -142,6 +142,7 @@ class Blocks extends ComponentAbstract
                     // Check if content is from a file source
                     if ($key == "source") {
                         $key = 'content';
+                        //TODO load this with Magento's code, and also check for file existing
                         $value = file_get_contents(BP . '/' . $value);
                     }
 

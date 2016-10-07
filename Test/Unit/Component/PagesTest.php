@@ -22,7 +22,8 @@ class PagesTest extends ComponentAbstractTestCase
                 $this->objectManager,
                 $pageRepository,
                 $pageFactory,
-                $componentHelper);
+                $componentHelper
+            );
 
         $this->className = Pages::class;
     }

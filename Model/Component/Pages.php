@@ -51,8 +51,7 @@ class Pages extends YamlComponentAbstract
         PageRepositoryInterface $pageRepository,
         PageInterfaceFactory $pageFactory,
         Component $componentHelper
-    )
-    {
+    ) {
         $this->pageFactory = $pageFactory;
         $this->pageRepository = $pageRepository;
         $this->componentHelper = $componentHelper;

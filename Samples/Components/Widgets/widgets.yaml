@@ -1,0 +1,19 @@
+-
+  instance_type: Magento\Cms\Block\Widget\Page\Link
+  title: Test Link
+  theme: Magento/blank
+  stores:
+    - default
+    - usa_en_us
+  parameters:
+    anchor_text: Anchor Test
+    anchor_title: Anchor Title
+    page_id: 4
+-
+  instance_type: Magento\Cms\Block\Widget\Block
+  title: Test Block
+  theme: Magento/blank
+  stores:
+    - default
+  parameters:
+    block_id: 13

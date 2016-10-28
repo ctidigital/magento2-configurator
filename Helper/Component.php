@@ -51,5 +51,4 @@ class Component extends AbstractHelper
 
         return $store;
     }
-
 }

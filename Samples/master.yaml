@@ -46,3 +46,21 @@ blocks:
     local:
       mode: maintain
       log: debug
+pages:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Blocks/pages.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
+widgets:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Widgets/widgets.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug

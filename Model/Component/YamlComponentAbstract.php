@@ -2,6 +2,7 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
+use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Symfony\Component\Yaml\Yaml;
 
 /**

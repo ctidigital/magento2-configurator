@@ -5,7 +5,8 @@ namespace CtiDigital\Configurator\Model\Component;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection;
+use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
+use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 
 class Widgets extends YamlComponentAbstract
 {
@@ -14,11 +15,17 @@ class Widgets extends YamlComponentAbstract
     protected $name = 'Widgets';
     protected $description = 'Component to manage CMS Widgets';
     protected $widgetCollection;
+    protected $themeCollection;
 
-    public function __construct(LoggingInterface $log, ObjectManagerInterface $objectManager, Collection $collection)
-    {
+    public function __construct(
+        LoggingInterface $log,
+        ObjectManagerInterface $objectManager,
+        WidgetCollection $collection,
+        ThemeCollection $themeInterface
+    ) {
         parent::__construct($log, $objectManager);
         $this->widgetCollection = $collection;
+        $this->themeCollection = $themeInterface;
     }
 
     protected function processData($data = null)
@@ -59,9 +66,9 @@ class Widgets extends YamlComponentAbstract
                     continue;
                 }
 
-                // @todo handle theme
                 if ($key == "theme") {
-                    continue;
+                    $key = "theme_id";
+                    $value = $this->getThemeId($value);
                 }
 
                 if ($widget->getData($key) == $value) {
@@ -76,6 +83,7 @@ class Widgets extends YamlComponentAbstract
 
             if ($canSave) {
                 $widget->save();
+                $this->log->logInfo(sprintf("Saved Widget %s", $widget->getTitle()), 1);
             }
 
         } catch (ComponentException $e) {
@@ -110,6 +118,7 @@ class Widgets extends YamlComponentAbstract
             ->addFieldToFilter('title', $widgetTitle);
         // @todo add store filter
 
+
         // If we have more than 1, throw an exception for now. Needs store filter to drill down the widgets further
         // into a single widget.
         if ($widgets->count() > 1) {
@@ -124,5 +133,20 @@ class Widgets extends YamlComponentAbstract
 
         // Return the widget itself since it is a perfect match
         return $widgets->getFirstItem();
+    }
+
+    public function getThemeId($themeCode)
+    {
+
+        // Filter Theme Collection
+        $themes = $this->themeCollection->addFilter('code', $themeCode);
+
+        if ($themes->count() == 0) {
+            throw new ComponentException(sprintf('Could not find any themes with the theme code %s', $themeCode));
+        }
+
+        $theme = $themes->getFirstItem();
+
+        return $theme->getId();
     }
 }

@@ -21,7 +21,7 @@ abstract class YamlComponentAbstract extends ComponentAbstract
     {
         $path = BP . '/' . $this->source;
         if (!file_exists($path)) {
-            throw new ComponentException(
+            throw new \Exception(
                 sprintf("Could not find file in path %s", $path)
             );
         }
@@ -43,7 +43,6 @@ abstract class YamlComponentAbstract extends ComponentAbstract
                     sprintf('The %s component requires to have a file source definition.', $this->alias)
                 );
             }
-
             $parser = new Yaml();
             return $parser->parse(file_get_contents($source));
         } catch (ComponentException $e) {

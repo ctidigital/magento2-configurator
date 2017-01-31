@@ -1,0 +1,28 @@
+- attributes:
+  - colour:
+      is_global: 1
+      frontend_label: Colour
+      frontend_input: select
+      is_configurable: 1
+      is_visible_on_front: 1
+      is_filterable: 1
+      is_searchable: 1
+      is_visible_in_advanced_search: 0
+      product_types:
+        - simple
+      options:
+        - Red
+        - Green
+        - Yellow
+        - Blue
+        - Purple
+        - Pink
+        - Orange
+        - Brown
+  - rrp:
+      frontend_label: Recommended Retail Price
+      frontend_input: price
+      used_in_product_listing: 1
+      product_types:
+        - bundle
+        - simple

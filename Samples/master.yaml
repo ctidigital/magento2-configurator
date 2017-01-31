@@ -46,3 +46,8 @@ blocks:
     local:
       mode: maintain
       log: debug
+attributes:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Attributes/attributes.yaml

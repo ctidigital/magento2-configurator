@@ -1,22 +1,39 @@
-- attribute_sets:
-  -
-    name: Shirts
-    inherit: Default
-    groups:
-      -
-        name: General
-        attributes:
-          - colour
-          - color
-      -
-        name: Prices
-        attributes:
-          - rrp
-  -
-    name: Example Attribute Set 2
-    inherit: Default
-    groups:
-      -
-        name: Prices
-        attributes:
-          - rrp
+attribute_sets:
+-
+  name: Shirts
+  inherit: Default
+  groups:
+    -
+      name: General
+      attributes:
+        - colour
+        - color
+    -
+      name: Prices
+      attributes:
+        - rrp
+        - test_attr
+-
+  name: Example Attribute Set 2
+  inherit: Default
+  groups:
+    -
+      name: Prices
+      attributes:
+        - rrp
+-
+  name: Matthew Attribute Set
+  inherit: Default
+  groups:
+    -
+      name: Prices
+      attributes:
+        - rrp
+-
+  name: Matthew Attribute Set 2
+  groups:
+    -
+      name: Prices
+      attributes:
+        - rrp
+

@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
+use Magento\Framework\Webapi\Exception;
 use Symfony\Component\Yaml\Yaml;
 
 class Categories extends YamlComponentAbstract
@@ -24,10 +25,12 @@ class Categories extends YamlComponentAbstract
         \CtiDigital\Configurator\Model\LoggingInterface $log,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Catalog\Model\CategoryFactory $category,
-        \Magento\Store\Model\GroupFactory $groupFactory
+        \Magento\Store\Model\GroupFactory $groupFactory,
+        \Magento\Framework\App\Filesystem\DirectoryList $dirList
     ) {
         $this->category = $category;
         $this->groupFactory = $groupFactory;
+        $this->dirList = $dirList;
         parent::__construct($log, $objectManager);
     }
 
@@ -118,10 +121,20 @@ class Categories extends YamlComponentAbstract
                         break;
                     case 'category':
                         break;
+                    case 'image':
+                        $img = basename($value);
+                        $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
+                        if (! @copy($value, $catMediaDir . $img)) {
+                            $this->log->logError('Failed to find image: ' . $value, 1);
+                            break;
+                        }
+                        $category->setImage($img);
+                        break;
                     default:
                         $category->setCustomAttribute($attribute, $value);
                 }
             }
+
             // Set the category to be active
             if (!(isset($categoryValues['is_active']))) {
                 $category->setIsActive(true);

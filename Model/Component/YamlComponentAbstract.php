@@ -49,7 +49,7 @@ abstract class YamlComponentAbstract extends ComponentAbstract
 
             $path = BP . '/' . $source;
             $data = file_get_contents($path);
-            return Yaml::parse($data);
+            return (new Yaml())->parse($data);
         } catch (ParseException $e) {
             throw new ComponentException(
                 sprintf('The %s component failed to parse. Error: %s.', $source, $e->getMessage())

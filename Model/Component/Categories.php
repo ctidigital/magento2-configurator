@@ -98,6 +98,7 @@ class Categories extends YamlComponentAbstract
      *
      * @param array $categories
      * @param \Magento\Catalog\Model\Category $parentCategory
+     * @SuppressWarnings(PHPMD)
      */
     public function createOrUpdateCategory(
         \Magento\Catalog\Model\Category $parentCategory,
@@ -123,11 +124,18 @@ class Categories extends YamlComponentAbstract
                         break;
                     case 'image':
                         $img = basename($value);
+                        $path = parse_url($value);
                         $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
+
+                        if (! array_key_exists('host', $path)) {
+                            $value = BP . '/'. trim($value, '/');
+                        }
+
                         if (! @copy($value, $catMediaDir . $img)) {
                             $this->log->logError('Failed to find image: ' . $value, 1);
                             break;
                         }
+
                         $category->setImage($img);
                         break;
                     default:

@@ -11,6 +11,11 @@ use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Eav\Model\AttributeSetRepository;
 
+/**
+ * Class AttributeSets
+ * @package CtiDigital\Configurator\Model\Component
+ * @SuppressWarnings(PHPMD.LongVariable)
+ */
 class AttributeSets extends YamlComponentAbstract
 {
     protected $alias = 'attribute_sets';
@@ -53,8 +58,8 @@ class AttributeSets extends YamlComponentAbstract
     protected function processData($attributeConfigurationData = null)
     {
         try {
-            foreach ($attributeConfigurationData['attribute_sets'] as $_attributeSetConfiguration) {
-                $this->processAttributeSet($_attributeSetConfiguration);
+            foreach ($attributeConfigurationData['attribute_sets'] as $attributeSetConfiguration) {
+                $this->processAttributeSet($attributeSetConfiguration);
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
@@ -95,9 +100,9 @@ class AttributeSets extends YamlComponentAbstract
                     );
                 }*/
 
-        foreach ($attributeGroupData as $_group) {
-            $_attributeSetName = $attributeSetEntity->getAttributeSetName();
-            $this->eavSetup->addAttributeGroup(Product::ENTITY, $_attributeSetName, $_group['name']);
+        foreach ($attributeGroupData as $group) {
+            $attributeSetName = $attributeSetEntity->getAttributeSetName();
+            $this->eavSetup->addAttributeGroup(Product::ENTITY, $attributeSetName, $group['name']);
         }
     }
 
@@ -109,19 +114,19 @@ class AttributeSets extends YamlComponentAbstract
         AttributeSetInterface $attributeSetEntity,
         array $attributeGroupData
     ) {
-        foreach ($attributeGroupData as $_group) {
-            foreach ($_group['attributes'] as $_attributeCode) {
-                $_attributeData = $this->eavSetup->getAttribute(Product::ENTITY, $_attributeCode);
+        foreach ($attributeGroupData as $group) {
+            foreach ($group['attributes'] as $attributeCode) {
+                $attributeData = $this->eavSetup->getAttribute(Product::ENTITY, $attributeCode);
 
-                if (count($_attributeData) === 0) {
-                    throw new ComponentException("Attribute '{$_attributeCode}' does not exist.");
+                if (count($attributeData) === 0) {
+                    throw new ComponentException("Attribute '{$attributeCode}' does not exist.");
                 }
 
                 $this->eavSetup->addAttributeToGroup(
                     Product::ENTITY,
                     $attributeSetEntity->getId(),
-                    $_group['name'],
-                    $_attributeCode
+                    $group['name'],
+                    $attributeCode
                 );
             }
         }

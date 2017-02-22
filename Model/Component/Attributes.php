@@ -8,6 +8,11 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\ObjectManagerInterface;
 
+/**
+ * Class Attributes
+ * @package CtiDigital\Configurator\Model\Component
+ * @SuppressWarnings(PHPMD.LongVariable)
+ */
 class Attributes extends YamlComponentAbstract
 {
 
@@ -42,8 +47,8 @@ class Attributes extends YamlComponentAbstract
     protected function processData($attributeConfigurationData = null)
     {
         try {
-            foreach ($attributeConfigurationData['attributes'] as $_attributeCode => $_attributeConfiguration) {
-                $this->processAttribute($_attributeCode, $_attributeConfiguration);
+            foreach ($attributeConfigurationData['attributes'] as $attributeCode => $attributeConfiguration) {
+                $this->processAttribute($attributeCode, $attributeConfiguration);
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());

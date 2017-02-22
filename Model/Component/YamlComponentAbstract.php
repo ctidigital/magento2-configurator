@@ -2,7 +2,10 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
+use Magento\Framework\Webapi\Exception;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
+use CtiDigital\Configurator\Model\Exception\ComponentException;
 
 /**
  * Class YamlComponentAbstract
@@ -44,8 +47,13 @@ abstract class YamlComponentAbstract extends ComponentAbstract
                 );
             }
 
-            $parser = new Yaml();
-            return $parser->parse(file_get_contents($source));
+            $path = BP . '/' . $source;
+            $data = file_get_contents($path);
+            return (new Yaml())->parse($data);
+        } catch (ParseException $e) {
+            throw new ComponentException(
+                sprintf('The %s component failed to parse. Error: %s.', $source, $e->getMessage())
+            );
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }

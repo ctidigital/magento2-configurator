@@ -38,7 +38,8 @@ class AttributeSets extends YamlComponentAbstract
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
-        AttributeSetRepositoryInterface $attributeSetRepository) {
+        AttributeSetRepositoryInterface $attributeSetRepository
+    ) {
 
         parent::__construct($log, $objectManager);
 
@@ -70,13 +71,13 @@ class AttributeSets extends YamlComponentAbstract
         $attributeSetId = $this->eavSetup->getAttributeSetId(Product::ENTITY, $attributeSetConfig['name']);
         $attributeSetEntity = $this->attributeSetRepository->get($attributeSetId);
         if (array_key_exists('inherit', $attributeSetConfig)) {
-           $attributeSetEntity->initFromSkeleton($this->_getAttributeSetId($attributeSetConfig['inherit']));
-           $this->attributeSetRepository->save($attributeSetEntity);
+            $attributeSetEntity->initFromSkeleton($this->getAttributeSetId($attributeSetConfig['inherit']));
+            $this->attributeSetRepository->save($attributeSetEntity);
         }
 
         if (array_key_exists('groups', $attributeSetConfig) && count($attributeSetConfig['groups']) > 0) {
-            $this->_addAttributeGroups($attributeSetEntity, $attributeSetConfig['groups']);
-            $this->_addAttributeGroupAssociations($attributeSetEntity, $attributeSetConfig['groups']);
+            $this->addAttributeGroups($attributeSetEntity, $attributeSetConfig['groups']);
+            $this->addAttributeGroupAssociations($attributeSetEntity, $attributeSetConfig['groups']);
         }
     }
 
@@ -84,15 +85,15 @@ class AttributeSets extends YamlComponentAbstract
      * @param AttributeSetInterface $attributeSetEntity
      * @param array $attributeGroupData
      */
-    protected function _addAttributeGroups(AttributeSetInterface $attributeSetEntity, array $attributeGroupData)
+    protected function addAttributeGroups(AttributeSetInterface $attributeSetEntity, array $attributeGroupData)
     {
-/*        if ($attributeSetEntity->getDefaultGroupId()) {
-            $this->eavSetup->removeAttributeGroup(
-                Product::ENTITY,
-                $attributeSetEntity->getId(),
-                $attributeSetEntity->getDefaultGroupId()
-            );
-        }*/
+        /*        if ($attributeSetEntity->getDefaultGroupId()) {
+                    $this->eavSetup->removeAttributeGroup(
+                        Product::ENTITY,
+                        $attributeSetEntity->getId(),
+                        $attributeSetEntity->getDefaultGroupId()
+                    );
+                }*/
 
         foreach ($attributeGroupData as $_group) {
             $_attributeSetName = $attributeSetEntity->getAttributeSetName();
@@ -104,15 +105,17 @@ class AttributeSets extends YamlComponentAbstract
      * @param AttributeSetInterface $attributeSetEntity
      * @param array $attributeGroupData
      */
-    protected function _addAttributeGroupAssociations(AttributeSetInterface $attributeSetEntity,
-                                                      array $attributeGroupData)
-    {
+    protected function addAttributeGroupAssociations(
+        AttributeSetInterface $attributeSetEntity,
+        array $attributeGroupData
+    ) {
         foreach ($attributeGroupData as $_group) {
             foreach ($_group['attributes'] as $_attributeCode) {
                 $_attributeData = $this->eavSetup->getAttribute(Product::ENTITY, $_attributeCode);
 
-                if (count($_attributeData) === 0)
+                if (count($_attributeData) === 0) {
                     throw new ComponentException("Attribute '{$_attributeCode}' does not exist.");
+                }
 
                 $this->eavSetup->addAttributeToGroup(
                     Product::ENTITY,
@@ -128,7 +131,7 @@ class AttributeSets extends YamlComponentAbstract
      * @param $attributeSetName
      * @return string
      */
-    protected function _getAttributeSetId($attributeSetName)
+    protected function getAttributeSetId($attributeSetName)
     {
         $attributeSetData = $this->eavSetup->getAttributeSet(Product::ENTITY, $attributeSetName);
         if (array_key_exists('attribute_set_id', $attributeSetData)) {

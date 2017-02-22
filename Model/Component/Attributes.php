@@ -28,7 +28,8 @@ class Attributes extends YamlComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        EavSetup $eavSetup) {
+        EavSetup $eavSetup
+    ) {
 
         parent::__construct($log, $objectManager);
 

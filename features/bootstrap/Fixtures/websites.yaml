@@ -1,0 +1,51 @@
+websites:
+  base:
+    name: Base Website
+    store_groups:
+      -
+        group_id: 1
+        name: Main Website Store
+        default_store: default
+        store_views:
+          default:
+            name: Default Store View
+            is_active: 1
+
+  hu:
+    name: HU website
+    store_groups:
+      -
+        name: HU Store
+        default_store: hu_hu
+        store_views:
+          hu_hu:
+            name: HU Store View
+            is_active: 1
+
+  uk:
+    name: UK website
+    store_groups:
+      -
+        name: UK Store
+        default_store: en_uk
+        store_views:
+          en_uk:
+            name: UK Store View
+            is_active: 1
+
+  ch:
+    name: CH website
+    store_groups:
+      -
+        name: CH Store
+        default_store: de_ch
+        store_views:
+          de_ch:
+            name: CH Store View German Language
+            is_active: 1
+          fr_ch:
+            name: CH Store View French Language
+            is_active: 1
+          it_ch:
+            name: CH Store View Italian Language
+            is_active: 1

@@ -1,25 +1,79 @@
-dist: trusty
-language: php
-php:
-  - 5.6
-  - 7.0
 env:
-  global:
-    - secure: "BzT43wnD8ubl3qKC0WGyKktTXP1luJVC2kL5WA9EeBt+hvmZWVQjcJkFb5oa/SofIsDSGhvxzY6SjfCjkD49L0pKWpWIEZMWcNJV72CrW/LhP4YI3H68c3UIssV1R1BsrQie9MMM+N5X2K7IaeyHvf/zQkjyQukGVVpYrz+Ze1GF0dlR5+ux6Y6VU7MAJewzyj+hYoyqpHawTFMjAsKr7UOToHP34ejBWQzm863H3NeiXa701rysrliqy+EYDmh43tyCTA8CObXufXcOAcF3kmR3P9RAGFAhi3nkFstKvGeDanFM1JS1TSQnX799jUNXftCTja43e6O25N2b+t005976lz9/VDZcqtIcXLGbPZnESqCq7YEyFfJpfoJ828KGxnAmU/cixyHQZIyudY0PBnl/bqroXpgNiHhAzylcaHWbXk0HcCF1mStMfWhCjX/KVZL5ycRBWv9srj0g1Fy0SKha5dCnBJq4+kd0qM2erv/G7QejsMeBuYE3OtQnNJj9nvleM/2eSFqojvMYLO8uC23Omyi+7JmOvCV/NyHlV5qZLAPrdqmwirIJ4nkZvil+ltGCrQoZH8wjkJJdMKlZ6Xoe/Ercm9SJtcHXuqxaif+Vh0ZGJr/zcXG20UZAbHXYx3t8CeZXJetNdil2cQ1M3h8VITRFmsvcA4Nnmi92+Lw="
-    - secure: "ENxjSyl25GVMEvUurGuSd7mtKQPLmU6xvJUr7iV2pfnmZJV0jjjLk+9Vs81sy+6N6/PieeyWkDKlxBvXBaPrKPF2vN/yhlwrY4oPWfqOHCD3nbkf2j6bmrhFoJ6uQD9PNZqirZQ7E3Ok+8bQYPfzEpU/qyW+fBV5V2S7bwOo4KZsQaSAtkUMMH+5roDo7aorWBIKz2XAf3+UU5lUW8/8wrzECh2d/Cl2G/7D59Gtn7uKRSjCBorRtk3/cFexF3f/LLA6IMM6ME9WmriNcZP7xhNyUExZKkFyeb5Z8278eIvZ8I9TRtzUGb2o0waqKwgsAr2/QrtmBXPveIQM3xxzKTksh0hw6jc5PChu4SPVhCDP0B9irVR7uFY+NPipy1EFGfBDo0DTZa+vp5QeRqu8T/e/qivvT1TJL5iqYvwPT5xW1Xk8UQM5T2KfdtXr1/B63TPkRhXrztwZXqVygy/8nZ/3Cut6RtfQW+4QukRFLhmnAIGsf+9oqVWyjxeybyyGFc7bhdt67aFlW8qzmqvzbtWaIYw/zoTjUZzuMBsHjo9jIJNIwkJHaL0EqZFyoCAZWauRj1dHgU3geRA22cUS/S4UTXueIGqpxBt8PAGCNf86v07iVWj/d1gWW6NR0w1TxRevM4X29I9fxRbQQcOFeGEt9i8o6uUEfztZbkC3o4c="
-  matrix:
-    - TEST_SUITE=unit
-    - TEST_SUITE=phpcs
+    #global environmental variables control magento instal parameters
+    #see also hosts in addons.
+    global:
+    - TEST_MAGE2_FAKE_URL=http://magento-2-travis.dev
+    - TEST_MAGE2_ADMIN_EMAIL=admin.person@example.com
+    - TEST_MAGE2_ADMIN_FIRST_NAME=Admin    
+    - TEST_MAGE2_ADMIN_LAST_NAME=Person
+    - TEST_MAGE2_ADMIN_USERNAME=admin            
+    - TEST_MAGE2_ADMIN_PASSWORD=admin123
+    - TEST_MAGE2_ADMIN_DBNAME=magento_2_travis
+    - COMPOSER_REPOSITORY_TO_TEST=git@github.com:szagabesz/magento2-configurator.git
+    - PULSESTORM_COMPOSER_PACKAGE_TO_TEST=ctidigital/magento2-configurator
+addons:
+  hosts:
+    # should match TEST_MAGE2_FAKE_URL above
+    - magento-2-travis.dev    
+language: php
+sudo: required
+dist: trusty
+php:
+   - 5.6
+   - 7.0
+before_script:
+    # some useful debugging stuff for travis
+    #- curl http://magento-2-travis.dev/index.php
+    #- curl http://magento-2-travis.dev/  
+    #- sudo find /var/log/apache2 -exec cat '{}' \;      
+    #- sudo cat /etc/apache2/sites-available/000-default.conf
+    #- sudo cat /etc/apache2/sites-enabled/000-default.conf    
+    #- sudo apachectl -V
+    #- sudo apache2ctl -V
+    #- ls -lh $TRAVIS_BUILD_DIR
+    #- sudo ls /etc/apache2/sites-available
+    #- sudo ls /etc/apache2/sites-enabled
+    #- pwd    
+    #    
+    # get latest composer 
+    - composer selfupdate
+    # disable xdebug for perf    
+    - echo '' > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini   
+    # add multiverse support to get MySQL 5.6 update apt
+    - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty multiverse" && sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty-updates multiverse"
+    - sudo apt-get update -qq 
+    # add mysql 5.6
+    - sudo apt-get remove -y -qq --purge mysql-common mysql-server-5.5 mysql-server-core-5.5 mysql-client-5.5 mysql-client-core-5.5
+    - sudo apt-get -y -qq autoremove;
+    - sudo apt-get -y -qq autoclean;
+    - sudo apt-get install -y -qq mysql-server-5.6 mysql-client-5.6;    
+    - mysql -uroot -e 'SET @@global.sql_mode = NO_ENGINE_SUBSTITUTION; CREATE DATABASE magento_2_travis;';
+    # add apache
+    - sudo apt-get install -y -qq apache2 libapache2-mod-fastcgi
+    - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf 2>/dev/null || true
+    - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+    - sudo a2enmod rewrite actions fastcgi alias
+    - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
 
-install:
-  - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
-  - composer install --prefer-dist
+    # clone main magento github repository
+    - git clone https://github.com/magento/magento2    
+    # install Magento
+    - cd magento2  
+    # switch to specific branch in you like
+    - git checkout 2.1
+    # add composer package under test, composer require will trigger update/install
+    - composer config repositories.foo git https://github.com/${TRAVIS_REPO_SLUG}.git
+    - composer require ctidigital/magento2-configurator:dev-${TRAVIS_BRANCH}
+    - composer require behat/behat
+    - composer require bex/behat-magento2-init
+    # run installation command using evn variables set above
+    - php bin/magento setup:install --admin-email "$TEST_MAGE2_ADMIN_EMAIL" --admin-firstname "$TEST_MAGE2_ADMIN_FIRST_NAME" --admin-lastname "$TEST_MAGE2_ADMIN_LAST_NAME" --admin-password "$TEST_MAGE2_ADMIN_PASSWORD" --admin-user "$TEST_MAGE2_ADMIN_USERNAME" --backend-frontname admin --base-url "$TEST_MAGE2_FAKE_URL" --db-host 127.0.0.1 --db-name magento_2_travis --db-user root --session-save files --use-rewrites 1 --use-secure 0 -vvv    
+    - php bin/magento module:enable CtiDigital_Configurator
+    - php bin/magento setup:upgrade
+
+    # Publish features directory
+    - \[ -d "features" \] && rm -rf features/ || ln -s vendor/ctidigital/magento2-configurator/features features
 script:
-  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcs --standard=PSR2 Model/ Console/ Test/; fi"
-  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpmd Model/,Console/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode; fi"
-  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Console/ Test/; fi"
-  - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/; fi"
-notifications:
-  hipchat:
-    rooms:
-      secure: bM2ia9UiRcc/nudnEuU0fib564KScItsMG+RAJuTfOfhGrkoxW1RGOFHl75WVUupv4BswNyvUQezU+NQn6clRojfhOvVVJeN2GPPfh0Tl7ClmkOqNl5Uyooxt4wg9Gn+bu0Cl9uLHA9IaANR5Z1j+c9EBNnacOOdjPamHEAPH7Aw9n+mN3kx77NUe/uJmdUbqUUyuCzFz86zPNYT4cxDlFEGu8HpM6HC88DyUb6q0ZbeVH16YdZwNLgS15AlKiN2ZiqGnDiU8GxCdSHFg/JZ3bqY154ZH3IGnqAe0/FURErch5DNqTBhjqaqidTZyuZrST3sxq9+M3K7VkuiWLTVDQ7+FIrHk2t2Xu8obd5geTeLieBUarG5P7vGCerDR8XLwGXzEaihiG6jcb1MN/trDQdofABXc0zOtkTW1C1R+byBhCZIBITIk5rPyvKO9aVgl/MEqqYvh14JBpXrfFqOuxGTpoOKCwXVL6BzaB6EIh5aD6yWQx2rqaXUGAl1NBolBdMBJNLPXI5WeknWSpL83gMegrVbixH6si9ivynkpo/Thq8vERXVVM8RRKlD8b9/Yhep5vJCFA33uweNX6Y1k+7uEVara3OQnKHUiF5Fh4YnozYX7L8lSKOhhGJU+zg76ANyfVXIUY4WSIgsUMEAPA4GmfusNMPb0HxIOs+FJwI=
+  - cd vendor/ctidigital/magento2-configurator
+  - ../../behat/behat/bin/behat -v --stop-on-failure --no-snippets --no-interaction

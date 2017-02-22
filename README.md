@@ -24,6 +24,24 @@ php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctid
 php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
+### Integration tests
+Integration tests verify how the extension behaves when installed and used in a Mageto instance.
+Verification is carried out by Behat.
+Test definitions are stored in the **features** directory in _*.feature_ files.
+
+Fixture Yaml files are loaded relative to the Magento root directory. It's not configurable currently, 
+so the features directory has to be copied into the Magento root directory. Simplest way to do so by creating
+a symlink:
+```
+ln -s vendor/ctidigital/magento-configurator/features features 
+```
+
+To run the whole test suite, enter these commands:
+```
+cd vendor/ctidigital/magento-configurator
+../../../vendor/bin/behat
+```
+
 ## Getting Started
 1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)
 2. Enable Modules `CtiDigital_Configurator`,`FireGento_FastSimpleImport`.

@@ -4,12 +4,24 @@ namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
+use CtiDigital\Configurator\Model\Exception\CommandFailedException;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Parser;
 
 class Processor
 {
+    /**
+     * Default configuration file path relative to Magento's root directory
+     */
+    const DEFAULT_MASTER_FILE_PATH = '/app/etc/master.yaml';
+
+    /**
+     * master yaml file path
+     *
+     * @var string
+     */
+    protected $_masterYamlPath;
 
     /**
      * @var string
@@ -91,6 +103,31 @@ class Processor
     }
 
     /**
+     * @param string $masterYamlPath
+     * @return $this
+     */
+    public function setMasterYamlPath($masterYamlPath)
+    {
+        $this->_masterYamlPath = $masterYamlPath;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMasterYamlPath()
+    {
+        if (! empty($this->_masterYamlPath)) {
+            return $this->_masterYamlPath;
+        }
+
+        $this->_masterYamlPath = BP . self::DEFAULT_MASTER_FILE_PATH;
+
+        return $this->_masterYamlPath;
+    }
+
+    /**
      * Run the components individually
      */
     public function run()
@@ -129,6 +166,7 @@ class Processor
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
+            throw new CommandFailedException();
         }
     }
 
@@ -147,6 +185,7 @@ class Processor
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
+            throw new CommandFailedException();
         }
     }
 
@@ -200,6 +239,9 @@ class Processor
             return;
         }
 
+        foreach ($componentConfig['env'][$this->getEnvironment()]['sources'] as $source) {
+            $component->setSource($source)->process();
+        }
     }
 
     /**
@@ -208,7 +250,7 @@ class Processor
     private function getMasterYaml()
     {
         // Read master yaml
-        $masterPath = BP . '/app/etc/master.yaml';
+        $masterPath = $this->getMasterYamlPath();
         if (!file_exists($masterPath)) {
             throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
         }

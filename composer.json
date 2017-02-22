@@ -11,7 +11,6 @@
   "require": {
     "php": "~5.6.0|~7.0.0",
     "symfony/yaml": ">2.8.0",
-    "magento/framework": "100.1.*",
     "firegento/fastsimpleimport": "1.0.0"
   },
   "require-dev": {
@@ -19,7 +18,9 @@
     "squizlabs/php_codesniffer": "1.5.3",
     "sebastian/phpcpd": "2.0.0",
     "satooshi/php-coveralls": "^1.0",
-    "phpunit/phpunit": "4.1.0"
+    "phpunit/phpunit": "4.1.0",
+    "behat/behat": "^3.1.0",
+    "bex/behat-magento2-init": "^1.0"
   },
   "version": "0.5.6-dev",
   "autoload": {

@@ -1,0 +1,12 @@
+default:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+  extensions:
+    Bex\Behat\Magento2InitExtension:
+      magento_bootstrap_path: '../../../app/bootstrap.php'
+      magento_configs:
+        -
+          path: 'admin/security/use_form_key'
+          value: 0

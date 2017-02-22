@@ -1,0 +1,11 @@
+websites:
+  uk:
+    -
+      path: general/store_information/name
+      value: English webshop
+
+stores:
+  de_ch:
+    -
+      path: general/store_information/name
+      value: Swiss-German store

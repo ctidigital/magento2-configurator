@@ -1,0 +1,11 @@
+websites:
+  hu:
+    -
+      path: general/store_information/name
+      value: Hungarian webshop
+
+stores:
+  fr_ch:
+    -
+      path: general/store_information/name
+      value: Swiss-French store

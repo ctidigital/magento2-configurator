@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Model\Exception\CommandFailedException;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
 use CtiDigital\Configurator\Model\Processor;
 use Magento\Framework\ObjectManagerInterface;
@@ -58,8 +59,15 @@ class RunCommand extends Command
             'component',
             'c',
             InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-            'Test',
+            'Specify component(s) to manage',
             array()
+        );
+
+        $fileOption = new InputOption(
+            'file',
+            'f',
+            InputOption::VALUE_OPTIONAL,
+            'Specify master yaml file path'
         );
 
         $this
@@ -68,7 +76,8 @@ class RunCommand extends Command
             ->setDefinition(
                 new InputDefinition(array(
                     $environmentOption,
-                    $componentOption
+                    $componentOption,
+                    $fileOption
                 ))
             );
     }
@@ -76,7 +85,7 @@ class RunCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int|null
      * @SuppressWarnings(PHPMD)
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -88,7 +97,9 @@ class RunCommand extends Command
             }
 
             $environment = $input->getOption('env');
+            $masterYamlPath = $input->getOption('file');
             $components = $input->getOption('component');
+
 
             $logLevel = OutputInterface::VERBOSITY_NORMAL;
             $verbose = $input->getOption('verbose');
@@ -103,6 +114,10 @@ class RunCommand extends Command
 
             $this->processor->setEnvironment($environment);
 
+            if (! empty($masterYamlPath)) {
+                $this->processor->setMasterYamlPath($masterYamlPath);
+            }
+
             foreach ($components as $component) {
                 $this->processor->addComponent($component);
             }
@@ -116,6 +131,9 @@ class RunCommand extends Command
 
         } catch (ConfiguratorAdapterException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+            return 1;
+        } catch (CommandFailedException $e) {
+            return $e->getCode();
         }
     }
 }

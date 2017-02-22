@@ -1,0 +1,20 @@
+websites:
+  enabled: 1
+  method: code
+  sources:
+      - features/bootstrap/Fixtures/websites.yaml
+config:
+  enabled: 1
+  method: code
+  sources:
+    - features/bootstrap/Fixtures/global.yaml
+    - features/bootstrap/Fixtures/base-website-config.yaml
+  env:
+    local:
+      sources:
+        - features/bootstrap/Fixtures/local/global.yaml
+        - features/bootstrap/Fixtures/local/base-website-config.yaml
+    production:
+      sources:
+        - features/bootstrap/Fixtures/production/global.yaml
+        - features/bootstrap/Fixtures/production/base-website-config.yaml

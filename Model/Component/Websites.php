@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Model\Exception\CommandFailedException;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
@@ -83,6 +84,7 @@ class Websites extends YamlComponentAbstract
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
+            throw new CommandFailedException();
         }
     }
 
@@ -157,6 +159,7 @@ class Websites extends YamlComponentAbstract
             return $website;
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
+            throw new CommandFailedException();
         }
     }
 
@@ -250,6 +253,7 @@ class Websites extends YamlComponentAbstract
             return $storeGroup;
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
+            throw new CommandFailedException();
         }
     }
 
@@ -336,6 +340,7 @@ class Websites extends YamlComponentAbstract
             return $storeView;
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
+            throw new CommandFailedException();
         }
     }
 
@@ -394,6 +399,7 @@ class Websites extends YamlComponentAbstract
 
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
+            throw new CommandFailedException();
         }
     }
 }

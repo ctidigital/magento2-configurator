@@ -2,7 +2,7 @@ websites:
   enabled: 1
   method: code
   sources:
-      - app/etc/configurator/websites.yaml
+      - ../configurator/websites.yaml
   env:
       local:
         log: info
@@ -16,13 +16,13 @@ config:
   enabled: 1
   method: code
   sources:
-    - app/etc/configurator/Configuration/global.yaml
-    - app/etc/configurator/Configuration/base-website-config.yaml
+    - ../configurator/Configuration/global.yaml
+    - ../configurator/Configuration/base-website-config.yaml
 categories:
   enabled: 1
   method: code
   sources:
-    - app/etc/configurator/Categories/categories.yaml
+    - ../configurator/Categories/categories.yaml
   env:
     local:
       mode: maintain
@@ -31,8 +31,8 @@ products:
   enabled: 1
   method: code
   sources:
-    - app/etc/configurator/Products/simple.csv
-    - app/etc/configurator/Products/configurable.csv
+    - ../configurator/Products/simple.csv
+    - ../configurator/Products/configurable.csv
   env:
     local:
       mode: maintain
@@ -41,7 +41,7 @@ blocks:
   enabled: 1
   method: code
   sources:
-    - app/etc/configurator/Blocks/blocks.yaml
+    - ../configurator/Blocks/blocks.yaml
   env:
     local:
       mode: maintain
@@ -50,9 +50,9 @@ attributes:
   enabled: 1
   method: code
   sources:
-    - app/etc/configurator/Attributes/attributes.yaml
+    - ../configurator/Attributes/attributes.yaml
 attribute_sets:
   enabled: 1
   method: code
   sources:
-    - app/etc/configurator/Attributes/attribute_sets.yaml
+    - ../configurator/Attributes/attribute_sets.yaml

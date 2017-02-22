@@ -6,6 +6,7 @@ use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
+use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
@@ -33,12 +34,12 @@ class Attributes extends YamlComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        EavSetup $eavSetup
+        EavSetupFactory $eavSetupFactory
     ) {
 
         parent::__construct($log, $objectManager);
 
-        $this->eavSetup = $eavSetup;
+        $this->eavSetup = $eavSetupFactory;
     }
 
     /**

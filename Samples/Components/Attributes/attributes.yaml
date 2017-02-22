@@ -1,4 +1,4 @@
-ttributes:
+attributes:
   test_attr:
     is_global: 1
     label: TestAttr

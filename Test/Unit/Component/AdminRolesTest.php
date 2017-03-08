@@ -23,4 +23,3 @@ class AdminRolesTest extends ComponentAbstractTestCase
         $this->className = AdminRoles::class;
     }
 }
-

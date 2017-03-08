@@ -46,3 +46,12 @@ blocks:
     local:
       mode: maintain
       log: debug
+adminroles:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/AdminRoles/adminroles.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug

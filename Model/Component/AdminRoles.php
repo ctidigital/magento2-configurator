@@ -10,8 +10,6 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
-
-
 class AdminRoles extends YamlComponentAbstract
 {
     protected $alias = 'adminroles';
@@ -44,8 +42,7 @@ class AdminRoles extends YamlComponentAbstract
         ObjectManagerInterface $objectManager,
         RoleFactory $roleFactory,
         RulesFactory $rulesFactory
-    )
-    {
+    ) {
         parent::__construct($log, $objectManager);
 
         $this->roleFactory = $roleFactory;
@@ -118,5 +115,4 @@ class AdminRoles extends YamlComponentAbstract
         }
 
     }
-
 }

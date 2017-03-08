@@ -1,11 +1,11 @@
 <?php
 namespace CtiDigital\Configurator\Model\Component;
 
+use Magento\Authorization\Model\ResourceModel\Role;
 use Symfony\Component\Yaml\Yaml;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Authorization\Model\RulesFactory;
-use Magento\Authorization\Model\ResourceModel\Role;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
@@ -131,5 +131,6 @@ class AdminRoles extends YamlComponentAbstract
         $this->log->logError(
             sprintf('Admin Role "%s" Resources are empty, please check your yaml file', $roleName)
         );
+
     }
 }

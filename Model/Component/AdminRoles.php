@@ -5,7 +5,6 @@ use Symfony\Component\Yaml\Yaml;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Authorization\Model\RulesFactory;
-use Magento\Authorization\Model\ResourceModel\Role;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
@@ -41,8 +40,8 @@ class AdminRoles extends YamlComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        $roleFactory,
-        $rulesFactory
+        RoleFactory $roleFactory,
+        RulesFactory $rulesFactory
     ) {
         parent::__construct($log, $objectManager);
 
@@ -61,7 +60,7 @@ class AdminRoles extends YamlComponentAbstract
             foreach ($data['adminroles'] as $role) {
                 try {
                     if (isset($role['name'])) {
-                        $role = $this->createAdminRole($role['name'], $role['resources']);
+                        $this->createAdminRole($role['name'], $role['resources']);
                     }
                 } catch (ComponentException $e) {
                     $this->log->logError($e->getMessage());
@@ -116,7 +115,6 @@ class AdminRoles extends YamlComponentAbstract
      */
     private function setResourceIds($role, $resources)
     {
-        $roleId = $role->getId();
         $roleName = $role->getRoleName();
 
         if ($resources !== null) {
@@ -124,7 +122,7 @@ class AdminRoles extends YamlComponentAbstract
                 sprintf('Admin Role "%s" resources updating', $roleName)
             );
 
-            $this->rulesFactory->create()->setRoleId($roleId)->setResources($resources)->saveRel();
+            $this->rulesFactory->create()->setRoleId($role->getId())->setResources($resources)->saveRel();
             return;
         }
 

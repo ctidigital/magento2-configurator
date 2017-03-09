@@ -46,3 +46,12 @@ blocks:
     local:
       mode: maintain
       log: debug
+adminusers:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/AdminUsers/adminusers.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug

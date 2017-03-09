@@ -5,7 +5,6 @@ use Symfony\Component\Yaml\Yaml;
 use Magento\User\Model\UserFactory;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\EntityManager\EntityManager;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
@@ -27,12 +26,7 @@ class AdminUsers extends YamlComponentAbstract
      *
      * @var roleFactory
      */
-    private $roleFactory;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    protected $roleFactory;
 
     /**
      * AdminUsers constructor.
@@ -40,20 +34,17 @@ class AdminUsers extends YamlComponentAbstract
      * @param ObjectManagerInterface $objectManager
      * @param UserFactory $userFactory
      * @param RoleFactory $roleFactory
-     * @param EntityManager $entityManager
      */
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         UserFactory $userFactory,
-        RoleFactory $roleFactory,
-        EntityManager $entityManager
+        RoleFactory $roleFactory
     ) {
         parent::__construct($log, $objectManager);
 
         $this->userFactory = $userFactory;
         $this->roleFactory = $roleFactory;
-        $this->entityManager = $entityManager;
     }
 
     /**

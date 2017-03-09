@@ -51,6 +51,7 @@ adminusers:
   method: code
   sources:
     - ../configurator/AdminUsers/adminusers.yaml
+    - ../configurator/AdminUsers/apiusers.yaml
   env:
     local:
       mode: maintain

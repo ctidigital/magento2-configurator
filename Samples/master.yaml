@@ -46,3 +46,12 @@ blocks:
     local:
       mode: maintain
       log: debug
+apiintegrations:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/ApiIntegrations/apiintegrations.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug

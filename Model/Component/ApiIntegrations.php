@@ -2,6 +2,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use Symfony\Component\Yaml\Yaml;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
 use CtiDigital\Configurator\Model\LoggingInterface;
@@ -38,6 +39,7 @@ class ApiIntegrations extends YamlComponentAbstract
     /**
      * ApiIntegrations constructor.
      * @param LoggingInterface $log
+     * @param ObjectManagerInterface $objectManager
      * @param IntegrationFactory $integrationFactory
      * @param IntegrationServiceInterface $integrationService
      * @param AuthorizationService $authorizationService
@@ -45,12 +47,13 @@ class ApiIntegrations extends YamlComponentAbstract
      */
     public function __construct(
         LoggingInterface $log,
+        ObjectManagerInterface $objectManager,
         IntegrationFactory $integrationFactory,
         IntegrationServiceInterface $integrationService,
         AuthorizationService $authorizationService,
         TokenFactory $tokenFactory
     ) {
-        parent::__construct($log, \Magento\Framework\App\ObjectManager::getInstance());
+        parent::__construct($log, $objectManager);
 
         $this->integrationFactory = $integrationFactory;
         $this->integrationService = $integrationService;
@@ -89,11 +92,16 @@ class ApiIntegrations extends YamlComponentAbstract
     private function createApiIntegration($integrationData)
     {
         $integration = $this->integrationFactory->create();
-        $integrationCount = $integration->getCollection()->addFieldToFilter('name', $integrationData['name'])->getSize();
+        $integrationCount = $integration->getCollection()
+            ->addFieldToFilter('name', $integrationData['name'])
+            ->getSize();
 
         if ($integrationCount > 0) {
 
-            $integration = $integration->getCollection()->addFieldToFilter('name', $integrationData['name'])->getFirstItem();
+            $integration = $integration
+                ->getCollection()
+                ->addFieldToFilter('name', $integrationData['name'])
+                ->getFirstItem();
 
             $this->log->logInfo(
                 sprintf('API Integration "%s" already exists: Creation skipped', $integration->getName())
@@ -102,8 +110,8 @@ class ApiIntegrations extends YamlComponentAbstract
             return;
         }
 
-        $integrationDataSetArray = $this->convertToUseableData($integrationData);
-        $integration = $this->integrationService->create($integrationDataSetArray);
+        $integrationDataArray = $this->convertToUseableData($integrationData);
+        $integration = $this->integrationService->create($integrationDataArray);
         $integrationId = $integration->getId();
 
         $this->log->logInfo(

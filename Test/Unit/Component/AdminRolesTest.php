@@ -11,8 +11,8 @@ class AdminRolesTest extends ComponentAbstractTestCase
     protected function componentSetUp()
     {
 
-        $roleFactory = $this->getMock(RulesFactory::class);
-        $rulesFactory = $this->getMock(RoleFactory::class);
+        $roleFactory = $this->getMock(RoleFactory::class);
+        $rulesFactory = $this->getMock(RulesFactory::class);
 
         $this->component = new AdminRoles(
             $this->logInterface,

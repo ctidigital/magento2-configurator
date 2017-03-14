@@ -1,0 +1,22 @@
+dist: trusty
+language: php
+php:
+  - 5.6
+  - 7.0
+env:
+  matrix:
+    - TEST_SUITE=unit
+    - TEST_SUITE=phpcs
+
+install:
+  - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
+  - composer install --prefer-dist
+script:
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcs --standard=PSR2 Model/ Console/ Test/; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpmd Model/,Console/,Test/ text cleancode,codesize,controversial,design,naming,unusedcode; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Console/ Test/; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/; fi"
+notifications:
+  hipchat:
+    rooms:
+      secure: bM2ia9UiRcc/nudnEuU0fib564KScItsMG+RAJuTfOfhGrkoxW1RGOFHl75WVUupv4BswNyvUQezU+NQn6clRojfhOvVVJeN2GPPfh0Tl7ClmkOqNl5Uyooxt4wg9Gn+bu0Cl9uLHA9IaANR5Z1j+c9EBNnacOOdjPamHEAPH7Aw9n+mN3kx77NUe/uJmdUbqUUyuCzFz86zPNYT4cxDlFEGu8HpM6HC88DyUb6q0ZbeVH16YdZwNLgS15AlKiN2ZiqGnDiU8GxCdSHFg/JZ3bqY154ZH3IGnqAe0/FURErch5DNqTBhjqaqidTZyuZrST3sxq9+M3K7VkuiWLTVDQ7+FIrHk2t2Xu8obd5geTeLieBUarG5P7vGCerDR8XLwGXzEaihiG6jcb1MN/trDQdofABXc0zOtkTW1C1R+byBhCZIBITIk5rPyvKO9aVgl/MEqqYvh14JBpXrfFqOuxGTpoOKCwXVL6BzaB6EIh5aD6yWQx2rqaXUGAl1NBolBdMBJNLPXI5WeknWSpL83gMegrVbixH6si9ivynkpo/Thq8vERXVVM8RRKlD8b9/Yhep5vJCFA33uweNX6Y1k+7uEVara3OQnKHUiF5Fh4YnozYX7L8lSKOhhGJU+zg76ANyfVXIUY4WSIgsUMEAPA4GmfusNMPb0HxIOs+FJwI=

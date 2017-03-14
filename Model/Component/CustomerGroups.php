@@ -48,7 +48,7 @@ class CustomerGroups extends YamlComponentAbstract
      * @param array $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         foreach ($data['customergroups'] as $taxClass) {
 
@@ -73,8 +73,8 @@ class CustomerGroups extends YamlComponentAbstract
     /**
      * Create Customer Groups from YAML file
      *
-     * @param $groupName
-     * @param $taxClassId
+     * @param string $groupName
+     * @param int $taxClassId
      */
     private function createCustomerGroup($groupName, $taxClassId)
     {
@@ -105,7 +105,7 @@ class CustomerGroups extends YamlComponentAbstract
     /**
      * Return tax class id when given name
      *
-     * @param $taxClassName
+     * @param string $taxClassName
      * @return int|null
      */
     private function getTaxClassIdFromName($taxClassName)

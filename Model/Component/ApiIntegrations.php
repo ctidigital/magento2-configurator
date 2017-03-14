@@ -65,7 +65,7 @@ class ApiIntegrations extends YamlComponentAbstract
      * @param array $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         if (isset($data['apiintegrations'])) {
             foreach ($data['apiintegrations'] as $integrationData) {
@@ -87,9 +87,9 @@ class ApiIntegrations extends YamlComponentAbstract
     }
 
     /**
-     * @param $integrationData
+     * @param array $integrationData
      */
-    private function createApiIntegration($integrationData)
+    private function createApiIntegration(array $integrationData)
     {
         $integration = $this->integrationFactory->create();
         $integrationCount = $integration->getCollection()
@@ -129,10 +129,10 @@ class ApiIntegrations extends YamlComponentAbstract
     /**
      * Prepare data for integrationFactory creation
      *
-     * @param $integrationData
+     * @param array $integrationData
      * @return array
      */
-    private function convertToUseableData($integrationData)
+    private function convertToUseableData(array $integrationData)
     {
         $data = [
             'name' => $integrationData['name'],
@@ -150,9 +150,9 @@ class ApiIntegrations extends YamlComponentAbstract
      * Set permissions for API Integration
      *
      * @param $integrationId
-     * @param $resources
+     * @param array $resources
      */
-    private function setPermissions($integrationId, $resources)
+    private function setPermissions($integrationId, array $resources = null)
     {
         $authorizationService = $this->authorizationService;
         $authorizationService->grantPermissions($integrationId, $resources);

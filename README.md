@@ -32,7 +32,7 @@ php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital
 ### Usage
 
 * Listing available components `bin/magento configurator:list`
-* Running individual components `bin/magento configurator:run --env="<environment>" --components="config"`
+* Running individual components `bin/magento configurator:run --env="<environment>" --component="config"`
 * Extra logs `bin/magento configurator:run --env="<environment>" -v`
 
 ## Roadmap for components to do
@@ -44,20 +44,21 @@ php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital
 | Blocks                    | :white_check_mark: | :x:           | :white_check_mark: |
 | Attribute Sets            | :x:                | :x:           | :x:                |
 | Attributes                | :x:                | :x:           | :x:                |
-| Categories                | :x:                | :x:           | :x:                |
-| Products                  | :x:                | :x:           | :x:                |
-| Admin Roles               | :x:                | :x:           | :x:                |
-| Admin Users               | :x:                | :x:           | :x:                |
+| Categories                | :white_check_mark: | :x:           | :white_check_mark: |
+| Products                  | :x: Not Reviewed   | :x:           | :x: Not Reviewed   |
+| Admin Roles               | :white_check_mark: | :x:           | :white_check_mark: |
+| Admin Users               | :white_check_mark: | :x:           | :white_check_mark: |
 | Pages                     | :white_check_mark: | :x:           | :white_check_mark: |
 | Customers                 | :x:                | :x:           | :x:                |
 | Media                     | :x:                | :x:           | :x:                |
 | Widgets                   | :x:                | :x:           | :x:                |
 | Related Products          | :x:                | :x:           | :x:                |
 | SQL                       | :x:                | :x:           | :x:                |
-| Customer Groups           | :x:                | :x:           | :x:                |
+| Customer Groups           | :white_check_mark: | :x:           | :white_check_mark: |
 | Tax Rules                 | :x:                | :x:           | :x:                |
-| API Roles                 | :x:                | :x:           | :x:                |
-| API Users                 | :x:                | :x:           | :x:                |
+| API Roles                 | :white_check_mark: | :x:           | :white_check_mark: |
+| API Users                 | :white_check_mark: | :x:           | :white_check_mark: |
+| API Integrations          | :white_check_mark: | :x:           | :white_check_mark: |
 | Shipping Table Rates      | :x:                | :x:           | :x:                |
 | Catalog Price Rules       | :x:                | :x:           | :x:                |
 | Shopping Cart Price Rules | :x:                | :x:           | :x:                |

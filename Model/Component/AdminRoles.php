@@ -53,7 +53,7 @@ class AdminRoles extends YamlComponentAbstract
      * @param array $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
 
         if (isset($data['adminroles'])) {
@@ -72,8 +72,8 @@ class AdminRoles extends YamlComponentAbstract
     /**
      * Create Admin user roles, or update them if they exist
      *
-     * @param $roleName
-     * @param $resources
+     * @param string $roleName
+     * @param array $resources
      */
     private function createAdminRole($roleName, $resources)
     {
@@ -113,7 +113,7 @@ class AdminRoles extends YamlComponentAbstract
      * @param role
      * @param array|null $resources
      */
-    private function setResourceIds($role, $resources)
+    private function setResourceIds($role, array $resources = null)
     {
         $roleName = $role->getRoleName();
 

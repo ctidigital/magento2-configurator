@@ -51,7 +51,7 @@ class AdminUsers extends YamlComponentAbstract
      * @param array $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         //Get Each Role
         foreach ($data['adminusers'] as $roleSet) {

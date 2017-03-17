@@ -57,7 +57,7 @@ Do also include sample files with your component that works
 | Widgets                   | :x:                | :x:           | :x:                |
 | Related Products          | :x:                | :x:           | :x:                |
 | SQL                       | :x:                | :x:           | :x:                |
-| Customer Groups           | :x:                | :x:           | :x:                |
+| Customer Groups           | :white_check_mark: | :x:           | :white_check_mark: |
 | Tax Rules                 | :x:                | :x:           | :x:                |
 | API Roles                 | :x:                | :x:           | :x:                |
 | API Users                 | :x:                | :x:           | :x:                |

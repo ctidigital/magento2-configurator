@@ -38,7 +38,7 @@ class Config extends YamlComponentAbstract
      * @param array $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         try {
             $validScopes = array('global', 'websites', 'stores');

@@ -1,0 +1,25 @@
+adminroles:
+  - name: "API Sales Users"
+    resources:
+      - 'Magento_Backend::dashboard'
+      - 'Magento_Backend::admin'
+      - 'Magento_Sales::sales'
+      - 'Magento_Sales::create'
+      - 'Magento_Sales::actions_view'
+      - 'Magento_Sales::actions_edit'
+      - 'Magento_Sales::cancel'
+      - 'Magento_Sales::hold'
+      - 'Magento_Sales::unhold'
+  - name: "API Tax Manager"
+    resources:
+      - 'Magento_Backend::dashboard'
+      - 'Magento_Sales::sales'
+      - 'Magento_Sales::sales_operation'
+      - 'Magento_Sales::sales_order'
+      - 'Magento_Sales::actions'
+      - 'Magento_Sales::create'
+      - 'Magento_Sales::actions_view'
+      - 'Magento_Sales::email'
+      - 'Magento_Sales::reorder'
+  - name: "Admin"
+    resources:

@@ -136,8 +136,8 @@ abstract class ComponentAbstract
     /**
      * This method should be used to process the data and populate the Magento Database.
      *
-     * @param $data
+     * @param array $data
      * @return void
      */
-    abstract protected function processData($data = null);
+    abstract protected function processData(array $data = null);
 }

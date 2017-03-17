@@ -1,104 +1,76 @@
 <?php
-
 namespace CtiDigital\Configurator\Model\Component;
 
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Model\LoggingInterface;
+use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Symfony\Component\Yaml\Yaml;
-use Magento\Framework\File\Csv;
-use Magento\Framework\Filesystem\Driver\File;
 
-class Products extends ComponentAbstract
+class Products extends CsvComponentAbstract
 {
-    const TYPE_CSV = 'csv';
-    const TYPE_YAML = 'yaml';
-
     protected $alias = 'products';
     protected $name = 'Products';
     protected $description = 'Component to import products using a CSV file.';
-    protected $type;
+
+    /**
+     * @var ImporterFactory
+     */
     protected $importerFactory;
+
+    /**
+     * @var ProductFactory
+     */
     protected $productFactory;
 
     public function __construct(
-        \CtiDigital\Configurator\Model\LoggingInterface $log,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \FireGento\FastSimpleImport\Model\ImporterFactory $importerFactory,
-        \Magento\Catalog\Model\ProductFactory $productFactory
+        LoggingInterface $log,
+        ObjectManagerInterface $objectManager,
+        ImporterFactory $importerFactory,
+        ProductFactory $productFactory
     ) {
         parent::__construct($log, $objectManager);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
     }
 
-    protected function canParseAndProcess()
+    protected function processData(array $data = null)
     {
-        $path = BP . '/' . $this->source;
-        if (!file_exists($path)) {
+        // Get the first row of the CSV file for the attribute columns.
+        if (!isset($data[0])) {
             throw new ComponentException(
-                sprintf("Could not find file in path %s", $path)
+                sprintf('The row data is not valid.')
             );
         }
-        return true;
-    }
+        $attributeKeys = $this->getAttributesFromCsv($data);
+        unset($data[0]);
 
-    protected function parseData($source = null)
-    {
-        try {
-            $fileType = $this->getFileType($source);
-            if ($fileType === self::TYPE_CSV) {
-                $this->type = self::TYPE_CSV;
-                $file = new File();
-                $parser = new Csv($file);
-                return $parser->getData($source);
-            } elseif ($fileType === self::TYPE_YAML) {
-                $this->type = self::TYPE_YAML;
-                $parser = new Yaml();
-                return $parser->parse(file_get_contents($source));
+        // Prepare the data
+        $productsArray = array();
+
+        foreach ($data as $product) {
+            $productArray = array();
+            foreach ($attributeKeys as $column => $code) {
+                $productArray[$code] = $product[$column];
             }
-        } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
+            if ($this->isConfigurable($productArray)) {
+                $variations = $this->constructConfigurableVariations($productArray);
+                if (strlen($variations) > 0) {
+                    $productArray['configurable_variations'] = $variations;
+                }
+                unset($productArray['associated_products']);
+                unset($productArray['configurable_attributes']);
+            }
+            $productsArray[] = $productArray;
         }
-    }
 
-    protected function processData($data = null)
-    {
-        if ($this->type === self::TYPE_CSV) {
-            // Get the first row of the CSV file for the attribute columns.
-            if (!isset($data[0])) {
-                throw new ComponentException(
-                    sprintf('The row data is not valid.')
-                );
-            }
-            $attributeKeys = $this->getAttributesFromCsv($data);
-            unset($data[0]);
-
-            // Prepare the data
-            $productsArray = array();
-
-            foreach ($data as $product) {
-                $productArray = array();
-                foreach ($attributeKeys as $column => $code) {
-                    $productArray[$code] = $product[$column];
-                }
-                if ($this->isConfigurable($productArray)) {
-                    $variations = $this->constructConfigurableVariations($productArray);
-                    if (strlen($variations) > 0) {
-                        $productArray['configurable_variations'] = $variations;
-                    }
-                    unset($productArray['associated_products']);
-                    unset($productArray['configurable_attributes']);
-                }
-                $productsArray[] = $productArray;
-            }
-
-            try {
-                $import = $this->importerFactory->create();
-                $import->processImport($productsArray);
-                $this->log->logInfo($import->getLogTrace());
-            } catch (\Exception $e) {
-                $this->log->logError($import->getErrorMessages());
-                $this->log->logError($import->getLogTrace());
-            }
+        try {
+            $import = $this->importerFactory->create();
+            $import->processImport($productsArray);
+            $this->log->logInfo($import->getLogTrace());
+        } catch (\Exception $e) {
+            $this->log->logError($import->getErrorMessages());
+            $this->log->logError($import->getLogTrace());
         }
     }
 

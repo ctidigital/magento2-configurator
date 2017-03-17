@@ -62,10 +62,10 @@ class Pages extends YamlComponentAbstract
     /**
      * Loop through the data array and process page data
      *
-     * @param $data
+     * @param array $data
      * @return void
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         try {
             foreach ($data as $identifier => $data) {

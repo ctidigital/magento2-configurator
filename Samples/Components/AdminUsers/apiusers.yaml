@@ -1,0 +1,15 @@
+adminusers:
+  - rolename: API Sales Users
+    users:
+      - username: storeadmin
+        firstname: store
+        secondname: admin
+        email: apistoreadmin@email.com
+        password: fakepassword00
+  - rolename: API Product Manager
+    users:
+      - username: productmanager
+        firstname: product
+        secondname: manager
+        email:  apiproductmanager@email.com
+        password: Fakepassword01

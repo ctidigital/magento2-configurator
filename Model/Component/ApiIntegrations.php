@@ -34,7 +34,7 @@ class ApiIntegrations extends YamlComponentAbstract
     /**
      * @var TokenFactory
      */
-    protected $tokenFactory; 
+    protected $tokenFactory;
 
     /**
      * ApiIntegrations constructor.

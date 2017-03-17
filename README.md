@@ -24,6 +24,9 @@ php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctid
 php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
+If you're developing a new component, please ensure you have your corresponding unit test which extends `ComponentAbstractTestCase` as that will test that your component has the required functions.
+Do also include sample files with your component that works 
+
 ## Getting Started
 1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)
 2. Enable Modules `CtiDigital_Configurator`,`FireGento_FastSimpleImport`.

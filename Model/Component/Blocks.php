@@ -49,7 +49,7 @@ class Blocks extends YamlComponentAbstract
     }
 
     /**
-     * @param array $data
+     * @param $data
      */
     protected function processData($data = null)
     {

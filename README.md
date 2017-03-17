@@ -24,6 +24,9 @@ php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctid
 php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
+If you're developing a new component, please ensure you have your corresponding unit test which extends `ComponentAbstractTestCase` as that will test that your component has the required functions.
+Do also include sample files with your component that works 
+
 ## Getting Started
 1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)
 2. Enable Modules `CtiDigital_Configurator`,`FireGento_FastSimpleImport`.
@@ -46,15 +49,15 @@ php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital
 | Attributes                | :x:                | :x:           | :x:                |
 | Categories                | :x:                | :x:           | :x:                |
 | Products                  | :x:                | :x:           | :x:                |
-| Admin Roles               | :x:                | :x:           | :x:                |
-| Admin Users               | :x:                | :x:           | :x:                |
+| Admin Roles               | :white_check_mark: | :x:           | :white_check_mark: |
+| Admin Users               | :white_check_mark: | :x:           | :white_check_mark: |
 | Pages                     | :white_check_mark: | :x:           | :white_check_mark: |
 | Customers                 | :x:                | :x:           | :x:                |
 | Media                     | :x:                | :x:           | :x:                |
 | Widgets                   | :x:                | :x:           | :x:                |
 | Related Products          | :x:                | :x:           | :x:                |
 | SQL                       | :x:                | :x:           | :x:                |
-| Customer Groups           | :x:                | :x:           | :x:                |
+| Customer Groups           | :white_check_mark: | :x:           | :white_check_mark: |
 | Tax Rules                 | :x:                | :x:           | :x:                |
 | API Roles                 | :x:                | :x:           | :x:                |
 | API Users                 | :x:                | :x:           | :x:                |

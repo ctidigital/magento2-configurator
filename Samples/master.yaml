@@ -46,6 +46,15 @@ blocks:
     local:
       mode: maintain
       log: debug
+customergroups:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/CustomerGroups/customergroups.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
 adminroles:
   enabled: 1
   method: code

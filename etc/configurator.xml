@@ -6,6 +6,7 @@
     <component name="config" class="CtiDigital\Configurator\Model\Component\Config" />
     <component name="adminroles" class="CtiDigital\Configurator\Model\Component\AdminRoles" />
     <component name="adminusers" class="CtiDigital\Configurator\Model\Component\AdminUsers" /> <!-- Sample Depends on AdminRoles -->
+    <component name="customergroups" class="CtiDigital\Configurator\Model\Component\CustomerGroups" />
     <component name="categories" class="CtiDigital\Configurator\Model\Component\Categories" />
     <component name="products" class="CtiDigital\Configurator\Model\Component\Products" />
     <component name="blocks" class="CtiDigital\Configurator\Model\Component\Blocks" />

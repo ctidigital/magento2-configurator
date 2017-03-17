@@ -34,7 +34,7 @@ class Categories extends YamlComponentAbstract
         parent::__construct($log, $objectManager);
     }
 
-    public function processData(array $data = null)
+    public function processData($data = null)
     {
         if (isset($data['categories'])) {
             foreach ($data['categories'] as $store) {

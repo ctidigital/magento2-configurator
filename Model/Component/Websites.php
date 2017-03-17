@@ -38,7 +38,7 @@ class Websites extends YamlComponentAbstract
     }
 
 
-    protected function processData(array $data = null)
+    protected function processData($data = null)
     {
         try {
             if (!isset ($data['websites'])) {

@@ -60,7 +60,7 @@ class Products extends ComponentAbstract
         }
     }
 
-    protected function processData(array $data = null)
+    protected function processData($data = null)
     {
         if ($this->type === self::TYPE_CSV) {
             // Get the first row of the CSV file for the attribute columns.

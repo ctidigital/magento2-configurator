@@ -5,6 +5,7 @@
     <component name="websites" class="CtiDigital\Configurator\Model\Component\Websites" />
     <component name="config" class="CtiDigital\Configurator\Model\Component\Config" />
     <component name="categories" class="CtiDigital\Configurator\Model\Component\Categories" />
+    <component name="taxrules" class="CtiDigital\Configurator\Model\Component\TaxRules" />
     <component name="products" class="CtiDigital\Configurator\Model\Component\Products" />
     <component name="blocks" class="CtiDigital\Configurator\Model\Component\Blocks" />
     <component name="pages" class="CtiDigital\Configurator\Model\Component\Pages" />

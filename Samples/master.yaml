@@ -46,3 +46,12 @@ blocks:
     local:
       mode: maintain
       log: debug
+taxrules:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/TaxRules/taxrules.csv
+  env:
+    local:
+      mode: maintain
+      log: debug

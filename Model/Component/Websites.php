@@ -11,6 +11,8 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\Website;
 use Magento\Store\Model\WebsiteFactory;
+use Magento\Indexer\Model\IndexerFactory;
+use Magento\Framework\Event\ManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class Websites extends YamlComponentAbstract
@@ -26,15 +28,37 @@ class Websites extends YamlComponentAbstract
      */
     protected $eventManager;
 
+    /**
+     * @var WebsiteFactory
+     */
+    protected $websiteFactory;
+
+    /**
+     * @var StoreFactory
+     */
+    protected $storeFactory;
+
+    /**
+     * @var GroupFactory
+     */
+    protected $groupFactory;
+
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        \Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        \Magento\Framework\Event\ManagerInterface $eventManager
+        IndexerFactory $indexerFactory,
+        ManagerInterface $eventManager,
+        WebsiteFactory $websiteFactory,
+        StoreFactory $storeFactory,
+        GroupFactory $groupFactory
     ) {
+        parent::__construct($log, $objectManager);
+
         $this->indexer = $indexerFactory;
         $this->eventManager = $eventManager;
-        parent::__construct($log, $objectManager);
+        $this->websiteFactory = $websiteFactory;
+        $this->storeFactory = $storeFactory;
+        $this->groupFactory = $groupFactory;
     }
 
 
@@ -98,10 +122,9 @@ class Websites extends YamlComponentAbstract
 
         try {
 
-            // Load website via ObjectManager
             $this->log->logQuestion(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
-            $websiteFactory = new WebsiteFactory($this->objectManager, \Magento\Store\Model\Website::class);
-            $website = $websiteFactory->create();
+
+            $website = $this->websiteFactory->create();
             $website->load($code, 'code');
 
             $canSave = false;
@@ -185,8 +208,7 @@ class Websites extends YamlComponentAbstract
             }
 
             // Attempt to load the Store Group via the object manager
-            $groupFactory = new GroupFactory($this->objectManager, \Magento\Store\Model\Group::class);
-            $storeGroup = $groupFactory->create();
+            $storeGroup = $this->groupFactory->create();
 
             if (isset($storeGroupData['group_id'])) {
                 $storeGroup->load($storeGroupData['group_id']);
@@ -265,11 +287,10 @@ class Websites extends YamlComponentAbstract
         $logNest = 3;
 
         try {
-
-            // Load store view via ObjectManager
+            
             $this->log->logQuestion(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
-            $storeFactory = new StoreFactory($this->objectManager, \Magento\Store\Model\Store::class);
-            $storeView = $storeFactory->create();
+
+            $storeView = $this->storeFactory->create();
             $storeView->load($code, 'code');
 
             $canSave = false;
@@ -353,8 +374,8 @@ class Websites extends YamlComponentAbstract
                 sprintf("Setting default store for the store group '%s", $storeGroup->getName()),
                 $logNest
             );
-            $storeFactory = new StoreFactory($this->objectManager, \Magento\Store\Model\Store::class);
-            $storeView = $storeFactory->create();
+
+            $storeView = $this->storeFactory->create();
             $storeView->load($storeGroupData['default_store'], 'code');
 
             if (!$storeView->getId()) {

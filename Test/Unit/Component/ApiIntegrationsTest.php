@@ -9,12 +9,19 @@ use Magento\Integration\Api\IntegrationServiceInterface;
 
 class ApiIntegrationsTest extends ComponentAbstractTestCase
 {
+    protected $authorizationService;
+
+    public function __construct(AuthorizationService $authorizationService)
+    {
+        parent::__construct();
+        $this->authorizationService = $authorizationService;
+    }
 
     protected function componentSetUp()
     {
         $integrationFactory = $this->getMock(IntegrationFactory::class);
         $integrationService = $this->getMock(IntegrationServiceInterface::class);
-        $authorizationService = $this->getMock(AuthorizationService::class);
+        $authorizationService = $this->authorizationService;
         $tokenFactory = $this->getMock(TokenFactory::class);
 
         $this->component = new ApiIntegrations(
@@ -25,6 +32,7 @@ class ApiIntegrationsTest extends ComponentAbstractTestCase
             $authorizationService,
             $tokenFactory
         );
+
         $this->className = ApiIntegrations::class;
     }
 }

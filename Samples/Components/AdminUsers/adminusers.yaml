@@ -1,0 +1,15 @@
+adminusers:
+  - rolename: Sales Users
+    users:
+      - username: storeadmin
+        firstname: store
+        secondname: admin
+        email: storeadmin@email.com
+        password: fakepassword00
+  - rolename: Tax Manager
+    users:
+      - username: taxmanager
+        firstname: tax
+        secondname: manager
+        email:  taxmanager@email.com
+        password: Fakepassword01

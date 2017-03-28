@@ -7,6 +7,7 @@ use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
+use Magento\Store\Model\StoreFactory;
 
 class Widgets extends YamlComponentAbstract
 {
@@ -16,16 +17,19 @@ class Widgets extends YamlComponentAbstract
     protected $description = 'Component to manage CMS Widgets';
     protected $widgetCollection;
     protected $themeCollection;
+    protected $storeFactory;
 
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         WidgetCollection $collection,
+        StoreFactory $storeFactory,
         ThemeCollection $themeInterface
     ) {
         parent::__construct($log, $objectManager);
         $this->widgetCollection = $collection;
         $this->themeCollection = $themeInterface;
+        $this->storeFactory = $storeFactory;
     }
 
     protected function processData($data = null)
@@ -44,7 +48,7 @@ class Widgets extends YamlComponentAbstract
         try {
             $this->validateInstanceType($widgetData['instance_type']);
 
-            $widget = $this->getWidgetByInstanceTypeAndTitle($widgetData['instance_type'], $widgetData['title']);
+            $widget = $this->findWidgetByInstanceTypeAndTitle($widgetData['instance_type'], $widgetData['title']);
 
             $canSave = false;
             if (is_null($widget)) {
@@ -57,13 +61,13 @@ class Widgets extends YamlComponentAbstract
                 // @todo handle stores
                 // Comma separated
                 if ($key == "stores") {
-                    continue;
+                    $key = "store_ids";
+                    $value = $this->getCommaSeparatedStoreIds($value);
                 }
 
-                // @todo handle parameters
-                // serialized data a:3:{s:11:"anchor_text";s:11:"anchor text";s:5:"title";s:12:"anchor title";s:7:"page_id";s:1:"4";}
                 if ($key == "parameters") {
-                    continue;
+                    $key = "widget_parameters";
+                    $value = $this->populateWidgetParameters($value);
                 }
 
                 if ($key == "theme") {
@@ -108,14 +112,20 @@ class Widgets extends YamlComponentAbstract
      * @param $widgetTitle
      * @return \Magento\Framework\DataObject|null
      * @throws ComponentException
+     * @todo get this one to work instead of findWidgetByInstanceTypeAndTitle()
      */
     public function getWidgetByInstanceTypeAndTitle($widgetInstanceType, $widgetTitle)
     {
 
+        // Clear any existing filters applied to the widget collection
+        $this->widgetCollection->getSelect()->reset(\Zend_Db_Select::WHERE);
+        $this->widgetCollection->removeAllItems();
+
         // Filter widget collection
         $widgets = $this->widgetCollection
             ->addFieldToFilter('instance_type', $widgetInstanceType)
-            ->addFieldToFilter('title', $widgetTitle);
+            ->addFieldToFilter('title', $widgetTitle)
+            ->load();
         // @todo add store filter
 
 
@@ -135,6 +145,28 @@ class Widgets extends YamlComponentAbstract
         return $widgets->getFirstItem();
     }
 
+    /**
+     * @param $widgetInstanceType
+     * @param $widgetTitle
+     * @return mixed|null
+     */
+    public function findWidgetByInstanceTypeAndTitle($widgetInstanceType, $widgetTitle)
+    {
+
+        // Loop through the widget collection to find any matches.
+        foreach ($this->widgetCollection as $widget) {
+            if ($widget->getTitle() == $widgetTitle && $widget->getInstanceType() == $widgetInstanceType) {
+
+                // Return the widget if there is a match
+                return $widget;
+            }
+        }
+
+        // If there are no widgets, then it is like it doesn't even exist.
+        // Return null
+        return null;
+    }
+
     public function getThemeId($themeCode)
     {
 
@@ -148,5 +180,35 @@ class Widgets extends YamlComponentAbstract
         $theme = $themes->getFirstItem();
 
         return $theme->getId();
+    }
+
+    /**
+     * @param array $parameters
+     * @return string
+     * @todo better support with parameters that reference IDs of objects
+     */
+    public function populateWidgetParameters(array $parameters)
+    {
+
+        // Default property return
+        return serialize($parameters);
+    }
+
+    /**
+     * @param $stores
+     * @return string
+     */
+    public function getCommaSeparatedStoreIds($stores)
+    {
+        $storeIds = array();
+        foreach ($stores as $code) {
+            $storeView = $this->storeFactory->create();
+            $storeView->load($code, 'code');
+            if (!$storeView->getId()) {
+                throw new ComponentException(sprintf('Cannot find store with code %s', $code));
+            }
+            $storeIds[] = $storeView->getId();
+        }
+        return implode(',', $storeIds);
     }
 }

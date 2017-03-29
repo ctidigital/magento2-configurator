@@ -93,3 +93,8 @@ adminusers:
     local:
       mode: maintain
       log: debug
+media:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Media/media.yaml

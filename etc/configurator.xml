@@ -12,4 +12,5 @@
     <component name="blocks" class="CtiDigital\Configurator\Model\Component\Blocks" />
     <component name="pages" class="CtiDigital\Configurator\Model\Component\Pages" />
     <component name="widgets" class="CtiDigital\Configurator\Model\Component\Widgets" />
+    <component name="media" class="CtiDigital\Configurator\Model\Component\Media" />
 </config>

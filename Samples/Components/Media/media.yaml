@@ -1,0 +1,15 @@
+wysiwyg:
+  -
+    name: placeholder.gif
+    location: http://placehold.it/350x150
+  -
+    name: placeholder2.gif
+    location: http://placehold.it/350x550
+other_folder:
+  another_sub_folder:
+    -
+      name: placeholder1.gif
+      location: http://placehold.it/350x150
+    -
+      name: placeholder2.gif
+      location: http://placehold.it/350x550

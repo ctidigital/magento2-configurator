@@ -18,9 +18,9 @@ This is a work in progress and by no means for use with production environments 
 If you are contributing the module, please run the following commands to stand the best chance with Travis CI liking your code.
 These test include PHP Code Sniffer, PHP Mess Detector, PHP Copy and Paste Detector, PHP Unit
 ```
-php vendor/bin/phpcs --standard=PSR2 vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console/ vendor/ctidigital/magento2-configurator/Test/
-php vendor/bin/phpmd vendor/ctidigital/magento2-configurator/Model/,vendor/ctidigital/magento2-configurator/Console/,vendor/ctidigital/magento2-configurator/Test/ text cleancode,codesize,controversial,design,naming,unusedcode
-php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console vendor/ctidigital/magento2-configurator/Test/
+php vendor/bin/phpcs --standard=PSR2 vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console/ vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Helper/
+php vendor/bin/phpmd vendor/ctidigital/magento2-configurator/Model/,vendor/ctidigital/magento2-configurator/Console/,vendor/ctidigital/magento2-configurator/Test/,vendor/ctidigital/magento2-configurator/Helper/ text cleancode,codesize,controversial,design,naming,unusedcode
+php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Helper/
 php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
@@ -40,32 +40,33 @@ Do also include sample files with your component that works
 
 ## Roadmap for components to do
 
-| Component                 | Code Written       | Tests Written | Sample Files       |
-|---------------------------|--------------------|---------------|--------------------|
-| Websites                  | :white_check_mark: | :x:           | :white_check_mark: |
-| System Configuration      | :white_check_mark: | :x:           | :white_check_mark: |
-| Blocks                    | :white_check_mark: | :x:           | :white_check_mark: |
-| Attribute Sets            | :x:                | :x:           | :x:                |
-| Attributes                | :x:                | :x:           | :x:                |
-| Categories                | :x:                | :x:           | :x:                |
-| Products                  | :x:                | :x:           | :x:                |
-| Admin Roles               | :white_check_mark: | :x:           | :white_check_mark: |
-| Admin Users               | :white_check_mark: | :x:           | :white_check_mark: |
-| Pages                     | :white_check_mark: | :x:           | :white_check_mark: |
-| Customers                 | :x:                | :x:           | :x:                |
-| Media                     | :x:                | :x:           | :x:                |
-| Widgets                   | :x:                | :x:           | :x:                |
-| Related Products          | :x:                | :x:           | :x:                |
-| SQL                       | :x:                | :x:           | :x:                |
-| Customer Groups           | :white_check_mark: | :x:           | :white_check_mark: |
-| Tax Rules                 | :x:                | :x:           | :x:                |
-| API Roles                 | :x:                | :x:           | :x:                |
-| API Users                 | :x:                | :x:           | :x:                |
-| Shipping Table Rates      | :x:                | :x:           | :x:                |
-| Catalog Price Rules       | :x:                | :x:           | :x:                |
-| Shopping Cart Price Rules | :x:                | :x:           | :x:                |
-| Rewrites                  | :x:                | :x:           | :x:                |
-| Orders                    | :x:                | :x:           | :x:                |
+| Component                 | Code Written       | Tests Written      | Sample Files       |
+|---------------------------|--------------------|--------------------|--------------------|
+| Websites                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| System Configuration      | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Blocks                    | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Admin Roles               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Pages                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Widgets                   | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Attribute Sets            | :x:                | :x:                | :x:                |
+| Attributes                | :x:                | :x:                | :x:                |
+| Categories                | :x:                | :x:                | :x:                |
+| Products                  | :x:                | :x:                | :x:                |
+| Customers                 | :x:                | :x:                | :x:                |
+| Media                     | :x:                | :x:                | :x:                |
+| Related Products          | :x:                | :x:                | :x:                |
+| SQL                       | :x:                | :x:                | :x:                |
+| Tax Rules                 | :x:                | :x:                | :x:                |
+| Customers                 | :x:                | :x:                | :x:                |
+| API Roles                 | :x:                | :x:                | :x:                |
+| API Users                 | :x:                | :x:                | :x:                |
+| Shipping Table Rates      | :x:                | :x:                | :x:                |
+| Catalog Price Rules       | :x:                | :x:                | :x:                |
+| Shopping Cart Price Rules | :x:                | :x:                | :x:                |
+| Rewrites                  | :x:                | :x:                | :x:                |
+| Orders                    | :x:                | :x:                | :x:                |
 
 License
 ----

@@ -45,23 +45,21 @@ Do also include sample files with your component that works
 | Websites                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | System Configuration      | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Blocks                    | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Admin Roles               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Pages                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Widgets                   | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Attribute Sets            | :x:                | :x:                | :x:                |
 | Attributes                | :x:                | :x:                | :x:                |
 | Categories                | :x:                | :x:                | :x:                |
 | Products                  | :x:                | :x:                | :x:                |
-| Admin Roles               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Pages                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Customers                 | :x:                | :x:                | :x:                |
 | Media                     | :x:                | :x:                | :x:                |
-| Widgets                   | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |
-| Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rules                 | :x:                | :x:                | :x:                |
 | Customers                 | :x:                | :x:                | :x:                |
-| Admin Roles               | :x:                | :x:                | :x:                |
-| Admin Users               | :x:                | :x:                | :x:                |
 | API Roles                 | :x:                | :x:                | :x:                |
 | API Users                 | :x:                | :x:                | :x:                |
 | Shipping Table Rates      | :x:                | :x:                | :x:                |

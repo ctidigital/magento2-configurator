@@ -24,11 +24,11 @@ class Widgets extends YamlComponentAbstract
         ObjectManagerInterface $objectManager,
         WidgetCollection $collection,
         StoreFactory $storeFactory,
-        ThemeCollection $themeInterface
+        ThemeCollection $themeCollection
     ) {
         parent::__construct($log, $objectManager);
         $this->widgetCollection = $collection;
-        $this->themeCollection = $themeInterface;
+        $this->themeCollection = $themeCollection;
         $this->storeFactory = $storeFactory;
     }
 

@@ -50,7 +50,7 @@ pages:
   enabled: 1
   method: code
   sources:
-    - ../configurator/Blocks/pages.yaml
+    - ../configurator/Pages/pages.yaml
   env:
     local:
       mode: maintain

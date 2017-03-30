@@ -35,7 +35,7 @@ class Config extends YamlComponentAbstract
     }
 
     /**
-     * @param array $data
+     * @param $data
      * @SuppressWarnings(PHPMD)
      */
     protected function processData(array $data = null)

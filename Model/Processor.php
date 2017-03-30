@@ -152,7 +152,10 @@ class Processor
 
     private function runComponent($componentAlias, $componentConfig)
     {
-        $this->log->logComment(sprintf("Loading component %s", $componentAlias));
+        $this->log->logComment("");
+        $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));
+        $this->log->logComment(sprintf("| Loading component %s |", $componentAlias));
+        $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));
 
         $componentClass = $this->configInterface->getComponentByName($componentAlias);
 

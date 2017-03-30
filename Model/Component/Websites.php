@@ -121,7 +121,6 @@ class Websites extends YamlComponentAbstract
         $logNest = 1;
 
         try {
-
             $this->log->logQuestion(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
 
             $website = $this->websiteFactory->create();
@@ -131,7 +130,6 @@ class Websites extends YamlComponentAbstract
 
             // Check if it exists
             if ($website->getId()) {
-                $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(sprintf("Website already exists with code '%s'", $code), $logNest);
             } else {
                 $this->reindex = true;
@@ -196,12 +194,12 @@ class Websites extends YamlComponentAbstract
         try {
 
             if (isset($storeGroupData['group_id'])) {
-                $this->log->logQuestion(
+                $this->log->logComment(
                     sprintf("Does the store group with id '%s' already exist?", $storeGroupData['group_id']),
                     $logNest
                 );
             } else {
-                $this->log->logQuestion(
+                $this->log->logComment(
                     sprintf("Does the store group with name '%s' already exist?", $storeGroupData['name']),
                     $logNest
                 );
@@ -220,7 +218,6 @@ class Websites extends YamlComponentAbstract
 
             // Check if the store group already exists
             if ($storeGroup->getId()) {
-                $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(
                     sprintf("Store group already exists with name '%s'", $storeGroupData['name']),
                     $logNest
@@ -288,7 +285,11 @@ class Websites extends YamlComponentAbstract
 
         try {
             
+<<<<<<< HEAD
             $this->log->logQuestion(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
+=======
+            $this->log->logComment(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
+>>>>>>> 83e0986247b775325a46c943a003dbaefd5459c9
 
             $storeView = $this->storeFactory->create();
             $storeView->load($code, 'code');
@@ -297,7 +298,6 @@ class Websites extends YamlComponentAbstract
 
             // Check if it exists
             if ($storeView->getId()) {
-                $this->log->logInfo("Yes", $logNest);
                 $this->log->logComment(sprintf("Store view already exists with code '%s'", $code), $logNest);
             } else {
 

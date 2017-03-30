@@ -159,7 +159,8 @@ class Categories extends YamlComponentAbstract
             $category->save();
 
             $this->log->logInfo(
-                sprintf('Updated category %s', $category->getName())
+                sprintf('Updated category %s', $category->getName()),
+                ($category->getLevel() - 1)
             );
 
             if (isset($categoryValues['categories'])) {

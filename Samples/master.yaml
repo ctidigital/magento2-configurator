@@ -51,6 +51,33 @@ apiintegrations:
   method: code
   sources:
     - ../configurator/ApiIntegrations/apiintegrations.yaml
+taxrules:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/TaxRules/taxrules.csv
+  env:
+    local:
+      mode: maintain
+      log: debug
+pages:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Pages/pages.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
+widgets:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Widgets/widgets.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
 customergroups:
   enabled: 1
   method: code
@@ -80,3 +107,8 @@ adminusers:
     local:
       mode: maintain
       log: debug
+media:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Media/media.yaml

@@ -77,6 +77,8 @@ class AdminUsers extends YamlComponentAbstract
 
                     $this->createAdminUser($userData, $roleId);
 
+                } catch (\Magento\Framework\Validator\Exception $e) {
+                    $this->log->logError(sprintf('Magento Framework Validation Exception: %s', $e->getMessage()));
                 } catch (ComponentException $e) {
                     $this->log->logError($e->getMessage());
                 }
@@ -96,7 +98,7 @@ class AdminUsers extends YamlComponentAbstract
         $userCount = $user->getCollection()->addFieldToFilter('email', $userData['email'])->getSize();
 
         if ($userCount > 0) {
-            $this->log->logInfo(
+            $this->log->logComment(
                 sprintf(
                     'Admin User "%s" creation skipped: User with the email "%s" already exists',
                     $userData['firstname'] . ' ' . $userData['secondname'],

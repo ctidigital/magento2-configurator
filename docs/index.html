@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Magento 2 Configurator by CTI Digital</title>
+    <meta name="description" content="A Magento 2 module created by CTI Digital to create and maintain database variables using files.">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!--[if lte IE 8]>
+    <script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="assets/css/main.css"/>
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+</head>
+<body>
+
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Header -->
+    <header id="header" class="alt">
+        <span class="logo"><img src="images/logo.svg" alt="" width="300"/></span>
+        <h1>Magento 2 Configurator</h1>
+        <p>Just another free, fully grown configurator for <a href="https://magento.com/">Magento 2</a><br/>
+            built by <a href="https://twitter.com/ctidigital">@ctidigital</a></p>
+    </header>
+
+    <!-- Nav -->
+    <nav id="nav">
+        <ul>
+            <li><a href="#intro" class="active">Introduction</a></li>
+            <li><a href="#workflow">Workflow</a></li>
+            <li><a href="#getting-started">Getting Started</a></li>
+            <li><a href="#usage">Usage</a></li>
+            <li><a href="#supported-components">Supported Components</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main -->
+    <div id="main">
+
+        <!-- Introduction -->
+        <section id="intro" class="main">
+            <div class="spotlight">
+                <div class="content">
+                    <header class="major">
+                        <h2>Magento 2 Configurator</h2>
+                    </header>
+                    <p>A Magento module initially created by CTI Digital to create and maintain database variables using
+                        files.</p>
+                    <p>If you're interested about finding out more about the background of the configurator, watch this
+                        lightning talk by <a href="https://twitter.com/rick_steckles">Rick Steckles</a> at Mage Titans.
+                        This is a work in progress and by no means for use with production environments (and probably
+                        not even development environments either just yet).</p>
+                    <ul class="actions">
+                        <li><a href="https://www.youtube.com/watch?v=u9zHaX8G5_0" class="button" target="_blank">View
+                            MageTitans Talk</a></li>
+                        <li><a href="https://github.com/ctidigital/magento2-configurator" class="button special"><span
+                                class="icon fa-github"></span> View Project</a></li>
+                    </ul>
+                </div>
+                <span class="image"><img src="images/logo.svg" alt=""/></span>
+            </div>
+        </section>
+
+        <!-- First Section -->
+        <section id="workflow" class="main special">
+            <header class="major">
+                <h2>Workflow</h2>
+            </header>
+            <ul class="features">
+                <li>
+                    <span class="icon major style1 fa-code"></span>
+                    <h3>Install</h3>
+                    <p>Install Magento from scratch with important database configurations.</p>
+                </li>
+                <li>
+                    <span class="icon major style3 fa-copy"></span>
+                    <h3>Share</h3>
+                    <p>Share and collaborate configuration with other colleagues.</p>
+                </li>
+                <li>
+                    <span class="icon major style5 fa-diamond"></span>
+                    <h3>Versioning</h3>
+                    <p>Maintain different versions of your configurations & split to suit environments.</p>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Get Started -->
+        <section id="getting-started" class="main special">
+            <header class="major">
+                <h2>Getting Started</h2>
+                <ul class="actions">
+                    <li><p>Install using Composer<br/><code>composer require ctidigital/magento2-configurator</code></p></li>
+                    <li><p>Create a master.yaml file in<br/><code>&lt;mage_root&gt;/app/etc/</code> (see <a
+                            href="https://github.com/ctidigital/magento2-configurator/blob/develop/Samples/master.yaml"
+                            target="_blank">samples/master.yaml</a>)</p></li>
+                    <li><p>Enable Modules<br/><code>CtiDigital_Configurator, FireGento_FastSimpleImport</code></p></li>
+                    <li><p>Run<br/><code>bin/magento configurator:run --env="&lt;environment&gt;"</code></p></li>
+                </ul>
+
+            </header>
+        </section>
+
+        <section id="usage" class="main special">
+            <header class="major">
+                <h2>Usage</h2>
+                <ul class="actions">
+                    <li><p>Listing available components<br/><code>bin/magento configurator:list</code></p></li>
+                    <li><p>Running individual components<br/><code>bin/magento configurator:run --env="&lt;environment&gt;"
+                        --components="config"</code></p></li>
+                    <li><p>Extra logs<br/><code>bin/magento configurator:run --env="&lt;environment&gt;" -v</code></p>
+                    </li>
+                </ul>
+
+            </header>
+        </section>
+
+
+        <!-- Supported components Section -->
+        <section id="supported-components" class="main special">
+            <header class="major">
+                <h2>Supported Components</h2>
+                <p>Below are the list of supported components.</p>
+            </header>
+            <ul class="statistics">
+                <li class="style5">
+                    <span class="icon fa-laptop"></span>
+                    <strong>Websites</strong>
+                </li>
+                <li class="style2">
+                    <span class="icon fa-cogs"></span>
+                    <strong>System</strong> Configuration
+                </li>
+                <li class="style3">
+                    <span class="icon fa-dashboard"></span>
+                    <strong>Admin</strong> Roles, Users
+                </li>
+                <li class="style4">
+                    <span class="icon fa-newspaper-o"></span>
+                    <strong>Pages</strong>
+                </li>
+            </ul>
+            <ul class="statistics">
+                <li class="style3">
+                    <span class="icon fa-plug"></span>
+                    <strong>Widgets</strong>
+                </li>
+                <li class="style2">
+                    <span class="icon fa-users"></span>
+                    <strong>Customer</strong> Groups
+                </li>
+                <li class="style5">
+                    <span class="icon fa-file-image-o"></span>
+                    <strong>Media</strong>
+                </li>
+                <li class="style4">
+                    <span class="icon fa-gbp"></span>
+                    <strong>Tax</strong> Rules
+                </li>
+            </ul>
+           <footer class="major">
+                <p><strong>Status:&nbsp;</strong> ✅ &nbsp;Code Written&nbsp; ❕ Tests Written&nbsp; ✅ &nbsp;Included
+                    Sample files</p>
+            </footer>
+        </section>
+
+        <section id="wip-components" class="main special">
+            <header class="major">
+                <h2>Work In Progress Components</h2>
+                <p>Below are the list of components, not supported and been worked upon.</p>
+            </header>
+            <ul class="statistics">
+                <li class="style1">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Tax</strong> Rates
+                </li>
+                <li class="style2">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Attribute</strong> Sets, Attributes
+                </li>
+                <li class="style1">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Categories</strong>
+                </li>
+                <li class="style2">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Products</strong> Related Products
+                </li>
+                <li class="style1">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Customers</strong>
+                </li>
+            </ul>
+            <ul class="statistics">
+                <li class="style1">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>SQL</strong>
+                </li>
+                <li class="style2">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>API</strong> Roles, Users
+                </li>
+                <li class="style1">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Shipping</strong> Table rates
+                </li>
+                <li class="style2">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Price Rules</strong> Catalog, Shopping Cart
+                </li>
+                <li class="style1">
+                    <span class="icon fa-lightbulb-o"></span>
+                    <strong>Rewrites</strong> Orders
+                </li>
+            </ul>
+            <footer class="major">
+                <p><strong>Status:&nbsp;</strong> ❌ &nbsp;Code Written&nbsp; ❌ Tests Written&nbsp; ❌ &nbsp;Included
+                    Sample files</p>
+            </footer>
+        </section>
+
+        <!-- Get Started -->
+        <section id="contribute" class="main special">
+            <header class="major">
+                <h2>Contribute</h2>
+                <p>We are happy to accept any contributions from community for this module.<br/>If you are willing to
+                    contribute the module, Please view our contributing tips from the GitHub link below.</header>
+            <footer class="major">
+                <ul class="actions">
+                    <li><a href="https://github.com/ctidigital/magento2-configurator#testing-locally-for-development"
+                           target="_blank" class="button special">Contribute</a></li>
+                    <li><a href="https://github.com/ctidigital/magento2-configurator" class="button"><span
+                            class="icon fa-github"></span> View Project</a></li>
+                </ul>
+            </footer>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <p class="copyright">&copy; <a href="https://ctidigital.com">CTI Digital Ltd</a>.</p>
+    </footer>
+
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/jquery.scrolly.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<!--[if lte IE 8]>
+<script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>

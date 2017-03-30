@@ -46,3 +46,10 @@ ls
 
 cd ../../..
 
+php bin/magento cache:flush
+php bin/magento module:status
+php bin/magento module:enable FireGento_FastSimpleImport
+php bin/magento module:enable CtiDigital_Configurator
+php bin/magento module:status
+php bin/magento cache:flush
+php bin/magento configurator:list

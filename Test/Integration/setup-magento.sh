@@ -37,6 +37,9 @@ cd ../../../app/etc
 echo Symlink master.yaml folder
 ln -s ../../../Samples/master.yml master.yaml
 
+pwd
+ls -alh
+
 cd ../..
 php bin/magento cache:flush
 php bin/magento module:status

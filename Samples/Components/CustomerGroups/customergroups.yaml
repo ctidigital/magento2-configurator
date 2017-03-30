@@ -1,0 +1,5 @@
+customergroups:
+  - taxclass: Retail Customer
+    groups:
+     - name: VIP
+     - name: Subscriber

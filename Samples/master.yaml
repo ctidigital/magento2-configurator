@@ -55,3 +55,55 @@ taxrules:
     local:
       mode: maintain
       log: debug
+pages:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Blocks/pages.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
+widgets:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Widgets/widgets.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
+customergroups:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/CustomerGroups/customergroups.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
+adminroles:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/AdminRoles/adminroles.yaml
+    - ../configurator/AdminRoles/apiroles.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
+adminusers:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/AdminUsers/adminusers.yaml
+    - ../configurator/AdminUsers/apiusers.yaml
+  env:
+    local:
+      mode: maintain
+      log: debug
+media:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Media/media.yaml

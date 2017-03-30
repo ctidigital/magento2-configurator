@@ -2,9 +2,6 @@
 
 echo Setting up Magento
 
-echo Updating composer - if required
-composer selfupdate
-
 echo Disabling xdebug for performance
 echo '' > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
 

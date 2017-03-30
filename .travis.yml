@@ -1,16 +1,20 @@
 dist: trusty
 language: php
 php:
-  - 5.6
   - 7.0
+services:
+  - mysql
 env:
   matrix:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
+    - TEST_SUITE=integration
 
 install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - composer install --prefer-dist
+before_script:
+  - sh -c "if [ '$TEST_SUITE' = 'integration' ]; then ./Test/Integration/setup-magento.sh; fi"
 script:
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcs --standard=PSR2 Model/ Console/ Test/ Helper/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpmd Model/,Console/,Test/,Helper/ text cleancode,codesize,controversial,design,naming,unusedcode; fi"

@@ -4,6 +4,7 @@ php:
   - 7.0
 services:
   - mysql
+sudo: required
 env:
   matrix:
     - TEST_SUITE=unit

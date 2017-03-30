@@ -43,4 +43,3 @@ ls -alh
 cd ../..
 php bin/magento cache:flush
 php bin/magento module:status
-php bin/magento configurator:list

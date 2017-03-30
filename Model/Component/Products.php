@@ -34,7 +34,7 @@ class Products extends CsvComponentAbstract
         $this->importerFactory = $importerFactory;
     }
 
-    protected function processData(array $data = null)
+    protected function processData($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
         if (!isset($data[0])) {

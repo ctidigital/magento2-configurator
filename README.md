@@ -51,6 +51,8 @@ Do also include sample files with your component that works
 | Widgets                   | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Media                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Tax Rates                 | :x:                | :x:                | :x:                |
 | Attribute Sets            | :x:                | :x:                | :x:                |
 | Attributes                | :x:                | :x:                | :x:                |
 | Categories                | :x:                | :x:                | :x:                |
@@ -58,7 +60,6 @@ Do also include sample files with your component that works
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |
-| Tax Rules                 | :x:                | :x:                | :x:                |
 | API Roles                 | :x:                | :x:                | :x:                |
 | API Users                 | :x:                | :x:                | :x:                |
 | Shipping Table Rates      | :x:                | :x:                | :x:                |

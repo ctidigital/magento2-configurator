@@ -64,7 +64,7 @@ class TaxRules extends CsvComponentAbstract
     /**
      * @param array|null $data
      */
-    protected function processData(array $data = null)
+    protected function processData($data = null)
     {
         //Check Row Data exists
         if (!isset($data[0])) {
@@ -95,7 +95,7 @@ class TaxRules extends CsvComponentAbstract
 
         }
 
-        $this->log->logInfo(
+        $this->log->logComment(
             sprintf('Tax Rules import finished')
         );
     }
@@ -217,7 +217,7 @@ class TaxRules extends CsvComponentAbstract
 
         if ($ruleCount > 0) {
 
-            $this->log->logError(
+            $this->log->logComment(
                 sprintf('Tax Rule "%s" already exists in database.', $ruleData['code'])
             );
 

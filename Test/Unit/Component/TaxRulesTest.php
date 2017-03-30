@@ -10,7 +10,7 @@ class TaxRulesTest extends ComponentAbstractTestCase
 {
     protected function componentSetUp()
     {
-        $rateFactory = $this->getMock(RateFactory::class);
+        $rateFactory = $this->getMock(RateFactory::class, [], [], '', false);
         $classModelFactory = $this->getMock(ClassModelFactory::class);
         $ruleFactory = $this->getMock(RuleFactory::class);
 

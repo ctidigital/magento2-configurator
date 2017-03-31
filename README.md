@@ -44,6 +44,8 @@ Do also include sample files with your component that works
 |---------------------------|--------------------|--------------------|--------------------|
 | Websites                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | System Configuration      | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Categories                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Products                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Blocks                    | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Admin Roles               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
@@ -55,8 +57,6 @@ Do also include sample files with your component that works
 | Tax Rates                 | :x:                | :x:                | :x:                |
 | Attribute Sets            | :x:                | :x:                | :x:                |
 | Attributes                | :x:                | :x:                | :x:                |
-| Categories                | :x:                | :x:                | :x:                |
-| Products                  | :x:                | :x:                | :x:                |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |

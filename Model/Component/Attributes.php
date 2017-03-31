@@ -6,7 +6,6 @@ use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
-use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
@@ -39,11 +38,11 @@ class Attributes extends YamlComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        EavSetupFactory $eavSetupFactory,
+        EavSetup $eavSetup,
         Product\Attribute\Repository $repository
     ) {
         parent::__construct($log, $objectManager);
-        $this->eavSetup = $eavSetupFactory->create();
+        $this->eavSetup = $eavSetup;
         $this->productAttributeRepository = $repository;
     }
 
@@ -109,6 +108,10 @@ class Attributes extends YamlComponentAbstract
         $requiresUpdate = false;
         $nest = 1;
         foreach ($attributeConfig as $name => $value) {
+
+            if ($name == "product_types") {
+                $value = implode(',', $value);
+            }
 
             $name = $this->mapAttributeConfig($name);
 
@@ -183,7 +186,6 @@ class Attributes extends YamlComponentAbstract
 
         $optionsToAdd = array_diff($option['values'], $existingAttributeOptions);
         //$optionsToRemove = array_diff($existingAttributeOptions, $option['values']);
-
 
         return $optionsToAdd;
     }

@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Model\Component\AttributeSets;
-use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Api\AttributeSetRepositoryInterface;
 
 /**
@@ -16,13 +16,13 @@ class AttributeSetsTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $eavSetupFactory = $this->getMock(EavSetupFactory::class);
+        $eavSetup = $this->getMock(EavSetup::class, [], [], '', false);
         $attributeSetsRepositoryInterface = $this->getMock(AttributeSetRepositoryInterface::class);
 
         $this->component = new AttributeSets(
             $this->logInterface,
             $this->objectManager,
-            $eavSetupFactory,
+            $eavSetup,
             $attributeSetsRepositoryInterface
         );
 

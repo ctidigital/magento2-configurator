@@ -8,7 +8,6 @@ use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\Data\AttributeSetInterface;
 use Magento\Eav\Setup\EavSetup;
-use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Eav\Model\AttributeSetRepository;
 
@@ -43,13 +42,13 @@ class AttributeSets extends YamlComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        EavSetupFactory $eavSetupFactory,
+        EavSetup $eavSetup,
         AttributeSetRepositoryInterface $attributeSetRepository
     ) {
 
         parent::__construct($log, $objectManager);
 
-        $this->eavSetup = $eavSetupFactory;
+        $this->eavSetup = $eavSetup;
         $this->attributeSetRepository = $attributeSetRepository;
     }
 

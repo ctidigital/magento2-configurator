@@ -3,7 +3,6 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Magento\Framework\Webapi\Exception;
 use Symfony\Component\Yaml\Yaml;
 
 class Categories extends YamlComponentAbstract
@@ -25,12 +24,10 @@ class Categories extends YamlComponentAbstract
         \CtiDigital\Configurator\Model\LoggingInterface $log,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Catalog\Model\CategoryFactory $category,
-        \Magento\Store\Model\GroupFactory $groupFactory,
-        \Magento\Framework\App\Filesystem\DirectoryList $dirList
+        \Magento\Store\Model\GroupFactory $groupFactory
     ) {
         $this->category = $category;
         $this->groupFactory = $groupFactory;
-        $this->dirList = $dirList;
         parent::__construct($log, $objectManager);
     }
 
@@ -98,7 +95,6 @@ class Categories extends YamlComponentAbstract
      *
      * @param array $categories
      * @param \Magento\Catalog\Model\Category $parentCategory
-     * @SuppressWarnings(PHPMD)
      */
     public function createOrUpdateCategory(
         \Magento\Catalog\Model\Category $parentCategory,
@@ -122,27 +118,10 @@ class Categories extends YamlComponentAbstract
                         break;
                     case 'category':
                         break;
-                    case 'image':
-                        $img = basename($value);
-                        $path = parse_url($value);
-                        $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
-
-                        if (! array_key_exists('host', $path)) {
-                            $value = BP . '/'. trim($value, '/');
-                        }
-
-                        if (! @copy($value, $catMediaDir . $img)) {
-                            $this->log->logError('Failed to find image: ' . $value, 1);
-                            break;
-                        }
-
-                        $category->setImage($img);
-                        break;
                     default:
                         $category->setCustomAttribute($attribute, $value);
                 }
             }
-
             // Set the category to be active
             if (!(isset($categoryValues['is_active']))) {
                 $category->setIsActive(true);

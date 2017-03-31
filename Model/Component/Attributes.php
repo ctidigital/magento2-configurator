@@ -6,14 +6,8 @@ use CtiDigital\Configurator\Model\Exception\ComponentException;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
-use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Class Attributes
- * @package CtiDigital\Configurator\Model\Component
- * @SuppressWarnings(PHPMD.LongVariable)
- */
 class Attributes extends YamlComponentAbstract
 {
 
@@ -34,12 +28,11 @@ class Attributes extends YamlComponentAbstract
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        EavSetupFactory $eavSetupFactory
-    ) {
+        EavSetup $eavSetup) {
 
         parent::__construct($log, $objectManager);
 
-        $this->eavSetup = $eavSetupFactory;
+        $this->eavSetup = $eavSetup;
     }
 
     /**
@@ -48,8 +41,8 @@ class Attributes extends YamlComponentAbstract
     protected function processData($attributeConfigurationData = null)
     {
         try {
-            foreach ($attributeConfigurationData['attributes'] as $attributeCode => $attributeConfiguration) {
-                $this->processAttribute($attributeCode, $attributeConfiguration);
+            foreach ($attributeConfigurationData['attributes'] as $_attributeCode => $_attributeConfiguration) {
+                $this->processAttribute($_attributeCode, $_attributeConfiguration);
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());

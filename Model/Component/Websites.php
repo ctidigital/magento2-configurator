@@ -21,19 +21,13 @@ class Websites extends YamlComponentAbstract
     protected $description = 'Component to manage Websites, Stores and Store Views';
     protected $indexer;
     protected $reindex = false;
-    /**
-     * @var \Magento\Framework\Event\ManagerInterface
-     */
-    protected $eventManager;
 
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        \Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        \Magento\Framework\Event\ManagerInterface $eventManager
+        \Magento\Indexer\Model\IndexerFactory $indexerFactory
     ) {
         $this->indexer = $indexerFactory;
-        $this->eventManager = $eventManager;
         parent::__construct($log, $objectManager);
     }
 
@@ -330,7 +324,6 @@ class Websites extends YamlComponentAbstract
 
                 // Save the store view
                 $storeView->getResource()->save($storeView);
-                $this->eventManager->dispatch('store_add', ['store' => $storeView]);
                 $this->log->logInfo(sprintf("Saved store view '%s'", $code), $logNest);
             }
             return $storeView;

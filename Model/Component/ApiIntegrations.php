@@ -1,7 +1,6 @@
 <?php
 namespace CtiDigital\Configurator\Model\Component;
 
-use Symfony\Component\Yaml\Yaml;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
@@ -63,9 +62,8 @@ class ApiIntegrations extends YamlComponentAbstract
 
     /**
      * @param array $data
-     * @SuppressWarnings(PHPMD)
      */
-    protected function processData(array $data = null)
+    protected function processData($data = null)
     {
         if (isset($data['apiintegrations'])) {
             foreach ($data['apiintegrations'] as $integrationData) {
@@ -103,7 +101,7 @@ class ApiIntegrations extends YamlComponentAbstract
                 ->addFieldToFilter('name', $integrationData['name'])
                 ->getFirstItem();
 
-            $this->log->logInfo(
+            $this->log->logComment(
                 sprintf('API Integration "%s" already exists: Creation skipped', $integration->getName())
             );
 

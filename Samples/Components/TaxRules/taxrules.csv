@@ -1,0 +1,3 @@
+code,tax_rate_ids,customer_tax_class_ids,product_tax_class_ids,priority,calculate_subtotal,position
+Tax Rule One,US-CA-*-Rate 1,Retail Customer,Taxable Goods,0,0,1
+Tax Rate Two,US-NY-*-Rate 1,Retail Customer,Taxable Goods,1,1,2

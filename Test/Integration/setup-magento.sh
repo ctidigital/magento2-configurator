@@ -33,9 +33,12 @@ tar -xf configurator.tar.gz
 echo Go to app etc folder
 cd ../../../app/etc
 
-
 echo Symlink master.yaml folder
 ln -s ../../../Samples/master.yml master.yaml
+
+pwd
+ls -alh
+cat master.yaml
 
 cd ../..
 php bin/magento cache:flush

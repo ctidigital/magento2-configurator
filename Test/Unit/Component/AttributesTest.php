@@ -12,13 +12,8 @@ class AttributesTest extends ComponentAbstractTestCase
     protected function componentSetUp()
     {
         $eavSetup = $this->getMock(EavSetup::class, [], [], '', false);
-        $productAttributeRepository = $this->getMock(ProductAttributeRepository::class, [], [], '', false);
-        $this->component = new Attributes(
-            $this->logInterface,
-            $this->objectManager,
-            $eavSetup,
-            $productAttributeRepository
-        );
+        $attributeRepository = $this->getMock(ProductAttributeRepository::class, [], [], '', false);
+        $this->component = new Attributes($this->logInterface, $this->objectManager, $eavSetup, $attributeRepository);
         $this->className = Attributes::class;
     }
 }

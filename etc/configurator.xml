@@ -14,4 +14,6 @@
     <component name="pages" class="CtiDigital\Configurator\Model\Component\Pages" />
     <component name="widgets" class="CtiDigital\Configurator\Model\Component\Widgets" />
     <component name="media" class="CtiDigital\Configurator\Model\Component\Media" />
+    <component name="attributes" class="CtiDigital\Configurator\Model\Component\Attributes" />
+    <component name="attribute_sets" class="CtiDigital\Configurator\Model\Component\AttributeSets" />
 </config>

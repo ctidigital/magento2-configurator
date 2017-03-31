@@ -107,3 +107,13 @@ media:
   method: code
   sources:
     - ../configurator/Media/media.yaml
+attributes:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Attributes/attributes.yaml
+attribute_sets:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Attributes/attribute_sets.yaml

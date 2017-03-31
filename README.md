@@ -55,13 +55,12 @@ Do also include sample files with your component that works
 | Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Media                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rates                 | :x:                | :x:                | :x:                |
 | Attribute Sets            | :x:                | :x:                | :x:                |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |
-| API Roles                 | :x:                | :x:                | :x:                |
-| API Users                 | :x:                | :x:                | :x:                |
 | Shipping Table Rates      | :x:                | :x:                | :x:                |
 | Catalog Price Rules       | :x:                | :x:                | :x:                |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |

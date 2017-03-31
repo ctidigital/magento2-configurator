@@ -55,7 +55,7 @@ Do also include sample files with your component that works
 | Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Media                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| API Integrations          | :x:                | :x:                | :x:                |
+| API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rates                 | :x:                | :x:                | :x:                |
 | Attribute Sets            | :x:                | :x:                | :x:                |
 | Customers                 | :x:                | :x:                | :x:                |

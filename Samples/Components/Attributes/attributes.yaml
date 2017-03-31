@@ -1,10 +1,9 @@
 attributes:
   test_attr:
     is_global: 1
-    label: TestAttr
+    label: Test Attribute
     type: text
     input: select
-    is_configurable: 1
     is_visible_on_front: 1
     is_filterable: 1
     is_searchable: 1
@@ -13,7 +12,7 @@ attributes:
       - simple
     option:
       values:
-        - Foo
+        - Red
         - Green
         - Yellow
         - Blue

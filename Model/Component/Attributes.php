@@ -31,15 +31,20 @@ class Attributes extends YamlComponentAbstract
      */
     protected $cachedAttributeConfig;
 
+    /**
+     * @var Product\Attribute\Repository
+     */
+    protected $productAttributeRepository;
+
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
-        EavSetupFactory $eavSetupFactory
+        EavSetupFactory $eavSetupFactory,
+        Product\Attribute\Repository $repository
     ) {
-
         parent::__construct($log, $objectManager);
-
-        $this->eavSetup = $eavSetupFactory;
+        $this->eavSetup = $eavSetupFactory->create();
+        $this->productAttributeRepository = $repository;
     }
 
     /**
@@ -62,12 +67,124 @@ class Attributes extends YamlComponentAbstract
      */
     protected function processAttribute($attributeCode, array $attributeConfig)
     {
-        $attributeConfig['user_defined'] = 1;
+        $updateAttribute = true;
+        $attributeExists = false;
+        $attributeArray = $this->eavSetup->getAttribute(Product::ENTITY, $attributeCode);
+        if ($attributeArray && $attributeArray['attribute_id']) {
+            $attributeExists = true;
+            $this->log->logComment(sprintf('Attribute %s exists. Checking for updates.', $attributeCode));
+            $updateAttribute = $this->checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig);
 
-        $this->eavSetup->addAttribute(
-            Product::ENTITY,
-            $attributeCode,
-            $attributeConfig
-        );
+            if (isset($attributeConfig['option'])) {
+                $newAttributeOptions = $this->manageAttributeOptions($attributeCode, $attributeConfig['option']);
+                $attributeConfig['option']['values'] = $newAttributeOptions;
+            }
+        }
+
+        if ($updateAttribute) {
+
+            $attributeConfig['user_defined'] = 1;
+
+            if (isset($attributeConfig['product_types'])) {
+                $attributeConfig['apply_to'] = implode(',', $attributeConfig['product_types']);
+            }
+
+            $this->eavSetup->addAttribute(
+                Product::ENTITY,
+                $attributeCode,
+                $attributeConfig
+            );
+
+            if ($attributeExists) {
+                $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
+                return;
+            }
+
+            $this->log->logInfo(sprintf('Attribute %s created.', $attributeCode));
+        }
+    }
+
+    protected function checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig)
+    {
+        $requiresUpdate = false;
+        $nest = 1;
+        foreach ($attributeConfig as $name => $value) {
+
+            $name = $this->mapAttributeConfig($name);
+
+            if ($name == 'option') {
+                continue;
+            }
+
+            if (!isset($attributeArray[$name])) {
+                $this->log->logError(sprintf(
+                    'Attribute %s type %s does not exist or is not mapped',
+                    $attributeCode,
+                    $name
+                ), $nest);
+                continue;
+            }
+
+            if ($attributeArray[$name] != $value) {
+                $this->log->logInfo(sprintf(
+                    'Update required for %s as %s is "%s" but should be "%s"',
+                    $attributeCode,
+                    $name,
+                    $attributeArray[$name],
+                    $value
+                ), $nest);
+
+                $requiresUpdate = true;
+
+                continue;
+            }
+
+            $this->log->logComment(sprintf(
+                'No Update required for %s as %s is still "%s"',
+                $attributeCode,
+                $name,
+                $value
+            ), $nest);
+        }
+
+        return $requiresUpdate;
+    }
+
+    protected function mapAttributeConfig($name)
+    {
+        if ($name == 'label') {
+            $name = 'frontend_label';
+        }
+
+        if ($name == 'type') {
+            $name = 'backend_type';
+        }
+
+        if ($name == 'input') {
+            $name = 'frontend_input';
+        }
+
+        if ($name == 'product_types') {
+            $name = 'apply_to';
+        }
+        return $name;
+    }
+
+    private function manageAttributeOptions($attributeCode, $option)
+    {
+        $attributeOptions = $this->productAttributeRepository->get($attributeCode)->getOptions();
+
+        // Loop through existing attributes options
+        $existingAttributeOptions = array();
+        foreach ($attributeOptions as $attributeOption) {
+            $value = $attributeOption->getLabel();
+            $existingAttributeOptions[] = $value;
+        }
+
+        $optionsToAdd = array_diff($option['values'], $existingAttributeOptions);
+        //$optionsToRemove = array_diff($existingAttributeOptions, $option['values']);
+
+
+        return $optionsToAdd;
     }
 }

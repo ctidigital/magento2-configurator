@@ -34,7 +34,7 @@ echo Go to app etc folder
 cd ../../../app/etc
 
 echo Copy master.yaml folder
-cp ../../../Samples/master.yml master.yaml
+cp ../../../Samples/master.yaml master.yaml
 
 pwd
 ls -alh
@@ -44,3 +44,5 @@ cd ../..
 php bin/magento cache:flush
 php bin/magento module:status
 cd ..
+
+mv Samples/Components configurator

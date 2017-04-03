@@ -53,10 +53,11 @@ class TaxRates extends CsvComponentAbstract
 
             $this->csvImportHandler->importFromCsvFile(['tmp_name' => $filePath]);
             $this->log->logComment(
-                sprintf('Tax Rules import finished')
+                sprintf('"%s" Tax Rules import finished', $filePath)
             );
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
     }
 }
+ 

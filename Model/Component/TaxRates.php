@@ -60,4 +60,3 @@ class TaxRates extends CsvComponentAbstract
         }
     }
 }
- 

@@ -51,6 +51,15 @@ apiintegrations:
   method: code
   sources:
     - ../configurator/ApiIntegrations/apiintegrations.yaml
+taxrates:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/TaxRates/taxrates.csv
+  env:
+    local:
+      mode: maintain
+      log: debug
 taxrules:
   enabled: 1
   method: code

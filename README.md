@@ -35,7 +35,7 @@ Do also include sample files with your component that works
 ### Usage
 
 * Listing available components `bin/magento configurator:list`
-* Running individual components `bin/magento configurator:run --env="<environment>" --components="config"`
+* Running individual components `bin/magento configurator:run --env="<environment>" --component="config"`
 * Extra logs `bin/magento configurator:run --env="<environment>" -v`
 
 ## Roadmap for components to do

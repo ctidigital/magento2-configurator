@@ -35,7 +35,7 @@ Do also include sample files with your component that works
 ### Usage
 
 * Listing available components `bin/magento configurator:list`
-* Running individual components `bin/magento configurator:run --env="<environment>" --components="config"`
+* Running individual components `bin/magento configurator:run --env="<environment>" --component="config"`
 * Extra logs `bin/magento configurator:run --env="<environment>" -v`
 
 ## Roadmap for components to do
@@ -56,7 +56,7 @@ Do also include sample files with your component that works
 | Media                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Tax Rates                 | :x:                | :x:                | :x:                |
+| Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Attribute Sets            | :x:                | :x:                | :x:                |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |

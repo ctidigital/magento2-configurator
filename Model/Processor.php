@@ -10,6 +10,7 @@ use Symfony\Component\Yaml\Parser;
 
 class Processor
 {
+
     /**
      * @var string
      */
@@ -104,7 +105,7 @@ class Processor
         $this->runIndividualComponents();
     }
 
-    protected function runIndividualComponents()
+    private function runIndividualComponents()
     {
         try {
 
@@ -131,7 +132,7 @@ class Processor
         }
     }
 
-    protected function runAllComponents()
+    private function runAllComponents()
     {
         try {
 

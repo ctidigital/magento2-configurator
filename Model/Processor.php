@@ -132,7 +132,11 @@ class Processor
                 $masterConfig = $master[$componentAlias];
 
                 // Run that component
-                $this->state->emulateAreaCode(Area::AREA_ADMINHTML, [$this, 'runComponent'], [$componentAlias, $masterConfig]);
+                $this->state->emulateAreaCode(
+                    Area::AREA_ADMINHTML,
+                    [$this, 'runComponent'],
+                    [$componentAlias, $masterConfig]
+                );
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
@@ -150,7 +154,11 @@ class Processor
             foreach ($master as $componentAlias => $componentConfig) {
 
                 // Run the component in question
-                $this->state->emulateAreaCode(Area::AREA_ADMINHTML, [$this, 'runComponent'], [$componentAlias, $componentConfig]);
+                $this->state->emulateAreaCode(
+                    Area::AREA_ADMINHTML,
+                    [$this, 'runComponent'],
+                    [$componentAlias, $componentConfig]
+                );
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());

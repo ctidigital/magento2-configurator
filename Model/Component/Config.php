@@ -87,7 +87,7 @@ class Config extends YamlComponentAbstract
             // Check existing value, skip if the same
             $scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
             $existingValue = $this->scopeConfig->getValue($path, $scope);
-            if ($value == $existingValue) {
+            if ($value == $existingValue && $this->scopeConfig->isSetFlag($path, $scope)) {
                 $this->log->logComment(sprintf("Global Config Already: %s = %s", $path, $value));
                 return;
             }
@@ -122,7 +122,7 @@ class Config extends YamlComponentAbstract
 
             // Check existing value, skip if the same
             $existingValue = $this->scopeConfig->getValue($path, $scope, $code);
-            if ($value == $existingValue) {
+            if ($value == $existingValue && $this->scopeConfig->isSetFlag($path, $scope)) {
                 $this->log->logComment(sprintf("Website '%s' Config Already: %s = %s", $code, $path, $value), $logNest);
                 return;
             }
@@ -156,7 +156,7 @@ class Config extends YamlComponentAbstract
 
             // Check existing value, skip if the same
             $existingValue = $this->scopeConfig->getValue($path, $scope, $code);
-            if ($value == $existingValue) {
+            if ($value == $existingValue && $this->scopeConfig->isSetFlag($path, $scope)) {
                 $this->log->logComment(sprintf("Store '%s' Config Already: %s = %s", $code, $path, $value), $logNest);
                 return;
             }

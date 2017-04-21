@@ -16,17 +16,17 @@ class ListCommand extends Command
     /**
      * @var ConfiguratorAdapterInterface
      */
-    private $configuratorAdapter;
+    protected $configuratorAdapter;
 
     /**
      * @var ConfigInterface|CtiDigital\Configurator\Console\Command\ListCommand
      */
-    private $configInterface;
+    protected $configInterface;
 
     /**
      * @var ObjectManagerInterface
      */
-    private $objectManagerInterface;
+    protected $objectManagerInterface;
 
     public function __construct(
         ConfiguratorAdapterInterface $configuratorAdapter,

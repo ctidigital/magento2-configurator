@@ -18,19 +18,20 @@ class RunCommand extends Command
     /**
      * @var ConfiguratorAdapterInterface
      */
-    private $configuratorAdapter;
+    protected $configuratorAdapter;
 
     /**
      * @var ConfigInterface|CtiDigital\Configurator\Console\Command\RunCommand
      */
-    private $configInterface;
+    protected $configInterface;
 
     /**
      * @var ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
-    private $processor;
+    /** @var \CtiDigital\Configurator\Model\Processor */
+    protected $processor;
 
     public function __construct(
         ConfiguratorAdapterInterface $configuratorAdapter,

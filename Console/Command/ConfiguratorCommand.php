@@ -13,7 +13,7 @@ class ConfiguratorCommand extends Command
     /**
      * @var ConfiguratorAdapterInterface
      */
-    private $configuratorAdapter;
+    protected $configuratorAdapter;
 
     public function __construct(ConfiguratorAdapterInterface $configuratorAdapter)
     {

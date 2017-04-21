@@ -150,7 +150,7 @@ class Processor
         }
     }
 
-    private function runComponent($componentAlias, $componentConfig)
+    protected function runComponent($componentAlias, $componentConfig)
     {
         $this->log->logComment("");
         $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));
@@ -208,7 +208,7 @@ class Processor
     /**
      * @return array
      */
-    private function getMasterYaml()
+    protected function getMasterYaml()
     {
         // Read master yaml
         $masterPath = BP . '/app/etc/master.yaml';
@@ -232,7 +232,7 @@ class Processor
      * @param $componentName
      * @return bool
      */
-    private function isValidComponent($componentName)
+    protected function isValidComponent($componentName)
     {
         if ($this->log->getLogLevel() > \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_NORMAL) {
             $this->log->logQuestion(sprintf("Does the %s component exist?", $componentName));
@@ -258,7 +258,7 @@ class Processor
      * @param $master
      * @SuppressWarnings(PHPMD)
      */
-    private function validateMasterYaml($master)
+    protected function validateMasterYaml($master)
     {
         try {
             foreach ($master as $componentAlias => $componentConfig) {

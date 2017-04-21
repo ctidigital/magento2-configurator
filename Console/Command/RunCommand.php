@@ -30,7 +30,7 @@ class RunCommand extends Command
      */
     private $objectManager;
 
-    private $processor;
+    protected $processor;
 
     public function __construct(
         ConfiguratorAdapterInterface $configuratorAdapter,

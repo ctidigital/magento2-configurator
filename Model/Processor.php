@@ -10,7 +10,6 @@ use Symfony\Component\Yaml\Parser;
 
 class Processor
 {
-
     /**
      * @var string
      */
@@ -105,7 +104,7 @@ class Processor
         $this->runIndividualComponents();
     }
 
-    private function runIndividualComponents()
+    protected function runIndividualComponents()
     {
         try {
 
@@ -132,7 +131,7 @@ class Processor
         }
     }
 
-    private function runAllComponents()
+    protected function runAllComponents()
     {
         try {
 
@@ -232,7 +231,7 @@ class Processor
      * @param $componentName
      * @return bool
      */
-    private function isValidComponent($componentName)
+    protected function isValidComponent($componentName)
     {
         if ($this->log->getLogLevel() > \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_NORMAL) {
             $this->log->logQuestion(sprintf("Does the %s component exist?", $componentName));

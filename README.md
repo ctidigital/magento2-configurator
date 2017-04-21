@@ -10,7 +10,7 @@ A Magento module initially created by [CTI Digital] to create and maintain datab
   - Keep versions of your configurations using your own versioning system.
   - Split your configuration based on the environment you're developing on.
 
-If you're interested about finding out more about the background of the configurator, watch this lightning talk by [Rick Steckles] at Mage Titans in Manchester on [YouTube].
+If you're interested to find out more about the background of the configurator, watch this lightning talk by [Rick Steckles] at Mage Titans in Manchester on [YouTube].
 
 This is a work in progress and by no means for use with production environments (and probably not even development environments either just yet).
 

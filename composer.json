@@ -1,5 +1,5 @@
 {
-  "name": "ctidigital/magento2-configurator",
+  "name": "sebwite/module-ctidigitalmagento2-configurator",
   "description": "Keep magento persistently configured using files",
   "type":"magento2-module",
   "repositories": [

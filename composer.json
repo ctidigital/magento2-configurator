@@ -1,5 +1,5 @@
 {
-  "name": "sebwite/module-ctidigitalmagento2-configurator",
+  "name": "ctidigital/magento2-configurator",
   "description": "Keep magento persistently configured using files",
   "type":"magento2-module",
   "repositories": [
@@ -21,6 +21,7 @@
     "satooshi/php-coveralls": "^1.0",
     "phpunit/phpunit": "4.1.0"
   },
+  "version": "0.14.0-dev",
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {

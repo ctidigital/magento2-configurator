@@ -48,19 +48,26 @@ class Products extends CsvComponentAbstract
      */
     protected $httpClientFactory;
 
+    /**
+     * @var \FireGento\FastSimpleImport\Helper\Config
+     */
+    protected $importerConfig;
+
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
         \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory,
-        Filesystem $filesystem
+        Filesystem $filesystem,
+        \FireGento\FastSimpleImport\Helper\Config $importerConfig
     ) {
         parent::__construct($log, $objectManager);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
         $this->httpClientFactory = $httpClientFactory;
         $this->filesystem = $filesystem;
+        $this->importerConfig = $importerConfig;
     }
 
     protected function processData($data = null)
@@ -271,11 +278,9 @@ class Products extends CsvComponentAbstract
     {
         $name = pathinfo($fileName, PATHINFO_FILENAME);
         $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-        /**
-         * @var Filesystem $file
-         */
+
         $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $importDirectory = $writeDirectory->getRelativePath('import');
+        $importDirectory = $this->getFileDirectory($writeDirectory);
         $counter = 0;
         do {
             $file = $name . '_' . $counter . '.' . $ext;
@@ -309,5 +314,20 @@ class Products extends CsvComponentAbstract
             return $fileContent;
         }
         return $value;
+    }
+
+    /**
+     * Get the file directory from the configuration if set
+     *
+     * @param Filesystem\Directory\WriteInterface $file
+     * @return string
+     */
+    public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file)
+    {
+        $configurationValue = $this->importerConfig->getImportFileDir();
+        if (!empty($configurationValue)) {
+            return $file->getRelativePath($configurationValue);
+        }
+        return $file->getRelativePath('import');
     }
 }

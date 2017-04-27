@@ -6,6 +6,12 @@ use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Framework\ObjectManagerInterface;
 
+/**
+ * Class ComponentAbstractTestCase
+ * @package CtiDigital\Configurator\Test\Unit\Component
+ *
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
+ */
 abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
 {
 

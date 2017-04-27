@@ -6,7 +6,6 @@ use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
@@ -45,7 +44,7 @@ class Products extends CsvComponentAbstract
     protected $filesystem;
 
     /**
-     * @var ZendClientFactory
+     * @var \Magento\Framework\HTTP\ZendClientFactory
      */
     protected $httpClientFactory;
 
@@ -54,7 +53,7 @@ class Products extends CsvComponentAbstract
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
-        ZendClientFactory $httpClientFactory,
+        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory,
         Filesystem $filesystem
     ) {
         parent::__construct($log, $objectManager);

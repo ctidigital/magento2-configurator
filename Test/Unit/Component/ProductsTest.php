@@ -4,7 +4,6 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 use CtiDigital\Configurator\Model\Component\Products;
 use Firegento\FastSimpleImport\Model\ImporterFactory;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Framework\HTTP\ZendClient;
 use Magento\Framework\App\Response\Http\FileFactory;
 
 class ProductsTest extends ComponentAbstractTestCase
@@ -60,7 +59,7 @@ class ProductsTest extends ComponentAbstractTestCase
             false
         );
         $httpMock = $this->getMock(
-            ZendClient::class,
+            'Magento\Framework\HTTP\ZendClient',
             ['setUri', 'request', 'getBody'],
             [],
             '',
@@ -107,7 +106,7 @@ class ProductsTest extends ComponentAbstractTestCase
             false
         );
         $mockFileFactory = $this->getMock(
-            FileFactory::class,
+            'Magento\Framework\HTTP\ZendClient',
             [],
             [],
             '',

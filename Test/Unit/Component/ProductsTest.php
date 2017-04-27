@@ -4,8 +4,8 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 use CtiDigital\Configurator\Model\Component\Products;
 use Firegento\FastSimpleImport\Model\ImporterFactory;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Framework\Http\ZendClient;
-use Magento\Framework\Http\ZendClientFactory;
+use Magento\Framework\HTTP\ZendClient;
+use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\App\Response\Http\FileFactory;
 
 class ProductsTest extends ComponentAbstractTestCase

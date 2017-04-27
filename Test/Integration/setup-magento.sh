@@ -43,7 +43,6 @@ cat master.yaml
 cd ../..
 php bin/magento cache:flush
 php bin/magento module:status
-php bin/magento deploy:mode:set production
 cd ..
 
 mv Samples/Components configurator

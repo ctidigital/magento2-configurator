@@ -6,7 +6,7 @@ use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Magento\Framework\Http\ZendClientFactory;
+use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
@@ -235,7 +235,7 @@ class Products extends CsvComponentAbstract
     public function downloadFile($value)
     {
         /**
-         * @var \Magento\Framework\Http\ZendClient $client
+         * @var \Magento\Framework\HTTP\ZendClient $client
          */
         $client = $this->httpClientFactory->create();
         $response = '';

@@ -6,12 +6,28 @@ use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
+use Magento\Framework\Http\ZendClientFactory;
+use Magento\Framework\Filesystem;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
+/**
+ * Class Products
+ * @package CtiDigital\Configurator\Model\Component
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Products extends CsvComponentAbstract
 {
     protected $alias = 'products';
     protected $name = 'Products';
     protected $description = 'Component to import products using a CSV file.';
+
+    protected $imageAttributes = [
+        'image',
+        'small_image',
+        'thumbnail',
+        'media_image'
+    ];
 
     /**
      * @var ImporterFactory
@@ -23,15 +39,29 @@ class Products extends CsvComponentAbstract
      */
     protected $productFactory;
 
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
+    /**
+     * @var ZendClientFactory
+     */
+    protected $httpClientFactory;
+
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
-        ProductFactory $productFactory
+        ProductFactory $productFactory,
+        ZendClientFactory $httpClientFactory,
+        Filesystem $filesystem
     ) {
         parent::__construct($log, $objectManager);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
+        $this->httpClientFactory = $httpClientFactory;
+        $this->filesystem = $filesystem;
     }
 
     protected function processData($data = null)
@@ -51,6 +81,9 @@ class Products extends CsvComponentAbstract
         foreach ($data as $product) {
             $productArray = array();
             foreach ($attributeKeys as $column => $code) {
+                if (in_array($code, $this->imageAttributes)) {
+                    $product[$column] = $this->getImage($product[$column]);
+                }
                 $productArray[$code] = $product[$column];
             }
             if ($this->isConfigurable($productArray)) {
@@ -180,5 +213,102 @@ class Products extends CsvComponentAbstract
             }
         }
         return $skuAttributes;
+    }
+
+    /**
+     * Checks if a value is a URL
+     *
+     * @param $url
+     * @return bool|string
+     */
+    public function isValueURL($url)
+    {
+        return filter_var($url, FILTER_VALIDATE_URL);
+    }
+
+    /**
+     * Download a file and return the response
+     *
+     * @param $value
+     * @return string
+     */
+    public function downloadFile($value)
+    {
+        /**
+         * @var \Magento\Framework\Http\ZendClient $client
+         */
+        $client = $this->httpClientFactory->create();
+        $response = '';
+        try {
+            $response = $client
+                ->setUri($value)
+                ->request('GET')
+                ->getBody();
+        } catch (\Exception $e) {
+            $this->log->logError($e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * Get the file name from the URL
+     *
+     * @param $url
+     * @return string
+     */
+    public function getFileName($url)
+    {
+        return basename($url);
+    }
+
+    /**
+     * Saves the file. If the file exists, a number will be appended to the end of the file name
+     *
+     * @param $fileName
+     * @param $value
+     * @return Filesystem|string
+     */
+    public function saveFile($fileName, $value)
+    {
+        $name = pathinfo($fileName, PATHINFO_FILENAME);
+        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+        /**
+         * @var Filesystem $file
+         */
+        $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $importDirectory = $writeDirectory->getRelativePath('import');
+        $counter = 0;
+        do {
+            $file = $name . '_' . $counter . '.' . $ext;
+            $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $file);
+            $counter++;
+        } while ($writeDirectory->isExist($filePath));
+
+        try {
+            $writeDirectory->writeFile($filePath, $value);
+        } catch (\Exception $e) {
+            $this->log->logError($e->getMessage());
+        }
+        return $file;
+    }
+
+    /**
+     * Downloads the image, saves, and returns the file name
+     *
+     * @param $value
+     * @return Filesystem|string
+     */
+    public function getImage($value)
+    {
+        if ($this->isValueURL($value) === false) {
+            return $value;
+        }
+        $file = $this->downloadFile($value);
+        if (strlen($file) > 0) {
+            $fileName = $this->getFileName($value);
+            $fileContent = $this->saveFile($fileName, $file);
+            return $fileContent;
+        }
+        return $value;
     }
 }

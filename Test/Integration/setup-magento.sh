@@ -18,6 +18,7 @@ cd magento2
 git checkout tags/2.1.0 -b 2.1.0
 
 composer require ctidigital/magento2-configurator
+composer require magento/zendframework1 ~1.12.16
 composer install
 
 php bin/magento setup:install --admin-email "test@test.com" --admin-firstname "CTI" --admin-lastname "Test" --admin-password "password123" --admin-user "admin" --backend-frontname admin --base-url "http://configurator.dev" --db-host 127.0.0.1 --db-name configurator --db-user root --session-save files --use-rewrites 1 --use-secure 0 -vvv

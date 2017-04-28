@@ -4,6 +4,8 @@
 
     <component name="websites" class="CtiDigital\Configurator\Model\Component\Websites" />
     <component name="config" class="CtiDigital\Configurator\Model\Component\Config" />
+    <component name="attributes" class="CtiDigital\Configurator\Model\Component\Attributes" />
+    <component name="attribute_sets" class="CtiDigital\Configurator\Model\Component\AttributeSets" />
     <component name="adminroles" class="CtiDigital\Configurator\Model\Component\AdminRoles" />
     <component name="adminusers" class="CtiDigital\Configurator\Model\Component\AdminUsers" /> <!-- Sample Depends on AdminRoles -->
     <component name="customergroups" class="CtiDigital\Configurator\Model\Component\CustomerGroups" />
@@ -16,6 +18,4 @@
     <component name="apiintegrations" class="CtiDigital\Configurator\Model\Component\ApiIntegrations" />
     <component name="widgets" class="CtiDigital\Configurator\Model\Component\Widgets" />
     <component name="media" class="CtiDigital\Configurator\Model\Component\Media" />
-    <component name="attributes" class="CtiDigital\Configurator\Model\Component\Attributes" />
-    <component name="attribute_sets" class="CtiDigital\Configurator\Model\Component\AttributeSets" />
 </config>

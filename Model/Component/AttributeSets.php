@@ -73,6 +73,8 @@ class AttributeSets extends YamlComponentAbstract
     {
         $this->eavSetup->addAttributeSet(Product::ENTITY, $attributeSetConfig['name']);
 
+        $this->log->logInfo(sprintf('Creating attribute set: "%s"', $attributeSetConfig['name']));
+
         $attributeSetId = $this->eavSetup->getAttributeSetId(Product::ENTITY, $attributeSetConfig['name']);
         $attributeSetEntity = $this->attributeSetRepository->get($attributeSetId);
         if (array_key_exists('inherit', $attributeSetConfig)) {
@@ -82,7 +84,6 @@ class AttributeSets extends YamlComponentAbstract
 
         if (array_key_exists('groups', $attributeSetConfig) && count($attributeSetConfig['groups']) > 0) {
             $this->addAttributeGroups($attributeSetEntity, $attributeSetConfig['groups']);
-            $this->addAttributeGroupAssociations($attributeSetEntity, $attributeSetConfig['groups']);
         }
     }
 
@@ -102,33 +103,37 @@ class AttributeSets extends YamlComponentAbstract
 
         foreach ($attributeGroupData as $group) {
             $attributeSetName = $attributeSetEntity->getAttributeSetName();
+
+            // @todo Check if the attribute group is already associated to the attribute set.
             $this->eavSetup->addAttributeGroup(Product::ENTITY, $attributeSetName, $group['name']);
+            $this->log->logInfo(sprintf('Creating group: "%s"', $group['name']), 1);
+            $this->addAttributeGroupAssociations($attributeSetEntity, $group);
         }
     }
 
     /**
      * @param AttributeSetInterface $attributeSetEntity
-     * @param array $attributeGroupData
+     * @param array $group
      */
     protected function addAttributeGroupAssociations(
         AttributeSetInterface $attributeSetEntity,
-        array $attributeGroupData
+        array $group
     ) {
-        foreach ($attributeGroupData as $group) {
-            foreach ($group['attributes'] as $attributeCode) {
-                $attributeData = $this->eavSetup->getAttribute(Product::ENTITY, $attributeCode);
+        foreach ($group['attributes'] as $attributeCode) {
+            $attributeData = $this->eavSetup->getAttribute(Product::ENTITY, $attributeCode);
 
-                if (count($attributeData) === 0) {
-                    throw new ComponentException("Attribute '{$attributeCode}' does not exist.");
-                }
-
-                $this->eavSetup->addAttributeToGroup(
-                    Product::ENTITY,
-                    $attributeSetEntity->getId(),
-                    $group['name'],
-                    $attributeCode
-                );
+            if (count($attributeData) === 0) {
+                throw new ComponentException("Attribute '{$attributeCode}' does not exist.");
             }
+
+            $this->eavSetup->addAttributeToGroup(
+                Product::ENTITY,
+                $attributeSetEntity->getId(),
+                $group['name'],
+                $attributeCode
+            );
+
+            $this->log->logInfo(sprintf('Adding attribute "%s"', $attributeCode), 2);
         }
     }
 

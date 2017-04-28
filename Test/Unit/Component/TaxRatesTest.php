@@ -8,7 +8,7 @@ class TaxRatesTest extends ComponentAbstractTestCase
 {
     protected function componentSetUp()
     {
-        $csvImportHandler = $this->getMock(CsvImportHandler::class);
+        $csvImportHandler = $this->getMock(CsvImportHandler::class, [], [], '', false);
 
         $this->component = new TaxRates(
             $this->logInterface,

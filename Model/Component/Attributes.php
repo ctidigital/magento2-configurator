@@ -108,7 +108,6 @@ class Attributes extends YamlComponentAbstract
         $requiresUpdate = false;
         $nest = 1;
         foreach ($attributeConfig as $name => $value) {
-
             if ($name == "product_types") {
                 $value = implode(',', $value);
             }
@@ -118,8 +117,7 @@ class Attributes extends YamlComponentAbstract
             if ($name == 'option') {
                 continue;
             }
-
-            if (!isset($attributeArray[$name])) {
+            if (!array_key_exists($name, $attributeArray)) {
                 $this->log->logError(sprintf(
                     'Attribute %s type %s does not exist or is not mapped',
                     $attributeCode,
@@ -155,20 +153,28 @@ class Attributes extends YamlComponentAbstract
 
     protected function mapAttributeConfig($name)
     {
-        if ($name == 'label') {
-            $name = 'frontend_label';
-        }
-
-        if ($name == 'type') {
-            $name = 'backend_type';
-        }
-
-        if ($name == 'input') {
-            $name = 'frontend_input';
-        }
-
-        if ($name == 'product_types') {
-            $name = 'apply_to';
+        switch ($name) {
+            case 'label':
+                $name = 'frontend_label';
+                break;
+            case 'type':
+                $name = 'backend_type';
+                break;
+            case 'input':
+                $name = 'frontend_input';
+                break;
+            case 'product_types':
+                $name = 'apply_to';
+                break;
+            case 'required':
+                $name = 'is_required';
+                break;
+            case 'source':
+                $name = 'source_model';
+                break;
+            case 'backend':
+                $name = 'backend_model';
+                break;
         }
         return $name;
     }

@@ -284,12 +284,8 @@ class Websites extends YamlComponentAbstract
         $logNest = 3;
 
         try {
-            
-<<<<<<< HEAD
-            $this->log->logQuestion(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
-=======
+
             $this->log->logComment(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
->>>>>>> 83e0986247b775325a46c943a003dbaefd5459c9
 
             $storeView = $this->storeFactory->create();
             $storeView->load($code, 'code');

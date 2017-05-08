@@ -1,0 +1,29 @@
+apiintegrations:
+  - name: API Product Management
+    email: apiprodmanagement@email.com
+    setuptype: 1
+    callbackurl:
+    identityurl:
+    resources:
+      - 'Magento_Backend::admin'
+      - 'Magento_Catalog::catalog'
+      - 'Magento_Catalog::catalog_inventory'
+      - 'Magento_Catalog::products'
+      - 'Magento_Catalog::categories'
+      - 'Magento_Catalog::attributes_attributes'
+      - 'Magento_Catalog::update_attributes'
+      - 'Magento_Catalog::sets'
+  - name: API Sales Management
+    email: apisalesmanagement@email.com
+    setuptype: 0
+    callbackurl:
+    identityurl:
+    resources:
+      - 'Magento_Backend::admin'
+      - 'Magento_Sales::sales'
+      - 'Magento_Sales::create'
+      - 'Magento_Sales::actions_view'
+      - 'Magento_Sales::actions_edit'
+      - 'Magento_Sales::cancel'
+      - 'Magento_Sales::hold'
+      - 'Magento_Sales::unhold'

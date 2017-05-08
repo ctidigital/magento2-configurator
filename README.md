@@ -10,7 +10,7 @@ A Magento module initially created by [CTI Digital] to create and maintain datab
   - Keep versions of your configurations using your own versioning system.
   - Split your configuration based on the environment you're developing on.
 
-If you're interested about finding out more about the background of the configurator, watch this lightning talk by [Rick Steckles] at Mage Titans in Manchester on [YouTube].
+If you're interested to find out more about the background of the configurator, watch this lightning talk by [Rick Steckles] at Mage Titans in Manchester on [YouTube].
 
 This is a work in progress and by no means for use with production environments (and probably not even development environments either just yet).
 
@@ -44,6 +44,9 @@ Do also include sample files with your component that works
 |---------------------------|--------------------|--------------------|--------------------|
 | Websites                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | System Configuration      | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Categories                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Products                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Attributes                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Blocks                    | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Admin Roles               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
@@ -52,17 +55,14 @@ Do also include sample files with your component that works
 | Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Media                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Tax Rates                 | :x:                | :x:                | :x:                |
+| Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Attribute Sets            | :x:                | :x:                | :x:                |
-| Attributes                | :x:                | :x:                | :x:                |
-| Categories                | :x:                | :x:                | :x:                |
-| Products                  | :x:                | :x:                | :x:                |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |
 | API Roles                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | API Users                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| API Integrations          | :grey_exclamation: | :x:          	  | :grey_exclamation: |
+| API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Shipping Table Rates      | :x:                | :x:                | :x:                |
 | Catalog Price Rules       | :x:                | :x:                | :x:                |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |

@@ -63,7 +63,7 @@ class ApiIntegrations extends YamlComponentAbstract
     /**
      * @param array $data
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         if (isset($data['apiintegrations'])) {
             foreach ($data['apiintegrations'] as $integrationData) {

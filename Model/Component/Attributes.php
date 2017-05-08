@@ -49,7 +49,7 @@ class Attributes extends YamlComponentAbstract
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    protected function processData(array $attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['attributes'] as $attributeCode => $attributeConfiguration) {

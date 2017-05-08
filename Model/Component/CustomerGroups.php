@@ -47,7 +47,7 @@ class CustomerGroups extends YamlComponentAbstract
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         foreach ($data['customergroups'] as $taxClass) {
 

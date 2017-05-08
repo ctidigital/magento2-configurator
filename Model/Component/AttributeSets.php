@@ -55,7 +55,7 @@ class AttributeSets extends YamlComponentAbstract
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    protected function processData(array $attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['attribute_sets'] as $attributeSetConfiguration) {

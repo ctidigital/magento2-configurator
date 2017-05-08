@@ -70,7 +70,7 @@ class Products extends CsvComponentAbstract
         $this->importerConfig = $importerConfig;
     }
 
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
         if (!isset($data[0])) {

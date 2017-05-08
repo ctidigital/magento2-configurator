@@ -7,6 +7,8 @@ use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Parser;
+use Magento\Framework\App\State;
+use Magento\Framework\App\Area;
 
 class Processor
 {
@@ -36,16 +38,21 @@ class Processor
      */
     protected $objectManager;
 
+    /**
+     * @var State
+     */
+    protected $state;
+
     public function __construct(
         ConfigInterface $configInterface,
         ObjectManagerInterface $objectManager,
         LoggingInterface $logging,
-        \Magento\Framework\App\State $state
+        State $state
     ) {
         $this->log = $logging;
         $this->configInterface = $configInterface;
         $this->objectManager = $objectManager;
-        $state->setAreaCode('adminhtml');
+        $this->state = $state;
     }
 
 
@@ -125,7 +132,11 @@ class Processor
                 $masterConfig = $master[$componentAlias];
 
                 // Run that component
-                $this->runComponent($componentAlias, $masterConfig);
+                $this->state->emulateAreaCode(
+                    Area::AREA_ADMINHTML,
+                    [$this, 'runComponent'],
+                    [$componentAlias, $masterConfig]
+                );
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
@@ -143,14 +154,18 @@ class Processor
             foreach ($master as $componentAlias => $componentConfig) {
 
                 // Run the component in question
-                $this->runComponent($componentAlias, $componentConfig);
+                $this->state->emulateAreaCode(
+                    Area::AREA_ADMINHTML,
+                    [$this, 'runComponent'],
+                    [$componentAlias, $componentConfig]
+                );
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
     }
 
-    private function runComponent($componentAlias, $componentConfig)
+    public function runComponent($componentAlias, $componentConfig)
     {
         $this->log->logComment("");
         $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));

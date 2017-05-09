@@ -13,6 +13,7 @@ adminroles:
   - name: "Tax Manager"
     resources:
       - 'Magento_Backend::dashboard'
+      - 'Magento_Backend::admin'
       - 'Magento_Sales::sales'
       - 'Magento_Sales::sales_operation'
       - 'Magento_Sales::sales_order'

@@ -24,6 +24,27 @@ php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctid
 php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
+## Integration tests
+- Configure your [Magento integration test environment](http://devdocs.magento.com/guides/v2.0/test/integration/integration_test_setup.html).
+- Add the XML below to dev/tests/integration/phpunit.xml.dist
+
+````
+<testsuite name="magento2-configurator">
+    <directory>../../../vendor/ctidigital/magento2-configurator/Test/Integration</directory>
+</testsuite>
+ ````
+ 
+- You can run the tests from the correct place on the command line
+
+````
+/dev/tests/integration$ ../../../vendor/bin/phpunit --testsuite "magento2-configurator"
+````
+
+- You can also add the magento PHP developer tools to your path, so that you do not have to specify location of phpunit
+````
+export PATH=$PATH:/var/www/magento2/vendor/bin
+````
+## Unit tests 
 If you're developing a new component, please ensure you have your corresponding unit test which extends `ComponentAbstractTestCase` as that will test that your component has the required functions.
 Do also include sample files with your component that works 
 

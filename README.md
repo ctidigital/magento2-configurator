@@ -69,7 +69,7 @@ Do also include sample files with your component that works
 | Products                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Attributes                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Blocks                    | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Admin Roles               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Admin Roles               | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Pages                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Widgets                   | :white_check_mark: | :grey_exclamation: | :white_check_mark: |

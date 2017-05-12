@@ -61,34 +61,34 @@ Do also include sample files with your component that works
 
 ## Roadmap for components to do
 
-| Component                 | Code Written       | Tests Written      | Sample Files       |
-|---------------------------|--------------------|--------------------|--------------------|
-| Websites                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| System Configuration      | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Categories                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Products                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Attributes                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Blocks                    | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Admin Roles               | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Pages                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Widgets                   | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Media                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Attribute Sets            | :x:                | :x:                | :x:                |
-| Customers                 | :x:                | :x:                | :x:                |
-| Related Products          | :x:                | :x:                | :x:                |
-| SQL                       | :x:                | :x:                | :x:                |
-| API Roles                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| API Users                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Shipping Table Rates      | :x:                | :x:                | :x:                |
-| Catalog Price Rules       | :x:                | :x:                | :x:                |
-| Shopping Cart Price Rules | :x:                | :x:                | :x:                |
-| Rewrites                  | :x:                | :x:                | :x:                |
-| Orders                    | :x:                | :x:                | :x:                |
+| Component                 | Code Written       | Tests Written      | Sample Files       | In progress (see branches) |  
+|---------------------------|--------------------|--------------------|--------------------|----------------------------|  
+| Websites                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| System Configuration      | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Categories                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Products                  | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Attributes                | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Blocks                    | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Admin Roles               | :white_check_mark: | :white_check_mark: | :white_check_mark: |                            |  
+| Admin Users               | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Pages                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Widgets                   | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Customer Groups           | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Media                     | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Attribute Sets            | :x:                | :x:                | :x:                |                            |  
+| Customers                 | :x:                | :x:                | :x:                |                            |  
+| Related Products          | :x:                | :x:                | :x:                |                            |  
+| SQL                       | :x:                | :x:                | :x:                |                            |  
+| API Roles                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| API Users                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
+| Shipping Table Rates      | :x:                | :x:                | :x:                | :white_check_mark:         |  
+| Catalog Price Rules       | :x:                | :x:                | :x:                |                            |  
+| Shopping Cart Price Rules | :x:                | :x:                | :x:                |                            |  
+| Rewrites                  | :x:                | :x:                | :x:                |                            |  
+| Orders                    | :x:                | :x:                | :x:                |                            |  
 
 License
 ----

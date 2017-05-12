@@ -84,7 +84,7 @@ Do also include sample files with your component that works
 | API Roles                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
 | API Users                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
 | API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |                            |  
-| Shipping Table Rates      | :x:                | :x:                | :x:                | :white_check_mark:         |  
+| Shipping Table Rates      | :white_check_mark: | :white_check_mark: | :white_check_mark: |                            |  
 | Catalog Price Rules       | :x:                | :x:                | :x:                |                            |  
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |                            |  
 | Rewrites                  | :x:                | :x:                | :x:                |                            |  

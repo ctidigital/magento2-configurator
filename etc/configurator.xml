@@ -18,4 +18,5 @@
     <component name="media" class="CtiDigital\Configurator\Model\Component\Media" />
     <component name="attributes" class="CtiDigital\Configurator\Model\Component\Attributes" />
     <component name="attribute_sets" class="CtiDigital\Configurator\Model\Component\AttributeSets" />
+    <component name="rewrites" class="CtiDigital\Configurator\Model\Component\Rewrites" />
 </config>

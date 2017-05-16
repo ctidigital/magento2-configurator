@@ -131,3 +131,8 @@ attribute_sets:
   method: code
   sources:
     - ../configurator/Attributes/attribute_sets.yaml
+rewrites:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Rewrites/rewrites.csv

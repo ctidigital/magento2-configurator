@@ -17,4 +17,16 @@
             </argument>
         </arguments>
     </type>
+
+    <virtualType name="CtiDigital\Configurator\Setup\Module\DataSetup" type="Magento\Setup\Module\DataSetup">
+        <arguments>
+            <argument name="context" xsi:type="object">Magento\Framework\Module\Setup\Context</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Eav\Setup\EavSetup">
+        <arguments>
+            <argument name="setup" xsi:type="object">CtiDigital\Configurator\Setup\Module\DataSetup</argument>
+        </arguments>
+    </type>
 </config>

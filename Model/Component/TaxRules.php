@@ -64,7 +64,7 @@ class TaxRules extends CsvComponentAbstract
     /**
      * @param array|null $data
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         //Check Row Data exists
         if (!isset($data[0])) {

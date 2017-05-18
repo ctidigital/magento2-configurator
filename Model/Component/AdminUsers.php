@@ -48,9 +48,10 @@ class AdminUsers extends YamlComponentAbstract
     }
 
     /**
-     * @param data
+     * @param array $data
+     * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         //Get Each Role
         foreach ($data['adminusers'] as $roleSet) {
@@ -98,6 +99,7 @@ class AdminUsers extends YamlComponentAbstract
         $userCount = $user->getCollection()->addFieldToFilter('email', $userData['email'])->getSize();
 
         if ($userCount > 0) {
+
             $this->log->logComment(
                 sprintf(
                     'Admin User "%s" creation skipped: User with the email "%s" already exists',

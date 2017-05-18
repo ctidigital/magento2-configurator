@@ -32,7 +32,7 @@ class Widgets extends YamlComponentAbstract
         $this->storeFactory = $storeFactory;
     }
 
-    protected function processData($data = null)
+    protected function processData(array $data = null)
     {
         try {
             foreach ($data as $widgetData) {

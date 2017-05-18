@@ -1,0 +1,9 @@
+base:
+  -
+    dest_country_id: DE
+    dest_region_code: BER
+    dest_zip: 10405
+    condition_name: Test condition name
+    condition_value: 1.99
+    price: 5.99
+    cost: 1.99

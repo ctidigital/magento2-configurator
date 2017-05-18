@@ -1,9 +1,9 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\AdminUsers;
 use Magento\User\Model\UserFactory;
 use Magento\Authorization\Model\RoleFactory;
+use CtiDigital\Configurator\Model\Component\AdminUsers;
 
 class AdminUsersTest extends ComponentAbstractTestCase
 {

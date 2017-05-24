@@ -61,7 +61,7 @@ Do also include sample files with your component that works
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |
-| Shipping Table Rates      | :x:                | :x:                | :x:                |
+| Shipping Table Rates      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Catalog Price Rules       | :x:                | :x:                | :x:                |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
 | Rewrites                  | :x:                | :x:                | :x:                |

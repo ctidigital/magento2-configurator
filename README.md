@@ -57,7 +57,7 @@ Do also include sample files with your component that works
 | Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Attribute Sets            | :x:                | :x:                | :x:                |
+| Attribute Sets            | :white_check_mark: | :x:                | :white_check_mark: |               |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |

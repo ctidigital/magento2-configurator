@@ -1,0 +1,4 @@
+requestPath,targetPath,redirectType,storeId,description
+aaa,aab,302,1,Redirect One
+bbb,bbc,302,1,Redirect Two
+aac,aad,302,1,Redirect Three

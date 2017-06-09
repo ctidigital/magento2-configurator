@@ -45,7 +45,6 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ComponentAbstract::class, $this->component);
     }
 
-
     public function testItHasAnAlias()
     {
         $this->assertClassHasAttribute('alias', $this->className);

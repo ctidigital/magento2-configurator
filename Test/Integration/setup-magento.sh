@@ -15,7 +15,7 @@ echo Install Magento
 git clone https://github.com/magento/magento2
 cd magento2
 
-git checkout tags/2.1.0 -b 2.1.0
+git checkout tags/$1 -b $1
 
 composer require ctidigital/magento2-configurator
 composer install

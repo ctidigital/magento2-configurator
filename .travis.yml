@@ -8,8 +8,17 @@ sudo: required
 env:
   matrix:
     - TEST_SUITE=unit
+      MAGE_VERSION=2.1.0
     - TEST_SUITE=phpcs
+      MAGE_VERSION=2.1.0
     - TEST_SUITE=integration
+      MAGE_VERSION=2.1.0
+    - TEST_SUITE=unit
+      MAGE_VERSION=2.1.1
+    - TEST_SUITE=phpcs
+      MAGE_VERSION=2.1.1
+    - TEST_SUITE=integration
+      MAGE_VERSION=2.1.1
 
 install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json

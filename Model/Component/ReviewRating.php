@@ -48,7 +48,12 @@ class ReviewRating extends YamlComponentAbstract
                 $ratingModel->save();
                 $this->log->logInfo(__('Updated review rating "%1"', $code));
             } catch (\Exception $e) {
-                $this->log->logError(__('Failed updating review rating "%1". Error message: %2', $code, $e->getMessage()));
+                $this->log->logError(
+                    __('Failed updating review rating "%1". Error message: %2',
+                        $code,
+                        $e->getMessage()
+                    )
+                );
             }
         }
     }

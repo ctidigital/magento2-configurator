@@ -19,4 +19,5 @@
     <component name="widgets" class="CtiDigital\Configurator\Model\Component\Widgets" />
     <component name="media" class="CtiDigital\Configurator\Model\Component\Media" />
     <component name="rewrites" class="CtiDigital\Configurator\Model\Component\Rewrites" />
+    <component name="review_rating" class="CtiDigital\Configurator\Model\Component\ReviewRating" />
 </config>

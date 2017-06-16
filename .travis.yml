@@ -21,7 +21,7 @@ script:
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcs --standard=PSR2 Model/ Console/ Test/ Helper/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpmd Model/,Console/,Test/,Helper/ text cleancode,codesize,controversial,design,naming,unusedcode; fi"
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Console/ Test/ Helper/; fi"
-  - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then php vendor/bin/phpunit --coverage-clover build/logs/clover.xml --configuration dev/tests/unit/phpunit.xml.dist Test/Unit/; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'integration' ]; then ./Test/Integration/run-configurator.sh; fi"
 notifications:
   hipchat:

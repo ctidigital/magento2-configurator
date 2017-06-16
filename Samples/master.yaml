@@ -136,3 +136,8 @@ rewrites:
   method: code
   sources:
     - ../configurator/Rewrites/rewrites.csv
+review_rating:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/ReviewRating/reviewrating.yaml

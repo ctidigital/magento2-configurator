@@ -82,6 +82,7 @@ class ReviewRatingTest extends ComponentAbstractTestCase
     {
         $mockRating = $this->getMockBuilder(\Magento\Review\Model\Rating::class)
             ->disableOriginalConstructor()
+            ->setMethods(['load', 'getId'])
             ->getMock();
 
         $mockRating->expects($this->once())

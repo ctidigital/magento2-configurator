@@ -6,9 +6,13 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Store\Model\StoreRepository;
+use Magento\Review\Model\Rating\Option;
+use Magento\Review\Model\Rating\OptionFactory;
 
 class ReviewRating extends YamlComponentAbstract
 {
+    const MAX_NUM_RATINGS = 5;
+
     protected $alias = 'review_rating';
 
     protected $name = 'Review Rating';
@@ -23,14 +27,21 @@ class ReviewRating extends YamlComponentAbstract
      */
     protected $storeRepository;
 
+    /**
+     * @var OptionFactory
+     */
+    protected $optionFactory;
+
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         RatingFactory $ratingFactory,
-        StoreRepository $storeRepository
+        StoreRepository $storeRepository,
+        OptionFactory $optionFactory
     ) {
         $this->ratingFactory = $ratingFactory;
         $this->storeRepository = $storeRepository;
+        $this->optionFactory = $optionFactory;
         parent::__construct($log, $objectManager);
     }
 
@@ -46,7 +57,8 @@ class ReviewRating extends YamlComponentAbstract
                 $ratingModel = $this->getReviewRating($code);
                 $ratingModel = $this->updateOrCreateRating($ratingModel, $code, $reviewRating);
                 $ratingModel->save();
-                $this->log->logInfo(sprintf('Updated review rating "%s"', $code));
+                $this->setOptions($ratingModel);
+                $this->log->logInfo(__('Updated review rating "%1"', $code));
             } catch (\Exception $e) {
                 $this->log->logError(
                     sprintf(
@@ -89,6 +101,13 @@ class ReviewRating extends YamlComponentAbstract
         return $rating;
     }
 
+    /**
+     * @param Rating $rating
+     * @param $ratingCode
+     * @param $ratingData
+     *
+     * @return Rating
+     */
     public function updateOrCreateRating(Rating $rating, $ratingCode, $ratingData)
     {
         $rating->setRatingCode($ratingCode);
@@ -113,6 +132,43 @@ class ReviewRating extends YamlComponentAbstract
         return $rating;
     }
 
+    /**
+     * Sets the options on the rating
+     *
+     * @param Rating $rating
+     */
+    protected function setOptions(Rating $rating)
+    {
+        $ratingOptions = $rating->getOptions();
+        if (count($ratingOptions) === self::MAX_NUM_RATINGS) {
+            return;
+        }
+        $alreadyCreated = [];
+
+        foreach ($ratingOptions as $ratingOption) {
+            $alreadyCreated[] = $ratingOption->getCode();
+        }
+        for ($count = 1; $count <= self::MAX_NUM_RATINGS; $count++) {
+            if (in_array($count, $alreadyCreated)) {
+                continue;
+            }
+            /**
+             * @var Option $option
+             */
+            $option = $this->optionFactory->create();
+            $option->setRatingId($rating->getId());
+            $option->setCode($count);
+            $option->setValue($count);
+            $option->setPosition($count);
+            $option->save();
+        }
+    }
+
+    /**
+     * @param $storeCodes
+     *
+     * @return array
+     */
     public function getStoresByCodes($storeCodes)
     {
         $storesResponse = [];

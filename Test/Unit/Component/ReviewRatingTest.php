@@ -96,6 +96,7 @@ class ReviewRatingTest extends ComponentAbstractTestCase
 
         $mockRatingFactory = $this->getMockBuilder('\Magento\Review\Model\RatingFactory')
             ->disableOriginalConstructor()
+            ->setMethods(['create'])
             ->getMock();
 
         $mockRatingFactory->expects($this->once())

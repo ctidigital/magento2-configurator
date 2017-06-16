@@ -46,10 +46,11 @@ class ReviewRating extends YamlComponentAbstract
                 $ratingModel = $this->getReviewRating($code);
                 $ratingModel = $this->updateOrCreateRating($ratingModel, $code, $reviewRating);
                 $ratingModel->save();
-                $this->log->logInfo(__('Updated review rating "%1"', $code));
+                $this->log->logInfo(sprintf('Updated review rating "%s"', $code));
             } catch (\Exception $e) {
                 $this->log->logError(
-                    __('Failed updating review rating "%1". Error message: %2',
+                    sprintf(
+                        'Failed updating review rating "%s". Error message: %s',
                         $code,
                         $e->getMessage()
                     )

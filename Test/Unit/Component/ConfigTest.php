@@ -73,6 +73,7 @@ class ConfigTest extends ComponentAbstractTestCase
 
         $mockCollection = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Theme\Collection')
             ->disableOriginalConstructor()
+            ->setMethods(['getThemeByFullPath'])
             ->getMock();
 
         $mockCollection->expects($this->once())

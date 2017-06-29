@@ -7,10 +7,13 @@ use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\WebsiteFactory;
+use Magento\Theme\Model\ResourceModel\Theme\Collection;
+use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory;
 use Symfony\Component\Yaml\Yaml;
 
 class Config extends YamlComponentAbstract
 {
+    const PATH_THEME_ID = 'design/theme/theme_id';
 
     protected $alias = 'config';
     protected $name = 'Configuration';
@@ -26,12 +29,28 @@ class Config extends YamlComponentAbstract
      */
     protected $scopeConfig;
 
-    public function __construct(LoggingInterface $log, ObjectManagerInterface $objectManager)
-    {
+    /**
+     * @var CollectionFactory
+     */
+    protected $collectionFactory;
+
+    /**
+     * Config constructor.
+     *
+     * @param LoggingInterface $log
+     * @param ObjectManagerInterface $objectManager
+     * @param CollectionFactory $collectionFactory
+     */
+    public function __construct(
+        LoggingInterface $log,
+        ObjectManagerInterface $objectManager,
+        CollectionFactory $collectionFactory
+    ) {
         parent::__construct($log, $objectManager);
 
         $this->configResource = $this->objectManager->create(\Magento\Config\Model\ResourceModel\Config::class);
         $this->scopeConfig = $this->objectManager->create(\Magento\Framework\App\Config::class);
+        $this->collectionFactory = $collectionFactory;
     }
 
     /**
@@ -50,14 +69,23 @@ class Config extends YamlComponentAbstract
 
                 if ($scope == "global") {
                     foreach ($configurations as $configuration) {
-                        $this->setGlobalConfig($configuration['path'], $configuration['value']);
+                        $convertedConfiguration = $this->convert($configuration);
+                        $this->setGlobalConfig(
+                            $convertedConfiguration['path'],
+                            $convertedConfiguration['value']
+                        );
                     }
                 }
 
                 if ($scope == "websites") {
                     foreach ($configurations as $code => $websiteConfigurations) {
                         foreach ($websiteConfigurations as $configuration) {
-                            $this->setWebsiteConfig($configuration['path'], $configuration['value'], $code);
+                            $convertedConfiguration = $this->convert($configuration);
+                            $this->setWebsiteConfig(
+                                $convertedConfiguration['path'],
+                                $convertedConfiguration['value'],
+                                $code
+                            );
                         }
                     }
                 }
@@ -65,7 +93,12 @@ class Config extends YamlComponentAbstract
                 if ($scope == "stores") {
                     foreach ($configurations as $code => $storeConfigurations) {
                         foreach ($storeConfigurations as $configuration) {
-                            $this->setStoreConfig($configuration['path'], $configuration['value'], $code);
+                            $convertedConfiguration = $this->convert($configuration);
+                            $this->setStoreConfig(
+                                $convertedConfiguration,
+                                $convertedConfiguration,
+                                $code
+                            );
                         }
                     }
                 }
@@ -136,6 +169,24 @@ class Config extends YamlComponentAbstract
         }
     }
 
+    /**
+     * Convert paths or values before they're processed
+     *
+     * @param array $configuration
+     *
+     * @return array
+     */
+    protected function convert(array $configuration)
+    {
+        $convertedConfig = $configuration;
+        if (isset($convertedConfig['path']) && isset($convertedConfig['value'])) {
+            if ($this->isConfigTheme($convertedConfig['path'], $convertedConfig['value'])) {
+                $convertedConfig['value'] = $this->getThemeIdByPath($convertedConfig['value']);
+            }
+        }
+        return $convertedConfig;
+    }
+
     private function setStoreConfig($path, $value, $code, $encrypted = 0)
     {
         try {
@@ -168,5 +219,38 @@ class Config extends YamlComponentAbstract
             $this->log->logError($e->getMessage());
         }
 
+    }
+
+    /**
+     * Checks if the config path is setting the theme by its path so we can get the ID
+     *
+     * @param $path
+     * @param $value
+     *
+     * @return bool
+     */
+    public function isConfigTheme($path, $value)
+    {
+        if ($path === self::PATH_THEME_ID && is_int($value) === false) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get the theme ID by the path
+     *
+     * @param $themePath
+     *
+     * @return int
+     */
+    public function getThemeIdByPath($themePath)
+    {
+        /**
+         * @var Collection $themeCollection
+         */
+        $themeCollection = $this->collectionFactory->create();
+        $theme = $themeCollection->getThemeByFullPath($themePath);
+        return $theme->getThemeId();
     }
 }

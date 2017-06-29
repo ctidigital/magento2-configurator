@@ -95,8 +95,8 @@ class Config extends YamlComponentAbstract
                         foreach ($storeConfigurations as $configuration) {
                             $convertedConfiguration = $this->convert($configuration);
                             $this->setStoreConfig(
-                                $convertedConfiguration,
-                                $convertedConfiguration,
+                                $convertedConfiguration['path'],
+                                $convertedConfiguration['value'],
                                 $code
                             );
                         }

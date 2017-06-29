@@ -59,12 +59,11 @@ class ConfigTest extends ComponentAbstractTestCase
     {
         $mockThemeModel = $this->getMockBuilder('Magento\Theme\Model\Theme')
             ->disableOriginalConstructor()
-            ->setMethods(['__call'])
+            ->setMethods(['getThemeId'])
             ->getMock();
 
         $mockThemeModel->expects($this->once())
-            ->method('__call')
-            ->with('getThemeId')
+            ->method('getThemeId')
             ->willReturn(3);
 
         $mockFactory = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Theme\CollectionFactory')

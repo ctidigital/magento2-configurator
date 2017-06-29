@@ -5,10 +5,18 @@ use CtiDigital\Configurator\Model\LoggingInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
+use Magento\Review\Model\Rating\Entity;
+use Magento\Review\Model\Rating\EntityFactory;
 use Magento\Store\Model\StoreRepository;
 use Magento\Review\Model\Rating\Option;
 use Magento\Review\Model\Rating\OptionFactory;
 
+/**
+ * Class ReviewRating
+ * @package CtiDigital\Configurator\Model\Component
+ *
+ * @SuppressWarnings("CouplingBetweenObjects")
+ */
 class ReviewRating extends YamlComponentAbstract
 {
     const MAX_NUM_RATINGS = 5;
@@ -16,6 +24,8 @@ class ReviewRating extends YamlComponentAbstract
     protected $alias = 'review_rating';
 
     protected $name = 'Review Rating';
+
+    protected $entityId;
 
     /**
      * @var RatingFactory
@@ -32,16 +42,23 @@ class ReviewRating extends YamlComponentAbstract
      */
     protected $optionFactory;
 
+    /**
+     * @var EntityFactory
+     */
+    protected $entityFactory;
+
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         RatingFactory $ratingFactory,
         StoreRepository $storeRepository,
-        OptionFactory $optionFactory
+        OptionFactory $optionFactory,
+        EntityFactory $entityFactory
     ) {
         $this->ratingFactory = $ratingFactory;
         $this->storeRepository = $storeRepository;
         $this->optionFactory = $optionFactory;
+        $this->entityFactory = $entityFactory;
         parent::__construct($log, $objectManager);
     }
 
@@ -111,7 +128,8 @@ class ReviewRating extends YamlComponentAbstract
     public function updateOrCreateRating(Rating $rating, $ratingCode, $ratingData)
     {
         $rating->setRatingCode($ratingCode);
-        $rating->setEntityId(1);
+        $reviewEntityId = $this->getReviewEntityId();
+        $rating->setEntityId($reviewEntityId);
         $isActive = 0;
         if (isset($ratingData['is_active'])) {
             $isActive = $ratingData['is_active'];
@@ -183,5 +201,22 @@ class ReviewRating extends YamlComponentAbstract
         }
 
         return $storesResponse;
+    }
+
+    /**
+     * Get the review entity ID
+     *
+     * @return int
+     */
+    private function getReviewEntityId()
+    {
+        if ($this->entityId === null) {
+            /**
+             * @var Entity $entity
+             */
+            $entity = $this->entityFactory->create();
+            $this->entityId = $entity->getIdByCode('product');
+        }
+        return $this->entityId;
     }
 }

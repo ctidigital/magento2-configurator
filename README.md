@@ -48,6 +48,17 @@ export PATH=$PATH:/var/www/magento2/vendor/bin
 If you're developing a new component, please ensure you have your corresponding unit test which extends `ComponentAbstractTestCase` as that will test that your component has the required functions.
 Do also include sample files with your component that works 
 
+## Travis
+We also use Travis CI to automate part of the testing process (we are still looking to add more to this!).
+It tests the following:
+* CodeSniffer
+* MessDetector
+* Copy & Paste Detection
+* Run Configurator (we aim to run it on these)
+    1) Latest major versions 
+    2) Latest 3 minor versions
+    3) Latest release candidate (allowed to fail)
+
 ## Getting Started
 1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)
 2. Enable Modules `CtiDigital_Configurator`,`FireGento_FastSimpleImport`.
@@ -79,15 +90,15 @@ Do also include sample files with your component that works
 | Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Rewrites                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Review Ratings            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |
 | Shipping Table Rates      | :x:                | :x:                | :x:                |
 | Catalog Price Rules       | :x:                | :x:                | :x:                |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
-| Rewrites                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Orders                    | :x:                | :x:                | :x:                |
-| Review Ratings            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 License
 ----

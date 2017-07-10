@@ -1,0 +1,16 @@
+review_rating:
+  Quality:
+    is_active: 1
+    position: 0
+    stores:
+      - default
+  Value:
+    is_active: 1
+    position: 1
+    stores:
+      - default
+  Price:
+    is_active: 1
+    position: 2
+    stores:
+      - default

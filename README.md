@@ -87,6 +87,7 @@ Do also include sample files with your component that works
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
 | Rewrites                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Orders                    | :x:                | :x:                | :x:                |
+| Review Ratings            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 License
 ----

@@ -17,7 +17,7 @@ cd magento2
 
 git checkout tags/$1 -b $1
 
-composer require ctidigital/magento2-configurator
+composer require ctidigital/magento2-configurator dev-${TRAVIS_BRANCH}\#${TRAVIS_COMMIT}
 composer install
 
 php bin/magento setup:install --admin-email "test@test.com" --admin-firstname "CTI" --admin-lastname "Test" --admin-password "password123" --admin-user "admin" --backend-frontname admin --base-url "http://configurator.dev" --db-host 127.0.0.1 --db-name configurator --db-user root --session-save files --use-rewrites 1 --use-secure 0 -vvv

@@ -10,8 +10,6 @@ env:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.0.15
-    - TEST_SUITE=configurator
       MAGE_VERSION=2.1.5
     - TEST_SUITE=configurator
       MAGE_VERSION=2.1.6

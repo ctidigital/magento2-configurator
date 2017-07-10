@@ -56,9 +56,8 @@ It tests the following:
 * Copy & Paste Detection
 * Unit Tests
 * Run Configurator (we aim to run it on these versions)
-    1) Latest major versions 
-    2) Latest 3 minor versions
-    3) Latest release candidate (allowed to fail)
+    1) Latest 3 minor versions
+    2) Latest release candidate (allowed to fail)
 
 ## Getting Started
 1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)

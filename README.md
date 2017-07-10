@@ -54,7 +54,8 @@ It tests the following:
 * CodeSniffer
 * MessDetector
 * Copy & Paste Detection
-* Run Configurator (we aim to run it on these)
+* Unit Tests
+* Run Configurator (we aim to run it on these versions)
     1) Latest major versions 
     2) Latest 3 minor versions
     3) Latest release candidate (allowed to fail)

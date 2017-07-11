@@ -141,3 +141,10 @@ review_rating:
   method: code
   sources:
     - ../configurator/ReviewRating/reviewrating.yaml
+product_links:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/ProductLinks/related.yaml
+    - ../configurator/ProductLinks/cross-sells.yaml
+    - ../configurator/ProductLinks/up-sells.yaml

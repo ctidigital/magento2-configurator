@@ -1,0 +1,4 @@
+cross-sells:
+  configurable_product_2:
+    - simple-product
+    - configurable_product_1

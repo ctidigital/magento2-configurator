@@ -1,4 +1,4 @@
-up-sells:
+up_sell:
   configurable_product_1:
     - simple-product
     - configurable_product_2

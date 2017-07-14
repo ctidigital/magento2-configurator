@@ -12,6 +12,8 @@ use CtiDigital\Configurator\Model\Exception\ComponentException;
  *
  * Abstract Class for Components driven by YAML configuration
  * @package CtiDigital\Configurator\Model\Component
+ *
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
 abstract class YamlComponentAbstract extends ComponentAbstract
 {

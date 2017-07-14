@@ -21,7 +21,7 @@ These test include PHP Code Sniffer, PHP Mess Detector, PHP Copy and Paste Detec
 php vendor/bin/phpcs --standard=PSR2 vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console/ vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Helper/
 php vendor/bin/phpmd vendor/ctidigital/magento2-configurator/Model/,vendor/ctidigital/magento2-configurator/Console/,vendor/ctidigital/magento2-configurator/Test/,vendor/ctidigital/magento2-configurator/Helper/ text cleancode,codesize,controversial,design,naming,unusedcode
 php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Helper/
-php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
+php vendor/bin/phpunit vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
 ## Integration tests
@@ -92,6 +92,9 @@ It tests the following:
 | Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Rewrites                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Review Ratings            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Related Products          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Up Sell Products          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Cross Sell Products       | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |

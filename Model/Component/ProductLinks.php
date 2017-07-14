@@ -79,7 +79,7 @@ class ProductLinks extends YamlComponentAbstract
                 if (!$this->doesProductExist($sku)) {
                     throw new ComponentException(sprintf('SKU (%s) for products to link to is not found', $sku));
                 }
-                $this->log->logComment(sprintf('Creating product links for %s', $sku));
+                $this->log->logInfo(sprintf('Creating product links for %s', $sku));
 
                 // Process the links for that product
                 $this->processLinks($sku, $linkSkus, $linkType);
@@ -117,7 +117,7 @@ class ProductLinks extends YamlComponentAbstract
                     ->setLinkedProductSku($linkSku)
                     ->setLinkType($this->linkTypeMap[$linkType])
                     ->setPosition($position * 10);
-                $this->log->logComment($linkSku, 1);
+                $this->log->logInfo($linkSku, 1);
             }
 
             // Save product links onto the main product

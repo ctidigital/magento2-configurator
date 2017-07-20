@@ -39,7 +39,7 @@ class Image
         LoggingInterface $log,
         Filesystem $filesystem,
         \FireGento\FastSimpleImport\Helper\Config $importerConfig,
-        \Magento\Framework\Http\ZendClientFactory $httpClientFactory
+        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory
     ) {
         $this->log = $log;
         $this->filesystem = $filesystem;

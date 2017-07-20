@@ -32,7 +32,7 @@ class ImageTest extends \PHPUnit_Framework_TestCase
         $this->component = $this->objectManager->getObject(
             Image::class,
             [
-                'httpClientFactory' => $this->httpClientFactoryMock
+                'httpClientFactory' => $this->httpFactoryMock
             ]
         );
     }
@@ -58,7 +58,7 @@ class ImageTest extends \PHPUnit_Framework_TestCase
         $httpMock->expects($this->any())->method('request')->willReturnSelf();
         $httpMock->expects($this->any())->method('getBody')->willReturn('testbinarycontent');
 
-        $this->httpClientFactoryMock->expects($this->atLeastOnce())->method('create')->willReturn($httpMock);
+        $this->httpFactoryMock->expects($this->atLeastOnce())->method('create')->willReturn($httpMock);
 
         $this->assertEquals('testbinarycontent', $this->component->downloadFile('http://test.com/media/item.png'));
     }

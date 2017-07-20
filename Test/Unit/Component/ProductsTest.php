@@ -2,7 +2,6 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Model\Component\Products;
-use Firegento\FastSimpleImport\Model\ImporterFactory;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\App\Response\Http\FileFactory;
 
@@ -15,8 +14,14 @@ class ProductsTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $importerFactoryMock = $this->getMock(ImporterFactory::class, [], [], '', false);
-        $this->productFactoryMock = $this->getMock(ProductFactory::class, [], [], '', false);
+        $importerFactoryMock = $this->getMockBuilder('Firegento\FastSimpleImport\Model\ImporterFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productFactoryMock = $this->getMockBuilder('Magento\Catalog\Model\ProductFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $httpClientMock = $this->getMock(
             'Magento\Framework\HTTP\ZendClientFactory',
             ['create'],
@@ -126,7 +131,7 @@ class ProductsTest extends ComponentAbstractTestCase
         $expected = 'sku=1,colour=Blue,size=Medium,style=Loose|sku=2,colour=Red,size=Small,style=Loose';
 
         $productAColourMock = $this->createMockAttribute('colour', 'Blue');
-        $productASizeeMock = $this->createMockAttribute('size', 'Medium');
+        $productASizeMock = $this->createMockAttribute('size', 'Medium');
         $productAStyleMock = $this->createMockAttribute('style', 'Loose');
         $productBColourMock = $this->createMockAttribute('colour', 'Red');
         $productBSizeMock = $this->createMockAttribute('size', 'Small');
@@ -157,7 +162,7 @@ class ProductsTest extends ComponentAbstractTestCase
             ->will(
                 $this->onConsecutiveCalls(
                     $productAColourMock,
-                    $productASizeeMock,
+                    $productASizeMock,
                     $productAStyleMock
                 )
             );

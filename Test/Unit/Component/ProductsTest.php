@@ -19,6 +19,7 @@ class ProductsTest extends ComponentAbstractTestCase
             ->getMock();
 
         $this->productFactoryMock = $this->getMockBuilder('Magento\Catalog\Model\ProductFactory')
+            ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 

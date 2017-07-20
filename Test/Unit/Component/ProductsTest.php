@@ -10,8 +10,8 @@ class ProductsTest extends ComponentAbstractTestCase
 {
     protected function componentSetUp()
     {
-        $importerFactoryMock = $this->getMock(ImporterFactory::class);
-        $productFactoryMock = $this->getMock(ProductFactory::class);
+        $importerFactoryMock = $this->getMock(ImporterFactory::class, [], [], '', false);
+        $productFactoryMock = $this->getMock(ProductFactory::class, [], [], '', false);
         $httpClientMock = $this->getMock(
             'Magento\Framework\HTTP\ZendClientFactory',
             ['create'],
@@ -39,89 +39,75 @@ class ProductsTest extends ComponentAbstractTestCase
         $this->className = Products::class;
     }
 
-    public function testIsValueUrl()
+    public function testGetSkuColumnIndex()
     {
-        $testUrl = "http://test.com/media/item.png";
-        $testFilename = 'item.png';
-        $this->assertNotFalse($this->component->isValueUrl($testUrl));
-        $this->assertFalse($this->component->isValueUrl($testFilename));
+        $columns = [
+            'attribute_set_code',
+            'product_websites',
+            'store_view_code',
+            'product_type',
+            'sku',
+            'name',
+            'short_description',
+            'description'
+        ];
+
+        $expected = 4;
+        $this->assertEquals($expected, $this->component->getSkuColumnIndex($columns));
     }
 
-    public function testDownloadFile()
+    public function testGetAttributesFromCsv()
     {
-        $importerFactoryMock = $this->getMock(ImporterFactory::class);
-        $productFactoryMock = $this->getMock(ProductFactory::class);
-        $httpClientFactory = $this->getMock(
-            'Magento\Framework\HTTP\ZendClientFactory',
-            ['create'],
-            [],
-            '',
-            false
-        );
-        $httpMock = $this->getMock(
-            'Magento\Framework\HTTP\ZendClient',
-            ['setUri', 'request', 'getBody'],
-            [],
-            '',
-            false
-        );
-        $httpMock->expects($this->any())->method('setUri')->willReturnSelf();
-        $httpMock->expects($this->any())->method('request')->willReturnSelf();
-        $httpMock->expects($this->any())->method('getBody')->willReturn('testbinarycontent');
-
-        $httpClientFactory->expects($this->atLeastOnce())->method('create')->willReturn($httpMock);
-
-        $mockFileFactory = $this->getMock(
-            FileFactory::class,
-            ['create'],
-            [],
-            '',
-            false
-        );
-
-        $productsTest = $this->testObjectManager->getObject(
-            Products::class,
+        $importData = [
             [
-                'importerFactory' => $importerFactoryMock,
-                'productFactory' => $productFactoryMock,
-                'httpClientFactory' => $httpClientFactory,
-                'fileFactory' => $mockFileFactory
+                'attribute_set_code',
+                'product_websites',
+                'store_view_code',
+                'product_type',
+                'sku',
+                'name',
+                'short_description',
+                'description'
+            ],
+            [
+                'Default',
+                'base',
+                'default',
+                'configurable',
+                '123',
+                'Product A',
+                'Short description',
+                'Longer description'
             ]
-        );
+        ];
 
-        $this->assertEquals('testbinarycontent', $productsTest->downloadFile('http://test.com/media/item.png'));
+        $expected = [
+            'attribute_set_code',
+            'product_websites',
+            'store_view_code',
+            'product_type',
+            'sku',
+            'name',
+            'short_description',
+            'description'
+        ];
+
+        $this->assertEquals($expected, $this->component->getAttributesFromCsv($importData));
     }
 
-    public function testGetFileName()
+    public function testIsConfigurable()
     {
-        $testUrl = "http://test.com/media/item.png";
+        $importData = [
+            'product_type' => 'configurable'
+        ];
+        $this->assertTrue($this->component->isConfigurable($importData));
+    }
 
-        $importerFactoryMock = $this->getMock(ImporterFactory::class);
-        $productFactoryMock = $this->getMock(ProductFactory::class);
-        $httpClientFactory = $this->getMock(
-            'Magento\Framework\HTTP\ZendClientFactory',
-            [],
-            [],
-            '',
-            false
-        );
-        $mockFileFactory = $this->getMock(
-            'Magento\Framework\HTTP\ZendClient',
-            [],
-            [],
-            '',
-            false
-        );
-
-        $productsTest = $this->testObjectManager->getObject(
-            Products::class,
-            [
-                'importerFactory' => $importerFactoryMock,
-                'productFactory' => $productFactoryMock,
-                'httpClientFactory' => $httpClientFactory,
-                'fileFactory' => $mockFileFactory
-            ]
-        );
-        $this->assertEquals('item.png', $productsTest->getFileName($testUrl));
+    public function testIsNotAConfigurable()
+    {
+        $importData = [
+            'product_type' => 'simple'
+        ];
+        $this->assertFalse($this->component->isConfigurable($importData));
     }
 }

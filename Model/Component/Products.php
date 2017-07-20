@@ -4,10 +4,9 @@ namespace CtiDigital\Configurator\Model\Component;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\Component\Product\Image;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Magento\Framework\Filesystem;
-use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Class Products
@@ -17,6 +16,8 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  */
 class Products extends CsvComponentAbstract
 {
+    const SKU_COLUMN_HEADING = 'sku';
+
     protected $alias = 'products';
     protected $name = 'Products';
     protected $description = 'Component to import products using a CSV file.';
@@ -39,35 +40,36 @@ class Products extends CsvComponentAbstract
     protected $productFactory;
 
     /**
-     * @var Filesystem
+     * @var Image
      */
-    protected $filesystem;
+    protected $image;
 
     /**
-     * @var \Magento\Framework\HTTP\ZendClientFactory
+     * @var []
      */
-    protected $httpClientFactory;
+    private $successProducts;
 
     /**
-     * @var \FireGento\FastSimpleImport\Helper\Config
+     * @var []
      */
-    protected $importerConfig;
+    private $skippedProducts;
+
+    /**
+     * @var int
+     */
+    private $skuColumn;
 
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
-        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory,
-        Filesystem $filesystem,
-        \FireGento\FastSimpleImport\Helper\Config $importerConfig
+        Image $image
     ) {
         parent::__construct($log, $objectManager);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
-        $this->httpClientFactory = $httpClientFactory;
-        $this->filesystem = $filesystem;
-        $this->importerConfig = $importerConfig;
+        $this->image = $image;
     }
 
     protected function processData($data = null)
@@ -79,16 +81,28 @@ class Products extends CsvComponentAbstract
             );
         }
         $attributeKeys = $this->getAttributesFromCsv($data);
+        $this->skuColumn = $this->getSkuColumnIndex($attributeKeys);
+        $totalColumnCount = count($attributeKeys);
         unset($data[0]);
 
         // Prepare the data
         $productsArray = array();
 
         foreach ($data as $product) {
+            if (count($product) !== $totalColumnCount) {
+                $this->skippedProducts[] = $product;
+                $this->log->logInfo(
+                    sprintf(
+                        'The product %s has been skipped as it does not have the required columns',
+                        $product[$this->skuColumn]
+                    )
+                );
+                continue;
+            }
             $productArray = array();
             foreach ($attributeKeys as $column => $code) {
                 if (in_array($code, $this->imageAttributes)) {
-                    $product[$column] = $this->getImage($product[$column]);
+                    $product[$column] = $this->image->getImage($product[$column]);
                 }
                 $productArray[$code] = $product[$column];
             }
@@ -101,8 +115,10 @@ class Products extends CsvComponentAbstract
                 unset($productArray['configurable_attributes']);
             }
             $productsArray[] = $productArray;
+            $this->successProducts[] = $product[$this->skuColumn];
         }
 
+        $this->log->logInfo(sprintf('Attempting to import %s rows', count($this->successProducts)));
         try {
             $import = $this->importerFactory->create();
             $import->processImport($productsArray);
@@ -221,113 +237,8 @@ class Products extends CsvComponentAbstract
         return $skuAttributes;
     }
 
-    /**
-     * Checks if a value is a URL
-     *
-     * @param $url
-     * @return bool|string
-     */
-    public function isValueURL($url)
+    public function getSkuColumnIndex($headers)
     {
-        return filter_var($url, FILTER_VALIDATE_URL);
-    }
-
-    /**
-     * Download a file and return the response
-     *
-     * @param $value
-     * @return string
-     */
-    public function downloadFile($value)
-    {
-        /**
-         * @var \Magento\Framework\HTTP\ZendClient $client
-         */
-        $client = $this->httpClientFactory->create();
-        $response = '';
-        try {
-            $response = $client
-                ->setUri($value)
-                ->request('GET')
-                ->getBody();
-        } catch (\Exception $e) {
-            $this->log->logError($e->getMessage());
-        }
-        return $response;
-    }
-
-    /**
-     * Get the file name from the URL
-     *
-     * @param $url
-     * @return string
-     */
-    public function getFileName($url)
-    {
-        return basename($url);
-    }
-
-    /**
-     * Saves the file. If the file exists, a number will be appended to the end of the file name
-     *
-     * @param $fileName
-     * @param $value
-     * @return Filesystem|string
-     */
-    public function saveFile($fileName, $value)
-    {
-        $name = pathinfo($fileName, PATHINFO_FILENAME);
-        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-
-        $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $importDirectory = $this->getFileDirectory($writeDirectory);
-        $counter = 0;
-        do {
-            $file = $name . '_' . $counter . '.' . $ext;
-            $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $file);
-            $counter++;
-        } while ($writeDirectory->isExist($filePath));
-
-        try {
-            $writeDirectory->writeFile($filePath, $value);
-        } catch (\Exception $e) {
-            $this->log->logError($e->getMessage());
-        }
-        return $file;
-    }
-
-    /**
-     * Downloads the image, saves, and returns the file name
-     *
-     * @param $value
-     * @return Filesystem|string
-     */
-    public function getImage($value)
-    {
-        if ($this->isValueURL($value) === false) {
-            return $value;
-        }
-        $file = $this->downloadFile($value);
-        if (strlen($file) > 0) {
-            $fileName = $this->getFileName($value);
-            $fileContent = $this->saveFile($fileName, $file);
-            return $fileContent;
-        }
-        return $value;
-    }
-
-    /**
-     * Get the file directory from the configuration if set
-     *
-     * @param Filesystem\Directory\WriteInterface $file
-     * @return string
-     */
-    public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file)
-    {
-        $configurationValue = $this->importerConfig->getImportFileDir();
-        if (!empty($configurationValue)) {
-            return $file->getRelativePath($configurationValue);
-        }
-        return $file->getRelativePath('import');
+        return array_search(self::SKU_COLUMN_HEADING, $headers);
     }
 }

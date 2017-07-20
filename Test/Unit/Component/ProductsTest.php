@@ -8,10 +8,15 @@ use Magento\Framework\App\Response\Http\FileFactory;
 
 class ProductsTest extends ComponentAbstractTestCase
 {
+    /**
+     * @var ProductFactory | \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productFactoryMock;
+
     protected function componentSetUp()
     {
         $importerFactoryMock = $this->getMock(ImporterFactory::class, [], [], '', false);
-        $productFactoryMock = $this->getMock(ProductFactory::class, [], [], '', false);
+        $this->productFactoryMock = $this->getMock(ProductFactory::class, [], [], '', false);
         $httpClientMock = $this->getMock(
             'Magento\Framework\HTTP\ZendClientFactory',
             ['create'],
@@ -31,7 +36,7 @@ class ProductsTest extends ComponentAbstractTestCase
             Products::class,
             [
                 'importerFactory' => $importerFactoryMock,
-                'productFactory' => $productFactoryMock,
+                'productFactory' => $this->productFactoryMock,
                 'httpClientFactory' => $httpClientMock,
                 'fileFactory' => $mockFileFactory
             ]
@@ -109,5 +114,110 @@ class ProductsTest extends ComponentAbstractTestCase
             'product_type' => 'simple'
         ];
         $this->assertFalse($this->component->isConfigurable($importData));
+    }
+
+    public function testConstructConfigurableVariations()
+    {
+        $configurableData = [
+            'associated_products' => '1,2',
+            'configurable_attributes' => 'colour,size,style',
+        ];
+
+        $expected = 'sku=1,colour=Blue,size=Medium,style=Loose|sku=2,colour=Red,size=Small,style=Loose';
+
+        $productAColourMock = $this->createMockAttribute('colour', 'Blue');
+        $productASizeeMock = $this->createMockAttribute('size', 'Medium');
+        $productAStyleMock = $this->createMockAttribute('style', 'Loose');
+        $productBColourMock = $this->createMockAttribute('colour', 'Red');
+        $productBSizeMock = $this->createMockAttribute('size', 'Small');
+        $productBStyleMock = $this->createMockAttribute('style', 'Loose');
+
+        $simpleMockA = $this->getMockBuilder('Magento\Catalog\Model\Product')
+            ->disableOriginalConstructor()
+            ->setMethods(['getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
+            ->getMock();
+
+        $simpleMockA->expects($this->any())
+            ->method('getIdBySku')
+            ->willReturnSelf();
+
+        $simpleMockA->expects($this->once())
+            ->method('load')
+            ->willReturnSelf();
+
+        $simpleMockA->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $simpleMockA->expects($this->any())
+            ->method('getResource')
+            ->willReturnSelf();
+
+        $simpleMockA->method('getAttribute')
+            ->will(
+                $this->onConsecutiveCalls(
+                    $productAColourMock,
+                    $productASizeeMock,
+                    $productAStyleMock
+                )
+            );
+
+        $simpleMockB = $this->getMockBuilder('Magento\Catalog\Model\Product')
+            ->disableOriginalConstructor()
+            ->setMethods(['getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
+            ->getMock();
+
+        $simpleMockB->expects($this->any())
+            ->method('getIdBySku')
+            ->willReturnSelf();
+
+        $simpleMockB->expects($this->any())
+            ->method('getId')
+            ->willReturn(2);
+
+        $simpleMockB->expects($this->once())
+            ->method('load')
+            ->willReturnSelf();
+
+        $simpleMockB->expects($this->any())
+            ->method('getResource')
+            ->willReturnSelf();
+
+        $simpleMockB->method('getAttribute')
+            ->will(
+                $this->onConsecutiveCalls(
+                    $productBColourMock,
+                    $productBSizeMock,
+                    $productBStyleMock
+                )
+            );
+
+        $this->productFactoryMock->expects($this->at(0))
+            ->method('create')
+            ->willReturn($simpleMockA);
+
+        $this->productFactoryMock->expects($this->at(1))
+            ->method('create')
+            ->willReturn($simpleMockB);
+
+        $this->assertEquals($expected, $this->component->constructConfigurableVariations($configurableData));
+    }
+
+    private function createMockAttribute($attributeCode, $value)
+    {
+        $attr = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute')
+            ->disableOriginalConstructor()
+            ->setMethods(['getFrontend', 'getValue'])
+            ->getMock();
+        $attr->expects($this->once())
+            ->method('getFrontend')
+            ->willReturnSelf();
+        $attr->expects($this->any())
+            ->method('getAttributeCode')
+            ->willReturn($attributeCode);
+        $attr->expects($this->once())
+            ->method('getValue')
+            ->willReturn($value);
+        return $attr;
     }
 }

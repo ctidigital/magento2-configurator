@@ -18,13 +18,13 @@ class ImageTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \Magento\Framework\HTTP\ZendClientFactory | \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $httpClientFactoryMock;
+    protected $httpFactoryMock;
 
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->httpClientFactoryMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
+        $this->httpFactoryMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();

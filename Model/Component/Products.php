@@ -237,6 +237,13 @@ class Products extends CsvComponentAbstract
         return $skuAttributes;
     }
 
+    /**
+     * Get the column index of the SKU
+     *
+     * @param $headers
+     *
+     * @return mixed
+     */
     public function getSkuColumnIndex($headers)
     {
         return array_search(self::SKU_COLUMN_HEADING, $headers);

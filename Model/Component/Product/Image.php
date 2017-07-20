@@ -27,16 +27,24 @@ class Image
      */
     protected $importerConfig;
 
+    /**
+     * Image constructor.
+     *
+     * @param LoggingInterface $log
+     * @param Filesystem $filesystem
+     * @param \FireGento\FastSimpleImport\Helper\Config $importerConfig
+     * @param \Magento\Framework\Http\ZendClientFactory $httpClientFactory
+     */
     public function __construct(
         LoggingInterface $log,
-        \Magento\Framework\Http\ZendClientFactory $httpClientFactory,
         Filesystem $filesystem,
-        \FireGento\FastSimpleImport\Helper\Config $importerConfig
+        \FireGento\FastSimpleImport\Helper\Config $importerConfig,
+        \Magento\Framework\Http\ZendClientFactory $httpClientFactory
     ) {
         $this->log = $log;
-        $this->httpClientFactory = $httpClientFactory;
         $this->filesystem = $filesystem;
         $this->importerConfig = $importerConfig;
+        $this->httpClientFactory = $httpClientFactory;
     }
 
     /**

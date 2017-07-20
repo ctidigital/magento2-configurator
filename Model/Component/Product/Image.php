@@ -109,7 +109,11 @@ class Image
         $importDirectory = $this->getFileDirectory($writeDirectory);
         $counter = 0;
         do {
-            $file = $name . '_' . $counter . '.' . $ext;
+            if ($counter === 0) {
+                $file = $fileName;
+            } else {
+                $file = $name . '_' . $counter . '.' . $ext;
+            }
             $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $file);
             $counter++;
         } while ($writeDirectory->isExist($filePath));
@@ -133,6 +137,12 @@ class Image
         if ($this->isValueURL($value) === false) {
             return $value;
         }
+        if ($this->localFileExists($value)) {
+            $this->log->logInfo(
+                sprintf('Local file already exists for %s. Not downloading.', $value)
+            );
+            return $this->getLocalFile($value);
+        }
         $file = $this->downloadFile($value);
         if (strlen($file) > 0) {
             $fileName = $this->getFileName($value);
@@ -155,5 +165,40 @@ class Image
             return $file->getRelativePath($configurationValue);
         }
         return $file->getRelativePath('import');
+    }
+
+    /**
+     * Tests if the file exists locally
+     *
+     * @param $value
+     *
+     * @return bool
+     */
+    public function localFileExists($value)
+    {
+        $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $importDirectory = $this->getFileDirectory($writeDirectory);
+        $fileName= $this->getFileName($value);
+        $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $fileName);
+        if ($writeDirectory->isExist($filePath)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get the local file
+     *
+     * @param $value
+     *
+     * @return string
+     */
+    public function getLocalFile($value)
+    {
+        $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $importDirectory = $this->getFileDirectory($writeDirectory);
+        $fileName= $this->getFileName($value);
+        $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $fileName);
+        return $writeDirectory->readFile($filePath);
     }
 }

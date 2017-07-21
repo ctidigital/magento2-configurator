@@ -5,6 +5,7 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\LoggingInterface;
 use CtiDigital\Configurator\Model\Component\Product\Image;
+use CtiDigital\Configurator\Model\Component\Product\AttributeOption;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
@@ -45,6 +46,11 @@ class Products extends CsvComponentAbstract
     protected $image;
 
     /**
+     * @var AttributeOption
+     */
+    protected $attributeOption;
+
+    /**
      * @var []
      */
     private $successProducts;
@@ -59,17 +65,29 @@ class Products extends CsvComponentAbstract
      */
     private $skuColumn;
 
+    /**
+     * Products constructor.
+     *
+     * @param LoggingInterface $log
+     * @param ObjectManagerInterface $objectManager
+     * @param ImporterFactory $importerFactory
+     * @param ProductFactory $productFactory
+     * @param Image $image
+     * @param AttributeOption $attributeOption
+     */
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
-        Image $image
+        Image $image,
+        AttributeOption $attributeOption
     ) {
         parent::__construct($log, $objectManager);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
         $this->image = $image;
+        $this->attributeOption = $attributeOption;
     }
 
     protected function processData($data = null)
@@ -99,6 +117,7 @@ class Products extends CsvComponentAbstract
                     $product[$column] = $this->image->getImage($product[$column]);
                 }
                 $productArray[$code] = $product[$column];
+                $this->attributeOption->processAttributeValues($code, $productArray[$code]);
             }
             if ($this->isConfigurable($productArray)) {
                 $variations = $this->constructConfigurableVariations($productArray);
@@ -120,6 +139,7 @@ class Products extends CsvComponentAbstract
                 )
             );
         }
+        $this->attributeOption->saveOptions();
         $this->log->logInfo(sprintf('Attempting to import %s rows', count($this->successProducts)));
         try {
             $import = $this->importerFactory->create();

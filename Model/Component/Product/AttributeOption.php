@@ -151,15 +151,18 @@ class AttributeOption
                 $option->setSortOrder(0);
                 $option->setIsDefault(false);
 
-                $this->attrOptionManagement->add(
-                    Product::ENTITY,
-                    $attribute->getAttributeId(),
-                    $option
-                );
-
-                $this->log->logInfo(
-                    sprintf('Created the option "%s" for the attribute "%s"', $label, $attributeCode)
-                );
+                try {
+                    $this->attrOptionManagement->add(
+                        Product::ENTITY,
+                        $attribute->getAttributeId(),
+                        $option
+                    );
+                    $this->log->logInfo(
+                        sprintf('Created the option "%s" for the attribute "%s"', $label, $attributeCode)
+                    );
+                } catch (\Exception $e) {
+                    $this->log->logError($e->getMessage());
+                }
             }
         }
     }
@@ -175,7 +178,9 @@ class AttributeOption
             return false;
         }
         $attribute = $this->getAttribute($code);
-        if (in_array($attribute->getFrontendInput(), $this->allowedInputs)) {
+        if (in_array($attribute->getFrontendInput(), $this->allowedInputs) &&
+            $attribute->getBackendModel() == null
+        ) {
             return true;
         }
         return false;
@@ -196,7 +201,7 @@ class AttributeOption
                 $this->attributeValues[$code][] = $optionLabel->getLabel();
             }
         }
-        if (in_array($value, $this->attributeValues[$code])) {
+        if (in_array($value, $this->newValues) === false && in_array($value, $this->attributeValues[$code])) {
             return true;
         }
         return false;

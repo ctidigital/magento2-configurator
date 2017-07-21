@@ -71,6 +71,21 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->attributeOption->isOptionAttribute('colour'));
     }
 
+    public function testAttributeBackendModelIsNotProcessed()
+    {
+        /**
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
+         */
+        $attributeMock = $this->createMockAttribute('colour', 'select', []);
+        $attributeMock->expects($this->once())
+            ->method('getBackendModel')
+            ->willReturn('/test/');
+        $this->attrRepositoryMock->expects($this->once())
+            ->method('get')
+            ->willReturn($attributeMock);
+        $this->assertFalse($this->attributeOption->isOptionAttribute('colour'));
+    }
+
     public function testOptionValueDoesNotExist()
     {
         /**
@@ -123,7 +138,7 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
          */
         $attributeMock = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Eav\Attribute')
             ->disableOriginalConstructor()
-            ->setMethods(['getAttributeCode', 'getFrontendInput', 'getOptions'])
+            ->setMethods(['getAttributeCode', 'getFrontendInput', 'getOptions', 'getBackendModel'])
             ->getMock();
         $attributeMock->expects($this->any())
             ->method('getAttributeCode')

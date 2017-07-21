@@ -134,7 +134,7 @@ class Products extends CsvComponentAbstract
         if (count($this->skippedProducts) > 0) {
             $this->log->logInfo(
                 sprintf(
-                    'The following products were skipped as they do not have the required columns: %s',
+                    'The following products were skipped as they do not have the required columns: ' . PHP_EOL . '%s',
                     implode(PHP_EOL, $this->skippedProducts)
                 )
             );

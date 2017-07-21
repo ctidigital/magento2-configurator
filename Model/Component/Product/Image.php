@@ -141,7 +141,7 @@ class Image
             $this->log->logInfo(
                 sprintf('Local file already exists for %s. Not downloading.', $value)
             );
-            return $this->getLocalFile($value);
+            return $this->getFileName($value);
         }
         $file = $this->downloadFile($value);
         if (strlen($file) > 0) {
@@ -184,21 +184,5 @@ class Image
             return true;
         }
         return false;
-    }
-
-    /**
-     * Get the local file
-     *
-     * @param $value
-     *
-     * @return string
-     */
-    public function getLocalFile($value)
-    {
-        $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $importDirectory = $this->getFileDirectory($writeDirectory);
-        $fileName= $this->getFileName($value);
-        $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $fileName);
-        return $writeDirectory->readFile($filePath);
     }
 }

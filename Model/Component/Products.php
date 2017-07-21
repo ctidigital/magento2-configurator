@@ -90,13 +90,7 @@ class Products extends CsvComponentAbstract
 
         foreach ($data as $product) {
             if (count($product) !== $totalColumnCount) {
-                $this->skippedProducts[] = $product;
-                $this->log->logInfo(
-                    sprintf(
-                        'The product %s has been skipped as it does not have the required columns',
-                        $product[$this->skuColumn]
-                    )
-                );
+                $this->skippedProducts[] = $product[$this->skuColumn];
                 continue;
             }
             $productArray = array();
@@ -118,6 +112,14 @@ class Products extends CsvComponentAbstract
             $this->successProducts[] = $product[$this->skuColumn];
         }
 
+        if (count($this->skippedProducts) > 0) {
+            $this->log->logInfo(
+                sprintf(
+                    'The following products were skipped as they do not have the required columns: %s',
+                    implode(PHP_EOL, $this->skippedProducts)
+                )
+            );
+        }
         $this->log->logInfo(sprintf('Attempting to import %s rows', count($this->successProducts)));
         try {
             $import = $this->importerFactory->create();

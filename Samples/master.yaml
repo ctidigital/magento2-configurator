@@ -18,6 +18,16 @@ config:
   sources:
     - ../configurator/Configuration/global.yaml
     - ../configurator/Configuration/base-website-config.yaml
+attributes:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Attributes/attributes.yaml
+attribute_sets:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Attributes/attribute_sets.yaml
 categories:
   enabled: 1
   method: code
@@ -121,16 +131,6 @@ media:
   method: code
   sources:
     - ../configurator/Media/media.yaml
-attributes:
-  enabled: 1
-  method: code
-  sources:
-    - ../configurator/Attributes/attributes.yaml
-attribute_sets:
-  enabled: 1
-  method: code
-  sources:
-    - ../configurator/Attributes/attribute_sets.yaml
 rewrites:
   enabled: 1
   method: code
@@ -141,3 +141,10 @@ review_rating:
   method: code
   sources:
     - ../configurator/ReviewRating/reviewrating.yaml
+product_links:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/ProductLinks/related.yaml
+    - ../configurator/ProductLinks/cross-sells.yaml
+    - ../configurator/ProductLinks/up-sells.yaml

@@ -21,7 +21,7 @@ These test include PHP Code Sniffer, PHP Mess Detector, PHP Copy and Paste Detec
 php vendor/bin/phpcs --standard=PSR2 vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console/ vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Helper/
 php vendor/bin/phpmd vendor/ctidigital/magento2-configurator/Model/,vendor/ctidigital/magento2-configurator/Console/,vendor/ctidigital/magento2-configurator/Test/,vendor/ctidigital/magento2-configurator/Helper/ text cleancode,codesize,controversial,design,naming,unusedcode
 php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Helper/
-php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
+php vendor/bin/phpunit vendor/ctidigital/magento2-configurator/Test/Unit/
 ```
 
 ## Integration tests
@@ -47,6 +47,17 @@ export PATH=$PATH:/var/www/magento2/vendor/bin
 ## Unit tests 
 If you're developing a new component, please ensure you have your corresponding unit test which extends `ComponentAbstractTestCase` as that will test that your component has the required functions.
 Do also include sample files with your component that works 
+
+## Travis
+We also use Travis CI to automate part of the testing process (we are still looking to add more to this!).
+It tests the following:
+* CodeSniffer
+* MessDetector
+* Copy & Paste Detection
+* Unit Tests
+* Run Configurator (we aim to run it on these versions)
+    1) Latest 3 minor versions
+    2) Latest release candidate (allowed to fail)
 
 ## Getting Started
 1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)
@@ -79,15 +90,18 @@ Do also include sample files with your component that works
 | Tax Rules                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | API Integrations          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Tax Rates                 | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Rewrites                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Review Ratings            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Related Products          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Up Sell Products          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
+| Cross Sell Products       | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Customers                 | :x:                | :x:                | :x:                |
 | Related Products          | :x:                | :x:                | :x:                |
 | SQL                       | :x:                | :x:                | :x:                |
 | Shipping Table Rates      | :x:                | :x:                | :x:                |
 | Catalog Price Rules       | :x:                | :x:                | :x:                |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
-| Rewrites                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Orders                    | :x:                | :x:                | :x:                |
-| Review Ratings            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 License
 ----

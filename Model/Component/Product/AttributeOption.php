@@ -201,7 +201,10 @@ class AttributeOption
                 $this->attributeValues[$code][] = $optionLabel->getLabel();
             }
         }
-        if (in_array($value, $this->newValues) === false && in_array($value, $this->attributeValues[$code])) {
+        if (
+            (isset($this->attributeValues[$code]) && in_array($value, $this->attributeValues[$code]))
+            || (isset($this->newValues[$code]) && in_array($value, $this->newValues[$code]))
+        ) {
             return true;
         }
         return false;

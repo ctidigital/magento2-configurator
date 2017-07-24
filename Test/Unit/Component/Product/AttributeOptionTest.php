@@ -110,7 +110,7 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->attributeOption->isOptionValueExists('colour', 'Red'));
     }
 
-    public function newOptionIsNotDuplicated()
+    public function testNewOptionIsNotDuplicated()
     {
         /**
          * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
@@ -123,9 +123,17 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
             'White',
             'White',
             'Green',
-            'Red'
+            'Red',
+            'Red/Blue',
+            'White'
         ];
-        $expectedResult = ['White', 'Green'];
+        $expectedResult = [
+            'colour' => [
+                'White',
+                'Green',
+                'Red/Blue'
+            ]
+        ];
         foreach ($newValues as $newValue) {
             $this->attributeOption->processAttributeValues('colour', $newValue);
         }

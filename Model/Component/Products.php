@@ -130,7 +130,6 @@ class Products extends CsvComponentAbstract
             $productsArray[] = $productArray;
             $this->successProducts[] = $product[$this->skuColumn];
         }
-
         if (count($this->skippedProducts) > 0) {
             $this->log->logInfo(
                 sprintf(
@@ -144,11 +143,11 @@ class Products extends CsvComponentAbstract
         try {
             $import = $this->importerFactory->create();
             $import->processImport($productsArray);
-            $this->log->logInfo($import->getLogTrace());
         } catch (\Exception $e) {
-            $this->log->logError($import->getErrorMessages());
-            $this->log->logError($import->getLogTrace());
+
         }
+        $this->log->logInfo($import->getLogTrace());
+        $this->log->logError($import->getErrorMessages());
     }
 
     /**
@@ -212,7 +211,7 @@ class Products extends CsvComponentAbstract
             $products = explode(',', $data['associated_products']);
             $attributes = explode(',', $data['configurable_attributes']);
 
-            if (is_array($products)) {
+            if (is_array($products) && is_array($attributes)) {
                 $productsCount = count($products);
                 $count = 0;
                 foreach ($products as $sku) {
@@ -222,7 +221,9 @@ class Products extends CsvComponentAbstract
 
                     if ($productModel->getId()) {
                         $configSkuAttributes = $this->constructAttributeData($attributes, $productModel);
-                        $variations .= 'sku=' . $sku . ',' . $configSkuAttributes;
+                        if (strlen($configSkuAttributes) > 0) {
+                            $variations .= 'sku=' . $sku . ',' . $configSkuAttributes;
+                        }
                         $count++;
                         if ($count < $productsCount) {
                             $variations .= '|';
@@ -247,6 +248,19 @@ class Products extends CsvComponentAbstract
         $attrCounter = 0;
         foreach ($attributes as $attributeCode) {
             $attrCounter++;
+            if ($productModel->hasData($attributeCode) == false) {
+                $this->log->logError(
+                    sprintf(
+                        'The product "%s" is missing an attribute value for "%s" and will not be added ' .
+                        'to the configurable product',
+                        $productModel->getSku(),
+                        $attributeCode
+                    )
+                );
+                // Unset any previous attributes.
+                $skuAttributes = '';
+                break;
+            }
             $productAttribute = $productModel->getResource()->getAttribute($attributeCode);
             if ($productAttribute !== false) {
                 if ($attrCounter > 1) {

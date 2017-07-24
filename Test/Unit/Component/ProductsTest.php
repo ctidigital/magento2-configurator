@@ -140,7 +140,7 @@ class ProductsTest extends ComponentAbstractTestCase
 
         $simpleMockA = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
-            ->setMethods(['getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
+            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
             ->getMock();
 
         $simpleMockA->expects($this->any())
@@ -168,9 +168,18 @@ class ProductsTest extends ComponentAbstractTestCase
                 )
             );
 
+        $simpleMockA->method('hasData')
+            ->will(
+                $this->onConsecutiveCalls(
+                    'Blue',
+                    'Medium',
+                    'Loose'
+                )
+            );
+
         $simpleMockB = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
-            ->setMethods(['getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
+            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
             ->getMock();
 
         $simpleMockB->expects($this->any())
@@ -195,6 +204,15 @@ class ProductsTest extends ComponentAbstractTestCase
                     $productBColourMock,
                     $productBSizeMock,
                     $productBStyleMock
+                )
+            );
+
+        $simpleMockB->method('hasData')
+            ->will(
+                $this->onConsecutiveCalls(
+                    'Red',
+                    'Small',
+                    'Loose'
                 )
             );
 

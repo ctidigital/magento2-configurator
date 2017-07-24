@@ -20,14 +20,28 @@ class ImageTest extends \PHPUnit_Framework_TestCase
      */
     protected $httpFactoryMock;
 
+    /**
+     * @var \Magento\Framework\HTTP\ZendClient | \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $httpMock;
+
     protected function setUp()
     {
         $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+
+        $this->httpMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClient')
+            ->disableOriginalConstructor()
+            ->setMethods(['setUri', 'request', 'getBody'])
+            ->getMock();
 
         $this->httpFactoryMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
+
+        $this->httpFactoryMock->expects($this->any())
+            ->method('create')
+            ->willReturn($this->httpMock);
 
         $this->component = $this->objectManager->getObject(
             Image::class,
@@ -47,19 +61,9 @@ class ImageTest extends \PHPUnit_Framework_TestCase
 
     public function testDownloadFile()
     {
-        $httpMock = $this->getMock(
-            'Magento\Framework\HTTP\ZendClient',
-            ['setUri', 'request', 'getBody'],
-            [],
-            '',
-            false
-        );
-        $httpMock->expects($this->any())->method('setUri')->willReturnSelf();
-        $httpMock->expects($this->any())->method('request')->willReturnSelf();
-        $httpMock->expects($this->any())->method('getBody')->willReturn('testbinarycontent');
-
-        $this->httpFactoryMock->expects($this->atLeastOnce())->method('create')->willReturn($httpMock);
-
+        $this->httpMock->expects($this->any())->method('setUri')->willReturnSelf();
+        $this->httpMock->expects($this->any())->method('request')->willReturnSelf();
+        $this->httpMock->expects($this->any())->method('getBody')->willReturn('testbinarycontent');
         $this->assertEquals('testbinarycontent', $this->component->downloadFile('http://test.com/media/item.png'));
     }
 

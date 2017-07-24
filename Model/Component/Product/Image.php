@@ -71,11 +71,13 @@ class Image
          */
         $client = $this->httpClientFactory->create();
         $response = '';
+
         try {
             $response = $client
                 ->setUri($value)
                 ->request('GET')
                 ->getBody();
+
         } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }
@@ -120,10 +122,20 @@ class Image
 
         try {
             $writeDirectory->writeFile($filePath, $value);
+            if ($this->isValidImage($writeDirectory->getAbsolutePath($filePath)) === false) {
+                $this->log->logError(sprintf('The file %s is not valid and has been removed.', $filePath));
+                $writeDirectory->delete($filePath);
+                return '';
+            }
         } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }
         return $file;
+    }
+
+    private function isValidImage($file)
+    {
+        return exif_imagetype($file);
     }
 
     /**
@@ -138,11 +150,9 @@ class Image
             return $value;
         }
         if ($this->localFileExists($value)) {
-            $this->log->logInfo(
-                sprintf('Local file already exists for %s. Not downloading.', $value)
-            );
             return $this->getFileName($value);
         }
+        $this->log->logInfo(sprintf('Downloading image %s', $value));
         $file = $this->downloadFile($value);
         if (strlen($file) > 0) {
             $fileName = $this->getFileName($value);

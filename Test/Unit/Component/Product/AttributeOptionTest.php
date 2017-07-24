@@ -169,7 +169,7 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
          */
         $attributeMock = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Eav\Attribute')
             ->disableOriginalConstructor()
-            ->setMethods(['getAttributeCode', 'getFrontendInput', 'getOptions', 'getBackendModel'])
+            ->setMethods(['getAttributeCode', 'getFrontendInput', 'getOptions', 'getBackendModel', 'getIsUserDefined'])
             ->getMock();
         $attributeMock->expects($this->any())
             ->method('getAttributeCode')
@@ -193,6 +193,9 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
                 ->method('getOptions')
                 ->willReturn($attributeOptions);
         }
+        $attributeMock->expects($this->any())
+            ->method('getIsUserDefined')
+            ->willReturn(true);
         return $attributeMock;
     }
 }

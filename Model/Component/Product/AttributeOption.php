@@ -165,6 +165,7 @@ class AttributeOption
                 }
             }
         }
+        $this->reset();
     }
 
     /**
@@ -217,6 +218,16 @@ class AttributeOption
     public function addOption($code, $value)
     {
         $this->newValues[$code][] = $value;
+    }
+
+    /**
+     * Clears the values that have been saved
+     */
+    private function reset()
+    {
+        $this->newValues = [];
+        $this->attributes = [];
+        $this->attributeValues = [];
     }
 
     /**

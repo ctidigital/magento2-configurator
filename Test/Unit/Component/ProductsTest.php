@@ -122,7 +122,7 @@ class ProductsTest extends ComponentAbstractTestCase
         $this->assertFalse($this->component->isConfigurable($importData));
     }
 
-    public function testConstructConfigurableVariations()
+    public function testConstructVariations()
     {
         $configurableData = [
             'associated_products' => '1,2',

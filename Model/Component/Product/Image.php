@@ -111,9 +111,8 @@ class Image
         $importDirectory = $this->getFileDirectory($writeDirectory);
         $counter = 0;
         do {
-            if ($counter === 0) {
-                $file = $fileName;
-            } else {
+            $file = $fileName;
+            if ($counter > 0) {
                 $file = $name . '_' . $counter . '.' . $ext;
             }
             $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $file);

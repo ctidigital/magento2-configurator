@@ -144,7 +144,7 @@ class Products extends CsvComponentAbstract
             $import = $this->importerFactory->create();
             $import->processImport($productsArray);
         } catch (\Exception $e) {
-
+            $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());

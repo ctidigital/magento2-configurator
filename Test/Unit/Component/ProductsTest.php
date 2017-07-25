@@ -122,12 +122,9 @@ class ProductsTest extends ComponentAbstractTestCase
         $this->assertFalse($this->component->isConfigurable($importData));
     }
 
-    public function testConstructVariations()
+    public function testConstructConfigurableVariations()
     {
-        $configurableData = [
-            'associated_products' => '1,2',
-            'configurable_attributes' => 'colour,size,style',
-        ];
+        $configurableData = ['associated_products' => '1,2', 'configurable_attributes' => 'colour,size,style',];
 
         $expected = 'sku=1,colour=Blue,size=Medium,style=Loose|sku=2,colour=Red,size=Small,style=Loose';
 
@@ -161,20 +158,12 @@ class ProductsTest extends ComponentAbstractTestCase
 
         $simpleMockA->method('getAttribute')
             ->will(
-                $this->onConsecutiveCalls(
-                    $productAColourMock,
-                    $productASizeMock,
-                    $productAStyleMock
-                )
+                $this->onConsecutiveCalls($productAColourMock, $productASizeMock, $productAStyleMock)
             );
 
         $simpleMockA->method('hasData')
             ->will(
-                $this->onConsecutiveCalls(
-                    'Blue',
-                    'Medium',
-                    'Loose'
-                )
+                $this->onConsecutiveCalls('Blue', 'Medium', 'Loose')
             );
 
         $simpleMockB = $this->getMockBuilder('Magento\Catalog\Model\Product')
@@ -200,20 +189,12 @@ class ProductsTest extends ComponentAbstractTestCase
 
         $simpleMockB->method('getAttribute')
             ->will(
-                $this->onConsecutiveCalls(
-                    $productBColourMock,
-                    $productBSizeMock,
-                    $productBStyleMock
-                )
+                $this->onConsecutiveCalls($productBColourMock, $productBSizeMock, $productBStyleMock)
             );
 
         $simpleMockB->method('hasData')
             ->will(
-                $this->onConsecutiveCalls(
-                    'Red',
-                    'Small',
-                    'Loose'
-                )
+                $this->onConsecutiveCalls('Red', 'Small', 'Loose')
             );
 
         $this->productFactoryMock->expects($this->at(0))

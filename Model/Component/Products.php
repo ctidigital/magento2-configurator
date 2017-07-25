@@ -90,6 +90,11 @@ class Products extends CsvComponentAbstract
         $this->attributeOption = $attributeOption;
     }
 
+    /**
+     * @param null $data
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function processData($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.

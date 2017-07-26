@@ -21,7 +21,8 @@ if [ -z "${TRAVIS_TAG}" ]; then
     echo Require configurator branch: ${TRAVIS_BRANCH} commit: ${TRAVIS_COMMIT}
     composer require ctidigital/magento2-configurator dev-${TRAVIS_BRANCH}\#${TRAVIS_COMMIT}
 else
-    tag=${TRAVIS_TAG:1}
+    tag=${TRAVIS_TAG}
+    tag=${tag:1}
     echo Require configurator release $tag
     composer require ctidigital/magento2-configurator $tag
 fi

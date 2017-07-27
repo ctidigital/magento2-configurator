@@ -18,6 +18,8 @@ use CtiDigital\Configurator\Model\Exception\ComponentException;
 class Products extends CsvComponentAbstract
 {
     const SKU_COLUMN_HEADING = 'sku';
+    const QTY_COLUMN_HEADING = 'qty';
+    const IS_IN_STOCK_COLUMN_HEADING = 'is_in_stock';
 
     protected $alias = 'products';
     protected $name = 'Products';
@@ -90,11 +92,6 @@ class Products extends CsvComponentAbstract
         $this->attributeOption = $attributeOption;
     }
 
-    /**
-     * @param null $data
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
     protected function processData($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
@@ -132,6 +129,9 @@ class Products extends CsvComponentAbstract
                 unset($productArray['associated_products']);
                 unset($productArray['configurable_attributes']);
             }
+            if ($this->isStockSpecified($productArray) === false) {
+                $productArray = $this->setStock($productArray);
+            }
             $productsArray[] = $productArray;
             $this->successProducts[] = $product[$this->skuColumn];
         }
@@ -149,7 +149,7 @@ class Products extends CsvComponentAbstract
             $import = $this->importerFactory->create();
             $import->processImport($productsArray);
         } catch (\Exception $e) {
-            $this->log->logError($e->getMessage());
+
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());
@@ -276,6 +276,29 @@ class Products extends CsvComponentAbstract
             }
         }
         return $skuAttributes;
+    }
+
+    /**
+     * Tests to see if the stock values have been set
+     *
+     * @param array $productData
+     *
+     * @return bool
+     */
+    public function isStockSpecified(array $productData)
+    {
+        if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) || isset($productData[self::QTY_COLUMN_HEADING])) {
+            return true;
+        }
+        return false;
+    }
+
+    private function setStock(array $productData)
+    {
+        $newProductData = $productData;
+        $newProductData[self::QTY_COLUMN_HEADING] = 1;
+        $newProductData[self::IS_IN_STOCK_COLUMN_HEADING] = 1;
+        return $newProductData;
     }
 
     /**

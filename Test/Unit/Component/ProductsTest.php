@@ -138,22 +138,7 @@ class ProductsTest extends ComponentAbstractTestCase
         $productBSizeMock = $this->createMockAttribute('size', 'Small');
         $productBStyleMock = $this->createMockAttribute('style', 'Loose');
 
-        $simpleMockA = $this->getMockBuilder('Magento\Catalog\Model\Product')
-            ->disableOriginalConstructor()
-            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
-            ->getMock();
-
-        $simpleMockA->expects($this->any())
-            ->method('getIdBySku')
-            ->willReturnSelf();
-
-        $simpleMockA->expects($this->once())
-            ->method('load')
-            ->willReturnSelf();
-
-        $simpleMockA->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
+        $simpleMockA = $this->createProduct(1);
 
         $simpleMockA->expects($this->any())
             ->method('getResource')
@@ -177,27 +162,8 @@ class ProductsTest extends ComponentAbstractTestCase
                 )
             );
 
-        $simpleMockB = $this->getMockBuilder('Magento\Catalog\Model\Product')
-            ->disableOriginalConstructor()
-            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
-            ->getMock();
-
-        $simpleMockB->expects($this->any())
-            ->method('getIdBySku')
-            ->willReturnSelf();
-
-        $simpleMockB->expects($this->any())
-            ->method('getId')
-            ->willReturn(2);
-
-        $simpleMockB->expects($this->once())
-            ->method('load')
-            ->willReturnSelf();
-
-        $simpleMockB->expects($this->any())
-            ->method('getResource')
-            ->willReturnSelf();
-
+        $simpleMockB = $this->createProduct(2);
+        
         $simpleMockB->method('getAttribute')
             ->will(
                 $this->onConsecutiveCalls(
@@ -244,6 +210,27 @@ class ProductsTest extends ComponentAbstractTestCase
             'name' => 'Test'
         ];
         $this->assertFalse($this->component->isStockSpecified($testData));
+    }
+
+    private function createProduct($id)
+    {
+        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
+            ->disableOriginalConstructor()
+            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
+            ->getMock();
+        $productMock->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+        $productMock->expects($this->any())
+            ->method('getIdBySku')
+            ->willReturnSelf();
+        $productMock->expects($this->once())
+            ->method('load')
+            ->willReturnSelf();
+        $productMock->expects($this->any())
+            ->method('getResource')
+            ->willReturnSelf();
+        return $productMock;
     }
 
     private function createMockAttribute($attributeCode, $value)

@@ -38,7 +38,7 @@ class Products extends CsvComponentAbstract
      *
      * @var array
      */
-    protected $attributesUsingSeparator = [
+    protected $attrSeparator = [
         'product_websites',
         'store_view_code'
     ];
@@ -337,7 +337,7 @@ class Products extends CsvComponentAbstract
      */
     private function replaceSeparator($data, $column)
     {
-        if (in_array($column, $this->attributesUsingSeparator)) {
+        if (in_array($column, $this->attrSeparator)) {
             return str_replace(',', self::SEPARATOR, $data);
         }
         return $data;

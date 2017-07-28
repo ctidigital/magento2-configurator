@@ -4,10 +4,10 @@ namespace CtiDigital\Configurator\Model\Component;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\Component\Product\Image;
+use CtiDigital\Configurator\Model\Component\Product\AttributeOption;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Magento\Framework\Filesystem;
-use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Class Products
@@ -17,6 +17,11 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  */
 class Products extends CsvComponentAbstract
 {
+    const SKU_COLUMN_HEADING = 'sku';
+    const QTY_COLUMN_HEADING = 'qty';
+    const IS_IN_STOCK_COLUMN_HEADING = 'is_in_stock';
+    const SEPARATOR = ';';
+
     protected $alias = 'products';
     protected $name = 'Products';
     protected $description = 'Component to import products using a CSV file.';
@@ -26,6 +31,16 @@ class Products extends CsvComponentAbstract
         'small_image',
         'thumbnail',
         'media_image'
+    ];
+
+    /**
+     * The attributes that may use ',' as the separator and need replacing
+     *
+     * @var array
+     */
+    protected $attrSeparator = [
+        'product_websites',
+        'store_view_code'
     ];
 
     /**
@@ -39,37 +54,61 @@ class Products extends CsvComponentAbstract
     protected $productFactory;
 
     /**
-     * @var Filesystem
+     * @var Image
      */
-    protected $filesystem;
+    protected $image;
 
     /**
-     * @var \Magento\Framework\HTTP\ZendClientFactory
+     * @var AttributeOption
      */
-    protected $httpClientFactory;
+    protected $attributeOption;
 
     /**
-     * @var \FireGento\FastSimpleImport\Helper\Config
+     * @var []
      */
-    protected $importerConfig;
+    private $successProducts;
 
+    /**
+     * @var []
+     */
+    private $skippedProducts;
+
+    /**
+     * @var int
+     */
+    private $skuColumn;
+
+    /**
+     * Products constructor.
+     *
+     * @param LoggingInterface $log
+     * @param ObjectManagerInterface $objectManager
+     * @param ImporterFactory $importerFactory
+     * @param ProductFactory $productFactory
+     * @param Image $image
+     * @param AttributeOption $attributeOption
+     */
     public function __construct(
         LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
-        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory,
-        Filesystem $filesystem,
-        \FireGento\FastSimpleImport\Helper\Config $importerConfig
+        Image $image,
+        AttributeOption $attributeOption
     ) {
         parent::__construct($log, $objectManager);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
-        $this->httpClientFactory = $httpClientFactory;
-        $this->filesystem = $filesystem;
-        $this->importerConfig = $importerConfig;
+        $this->image = $image;
+        $this->attributeOption = $attributeOption;
     }
 
+    /**
+     * @param null $data
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     protected function processData($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
@@ -79,18 +118,26 @@ class Products extends CsvComponentAbstract
             );
         }
         $attributeKeys = $this->getAttributesFromCsv($data);
+        $this->skuColumn = $this->getSkuColumnIndex($attributeKeys);
+        $totalColumnCount = count($attributeKeys);
         unset($data[0]);
 
         // Prepare the data
         $productsArray = array();
 
         foreach ($data as $product) {
+            if (count($product) !== $totalColumnCount) {
+                $this->skippedProducts[] = $product[$this->skuColumn];
+                continue;
+            }
             $productArray = array();
             foreach ($attributeKeys as $column => $code) {
+                $product[$column] = $this->clean($product[$column], $code);
                 if (in_array($code, $this->imageAttributes)) {
-                    $product[$column] = $this->getImage($product[$column]);
+                    $product[$column] = $this->image->getImage($product[$column]);
                 }
                 $productArray[$code] = $product[$column];
+                $this->attributeOption->processAttributeValues($code, $productArray[$code]);
             }
             if ($this->isConfigurable($productArray)) {
                 $variations = $this->constructConfigurableVariations($productArray);
@@ -100,17 +147,31 @@ class Products extends CsvComponentAbstract
                 unset($productArray['associated_products']);
                 unset($productArray['configurable_attributes']);
             }
+            if ($this->isStockSpecified($productArray) === false) {
+                $productArray = $this->setStock($productArray);
+            }
             $productsArray[] = $productArray;
+            $this->successProducts[] = $product[$this->skuColumn];
         }
-
+        if (count($this->skippedProducts) > 0) {
+            $this->log->logInfo(
+                sprintf(
+                    'The following products were skipped as they do not have the required columns: ' . PHP_EOL . '%s',
+                    implode(PHP_EOL, $this->skippedProducts)
+                )
+            );
+        }
+        $this->attributeOption->saveOptions();
+        $this->log->logInfo(sprintf('Attempting to import %s rows', count($this->successProducts)));
         try {
             $import = $this->importerFactory->create();
+            $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($productsArray);
-            $this->log->logInfo($import->getLogTrace());
         } catch (\Exception $e) {
-            $this->log->logError($import->getErrorMessages());
-            $this->log->logError($import->getLogTrace());
+
         }
+        $this->log->logInfo($import->getLogTrace());
+        $this->log->logError($import->getErrorMessages());
     }
 
     /**
@@ -174,7 +235,7 @@ class Products extends CsvComponentAbstract
             $products = explode(',', $data['associated_products']);
             $attributes = explode(',', $data['configurable_attributes']);
 
-            if (is_array($products)) {
+            if (is_array($products) && is_array($attributes)) {
                 $productsCount = count($products);
                 $count = 0;
                 foreach ($products as $sku) {
@@ -184,7 +245,9 @@ class Products extends CsvComponentAbstract
 
                     if ($productModel->getId()) {
                         $configSkuAttributes = $this->constructAttributeData($attributes, $productModel);
-                        $variations .= 'sku=' . $sku . ',' . $configSkuAttributes;
+                        if (strlen($configSkuAttributes) > 0) {
+                            $variations .= 'sku=' . $sku . self::SEPARATOR . $configSkuAttributes;
+                        }
                         $count++;
                         if ($count < $productsCount) {
                             $variations .= '|';
@@ -209,10 +272,23 @@ class Products extends CsvComponentAbstract
         $attrCounter = 0;
         foreach ($attributes as $attributeCode) {
             $attrCounter++;
+            if ($productModel->hasData($attributeCode) == false) {
+                $this->log->logError(
+                    sprintf(
+                        'The product "%s" is missing an attribute value for "%s" and will not be added ' .
+                        'to the configurable product',
+                        $productModel->getSku(),
+                        $attributeCode
+                    )
+                );
+                // Unset any previous attributes.
+                $skuAttributes = '';
+                break;
+            }
             $productAttribute = $productModel->getResource()->getAttribute($attributeCode);
             if ($productAttribute !== false) {
                 if ($attrCounter > 1) {
-                    $skuAttributes .= ',';
+                    $skuAttributes .= self::SEPARATOR;
                 }
                 $value = $productAttribute->getFrontend()->getValue($productModel);
                 $skuAttributes .= $attributeCode . '=' . $value;
@@ -222,112 +298,77 @@ class Products extends CsvComponentAbstract
     }
 
     /**
-     * Checks if a value is a URL
+     * Tests to see if the stock values have been set
      *
-     * @param $url
-     * @return bool|string
+     * @param array $productData
+     *
+     * @return bool
      */
-    public function isValueURL($url)
+    public function isStockSpecified(array $productData)
     {
-        return filter_var($url, FILTER_VALIDATE_URL);
+        if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) && isset($productData[self::QTY_COLUMN_HEADING])) {
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Download a file and return the response
+     * Set the stock values
+     *
+     * @param array $productData
+     *
+     * @return array
+     */
+    public function setStock(array $productData)
+    {
+        $newProductData = $productData;
+        if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) &&
+            $productData[self::IS_IN_STOCK_COLUMN_HEADING] == 1 &&
+            isset($productData[self::QTY_COLUMN_HEADING]) == false) {
+            $newProductData[self::QTY_COLUMN_HEADING] = 1;
+        }
+        return $newProductData;
+    }
+
+    /**
+     * Replace the separator ','
+     *
+     * @param $data
+     * @param $column
+     *
+     * @return mixed
+     */
+    private function replaceSeparator($data, $column)
+    {
+        if (in_array($column, $this->attrSeparator)) {
+            return str_replace(',', self::SEPARATOR, $data);
+        }
+        return $data;
+    }
+
+    /**
+     * Tidy up the value
      *
      * @param $value
+     * @param $column
+     *
      * @return string
      */
-    public function downloadFile($value)
+    private function clean($value, $column)
     {
-        /**
-         * @var \Magento\Framework\HTTP\ZendClient $client
-         */
-        $client = $this->httpClientFactory->create();
-        $response = '';
-        try {
-            $response = $client
-                ->setUri($value)
-                ->request('GET')
-                ->getBody();
-        } catch (\Exception $e) {
-            $this->log->logError($e->getMessage());
-        }
-        return $response;
+        $value = $this->replaceSeparator($value, $column);
+        return trim($value);
     }
 
     /**
-     * Get the file name from the URL
+     * Get the column index of the SKU
      *
-     * @param $url
-     * @return string
-     */
-    public function getFileName($url)
-    {
-        return basename($url);
-    }
-
-    /**
-     * Saves the file. If the file exists, a number will be appended to the end of the file name
+     * @param $headers
      *
-     * @param $fileName
-     * @param $value
-     * @return Filesystem|string
+     * @return mixed
      */
-    public function saveFile($fileName, $value)
+    public function getSkuColumnIndex($headers)
     {
-        $name = pathinfo($fileName, PATHINFO_FILENAME);
-        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-
-        $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $importDirectory = $this->getFileDirectory($writeDirectory);
-        $counter = 0;
-        do {
-            $file = $name . '_' . $counter . '.' . $ext;
-            $filePath = $writeDirectory->getRelativePath($importDirectory . DIRECTORY_SEPARATOR . $file);
-            $counter++;
-        } while ($writeDirectory->isExist($filePath));
-
-        try {
-            $writeDirectory->writeFile($filePath, $value);
-        } catch (\Exception $e) {
-            $this->log->logError($e->getMessage());
-        }
-        return $file;
-    }
-
-    /**
-     * Downloads the image, saves, and returns the file name
-     *
-     * @param $value
-     * @return Filesystem|string
-     */
-    public function getImage($value)
-    {
-        if ($this->isValueURL($value) === false) {
-            return $value;
-        }
-        $file = $this->downloadFile($value);
-        if (strlen($file) > 0) {
-            $fileName = $this->getFileName($value);
-            $fileContent = $this->saveFile($fileName, $file);
-            return $fileContent;
-        }
-        return $value;
-    }
-
-    /**
-     * Get the file directory from the configuration if set
-     *
-     * @param Filesystem\Directory\WriteInterface $file
-     * @return string
-     */
-    public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file)
-    {
-        $configurationValue = $this->importerConfig->getImportFileDir();
-        if (!empty($configurationValue)) {
-            return $file->getRelativePath($configurationValue);
-        }
-        return $file->getRelativePath('import');
+        return array_search(self::SKU_COLUMN_HEADING, $headers);
     }
 }

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo packaging configurator
 tar czf configurator.tar.gz .
@@ -21,8 +21,8 @@ if [ -z "${TRAVIS_TAG}" ]; then
     echo Require configurator branch: ${TRAVIS_BRANCH} commit: ${TRAVIS_COMMIT}
     composer require ctidigital/magento2-configurator dev-${TRAVIS_BRANCH}\#${TRAVIS_COMMIT}
 else
-    echo Require configurator release ${TRAVIS_TAG}
-    composer require ctidigital/magento2-configurator ${TRAVIS_TAG}
+    echo Require configurator release ${TRAVIS_TAG:1}
+    composer require ctidigital/magento2-configurator ${TRAVIS_TAG:1}
 fi
 
 composer install

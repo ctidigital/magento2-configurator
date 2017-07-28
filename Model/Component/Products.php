@@ -20,6 +20,7 @@ class Products extends CsvComponentAbstract
     const SKU_COLUMN_HEADING = 'sku';
     const QTY_COLUMN_HEADING = 'qty';
     const IS_IN_STOCK_COLUMN_HEADING = 'is_in_stock';
+    const SEPARATOR = ';';
 
     protected $alias = 'products';
     protected $name = 'Products';
@@ -30,6 +31,16 @@ class Products extends CsvComponentAbstract
         'small_image',
         'thumbnail',
         'media_image'
+    ];
+
+    /**
+     * The attributes that may use ',' as the separator and need replacing
+     *
+     * @var array
+     */
+    protected $attributesUsingSeparator = [
+        'product_websites',
+        'store_view_code'
     ];
 
     /**
@@ -92,12 +103,6 @@ class Products extends CsvComponentAbstract
         $this->attributeOption = $attributeOption;
     }
 
-    /**
-     * @param null $data
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     */
     protected function processData($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
@@ -121,6 +126,7 @@ class Products extends CsvComponentAbstract
             }
             $productArray = array();
             foreach ($attributeKeys as $column => $code) {
+                $product[$column] = $this->replaceSeparator($product[$column], $code);
                 if (in_array($code, $this->imageAttributes)) {
                     $product[$column] = $this->image->getImage($product[$column]);
                 }
@@ -153,6 +159,7 @@ class Products extends CsvComponentAbstract
         $this->log->logInfo(sprintf('Attempting to import %s rows', count($this->successProducts)));
         try {
             $import = $this->importerFactory->create();
+            $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($productsArray);
         } catch (\Exception $e) {
 
@@ -233,7 +240,7 @@ class Products extends CsvComponentAbstract
                     if ($productModel->getId()) {
                         $configSkuAttributes = $this->constructAttributeData($attributes, $productModel);
                         if (strlen($configSkuAttributes) > 0) {
-                            $variations .= 'sku=' . $sku . ',' . $configSkuAttributes;
+                            $variations .= 'sku=' . $sku . self::SEPARATOR . $configSkuAttributes;
                         }
                         $count++;
                         if ($count < $productsCount) {
@@ -275,7 +282,7 @@ class Products extends CsvComponentAbstract
             $productAttribute = $productModel->getResource()->getAttribute($attributeCode);
             if ($productAttribute !== false) {
                 if ($attrCounter > 1) {
-                    $skuAttributes .= ',';
+                    $skuAttributes .= self::SEPARATOR;
                 }
                 $value = $productAttribute->getFrontend()->getValue($productModel);
                 $skuAttributes .= $attributeCode . '=' . $value;
@@ -299,12 +306,35 @@ class Products extends CsvComponentAbstract
         return false;
     }
 
+    /**
+     * Set the stock values
+     *
+     * @param array $productData
+     *
+     * @return array
+     */
     private function setStock(array $productData)
     {
         $newProductData = $productData;
         $newProductData[self::QTY_COLUMN_HEADING] = 1;
         $newProductData[self::IS_IN_STOCK_COLUMN_HEADING] = 1;
         return $newProductData;
+    }
+
+    /**
+     * Replace the separator ','
+     *
+     * @param $data
+     * @param $column
+     *
+     * @return mixed
+     */
+    private function replaceSeparator($data, $column)
+    {
+        if (in_array($column, $this->attributesUsingSeparator)) {
+            return str_replace(',', self::SEPARATOR, $data);
+        }
+        return $data;
     }
 
     /**

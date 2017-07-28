@@ -132,7 +132,7 @@ class Products extends CsvComponentAbstract
             }
             $productArray = array();
             foreach ($attributeKeys as $column => $code) {
-                $product[$column] = $this->replaceSeparator($product[$column], $code);
+                $product[$column] = $this->clean($product[$column], $code);
                 if (in_array($code, $this->imageAttributes)) {
                     $product[$column] = $this->image->getImage($product[$column]);
                 }
@@ -341,6 +341,20 @@ class Products extends CsvComponentAbstract
             return str_replace(',', self::SEPARATOR, $data);
         }
         return $data;
+    }
+
+    /**
+     * Tidy up the value
+     *
+     * @param $value
+     * @param $column
+     *
+     * @return string
+     */
+    private function clean($value, $column)
+    {
+        $value = $this->replaceSeparator($value, $column);
+        return trim($value);
     }
 
     /**

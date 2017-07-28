@@ -306,7 +306,7 @@ class Products extends CsvComponentAbstract
      */
     public function isStockSpecified(array $productData)
     {
-        if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) || isset($productData[self::QTY_COLUMN_HEADING])) {
+        if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) && isset($productData[self::QTY_COLUMN_HEADING])) {
             return true;
         }
         return false;

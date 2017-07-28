@@ -227,12 +227,12 @@ class ProductsTest extends ComponentAbstractTestCase
     }
 
     /**
-     * @param $id
-     * @param $sku
+     * @param int $entityId
+     * @param string $sku
      *
      * @return \PHPUnit_Framework_MockObject_MockObject | \Magento\Catalog\Model\Product
      */
-    private function createMockProduct($id, $sku)
+    private function createMockProduct($entityId, $sku)
     {
         $mockProduct = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
@@ -243,7 +243,7 @@ class ProductsTest extends ComponentAbstractTestCase
             ->willReturnSelf();
         $mockProduct->expects($this->any())
             ->method('getId')
-            ->willReturn($id);
+            ->willReturn($entityId);
         $mockProduct->expects($this->any())
             ->method('getSku')
             ->willReturn($sku);

@@ -163,7 +163,7 @@ class ProductsTest extends ComponentAbstractTestCase
             );
 
         $simpleMockB = $this->createProduct(2);
-        
+
         $simpleMockB->method('getAttribute')
             ->will(
                 $this->onConsecutiveCalls(
@@ -212,7 +212,7 @@ class ProductsTest extends ComponentAbstractTestCase
         $this->assertFalse($this->component->isStockSpecified($testData));
     }
 
-    private function createProduct($id)
+    private function createProduct($productId)
     {
         $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
             ->disableOriginalConstructor()
@@ -220,7 +220,7 @@ class ProductsTest extends ComponentAbstractTestCase
             ->getMock();
         $productMock->expects($this->any())
             ->method('getId')
-            ->willReturn($id);
+            ->willReturn($productId);
         $productMock->expects($this->any())
             ->method('getIdBySku')
             ->willReturnSelf();

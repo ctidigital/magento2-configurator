@@ -138,26 +138,7 @@ class ProductsTest extends ComponentAbstractTestCase
         $productBSizeMock = $this->createMockAttribute('size', 'Small');
         $productBStyleMock = $this->createMockAttribute('style', 'Loose');
 
-        $simpleMockA = $this->getMockBuilder('Magento\Catalog\Model\Product')
-            ->disableOriginalConstructor()
-            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
-            ->getMock();
-
-        $simpleMockA->expects($this->any())
-            ->method('getIdBySku')
-            ->willReturnSelf();
-
-        $simpleMockA->expects($this->once())
-            ->method('load')
-            ->willReturnSelf();
-
-        $simpleMockA->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
-
-        $simpleMockA->expects($this->any())
-            ->method('getResource')
-            ->willReturnSelf();
+        $simpleMockA = $this->createMockProduct(1, 'testproduct1');
 
         $simpleMockA->method('getAttribute')
             ->will(
@@ -177,26 +158,7 @@ class ProductsTest extends ComponentAbstractTestCase
                 )
             );
 
-        $simpleMockB = $this->getMockBuilder('Magento\Catalog\Model\Product')
-            ->disableOriginalConstructor()
-            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
-            ->getMock();
-
-        $simpleMockB->expects($this->any())
-            ->method('getIdBySku')
-            ->willReturnSelf();
-
-        $simpleMockB->expects($this->any())
-            ->method('getId')
-            ->willReturn(2);
-
-        $simpleMockB->expects($this->once())
-            ->method('load')
-            ->willReturnSelf();
-
-        $simpleMockB->expects($this->any())
-            ->method('getResource')
-            ->willReturnSelf();
+        $simpleMockB = $this->createMockProduct(2, 'testproduct2');
 
         $simpleMockB->method('getAttribute')
             ->will(
@@ -262,5 +224,35 @@ class ProductsTest extends ComponentAbstractTestCase
             ->method('getValue')
             ->willReturn($value);
         return $attr;
+    }
+
+    /**
+     * @param $id
+     * @param $sku
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject | \Magento\Catalog\Model\Product
+     */
+    private function createMockProduct($id, $sku)
+    {
+        $mockProduct = $this->getMockBuilder('Magento\Catalog\Model\Product')
+            ->disableOriginalConstructor()
+            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
+            ->getMock();
+        $mockProduct->expects($this->any())
+            ->method('getIdBySku')
+            ->willReturnSelf();
+        $mockProduct->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+        $mockProduct->expects($this->any())
+            ->method('getSku')
+            ->willReturn($sku);
+        $mockProduct->expects($this->any())
+            ->method('load')
+            ->willReturnSelf();
+        $mockProduct->expects($this->any())
+            ->method('getResource')
+            ->willReturnSelf();
+        return $mockProduct;
     }
 }

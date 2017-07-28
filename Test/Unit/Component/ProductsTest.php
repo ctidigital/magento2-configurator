@@ -212,6 +212,37 @@ class ProductsTest extends ComponentAbstractTestCase
         $this->assertFalse($this->component->isStockSpecified($testData));
     }
 
+    public function testSetStock()
+    {
+        $testData = [
+            'sku' => 1,
+            'name' => 'Test',
+            'is_in_stock' => 1
+        ];
+        $expectedData = [
+            'sku' => 1,
+            'name' => 'Test',
+            'is_in_stock' => 1,
+            'qty' => 1
+        ];
+        $this->assertEquals($expectedData, $this->component->setStock($testData));
+    }
+
+    public function testNotSetStock()
+    {
+        $testData = [
+            'sku' => 1,
+            'name' => 'Test',
+            'is_in_stock' => 0
+        ];
+        $expectedData = [
+            'sku' => 1,
+            'name' => 'Test',
+            'is_in_stock' => 0,
+        ];
+        $this->assertEquals($expectedData, $this->component->setStock($testData));
+    }
+
     private function createProduct($productId)
     {
         $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')

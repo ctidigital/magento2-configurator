@@ -319,11 +319,14 @@ class Products extends CsvComponentAbstract
      *
      * @return array
      */
-    private function setStock(array $productData)
+    public function setStock(array $productData)
     {
         $newProductData = $productData;
-        $newProductData[self::QTY_COLUMN_HEADING] = 1;
-        $newProductData[self::IS_IN_STOCK_COLUMN_HEADING] = 1;
+        if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) &&
+            $productData[self::IS_IN_STOCK_COLUMN_HEADING] == 1 &&
+            isset($productData[self::QTY_COLUMN_HEADING]) == false) {
+            $newProductData[self::QTY_COLUMN_HEADING] = 1;
+        }
         return $newProductData;
     }
 

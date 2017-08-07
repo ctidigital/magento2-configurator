@@ -120,7 +120,7 @@ class CustomersTest extends ComponentAbstractTestCase
         $this->searchResults->expects($this->any())
             ->method('getItems')
             ->willReturn($groups);
-        $this->assertTrue($this->component->getIsValidGroup(1));
+        $this->assertTrue($this->component->isValidGroup(1));
     }
 
     public function testGroupNotValid()
@@ -131,7 +131,7 @@ class CustomersTest extends ComponentAbstractTestCase
         $this->searchResults->expects($this->any())
             ->method('getItems')
             ->willReturn($groups);
-        $this->assertFalse($this->component->getIsValidGroup(4));
+        $this->assertFalse($this->component->isValidGroup(4));
     }
 
     public function testGetDefault()

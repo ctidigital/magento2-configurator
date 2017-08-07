@@ -12,6 +12,7 @@ use Magento\Customer\Api\GroupManagementInterface;
 
 class Customers extends CsvComponentAbstract
 {
+    const CUSTOMER_EMAIL_HEADER = 'email';
     const CUSTOMER_GROUP_HEADER = 'group_id';
 
     protected $alias = 'customers';
@@ -70,13 +71,13 @@ class Customers extends CsvComponentAbstract
         ImporterFactory $importerFactory,
         GroupRepositoryInterface $groupRepository,
         GroupManagementInterface $groupManagement,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
+        SearchCriteriaBuilder $criteriaBuilder,
         \Magento\Indexer\Model\IndexerFactory $indexerFactory
     ) {
         $this->importerFactory = $importerFactory;
         $this->groupRepository = $groupRepository;
         $this->groupManagement = $groupManagement;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->searchCriteriaBuilder = $criteriaBuilder;
         $this->indexerFactory = $indexerFactory;
         parent::__construct($log, $objectManager);
     }
@@ -88,23 +89,35 @@ class Customers extends CsvComponentAbstract
 
         $customerImport = [];
 
+        $rowIndex = 0;
         foreach ($data as $customer) {
             $row = [];
+            $extraItem = false;
             foreach ($this->getHeaders() as $key => $columnHeader) {
                 $row[$columnHeader] = $customer[$key];
-                if ($columnHeader === self::CUSTOMER_GROUP_HEADER &&
-                    $this->getIsValidGroup($row[$columnHeader]) === false
+
+                if ($columnHeader === self::CUSTOMER_EMAIL_HEADER &&
+                    strlen($row[self::CUSTOMER_EMAIL_HEADER]) === 0) {
+                    // If no email address is specified then it's an extra address being specified.
+                    $extraItem = true;
+                }
+
+                if ($extraItem === false &&
+                    $columnHeader === self::CUSTOMER_GROUP_HEADER &&
+                    $this->isValidGroup($row[$columnHeader]) === false
                 ) {
                     $this->log->logError(
                         sprintf(
-                            'The customer group ID "%s" is not valid. Default value set.',
-                            $row[$columnHeader]
+                            'The customer group ID "%s" is not valid for row "%s". Default value set.',
+                            $row[$columnHeader],
+                            $rowIndex
                         )
                     );
                     $row[self::CUSTOMER_GROUP_HEADER] = $this->getDefaultGroupId();
                 }
             }
             $customerImport[] = $row;
+            $rowIndex++;
         }
 
         try {
@@ -160,7 +173,7 @@ class Customers extends CsvComponentAbstract
      *
      * @return bool
      */
-    public function getIsValidGroup($group)
+    public function isValidGroup($group)
     {
         if (strlen($group) === 0) {
             return false;
@@ -177,11 +190,6 @@ class Customers extends CsvComponentAbstract
         return false;
     }
 
-    /**
-     * Get the default group
-     *
-     * @return int
-     */
     public function getDefaultGroupId()
     {
         if ($this->groupDefault === null) {
@@ -190,11 +198,6 @@ class Customers extends CsvComponentAbstract
         return $this->groupDefault;
     }
 
-    /**
-     * Reindex the customer grid
-     *
-     * @return void
-     */
     private function reindex()
     {
         $this->log->logInfo('Reindexing the customer grid');

@@ -48,7 +48,7 @@ class Customers extends CsvComponentAbstract
     /**
      * @var SearchCriteriaBuilder
      */
-    protected $searchCriteriaBuilder;
+    protected $criteriaBuilder;
 
     /**
      * @var array
@@ -77,7 +77,7 @@ class Customers extends CsvComponentAbstract
         $this->importerFactory = $importerFactory;
         $this->groupRepository = $groupRepository;
         $this->groupManagement = $groupManagement;
-        $this->searchCriteriaBuilder = $criteriaBuilder;
+        $this->criteriaBuilder = $criteriaBuilder;
         $this->indexerFactory = $indexerFactory;
         parent::__construct($log, $objectManager);
     }
@@ -179,7 +179,7 @@ class Customers extends CsvComponentAbstract
             return false;
         }
         if ($this->customerGroups === null) {
-            $groups = $this->groupRepository->getList($this->searchCriteriaBuilder->create());
+            $groups = $this->groupRepository->getList($this->criteriaBuilder->create());
             foreach ($groups->getItems() as $customerGroup) {
                 $this->customerGroups[] = $customerGroup->getId();
             }

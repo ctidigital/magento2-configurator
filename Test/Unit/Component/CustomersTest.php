@@ -38,8 +38,8 @@ class CustomersTest extends ComponentAbstractTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->groupRepository = $this->getMockBuilder('Magento\Customer\Model\ResourceModel\GroupRepository')
-            ->setMethods(['getList'])
+        $this->groupRepository = $this->getMockBuilder('Magento\Customer\Api\GroupRepositoryInterface')
+            ->setMethods(['save', 'getById', 'delete', 'deleteById', 'getList'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -75,7 +75,7 @@ class CustomersTest extends ComponentAbstractTestCase
             [
                 'groupRepository' => $this->groupRepository,
                 'groupManagement' => $this->groupManagement,
-                'searchCriteriaBuilder' => $this->searchCriteriaBuilder,
+                'criteriaBuilder' => $this->searchCriteriaBuilder,
             ]
         );
         $this->className = Customers::class;

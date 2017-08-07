@@ -21,4 +21,5 @@
     <component name="rewrites" class="CtiDigital\Configurator\Model\Component\Rewrites" />
     <component name="review_rating" class="CtiDigital\Configurator\Model\Component\ReviewRating" />
     <component name="product_links" class="CtiDigital\Configurator\Model\Component\ProductLinks" />
+    <component name="customers" class="CtiDigital\Configurator\Model\Component\Customers" />
 </config>

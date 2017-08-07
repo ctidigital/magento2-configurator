@@ -61,8 +61,10 @@ class CustomersTest extends ComponentAbstractTestCase
 
         $groupDefault = $this->createCustomerGroup(1);
 
-        $this->groupManagement = $this->getMockBuilder('Magento\Customer\Model\GroupManagement')
-            ->setMethods(['getDefaultGroup'])
+        $this->groupManagement = $this->getMockBuilder('Magento\Customer\Api\GroupManagementInterface')
+            ->setMethods(
+                ['isReadOnly', 'getNotLoggedInGroup', 'getLoggedInGroups', 'getAllCustomersGroup', 'getDefaultGroup']
+            )
             ->disableOriginalConstructor()
             ->getMock();
 

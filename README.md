@@ -95,7 +95,7 @@ It tests the following:
 | Related Products          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Up Sell Products          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Cross Sell Products       | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
-| Customers                 | :x:                | :x:                | :x:                |
+| Customers                 | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | SQL                       | :x:                | :x:                | :x:                |
 | Shipping Table Rates      | :x:                | :x:                | :x:                |
 | Catalog Price Rules       | :x:                | :x:                | :x:                |

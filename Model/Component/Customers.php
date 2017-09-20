@@ -94,6 +94,16 @@ class Customers extends CsvComponentAbstract
             $row = [];
             $extraItem = false;
             foreach ($this->getHeaders() as $key => $columnHeader) {
+                if (!array_key_exists($key, $customer)) {
+                    $this->log->logError(
+                        sprintf(
+                            'The key "%s" was not found on row "%s".',
+                            $key,
+                            $rowIndex
+                        )
+                    );
+                    continue;
+                }
                 $row[$columnHeader] = $customer[$key];
 
                 if ($columnHeader === self::CUSTOMER_EMAIL_HEADER &&

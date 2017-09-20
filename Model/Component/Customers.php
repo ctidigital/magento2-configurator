@@ -82,6 +82,11 @@ class Customers extends CsvComponentAbstract
         parent::__construct($log, $objectManager);
     }
 
+    /**
+     * @param null $data
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function processData($data = null)
     {
         $this->getColumnHeaders($data);

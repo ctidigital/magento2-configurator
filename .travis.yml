@@ -2,6 +2,7 @@ dist: trusty
 language: php
 php:
   - 7.0
+  - 7.1
 services:
   - mysql
 sudo: required
@@ -16,11 +17,11 @@ env:
     - TEST_SUITE=configurator
       MAGE_VERSION=2.1.9
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.2.0-RC3.0
+      MAGE_VERSION=2.2.0
 
 matrix:
   allow_failures:
-    - env: TEST_SUITE=configurator MAGE_VERSION=2.2.0-RC3.0
+    - env: TEST_SUITE=configurator MAGE_VERSION=2.2.0
 
 install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json

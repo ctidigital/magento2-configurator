@@ -5,7 +5,7 @@
                 type="CtiDigital\Configurator\Model\ConfiguratorAdapterInterface\Proxy"/>
     <preference for="CtiDigital\Configurator\Model\Configurator\ConfigInterface"
                 type="CtiDigital\Configurator\Model\Configurator\Config" />
-    <preference for="CtiDigital\Configurator\Model\LoggingInterface"
+    <preference for="CtiDigital\Configurator\Model\LoggerInterface"
                 type="CtiDigital\Configurator\Model\Logging" />
 
     <type name="Magento\Framework\Console\CommandList">

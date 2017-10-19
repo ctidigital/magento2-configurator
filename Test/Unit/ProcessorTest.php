@@ -17,7 +17,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
     private $processor;
     private $configInterface;
     private $objectManagerInterface;
-    private $loggingInterface;
+    private $loggerInterface;
 
     protected function setUp()
     {
@@ -26,14 +26,14 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
         $consoleOutput = $this->getMock(ConsoleOutputInterface::class);
         $scopeInterface = $this->getMock(ScopeInterface::class);
         $state = $this->getMock(State::class, array(), array($scopeInterface));
-        $this->loggingInterface = $this->getMock(LoggingInterface::class, array(), array(
+        $this->loggerInterface = $this->getMock(LoggerInterface::class, array(), array(
             $consoleOutput
         ));
 
         $this->processor = $this->getMock(Processor::class, array(), array(
             $this->configInterface,
             $this->objectManagerInterface,
-            $this->loggingInterface,
+            $this->loggerInterface,
             $state
         ));
     }

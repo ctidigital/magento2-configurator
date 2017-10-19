@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Model\Component;
 
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
@@ -66,7 +66,7 @@ class Customers extends CsvComponentAbstract
     protected $columnHeaders = [];
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         GroupRepositoryInterface $groupRepository,

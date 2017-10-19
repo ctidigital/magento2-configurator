@@ -5,7 +5,7 @@ use Symfony\Component\Yaml\Yaml;
 use Magento\Customer\Model\GroupFactory;
 use Magento\Tax\Model\ClassModelFactory;
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
 class CustomerGroups extends YamlComponentAbstract
@@ -27,13 +27,13 @@ class CustomerGroups extends YamlComponentAbstract
 
     /**
      * AdminRoles constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param GroupFactory $groupFactory
      * @param ClassModelFactory $classModelFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         GroupFactory $groupFactory,
         ClassModelFactory $classModelFactory

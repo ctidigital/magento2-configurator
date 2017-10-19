@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Model;
 
-interface LoggingInterface
+interface LoggerInterface
 {
 
     const LEVEL_INFO = 'info';

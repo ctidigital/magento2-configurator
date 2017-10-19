@@ -8,7 +8,7 @@ use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 use Magento\Eav\Api\Data\AttributeOptionInterface;
 use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
 use Magento\Catalog\Model\Product;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 
 class AttributeOption
 {
@@ -33,7 +33,7 @@ class AttributeOption
     protected $optionFactory;
 
     /**
-     * @var LoggingInterface
+     * @var LoggerInterface
      */
     protected $log;
 
@@ -72,14 +72,14 @@ class AttributeOption
      * @param AttributeOptionManagementInterface $attrOptionManagement
      * @param AttributeOptionLabelInterfaceFactory $labelFactory
      * @param AttributeOptionInterfaceFactory $optionFactory
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      */
     public function __construct(
         ProductAttributeRepositoryInterface $attributeRepository,
         AttributeOptionManagementInterface $attrOptionManagement,
         AttributeOptionLabelInterfaceFactory $labelFactory,
         AttributeOptionInterfaceFactory $optionFactory,
-        LoggingInterface $log
+        LoggerInterface $log
     ) {
         $this->attributeRepository = $attributeRepository;
         $this->attrOptionManagement = $attrOptionManagement;

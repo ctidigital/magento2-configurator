@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
 
@@ -31,12 +31,12 @@ class Blocks extends YamlComponentAbstract
 
     /**
      * Blocks constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param BlockInterfaceFactory $blockFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         BlockInterfaceFactory $blockFactory
     ) {

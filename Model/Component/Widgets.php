@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
@@ -20,7 +20,7 @@ class Widgets extends YamlComponentAbstract
     protected $storeFactory;
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         WidgetCollection $collection,
         StoreFactory $storeFactory,

@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
 
 abstract class ComponentAbstract
@@ -21,7 +21,7 @@ abstract class ComponentAbstract
     protected $description = 'Unknown Component';
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager
     ) {
         $this->log = $log;

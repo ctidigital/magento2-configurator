@@ -5,7 +5,7 @@ use Symfony\Component\Yaml\Yaml;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Authorization\Model\RulesFactory;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
@@ -32,13 +32,13 @@ class AdminRoles extends YamlComponentAbstract
 
     /**
      * AdminRoles constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param RoleFactory $roleFactory
      * @param RulesFactory $rulesFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         RoleFactory $roleFactory,
         RulesFactory $rulesFactory

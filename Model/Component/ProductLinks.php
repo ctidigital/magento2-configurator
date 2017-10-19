@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
@@ -25,7 +25,7 @@ class ProductLinks extends YamlComponentAbstract
     protected $linkTypeMap = ['relation' => 'related', 'up_sell' => 'upsell', 'cross_sell' => 'crosssell'];
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         ProductRepositoryInterface $productRepository,
         ProductLinkInterfaceFactory $productLinkFactory

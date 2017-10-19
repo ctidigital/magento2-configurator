@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use CtiDigital\Configurator\Model\Processor;
 use Magento\Framework\Config\ScopeInterface;
 use Magento\Framework\App\State;
@@ -58,9 +58,9 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
     private $processor;
 
     /**
-     * @var LoggingInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $loggingInterface;
+    private $loggerInterface;
 
     protected function setUp()
     {
@@ -70,14 +70,14 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
         $consoleOutput = $this->getMock(ConsoleOutputInterface::class);
         $scopeInterface = $this->getMock(ScopeInterface::class);
         $state = $this->getMock(State::class, array(), array($scopeInterface));
-        $this->loggingInterface = $this->getMock(LoggingInterface::class, array(), array(
+        $this->loggerInterface = $this->getMock(LoggerInterface::class, array(), array(
             $consoleOutput
         ));
 
         $this->processor = $this->getMock(Processor::class, array(), array(
             $this->configInterface,
             $this->objectManager,
-            $this->loggingInterface,
+            $this->loggerInterface,
             $state
         ));
 

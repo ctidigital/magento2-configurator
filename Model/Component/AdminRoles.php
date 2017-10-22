@@ -52,7 +52,7 @@ class AdminRoles extends YamlComponentAbstract
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function processData($data = null)
     {
 
         if (isset($data['adminroles'])) {
@@ -85,7 +85,7 @@ class AdminRoles extends YamlComponentAbstract
                 sprintf('Admin Role "%s" creation skipped: Already exists in database', $roleName)
             );
 
-            //Get exisiting Role
+            //Get existing Role
             $role = $role->getCollection()->addFieldToFilter('role_name', $roleName)->getFirstItem();
             $this->setResourceIds($role, $resources);
 

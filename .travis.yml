@@ -15,12 +15,12 @@ env:
       MAGE_VERSION=2.1.8
     - TEST_SUITE=configurator
       MAGE_VERSION=2.1.9
-    - TEST_SUITE=configurator
-      MAGE_VERSION=2.2.0
+#    - TEST_SUITE=configurator
+#      MAGE_VERSION=2.2.0
 
 matrix:
   allow_failures:
-    - env: TEST_SUITE=configurator MAGE_VERSION=2.2.0
+#    - env: TEST_SUITE=configurator MAGE_VERSION=2.2.0
 
 install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json

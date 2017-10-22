@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Store\Model\Group;
@@ -44,7 +44,7 @@ class Websites extends YamlComponentAbstract
     protected $groupFactory;
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         IndexerFactory $indexerFactory,
         ManagerInterface $eventManager,

@@ -5,7 +5,7 @@ namespace CtiDigital\Configurator\Model\Component;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
 class Rewrites extends CsvComponentAbstract
@@ -35,13 +35,13 @@ class Rewrites extends CsvComponentAbstract
 
     /**
      * Rewrites constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param UrlPersistInterface $urlPersist
      * @param UrlRewriteFactory $urlRewriteFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         UrlPersistInterface $urlPersist,
         UrlRewriteFactory $urlRewriteFactory

@@ -22,7 +22,7 @@ class Categories extends YamlComponentAbstract
     ];
 
     public function __construct(
-        \CtiDigital\Configurator\Model\LoggingInterface $log,
+        \CtiDigital\Configurator\Model\LoggerInterface $log,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Catalog\Model\CategoryFactory $category,
         \Magento\Store\Model\GroupFactory $groupFactory,

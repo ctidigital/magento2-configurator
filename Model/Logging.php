@@ -5,7 +5,7 @@ namespace CtiDigital\Configurator\Model;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Logging implements LoggingInterface
+class Logging implements LoggerInterface
 {
 
     protected $output;

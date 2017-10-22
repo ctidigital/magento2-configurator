@@ -3,7 +3,7 @@ namespace CtiDigital\Configurator\Model\Component;
 
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use CtiDigital\Configurator\Model\Component\Product\Image;
 use CtiDigital\Configurator\Model\Component\Product\AttributeOption;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
@@ -81,7 +81,7 @@ class Products extends CsvComponentAbstract
     /**
      * Products constructor.
      *
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param ImporterFactory $importerFactory
      * @param ProductFactory $productFactory
@@ -89,7 +89,7 @@ class Products extends CsvComponentAbstract
      * @param AttributeOption $attributeOption
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,

@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Helper\Component;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Framework\ObjectManagerInterface;
@@ -39,14 +39,14 @@ class Pages extends YamlComponentAbstract
 
     /**
      * Pages constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param PageRepositoryInterface $pageRepository
      * @param PageInterfaceFactory $pageFactory
      * @param Component $componentHelper
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         PageRepositoryInterface $pageRepository,
         PageInterfaceFactory $pageFactory,

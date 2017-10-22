@@ -1,14 +1,14 @@
 <?php
 namespace CtiDigital\Configurator\Model\Component\Product;
 
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 class Image
 {
     /**
-     * @var LoggingInterface
+     * @var LoggerInterface
      */
     protected $log;
 
@@ -30,13 +30,13 @@ class Image
     /**
      * Image constructor.
      *
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param Filesystem $filesystem
      * @param \FireGento\FastSimpleImport\Helper\Config $importerConfig
      * @param \Magento\Framework\Http\ZendClientFactory $httpClientFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         Filesystem $filesystem,
         \FireGento\FastSimpleImport\Helper\Config $importerConfig,
         \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory

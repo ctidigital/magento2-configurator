@@ -29,7 +29,7 @@ class Processor
     protected $configInterface;
 
     /**
-     * @var LoggingInterface
+     * @var LoggerInterface
      */
     protected $log;
 
@@ -46,7 +46,7 @@ class Processor
     public function __construct(
         ConfigInterface $configInterface,
         ObjectManagerInterface $objectManager,
-        LoggingInterface $logging,
+        LoggerInterface $logging,
         State $state
     ) {
         $this->log = $logging;

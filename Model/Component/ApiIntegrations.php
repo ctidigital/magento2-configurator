@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Model\Component;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
@@ -37,7 +37,7 @@ class ApiIntegrations extends YamlComponentAbstract
 
     /**
      * ApiIntegrations constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param IntegrationFactory $integrationFactory
      * @param IntegrationServiceInterface $integrationService
@@ -45,7 +45,7 @@ class ApiIntegrations extends YamlComponentAbstract
      * @param TokenFactory $tokenFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         IntegrationFactory $integrationFactory,
         IntegrationServiceInterface $integrationService,

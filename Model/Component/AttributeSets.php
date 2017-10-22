@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\Data\AttributeSetInterface;
@@ -34,13 +34,13 @@ class AttributeSets extends YamlComponentAbstract
 
     /**
      * AttributeSets constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param EavSetup $eavSetup
      * @param AttributeSetRepositoryInterface $attributeSetRepository
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
         AttributeSetRepositoryInterface $attributeSetRepository

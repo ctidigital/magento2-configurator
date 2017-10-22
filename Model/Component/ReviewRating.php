@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Model\Component;
 
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
@@ -48,7 +48,7 @@ class ReviewRating extends YamlComponentAbstract
     protected $entityFactory;
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         RatingFactory $ratingFactory,
         StoreRepository $storeRepository,

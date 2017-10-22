@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
@@ -20,12 +20,12 @@ class TaxRates extends CsvComponentAbstract
 
     /**
      * TaxRules constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param CsvImportHandler $csvImportHandler
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         CsvImportHandler $csvImportHandler
     ) {

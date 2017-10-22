@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
@@ -21,7 +21,7 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
     /* @var $className String */
     protected $className;
 
-    /* @var $logInterface LoggingInterface */
+    /* @var $logInterface LoggerInterface */
     protected $logInterface;
 
     /* @var $testObjectManager \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
@@ -36,7 +36,7 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
     {
         $this->testObjectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->objectManager = $this->getMock(ObjectManagerInterface::class);
-        $this->logInterface = $this->getMock(LoggingInterface::class);
+        $this->logInterface = $this->getMock(LoggerInterface::class);
         $this->componentSetUp();
     }
 

@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\ObjectManagerInterface;
 
@@ -18,7 +18,7 @@ class Media extends YamlComponentAbstract
     protected $directoryList;
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         DirectoryList $directoryList
     ) {

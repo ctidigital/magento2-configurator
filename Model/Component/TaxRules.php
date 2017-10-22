@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Model\Component;
 
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Tax\Model\Calculation\RuleFactory;
 use Magento\Tax\Model\Calculation\RateFactory;
 use Magento\Tax\Model\ClassModelFactory;
@@ -42,14 +42,14 @@ class TaxRules extends CsvComponentAbstract
 
     /**
      * TaxRules constructor.
-     * @param LoggingInterface $log
+     * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param RateFactory $rateFactory
      * @param ClassModelFactory $classModelFactory
      * @param RuleFactory $ruleFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         RateFactory $rateFactory,
         ClassModelFactory $classModelFactory,

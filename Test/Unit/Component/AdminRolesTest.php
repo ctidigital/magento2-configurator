@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\AdminRoles;
+use CtiDigital\Configurator\Component\AdminRoles;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Authorization\Model\RulesFactory;
 

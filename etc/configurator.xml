@@ -2,24 +2,24 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:CtiDigital_Configurator:etc/configurator.xsd">
 
-    <component name="websites" class="CtiDigital\Configurator\Model\Component\Websites" />
-    <component name="config" class="CtiDigital\Configurator\Model\Component\Config" />
-    <component name="attributes" class="CtiDigital\Configurator\Model\Component\Attributes" />
-    <component name="attribute_sets" class="CtiDigital\Configurator\Model\Component\AttributeSets" />
-    <component name="adminroles" class="CtiDigital\Configurator\Model\Component\AdminRoles" />
-    <component name="adminusers" class="CtiDigital\Configurator\Model\Component\AdminUsers" /> <!-- Sample Depends on AdminRoles -->
-    <component name="customergroups" class="CtiDigital\Configurator\Model\Component\CustomerGroups" />
-    <component name="categories" class="CtiDigital\Configurator\Model\Component\Categories" />
-    <component name="taxrates" class="CtiDigital\Configurator\Model\Component\TaxRates" />
-    <component name="taxrules" class="CtiDigital\Configurator\Model\Component\TaxRules" />
-    <component name="products" class="CtiDigital\Configurator\Model\Component\Products" />
-    <component name="blocks" class="CtiDigital\Configurator\Model\Component\Blocks" />
-    <component name="pages" class="CtiDigital\Configurator\Model\Component\Pages" />
-    <component name="apiintegrations" class="CtiDigital\Configurator\Model\Component\ApiIntegrations" />
-    <component name="widgets" class="CtiDigital\Configurator\Model\Component\Widgets" />
-    <component name="media" class="CtiDigital\Configurator\Model\Component\Media" />
-    <component name="rewrites" class="CtiDigital\Configurator\Model\Component\Rewrites" />
-    <component name="review_rating" class="CtiDigital\Configurator\Model\Component\ReviewRating" />
-    <component name="product_links" class="CtiDigital\Configurator\Model\Component\ProductLinks" />
-    <component name="customers" class="CtiDigital\Configurator\Model\Component\Customers" />
+    <component name="websites" class="CtiDigital\Configurator\Component\Websites" />
+    <component name="config" class="CtiDigital\Configurator\Component\Config" />
+    <component name="attributes" class="CtiDigital\Configurator\Component\Attributes" />
+    <component name="attribute_sets" class="CtiDigital\Configurator\Component\AttributeSets" />
+    <component name="adminroles" class="CtiDigital\Configurator\Component\AdminRoles" />
+    <component name="adminusers" class="CtiDigital\Configurator\Component\AdminUsers" /> <!-- Sample Depends on AdminRoles -->
+    <component name="customergroups" class="CtiDigital\Configurator\Component\CustomerGroups" />
+    <component name="categories" class="CtiDigital\Configurator\Component\Categories" />
+    <component name="taxrates" class="CtiDigital\Configurator\Component\TaxRates" />
+    <component name="taxrules" class="CtiDigital\Configurator\Component\TaxRules" />
+    <component name="products" class="CtiDigital\Configurator\Component\Products" />
+    <component name="blocks" class="CtiDigital\Configurator\Component\Blocks" />
+    <component name="pages" class="CtiDigital\Configurator\Component\Pages" />
+    <component name="apiintegrations" class="CtiDigital\Configurator\Component\ApiIntegrations" />
+    <component name="widgets" class="CtiDigital\Configurator\Component\Widgets" />
+    <component name="media" class="CtiDigital\Configurator\Component\Media" />
+    <component name="rewrites" class="CtiDigital\Configurator\Component\Rewrites" />
+    <component name="review_rating" class="CtiDigital\Configurator\Component\ReviewRating" />
+    <component name="product_links" class="CtiDigital\Configurator\Component\ProductLinks" />
+    <component name="customers" class="CtiDigital\Configurator\Component\Customers" />
 </config>

@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\Products;
+use CtiDigital\Configurator\Component\Products;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\App\Response\Http\FileFactory;
 

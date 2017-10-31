@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\Model\Component\Product;
+namespace CtiDigital\Configurator\Component\Product;
 
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Eav\Api\AttributeOptionManagementInterface;

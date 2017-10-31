@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\ReviewRating;
+use CtiDigital\Configurator\Component\ReviewRating;
 
 class ReviewRatingTest extends ComponentAbstractTestCase
 {

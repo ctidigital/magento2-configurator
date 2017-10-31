@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\Customers;
+use CtiDigital\Configurator\Component\Customers;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
 class CustomersTest extends ComponentAbstractTestCase

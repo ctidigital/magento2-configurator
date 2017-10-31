@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\Model\Component;
+namespace CtiDigital\Configurator\Component;
 
 use Symfony\Component\Yaml\Yaml;
 use Magento\Customer\Model\GroupFactory;

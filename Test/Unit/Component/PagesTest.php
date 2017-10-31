@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\Pages;
+use CtiDigital\Configurator\Component\Pages;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use CtiDigital\Configurator\Helper\Component;

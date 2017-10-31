@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\ComponentAbstract;
+use CtiDigital\Configurator\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
 

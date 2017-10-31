@@ -1,6 +1,6 @@
 <?php
 
-namespace CtiDigital\Configurator\Model\Component;
+namespace CtiDigital\Configurator\Component;
 
 class Rewrite
 {

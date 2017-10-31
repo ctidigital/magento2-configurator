@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Model;
 
-use CtiDigital\Configurator\Model\Component\ComponentAbstract;
+use CtiDigital\Configurator\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;

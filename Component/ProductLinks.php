@@ -1,6 +1,6 @@
 <?php
 
-namespace CtiDigital\Configurator\Model\Component;
+namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;

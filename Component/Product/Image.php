@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\Model\Component\Product;
+namespace CtiDigital\Configurator\Component\Product;
 
 use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\Filesystem;

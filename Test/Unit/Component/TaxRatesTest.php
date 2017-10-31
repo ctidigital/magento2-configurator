@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\TaxRates;
+use CtiDigital\Configurator\Component\TaxRates;
 use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 
 class TaxRatesTest extends ComponentAbstractTestCase

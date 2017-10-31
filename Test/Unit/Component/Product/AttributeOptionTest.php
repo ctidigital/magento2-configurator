@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
-use CtiDigital\Configurator\Model\Component\Product\AttributeOption;
+use CtiDigital\Configurator\Component\Product\AttributeOption;
 
 class AttributeOptionTest extends \PHPUnit_Framework_TestCase
 {

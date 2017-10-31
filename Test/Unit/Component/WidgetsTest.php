@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\Widgets;
+use CtiDigital\Configurator\Component\Widgets;
 use Magento\Store\Model\StoreFactory;
 use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;

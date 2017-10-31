@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\AdminUsers;
+use CtiDigital\Configurator\Component\AdminUsers;
 use Magento\User\Model\UserFactory;
 use Magento\Authorization\Model\RoleFactory;
 

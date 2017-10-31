@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\AttributeSets;
+use CtiDigital\Configurator\Component\AttributeSets;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Api\AttributeSetRepositoryInterface;
 

@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\Media;
+use CtiDigital\Configurator\Component\Media;
 
 class MediaTest extends ComponentAbstractTestCase
 {

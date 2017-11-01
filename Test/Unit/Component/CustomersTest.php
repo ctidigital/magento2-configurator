@@ -141,6 +141,100 @@ class CustomersTest extends ComponentAbstractTestCase
         $this->assertEquals(1, $this->component->getDefaultGroupId());
     }
 
+    /**
+     * @dataProvider addressColumnProvider
+     */
+    public function testIsAddressColumn($column, $expected)
+    {
+        $this->assertEquals($expected, $this->component->getIsAddressColumn($column));
+    }
+
+    public function addressColumnProvider()
+    {
+        return [
+            ['_address_fax', true],
+            ['group_id', false],
+            ['something_address_', false]
+        ];
+    }
+
+    /**
+     * @param $address
+     * @param $expected
+     *
+     * @dataProvider addressValidProvider
+     */
+    public function testIsValidAddress($address, $expected)
+    {
+        $this->assertEquals($expected, $this->component->isAddressValid($address));
+    }
+
+    public function addressValidProvider()
+    {
+        return [
+            [
+                [
+                    '_address_city' => 'Test',
+                    '_address_country_id' => 'Test',
+                    '_address_firstname' => 'Test',
+                    '_address_lastname' => 'Test',
+                    '_address_street' => 'Test',
+                    '_address_telephone' => 'Test'
+                ],
+                true
+            ],
+            [
+                [
+                    '_address_city' => 'Test',
+                    '_address_country_id' => '',
+                    '_address_firstname' => '',
+                    '_address_lastname' => '',
+                    '_address_street' => '',
+                    '_address_telephone' => ''
+                ],
+                false
+            ],
+            [
+                [
+                    '_address_city' => 'Test',
+                    '_address_country_id' => 'Test',
+                    '_address_firstname' => 'Test',
+                    '_address_street' => 'Test',
+                    '_address_telephone' => 'Test'
+                ],
+                false
+            ],
+            [
+                [
+                    '_address_city' => 'Test',
+                    '_address_country_id' => 'Test',
+                    '_address_firstname' => 'Test',
+                    '_address_lastname' => 'Test',
+                    '_address_street' => 'Test',
+                    '_address_telephone' => ''
+                ],
+                false
+            ],
+        ];
+    }
+
+    public function testRemoveAddress()
+    {
+        $customer = [
+            'email' => 'test',
+            'firstname' => 'test',
+            'lastname' => 'test',
+            '_address_firstname' => 'test',
+            '_address_lastname' => ''
+        ];
+        $test = [
+            'email' => 'test',
+            'firstname' => 'test',
+            'lastname' => 'test'
+        ];
+        $this->assertEquals($test, $this->component->removeAddressFields($customer));
+    }
+
     private function createCustomerGroup($groupId)
     {
         $group = $this->getMockBuilder('Magento\Customer\Model\Data\Group')

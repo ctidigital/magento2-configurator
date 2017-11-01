@@ -25,6 +25,15 @@ class Customers extends CsvComponentAbstract
         '_store',
     ];
 
+    protected $requiredAddressFields = [
+        '_address_firstname',
+        '_address_lastname',
+        '_address_street',
+        '_address_city',
+        '_address_country_id',
+        '_address_telephone'
+    ];
+
     /**
      * @var \Magento\Indexer\Model\IndexerFactory
      */
@@ -65,15 +74,21 @@ class Customers extends CsvComponentAbstract
      */
     protected $columnHeaders = [];
 
+    /**
+     * @var boolean
+     */
+    protected $customerHasAddress = false;
+
     public function __construct(
-        LoggerInterface $log,
+        LoggingInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         GroupRepositoryInterface $groupRepository,
         GroupManagementInterface $groupManagement,
         SearchCriteriaBuilder $criteriaBuilder,
         \Magento\Indexer\Model\IndexerFactory $indexerFactory
-    ) {
+    )
+    {
         $this->importerFactory = $importerFactory;
         $this->groupRepository = $groupRepository;
         $this->groupManagement = $groupManagement;
@@ -98,6 +113,7 @@ class Customers extends CsvComponentAbstract
         foreach ($data as $customer) {
             $row = [];
             $extraItem = false;
+            $this->setCustomerHasAddress(false);
             foreach ($this->getHeaders() as $key => $columnHeader) {
                 if (!array_key_exists($key, $customer)) {
                     $this->log->logError(
@@ -109,6 +125,13 @@ class Customers extends CsvComponentAbstract
                     );
                     continue;
                 }
+
+                if ($this->getCustomerHasAddress() === false &&
+                    $customer[$key] !== '' &&
+                    $this->getIsAddressColumn($columnHeader)) {
+                    $this->setCustomerHasAddress(true);
+                }
+
                 $row[$columnHeader] = $customer[$key];
 
                 if ($columnHeader === self::CUSTOMER_EMAIL_HEADER &&
@@ -130,6 +153,16 @@ class Customers extends CsvComponentAbstract
                     );
                     $row[self::CUSTOMER_GROUP_HEADER] = $this->getDefaultGroupId();
                 }
+            }
+
+            if ($this->getCustomerHasAddress() === true && $this->isAddressValid($row) === false) {
+                $this->log->logInfo(
+                    sprintf(
+                        'The address for row %s is not valid and will not be imported (the customer will be though)',
+                        $rowIndex
+                    )
+                );
+                $row = $this->removeAddressFields($row);
             }
             $customerImport[] = $row;
             $rowIndex++;
@@ -174,6 +207,18 @@ class Customers extends CsvComponentAbstract
     }
 
     /**
+     * @param $column
+     * @return bool
+     */
+    public function getIsAddressColumn($column)
+    {
+        if (substr($column, 0, 9) === '_address_') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @return array
      */
     public function getHeaders()
@@ -211,6 +256,41 @@ class Customers extends CsvComponentAbstract
             $this->groupDefault = $this->groupManagement->getDefaultGroup()->getId();
         }
         return $this->groupDefault;
+    }
+
+    /**
+     * @param boolean $hasAddress
+     */
+    public function setCustomerHasAddress($hasAddress)
+    {
+        $this->customerHasAddress = $hasAddress;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCustomerHasAddress()
+    {
+        return $this->customerHasAddress;
+    }
+
+    public function isAddressValid($customer)
+    {
+        foreach ($this->requiredAddressFields as $required) {
+            if (!in_array($required, array_keys($customer)) || strlen($customer[$required]) === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function removeAddressFields($customer) {
+        foreach ($customer as $column => $value) {
+            if ($this->getIsAddressColumn($column)) {
+                unset($customer[$column]);
+            }
+        }
+        return $customer;
     }
 
     private function reindex()

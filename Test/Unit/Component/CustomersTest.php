@@ -4,6 +4,12 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 use CtiDigital\Configurator\Component\Customers;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
+/**
+ * Class CustomersTest
+ * @package CtiDigital\Configurator\Test\Unit\Component
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CustomersTest extends ComponentAbstractTestCase
 {
     /**

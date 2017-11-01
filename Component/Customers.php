@@ -80,15 +80,14 @@ class Customers extends CsvComponentAbstract
     protected $customerHasAddress = false;
 
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         GroupRepositoryInterface $groupRepository,
         GroupManagementInterface $groupManagement,
         SearchCriteriaBuilder $criteriaBuilder,
         \Magento\Indexer\Model\IndexerFactory $indexerFactory
-    )
-    {
+    ) {
         $this->importerFactory = $importerFactory;
         $this->groupRepository = $groupRepository;
         $this->groupManagement = $groupManagement;

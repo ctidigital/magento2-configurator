@@ -6,7 +6,7 @@ use Magento\Customer\Model\GroupFactory;
 use Magento\Tax\Model\ClassModelFactory;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Model\LoggerInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 class CustomerGroups extends YamlComponentAbstract
 {

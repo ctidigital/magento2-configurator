@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\Webapi\Exception;
 use Symfony\Component\Yaml\Yaml;
 

@@ -6,7 +6,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use CtiDigital\Configurator\Model\LoggerInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 class Rewrites extends CsvComponentAbstract
 {

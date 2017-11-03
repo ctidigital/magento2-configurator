@@ -2,7 +2,7 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\Customers;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 class CustomersTest extends ComponentAbstractTestCase
 {

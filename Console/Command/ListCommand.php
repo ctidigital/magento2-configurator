@@ -3,8 +3,8 @@
 namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Model\ComponentList;
-use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
-use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Api\ConfigInterface;
+use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Console\Command\Command;

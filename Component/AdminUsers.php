@@ -5,7 +5,7 @@ use Symfony\Component\Yaml\Yaml;
 use Magento\User\Model\UserFactory;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
 
 class AdminUsers extends YamlComponentAbstract

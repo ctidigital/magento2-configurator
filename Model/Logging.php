@@ -2,6 +2,7 @@
 
 namespace CtiDigital\Configurator\Model;
 
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 

@@ -2,9 +2,9 @@
 
 namespace CtiDigital\Configurator\Console\Command;
 
-use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
-use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\ConfigInterface;
+use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Model\Processor;
 use Magento\Framework\Config\ScopeInterface;
 use Magento\Framework\App\State;

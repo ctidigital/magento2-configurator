@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Helper\Component;
 use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Framework\ObjectManagerInterface;

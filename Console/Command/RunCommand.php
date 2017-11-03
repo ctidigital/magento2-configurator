@@ -2,8 +2,8 @@
 
 namespace CtiDigital\Configurator\Console\Command;
 
-use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
-use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Api\ConfigInterface;
+use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
 use CtiDigital\Configurator\Model\Exception\ConfiguratorAdapterException;
 use CtiDigital\Configurator\Model\Processor;
 use Magento\Framework\ObjectManagerInterface;

@@ -3,7 +3,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 use CtiDigital\Configurator\Exception\ComponentException;
 

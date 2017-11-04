@@ -1,6 +1,6 @@
 <?php
 
-namespace CtiDigital\Configurator\Model\Configurator;
+namespace CtiDigital\Configurator\Api;
 
 use CtiDigital\Configurator\Model\Component\ComponentAbstract;
 

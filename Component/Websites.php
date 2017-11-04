@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Store\Model\Group;

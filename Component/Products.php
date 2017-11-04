@@ -3,7 +3,7 @@ namespace CtiDigital\Configurator\Component;
 
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\Image;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 use FireGento\FastSimpleImport\Model\ImporterFactory;

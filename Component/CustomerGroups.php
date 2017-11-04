@@ -5,8 +5,8 @@ use Symfony\Component\Yaml\Yaml;
 use Magento\Customer\Model\GroupFactory;
 use Magento\Tax\Model\ClassModelFactory;
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Api\LoggerInterface;
 
 class CustomerGroups extends YamlComponentAbstract
 {

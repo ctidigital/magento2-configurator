@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\Model;
+namespace CtiDigital\Configurator\Api;
 
 interface LoggerInterface
 {

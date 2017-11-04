@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Component\Product;
 
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 

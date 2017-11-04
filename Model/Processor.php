@@ -2,9 +2,10 @@
 
 namespace CtiDigital\Configurator\Model;
 
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\ComponentAbstract;
-use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Api\ConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Parser;
 use Magento\Framework\App\State;
@@ -12,7 +13,6 @@ use Magento\Framework\App\Area;
 
 class Processor
 {
-
     /**
      * @var string
      */

@@ -5,8 +5,8 @@ namespace CtiDigital\Configurator\Component;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
-use CtiDigital\Configurator\Model\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Api\LoggerInterface;
 
 class Rewrites extends CsvComponentAbstract
 {

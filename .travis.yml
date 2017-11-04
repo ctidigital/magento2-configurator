@@ -26,6 +26,7 @@ before_install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then composer require magento/framework:~100.1.0; fi"
   - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then composer require magento/framework:~100.1.0; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then composer require magento/zendframework1:>=1.12.16; fi"
 install:
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then composer install --prefer-dist; fi"
   - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then composer install --prefer-dist; fi"

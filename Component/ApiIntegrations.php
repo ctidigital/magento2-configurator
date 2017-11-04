@@ -7,7 +7,7 @@ use Magento\Integration\Model\Oauth\TokenFactory;
 use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Api\IntegrationServiceInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 class ApiIntegrations extends YamlComponentAbstract
 {

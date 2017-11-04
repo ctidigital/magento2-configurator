@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Component;
 
 use Magento\Framework\File\Csv;
 use Magento\Framework\Filesystem\Driver\File;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 /**
  * Class CsvComponentAbstract

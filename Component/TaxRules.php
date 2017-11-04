@@ -7,7 +7,7 @@ use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Tax\Model\Calculation\RuleFactory;
 use Magento\Tax\Model\Calculation\RateFactory;
 use Magento\Tax\Model\ClassModelFactory;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 class TaxRules extends CsvComponentAbstract
 {

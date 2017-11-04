@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use Magento\Store\Model\StoreFactory;

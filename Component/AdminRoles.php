@@ -8,7 +8,7 @@ use Magento\Authorization\Model\RulesFactory;
 use CtiDigital\Configurator\Model\LoggerInterface;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 class AdminRoles extends YamlComponentAbstract
 {

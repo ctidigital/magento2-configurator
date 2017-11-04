@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Component\ComponentAbstract;
 use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Yaml\Parser;
 use Magento\Framework\App\State;

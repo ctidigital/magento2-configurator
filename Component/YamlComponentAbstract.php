@@ -5,7 +5,7 @@ namespace CtiDigital\Configurator\Component;
 use Magento\Framework\Webapi\Exception;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 /**
  * Class YamlComponentAbstract

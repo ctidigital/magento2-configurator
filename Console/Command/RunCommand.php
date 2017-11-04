@@ -6,7 +6,6 @@ use CtiDigital\Configurator\Exception\ConfiguratorAdapterException;
 use CtiDigital\Configurator\Api\ConfigInterface;
 use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
 use CtiDigital\Configurator\Model\Processor;
-use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,22 +25,18 @@ class RunCommand extends Command
     private $configInterface;
 
     /**
-     * @var ObjectManagerInterface
+     * @var Processor
      */
-    private $objectManager;
-
     private $processor;
 
     public function __construct(
         ConfiguratorAdapterInterface $configuratorAdapter,
         ConfigInterface $config,
-        ObjectManagerInterface $objectManager,
         Processor $processor
     ) {
         parent::__construct();
         $this->configuratorAdapter = $configuratorAdapter;
         $this->configInterface = $config;
-        $this->objectManager = $objectManager;
         $this->processor = $processor;
     }
 

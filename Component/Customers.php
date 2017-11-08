@@ -1,5 +1,4 @@
 <?php
-
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Model\LoggerInterface;
@@ -43,7 +42,7 @@ class Customers extends CsvComponentAbstract
     /**
      * @var \Magento\Framework\Validator\EmailAddress
      */
-    protected $emailAddressValidator;
+    protected $emailValidator;
 
     /**
      * @var ImporterFactory
@@ -85,6 +84,8 @@ class Customers extends CsvComponentAbstract
      */
     protected $customerHasAddress = false;
 
+    protected $emailAddresses = [];
+
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
@@ -93,15 +94,14 @@ class Customers extends CsvComponentAbstract
         GroupManagementInterface $groupManagement,
         SearchCriteriaBuilder $criteriaBuilder,
         \Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        \Magento\Framework\Validator\EmailAddress $emailAddressValidator
-    )
-    {
+        \Magento\Framework\Validator\EmailAddress $emailValidator
+    ) {
         $this->importerFactory = $importerFactory;
         $this->groupRepository = $groupRepository;
         $this->groupManagement = $groupManagement;
         $this->criteriaBuilder = $criteriaBuilder;
         $this->indexerFactory = $indexerFactory;
-        $this->emailAddressValidator = $emailAddressValidator;
+        $this->emailValidator = $emailValidator;
         parent::__construct($log, $objectManager);
     }
 
@@ -120,14 +120,13 @@ class Customers extends CsvComponentAbstract
         $rowIndex = 0;
         foreach ($data as $customer) {
             $row = [];
-            $skip = false;
             $extraItem = false;
+            $skipCustomer = false;
             $this->setCustomerHasAddress(false);
             foreach ($this->getHeaders() as $key => $columnHeader) {
-                if ($skip === true) {
-                    break;
+                if ($skipCustomer === true) {
+                    continue;
                 }
-
                 if (!array_key_exists($key, $customer)) {
                     $this->log->logError(
                         sprintf(
@@ -148,21 +147,37 @@ class Customers extends CsvComponentAbstract
                 $row[$columnHeader] = $customer[$key];
 
                 if ($columnHeader === self::CUSTOMER_EMAIL_HEADER) {
-                    if (strlen($row[self::CUSTOMER_EMAIL_HEADER]) > 0) {
-                        if ($this->emailAddressValidator->isValid($row[self::CUSTOMER_EMAIL_HEADER]) === false) {
-                            $skip = true;
-                            $this->log->logError(
-                                sprintf('The email %s is not valid. Skipping customer.', $row[self::CUSTOMER_EMAIL_HEADER])
-                            );
-                            continue;
-                        }
-                    }
                     if (strlen($row[self::CUSTOMER_EMAIL_HEADER]) === 0) {
                         // If no email address is specified then it's an extra address being specified.
                         $extraItem = true;
                     }
+                    if (strlen($row[self::CUSTOMER_EMAIL_HEADER]) > 0) {
+                        $emailAddress = trim($row[self::CUSTOMER_EMAIL_HEADER]);
+                        if ($this->emailValidator->isValid($emailAddress) === false) {
+                            $this->log->logError(
+                                sprintf(
+                                    'The email address %s is not valid. Skipping row %s',
+                                    $emailAddress,
+                                    $rowIndex
+                                )
+                            );
+                            $skipCustomer = true;
+                            continue;
+                        }
+                        if (array_key_exists($emailAddress, $this->emailAddresses)) {
+                            $this->log->logError(
+                                sprintf(
+                                    'The email address %s has already been used. Skipping row %s',
+                                    $row[self::CUSTOMER_EMAIL_HEADER],
+                                    $rowIndex
+                                )
+                            );
+                            $skipCustomer = true;
+                            continue;
+                        }
+                        $this->emailAddresses[$emailAddress] = true;
+                    }
                 }
-
                 if ($extraItem === false &&
                     $columnHeader === self::CUSTOMER_GROUP_HEADER &&
                     $this->isValidGroup($row[$columnHeader]) === false
@@ -176,6 +191,20 @@ class Customers extends CsvComponentAbstract
                     );
                     $row[self::CUSTOMER_GROUP_HEADER] = $this->getDefaultGroupId();
                 }
+
+                if ($extraItem === false && ($columnHeader === 'firstname' || $columnHeader === 'lastname')) {
+                    if (strlen($row[$columnHeader]) === 0) {
+                        $this->log->logError(
+                            sprintf(
+                                'The column "%s" must have a value for row "%s". This row will be skipped.',
+                                $columnHeader,
+                                $rowIndex
+                            )
+                        );
+                        $skipCustomer = true;
+                        continue;
+                    }
+                }
             }
 
             if ($this->getCustomerHasAddress() === true && $this->isAddressValid($row) === false) {
@@ -187,7 +216,9 @@ class Customers extends CsvComponentAbstract
                 );
                 $row = $this->removeAddressFields($row);
             }
-            $customerImport[] = $row;
+            if ($skipCustomer === false) {
+                $customerImport[] = $row;
+            }
             $rowIndex++;
         }
 
@@ -273,9 +304,6 @@ class Customers extends CsvComponentAbstract
         return false;
     }
 
-    /**
-     * @return int
-     */
     public function getDefaultGroupId()
     {
         if ($this->groupDefault === null) {
@@ -300,26 +328,24 @@ class Customers extends CsvComponentAbstract
         return $this->customerHasAddress;
     }
 
-    /**
-     * @param $customer
-     * @return bool
-     */
     public function isAddressValid($customer)
     {
         foreach ($this->requiredAddressFields as $required) {
-            if (!in_array($required, array_keys($customer)) || strlen($customer[$required]) === 0) {
+            if (!in_array($required, array_keys($customer)) || strlen($customer[$required]) === 0 || $customer[$required] == '0') {
+                $this->log->logInfo(
+                    sprintf(
+                        'The column "%s" has a value of "%s" which is not allowed.',
+                        $required,
+                        $customer[$required]
+                    )
+                );
                 return false;
             }
         }
         return true;
     }
 
-    /**
-     * @param $customer
-     * @return mixed
-     */
-    public function removeAddressFields($customer)
-    {
+    public function removeAddressFields($customer) {
         foreach ($customer as $column => $value) {
             if ($this->getIsAddressColumn($column)) {
                 unset($customer[$column]);

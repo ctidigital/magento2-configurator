@@ -2,12 +2,13 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Helper\Component;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -33,28 +34,31 @@ class Pages extends YamlComponentAbstract
     /** @var StoreManagerInterface */
     protected $storeManager;
 
-    /** @var Component */
-    protected $componentHelper;
-
+    /**
+     * @var StoreRepositoryInterface
+     */
+    private $storeRepository;
 
     /**
      * Pages constructor.
+     *
      * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param PageRepositoryInterface $pageRepository
      * @param PageInterfaceFactory $pageFactory
-     * @param Component $componentHelper
+     * @param StoreRepositoryInterface $storeRepository
      */
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         PageRepositoryInterface $pageRepository,
         PageInterfaceFactory $pageFactory,
-        Component $componentHelper
+        StoreRepositoryInterface $storeRepository
     ) {
         $this->pageFactory = $pageFactory;
         $this->pageRepository = $pageRepository;
-        $this->componentHelper = $componentHelper;
+        $this->storeRepository = $storeRepository;
+
         parent::__construct($log, $objectManager);
     }
 
@@ -91,7 +95,7 @@ class Pages extends YamlComponentAbstract
             foreach ($data['page'] as $pageData) {
                 if (isset($pageData['stores'])) {
                     foreach ($pageData['stores'] as $storeCode) {
-                        $store = $this->componentHelper->getStoreByCode($storeCode);
+                        $store = $this->storeRepository->get($storeCode);
                         $pageId = $this->pageFactory->create()->checkIdentifier($identifier, $store->getId());
                     }
                 } else {
@@ -152,7 +156,7 @@ class Pages extends YamlComponentAbstract
 
                     $stores = array();
                     foreach ($pageData['stores'] as $code) {
-                        $stores[] = $this->componentHelper->getStoreByCode($code)->getId();
+                        $stores[] = $store = $this->storeRepository->get($code)->getId();
                     }
 
                     $page->setStores($stores);
@@ -168,7 +172,7 @@ class Pages extends YamlComponentAbstract
                 }
 
             }
-        } catch (ComponentException $e) {
+        } catch (NoSuchEntityException $e) {
             $this->log->logError($e->getMessage());
         }
 

@@ -2,8 +2,8 @@
 
 namespace CtiDigital\Configurator\Console\Command;
 
-use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
-use CtiDigital\Configurator\Model\ConfiguratorAdapterInterface;
+use CtiDigital\Configurator\Api\ConfigInterface;
+use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\ObjectManager;
 use Symfony\Component\Console\Command\Command;

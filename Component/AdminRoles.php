@@ -1,14 +1,13 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use Symfony\Component\Yaml\Yaml;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Authorization\Model\RulesFactory;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 
 class AdminRoles extends YamlComponentAbstract
 {

@@ -2,6 +2,7 @@
 
 namespace CtiDigital\Configurator\Model\Configurator;
 
+use CtiDigital\Configurator\Api\ConfigInterface;
 use CtiDigital\Configurator\Model\Configurator\Config\Reader;
 use Magento\Framework\Config\CacheInterface;
 use Magento\Framework\Config\Data;

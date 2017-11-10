@@ -1,8 +1,8 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Model\LoggerInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use Magento\ImportExport\Model\Import;

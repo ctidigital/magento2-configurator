@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\Model\Exception;
+namespace CtiDigital\Configurator\Exception;
 
 class ConfiguratorAdapterException extends \RuntimeException
 {

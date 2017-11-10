@@ -2,8 +2,8 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Model\Exception\ComponentException;
-use CtiDigital\Configurator\Model\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\ObjectManagerInterface;
 

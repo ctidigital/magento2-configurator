@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Model\Exception\ComponentException;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\Webapi\Exception;
 use Symfony\Component\Yaml\Yaml;
 
@@ -22,7 +22,7 @@ class Categories extends YamlComponentAbstract
     ];
 
     public function __construct(
-        \CtiDigital\Configurator\Model\LoggerInterface $log,
+        \CtiDigital\Configurator\Api\LoggerInterface $log,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Catalog\Model\CategoryFactory $category,
         \Magento\Store\Model\GroupFactory $groupFactory,

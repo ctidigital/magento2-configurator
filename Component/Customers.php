@@ -147,12 +147,13 @@ class Customers extends CsvComponentAbstract
                 $row[$columnHeader] = $customer[$key];
 
                 if ($columnHeader === self::CUSTOMER_EMAIL_HEADER) {
-                    if (strlen($row[self::CUSTOMER_EMAIL_HEADER]) === 0) {
+                    $emailAddress = trim(strtolower($row[self::CUSTOMER_EMAIL_HEADER]));
+                    $row[self::CUSTOMER_EMAIL_HEADER] = $emailAddress;
+                    if (strlen($emailAddress) === 0) {
                         // If no email address is specified then it's an extra address being specified.
                         $extraItem = true;
                     }
-                    if (strlen($row[self::CUSTOMER_EMAIL_HEADER]) > 0) {
-                        $emailAddress = trim($row[self::CUSTOMER_EMAIL_HEADER]);
+                    if (strlen($emailAddress) > 0) {
                         if ($this->emailValidator->isValid($emailAddress) === false) {
                             $this->log->logError(
                                 sprintf(
@@ -332,13 +333,6 @@ class Customers extends CsvComponentAbstract
     {
         foreach ($this->requiredAddressFields as $required) {
             if (!in_array($required, array_keys($customer)) || strlen($customer[$required]) === 0 || $customer[$required] == '0') {
-                $this->log->logInfo(
-                    sprintf(
-                        'The column "%s" has a value of "%s" which is not allowed.',
-                        $required,
-                        $customer[$required]
-                    )
-                );
                 return false;
             }
         }

@@ -332,14 +332,17 @@ class Customers extends CsvComponentAbstract
     public function isAddressValid($customer)
     {
         foreach ($this->requiredAddressFields as $required) {
-            if (!in_array($required, array_keys($customer)) || strlen($customer[$required]) === 0 || $customer[$required] == '0') {
+            if (!in_array($required, array_keys($customer)) ||
+                strlen($customer[$required]) === 0 ||
+                $customer[$required] == '0') {
                 return false;
             }
         }
         return true;
     }
 
-    public function removeAddressFields($customer) {
+    public function removeAddressFields($customer)
+    {
         foreach ($customer as $column => $value) {
             if ($this->getIsAddressColumn($column)) {
                 unset($customer[$column]);

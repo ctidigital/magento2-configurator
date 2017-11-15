@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\Config;
+use CtiDigital\Configurator\Component\Config;
 
 class ConfigTest extends ComponentAbstractTestCase
 {

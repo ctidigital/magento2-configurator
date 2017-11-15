@@ -2,7 +2,7 @@
 
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\Blocks;
+use CtiDigital\Configurator\Component\Blocks;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 
 class BlocksTest extends ComponentAbstractTestCase

@@ -29,9 +29,9 @@ Before submitting a pull request there are a few things that you should ensure. 
 
 1) Running Code Sniffer / Mess Detector / Duplicate Code Detector test. 
 ```
-php vendor/bin/phpcs --standard=PSR2 vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console/ vendor/ctidigital/magento2-configurator/Test/
-php vendor/bin/phpmd vendor/ctidigital/magento2-configurator/Model/,vendor/ctidigital/magento2-configurator/Console/,vendor/ctidigital/magento2-configurator/Test/ text cleancode,codesize,controversial,design,naming,unusedcode
-php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console vendor/ctidigital/magento2-configurator/Test/
+php vendor/bin/phpcs --standard=PSR2 vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console/ vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Api/ vendor/ctidigital/magento2-configurator/Component/ vendor/ctidigital/magento2-configurator/Exception/
+php vendor/bin/phpmd vendor/ctidigital/magento2-configurator/Model/,vendor/ctidigital/magento2-configurator/Console/,vendor/ctidigital/magento2-configurator/Test/,vendor/ctidigital/magento2-configurator/Api/,vendor/ctidigital/magento2-configurator/Component/,vendor/ctidigital/magento2-configurator/Exception/ text cleancode,codesize,controversial,design,naming,unusedcode
+php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Api/ vendor/ctidigital/magento2-configurator/Component/ vendor/ctidigital/magento2-configurator/Exception/
 ```
 2) Include PHP Unit tests. If you're developing a new component, it is important that the component fits the framework by extending `ComponentAbstractTestCase` within `Test\Unit\Component`.
 Then you would have to run the unit tests to ensure there are no failures.

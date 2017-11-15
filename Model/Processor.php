@@ -2,17 +2,17 @@
 
 namespace CtiDigital\Configurator\Model;
 
-use CtiDigital\Configurator\Model\Component\ComponentAbstract;
-use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
-use CtiDigital\Configurator\Model\Exception\ComponentException;
-use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Component\ComponentAbstract;
+use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Api\ConfigInterface;
+use CtiDigital\Configurator\Component\Factory\ComponentFactoryInterface;
 use Symfony\Component\Yaml\Parser;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
 
 class Processor
 {
-
     /**
      * @var string
      */
@@ -29,32 +29,39 @@ class Processor
     protected $configInterface;
 
     /**
-     * @var LoggingInterface
+     * @var LoggerInterface
      */
     protected $log;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
 
     /**
      * @var State
      */
     protected $state;
 
+    /**
+     * @var ComponentFactoryInterface
+     */
+    protected $componentFactory;
+
+    /**
+     * Processor constructor.
+     *
+     * @param ConfigInterface $configInterface
+     * @param ComponentFactoryInterface $componentFactory
+     * @param LoggerInterface $logging
+     * @param State $state
+     */
     public function __construct(
         ConfigInterface $configInterface,
-        ObjectManagerInterface $objectManager,
-        LoggingInterface $logging,
-        State $state
+        LoggerInterface $logging,
+        State $state,
+        ComponentFactoryInterface $componentFactory
     ) {
         $this->log = $logging;
         $this->configInterface = $configInterface;
-        $this->objectManager = $objectManager;
         $this->state = $state;
+        $this->componentFactory = $componentFactory;
     }
-
 
     public function getLogger()
     {
@@ -175,7 +182,7 @@ class Processor
         $componentClass = $this->configInterface->getComponentByName($componentAlias);
 
         /* @var ComponentAbstract $component */
-        $component = $this->objectManager->create($componentClass);
+        $component = $this->componentFactory->create($componentClass);
         foreach ($componentConfig['sources'] as $source) {
             $component->setSource($source)->process();
         }
@@ -216,6 +223,11 @@ class Processor
                 )
             );
             return;
+        }
+        
+        // If there are sources for the environment, process them
+        foreach ((array) $componentConfig['env'][$this->getEnvironment()]['sources'] as $source) {
+            $component->setSource($source)->process();
         }
 
     }
@@ -260,7 +272,7 @@ class Processor
         }
 
         $this->log->logComment(sprintf("The %s component has %s class name.", $componentName, $componentClass));
-        $component = $this->objectManager->create($componentClass);
+        $component = $this->componentFactory->create($componentClass);
         if ($component instanceof ComponentAbstract) {
             return true;
         }

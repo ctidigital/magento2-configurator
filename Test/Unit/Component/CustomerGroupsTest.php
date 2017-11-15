@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
-use CtiDigital\Configurator\Model\Component\CustomerGroups;
+use CtiDigital\Configurator\Component\CustomerGroups;
 use Magento\Customer\Model\GroupFactory;
 use Magento\Tax\Model\ClassModelFactory;
 

@@ -2,39 +2,56 @@
 
 namespace CtiDigital\Configurator\Model;
 
-use CtiDigital\Configurator\Model\Configurator\ConfigInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Api\ConfigInterface;
+use CtiDigital\Configurator\Component\Factory\ComponentFactory;
+use CtiDigital\Configurator\Component\Factory\ComponentFactoryInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\Config\ScopeInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 class ProcessorTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Processor
      */
     private $processor;
+
+    /**
+     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $configInterface;
-    private $objectManagerInterface;
-    private $loggingInterface;
+
+    /**
+     * @var ComponentFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $mockComponentFactory;
+
+    /**
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $loggerInterface;
 
     protected function setUp()
     {
         $this->configInterface = $this->getMock(ConfigInterface::class);
-        $this->objectManagerInterface = $this->getMock(ObjectManagerInterface::class);
+        $this->mockComponentFactory = $this->getMockBuilder(ComponentFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+
         $consoleOutput = $this->getMock(ConsoleOutputInterface::class);
         $scopeInterface = $this->getMock(ScopeInterface::class);
         $state = $this->getMock(State::class, array(), array($scopeInterface));
-        $this->loggingInterface = $this->getMock(LoggingInterface::class, array(), array(
-            $consoleOutput
+        $this->loggerInterface = $this->getMock(LoggerInterface::class, array(), array(
+            $consoleOutput,
         ));
 
         $this->processor = $this->getMock(Processor::class, array(), array(
             $this->configInterface,
-            $this->objectManagerInterface,
-            $this->loggingInterface,
-            $state
+            $this->loggerInterface,
+            $state,
+            $this->mockComponentFactory,
         ));
     }
 

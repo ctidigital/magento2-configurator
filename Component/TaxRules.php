@@ -165,10 +165,9 @@ class TaxRules extends CsvComponentAbstract
         $rateIds = [];
         $rateNamesArray = explode(',', $rateNames);
 
-        $rateFactory = $this->rateFactory->create()->getCollection();
         foreach ($rateNamesArray as $name) {
-            $rate = $rateFactory->addFieldToFilter('code', $name)->getFirstItem();
-
+            $rateFactory = $this->rateFactory->create()->getCollection();
+            $rate = $rateFactory->addFieldToFilter('code', $name)->load()->getFirstItem();
             $rateIds[] = $rate->getId();
         }
 
@@ -197,6 +196,7 @@ class TaxRules extends CsvComponentAbstract
                 $classModel->setClassName($name)
                     ->setClassType($type)
                     ->save();
+                $classId = $classModel->getId();
             }
 
             $taxClassIds[] = $classId;

@@ -1,0 +1,6 @@
+Code,Country,State,Zip/Post Code,Rate,Zip/Post is Range,Range From,Range To,default
+VAT Standard Rate,GB,*,*,20,,,,
+VAT Zero Rate,GB,*,*,0,,,,
+Czech Republic,CZ,*,*,20,,,,
+Austria,AT,*,*,20,,,,
+Belgium,BE,*,*,20,,,,

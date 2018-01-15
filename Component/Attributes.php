@@ -175,6 +175,27 @@ class Attributes extends YamlComponentAbstract
             case 'backend':
                 $name = 'backend_model';
                 break;
+            case 'searchable':
+                $name = 'is_searchable';
+                break;
+            case 'global':
+                $name = 'is_global';
+                break;
+            case 'filterable_in_search':
+                $name = 'is_filterable_in_search';
+                break;
+            case 'unique':
+                $name = 'is_unique';
+                break;
+            case 'visible_in_advanced_search':
+                $name = 'is_visible_in_advanced_search';
+                break;
+            case 'comparable':
+                $name = 'is_comparable';
+                break;
+            case 'visible_on_front':
+                $name = 'is_visible_on_front';
+                break;
         }
         return $name;
     }

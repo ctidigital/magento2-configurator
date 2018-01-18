@@ -35,6 +35,26 @@ class Attributes extends YamlComponentAbstract
      */
     protected $productAttributeRepository;
 
+    /**
+     * @var array
+     */
+    protected $attributeConfigMap = [
+        'label'                         => 'frontend_label',
+        'type'                          => 'backend_type',
+        'input'                         => 'frontend_input',
+        'product_types'                 => 'apply_to',
+        'required'                      => 'is_required',
+        'source'                        => 'source_model',
+        'backend'                       => 'backend_model',
+        'searchable'                    => 'is_searchable',
+        'global'                        => 'is_global',
+        'filterable_in_search'          => 'is_filterable_in_search',
+        'unique'                        => 'is_unique',
+        'visible_in_advanced_search'    => 'is_visible_in_advanced_search',
+        'comparable'                    => 'is_comparable',
+        'visible_on_front'              => 'is_visible_on_front'
+    ];
+
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
@@ -153,28 +173,8 @@ class Attributes extends YamlComponentAbstract
 
     protected function mapAttributeConfig($name)
     {
-        switch ($name) {
-            case 'label':
-                $name = 'frontend_label';
-                break;
-            case 'type':
-                $name = 'backend_type';
-                break;
-            case 'input':
-                $name = 'frontend_input';
-                break;
-            case 'product_types':
-                $name = 'apply_to';
-                break;
-            case 'required':
-                $name = 'is_required';
-                break;
-            case 'source':
-                $name = 'source_model';
-                break;
-            case 'backend':
-                $name = 'backend_model';
-                break;
+        if (isset($this->attributeConfigMap[$name])) {
+            return $this->attributeConfigMap[$name];
         }
         return $name;
     }

@@ -384,7 +384,8 @@ class Products extends CsvComponentAbstract
      *
      * @return int
      */
-    private function spotHtmlTags($string, $tagname) {
+    private function spotHtmlTags($string, $tagname)
+    {
         $pattern = "/<$tagname?.*>(.*)<\/$tagname>/";
         preg_match($pattern, $string, $matches);
         return count($matches);

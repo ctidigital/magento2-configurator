@@ -35,7 +35,7 @@ before_script:
 script:
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcs --standard=PSR2 Model/ Console/ Test/ Component/ Api/ Exception/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpmd Model/,Console/,Test/,Component/,Api/,Exception/ text cleancode,codesize,controversial,design,naming,unusedcode; fi"
-  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Console/ Test/ Component/ Api/ Exception/; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Console/ Component/ Api/ Exception/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'configurator' ]; then ./Test/Integration/run-configurator.sh; fi"
 notifications:

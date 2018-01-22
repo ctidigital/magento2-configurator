@@ -57,7 +57,7 @@ class ListCommand extends Command
             $count = 1;
             foreach ($this->configInterface->getAllComponents() as $component) {
 
-                /* @var \CtiDigital\Configurator\Model\Component\ComponentAbstract $componentClass */
+                /* @var \CtiDigital\Configurator\Component\ComponentAbstract $componentClass */
                 $componentClass = $this->objectManagerInterface->create($component['class']);
                 $comment =
                     str_pad($count.') ', 4)

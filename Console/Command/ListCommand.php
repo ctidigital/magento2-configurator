@@ -49,12 +49,11 @@ class ListCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-
             $count = 1;
             foreach ($this->configInterface->getAllComponents() as $component) {
 

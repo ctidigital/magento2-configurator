@@ -70,11 +70,12 @@ class Sql extends YamlComponentAbstract
 
         $this->log->logInfo('Beginning of custom queries configuration:');
         foreach ($data['sql'] as $name => $sqlFile) {
-            if (false === file_exists($sqlFile)) {
-                $this->log->logError("{$sqlFile} does not exist. Skipping.");
+            $path = BP . '/' . $sqlFile;
+            if (false === file_exists($path)) {
+                $this->log->logError("{$path} does not exist. Skipping.");
                 continue;
             }
-            $fileContent = file_get_contents($sqlFile);
+            $fileContent = file_get_contents($path);
             $this->processor->process($name, $fileContent);
         }
     }

@@ -68,8 +68,9 @@ class SqlSplitProcessor
 
         try {
             foreach ($queries as $query) {
+                $this->log->logComment($query, 1);
                 $this->connection->query($query);
-                $this->log->logInfo("[{$cnt}/$totalSqlCnt] queries executed.");
+                $this->log->logInfo("[{$cnt}/$totalSqlCnt] queries executed.", 1);
                 $cnt++;
             }
 

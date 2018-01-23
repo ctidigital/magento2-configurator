@@ -212,7 +212,8 @@ class TaxRules extends CsvComponentAbstract
      */
     private function createTaxRule(array $ruleData)
     {
-        $ruleCount = $this->ruleFactory->create()->getCollection()->addFieldToFilter('code', $ruleData['code'])->getSize();
+        $ruleModel = $this->ruleFactory->create();
+        $ruleCount = $ruleModel->getCollection()->addFieldToFilter('code', $ruleData['code'])->getSize();
 
         if ($ruleCount > 0) {
 

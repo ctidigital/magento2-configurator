@@ -162,4 +162,4 @@ catalog_price_rules:
   enabled: 1
   method: code
   sources:
-    - ./configurator/catalog_price_rules.yaml
+    - ../configurator/catalog_price_rules.yaml

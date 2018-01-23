@@ -52,7 +52,10 @@ class Attributes extends YamlComponentAbstract
         'unique'                        => 'is_unique',
         'visible_in_advanced_search'    => 'is_visible_in_advanced_search',
         'comparable'                    => 'is_comparable',
-        'visible_on_front'              => 'is_visible_on_front'
+        'visible_on_front'              => 'is_visible_on_front',
+        'filterable'                    => 'is_filterable',
+        'user_defined'                  => 'is_user_defined',
+        'default'                       => 'default_value'
     ];
 
     public function __construct(
@@ -102,7 +105,9 @@ class Attributes extends YamlComponentAbstract
 
         if ($updateAttribute) {
 
-            $attributeConfig['user_defined'] = 1;
+            if(!array_key_exists('user_defined',$attributeConfig)){
+                $attributeConfig['user_defined'] = 1;
+            }
 
             if (isset($attributeConfig['product_types'])) {
                 $attributeConfig['apply_to'] = implode(',', $attributeConfig['product_types']);

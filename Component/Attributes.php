@@ -63,8 +63,7 @@ class Attributes extends YamlComponentAbstract
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
         Product\Attribute\Repository $repository
-    )
-    {
+    ) {
         parent::__construct($log, $objectManager);
         $this->eavSetup = $eavSetup;
         $this->productAttributeRepository = $repository;

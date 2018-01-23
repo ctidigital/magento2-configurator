@@ -209,6 +209,7 @@ class TaxRules extends CsvComponentAbstract
      * Create TaxRule
      *
      * @param array $ruleData
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     private function createTaxRule(array $ruleData)
     {

@@ -212,8 +212,7 @@ class TaxRules extends CsvComponentAbstract
      */
     private function createTaxRule(array $ruleData)
     {
-        $rule = $this->ruleFactory->create();
-        $ruleCount = $rule->getCollection()->addFieldToFilter('code', $ruleData['code'])->getSize();
+        $ruleCount = $this->ruleFactory->create()->getCollection()->addFieldToFilter('code', $ruleData['code'])->getSize();
 
         if ($ruleCount > 0) {
 
@@ -223,6 +222,9 @@ class TaxRules extends CsvComponentAbstract
 
             return;
         }
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $rule = $objectManager->create('Magento\Tax\Model\Calculation\Rule');
 
         $rule->setCode($ruleData['code'])
             ->setTaxRateIds($ruleData['tax_rate_ids'])

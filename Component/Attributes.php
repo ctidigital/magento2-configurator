@@ -39,23 +39,23 @@ class Attributes extends YamlComponentAbstract
      * @var array
      */
     protected $attributeConfigMap = [
-        'label'                         => 'frontend_label',
-        'type'                          => 'backend_type',
-        'input'                         => 'frontend_input',
-        'product_types'                 => 'apply_to',
-        'required'                      => 'is_required',
-        'source'                        => 'source_model',
-        'backend'                       => 'backend_model',
-        'searchable'                    => 'is_searchable',
-        'global'                        => 'is_global',
-        'filterable_in_search'          => 'is_filterable_in_search',
-        'unique'                        => 'is_unique',
-        'visible_in_advanced_search'    => 'is_visible_in_advanced_search',
-        'comparable'                    => 'is_comparable',
-        'visible_on_front'              => 'is_visible_on_front',
-        'filterable'                    => 'is_filterable',
-        'user_defined'                  => 'is_user_defined',
-        'default'                       => 'default_value'
+        'label' => 'frontend_label',
+        'type' => 'backend_type',
+        'input' => 'frontend_input',
+        'product_types' => 'apply_to',
+        'required' => 'is_required',
+        'source' => 'source_model',
+        'backend' => 'backend_model',
+        'searchable' => 'is_searchable',
+        'global' => 'is_global',
+        'filterable_in_search' => 'is_filterable_in_search',
+        'unique' => 'is_unique',
+        'visible_in_advanced_search' => 'is_visible_in_advanced_search',
+        'comparable' => 'is_comparable',
+        'visible_on_front' => 'is_visible_on_front',
+        'filterable' => 'is_filterable',
+        'user_defined' => 'is_user_defined',
+        'default' => 'default_value'
     ];
 
     public function __construct(
@@ -63,7 +63,8 @@ class Attributes extends YamlComponentAbstract
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
         Product\Attribute\Repository $repository
-    ) {
+    )
+    {
         parent::__construct($log, $objectManager);
         $this->eavSetup = $eavSetup;
         $this->productAttributeRepository = $repository;
@@ -105,7 +106,7 @@ class Attributes extends YamlComponentAbstract
 
         if ($updateAttribute) {
 
-            if(!array_key_exists('user_defined',$attributeConfig)){
+            if (!array_key_exists('user_defined', $attributeConfig)) {
                 $attributeConfig['user_defined'] = 1;
             }
 

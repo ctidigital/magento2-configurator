@@ -55,7 +55,8 @@ class Attributes extends YamlComponentAbstract
         'visible_on_front' => 'is_visible_on_front',
         'filterable' => 'is_filterable',
         'user_defined' => 'is_user_defined',
-        'default' => 'default_value'
+        'default' => 'default_value',
+        'used_for_promo_rules' => 'is_used_for_promo_rules'
     ];
 
     public function __construct(

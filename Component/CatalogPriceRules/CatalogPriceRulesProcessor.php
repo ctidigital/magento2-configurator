@@ -9,6 +9,7 @@ namespace CtiDigital\Configurator\Component\CatalogPriceRules;
 
 use CtiDigital\Configurator\Api\ComponentProcessorInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\CatalogRule\Api\CatalogRuleRepositoryInterface;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 use Magento\CatalogRule\Model\Rule;
@@ -105,10 +106,27 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
         $this->logger->logInfo('Initializing configuration of Catalog Price Rules.');
 
         foreach ($this->rules as $ruleId => $ruleData) {
-            $this->logger->logInfo("- Processing {$ruleId} [{$ite}/{$rulesCount}]...");
+            $this->logger->logInfo("Processing {$ruleId} [{$ite}/{$rulesCount}]...", 1);
+
+            /** @var \Magento\CatalogRule\Model\ResourceModel\Rule\Collection $ruleCollection */
+            $ruleCollection = $this->ruleFactory->create()->getCollection()->addFieldToFilter('name', $ruleData['name']);
+
+            if ($ruleCollection->getSize() > 1) {
+                $this->logger->logError(sprintf(
+                    'There appears to be more than 1 rule in Magento with the name "%s."',
+                    $ruleData['name']
+                ), 1);
+
+                continue;
+            }
+
+            $rule = $ruleCollection->getFirstItem();
+
+            if (is_null($rule->getId())) {
+                $rule = $this->ruleFactory->create();
+            }
 
             /** @var Rule $rule */
-            $rule = $this->ruleFactory->create();
             $this->fillRuleWithData($rule, $ruleData);
 
             try {
@@ -136,19 +154,21 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
      */
     private function fillRuleWithData(Rule $rule, array $ruleData)
     {
-        $rule->setName($ruleData['name'] ?? "");
-        $rule->setDescription($ruleData['description'] ?? "");
-        $rule->setIsActive($ruleData['is_active'] ?? "");
-        $rule->setSortOrder($ruleData['sort_order'] ?? "");
-        $rule->setCustomerGroupIds($ruleData['customer_group_ids'] ?? "");
-        $rule->setWebsiteIds($ruleData['website_ids'] ?? "");
-        $rule->setFromDate($ruleData['from_date'] ?? "");
-        $rule->setToDate($ruleData['to_date'] ?? "");
-        $rule->setSimpleAction($ruleData['simple_action'] ?? "");
-        $rule->setDiscountAmount($ruleData['discount_amount'] ?? "");
-        $rule->setStopRulesProcessing($ruleData['stop_rules_processing'] ?? "");
-        $rule->setConditionsSerialized($ruleData['conditions_serialized'] ?? "");
-        $rule->setActionsSerialized($ruleData['actions_serialized'] ?? "");
+        foreach($ruleData as $key => $value) {
+
+            if ($rule->getData($key) == $value) {
+                if (!is_array($value)) {
+                    $this->logger->logComment(sprintf('%s = %s', $key, $value), 2);
+                }
+                continue;
+            }
+
+            $rule->setData($key, $value);
+
+            if (!is_array($value)) {
+                $this->logger->logInfo(sprintf('%s = %s', $key, $value), 2);
+            }
+        }
 
         $rule->loadPost($rule->getData());
     }

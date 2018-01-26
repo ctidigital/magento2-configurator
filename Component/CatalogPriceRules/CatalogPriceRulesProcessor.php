@@ -108,10 +108,15 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
         foreach ($this->rules as $ruleId => $ruleData) {
             $this->logger->logInfo("Processing {$ruleId} [{$ite}/{$rulesCount}]...", 1);
 
+            // Check the existing rule by the rule name
             /** @var \Magento\CatalogRule\Model\ResourceModel\Rule\Collection $ruleCollection */
-            $ruleCollection = $this->ruleFactory->create()->getCollection()->addFieldToFilter('name', $ruleData['name']);
+            $ruleCollection = $this->ruleFactory->create()->getCollection()
+                ->addFieldToFilter('name', $ruleData['name']);
 
+            // Check to see we only have one of those rules by name
             if ($ruleCollection->getSize() > 1) {
+
+                // Log an error and skip if there are more than 1 rules
                 $this->logger->logError(sprintf(
                     'There appears to be more than 1 rule in Magento with the name "%s."',
                     $ruleData['name']
@@ -120,8 +125,10 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
                 continue;
             }
 
+            // Get the first rule
             $rule = $ruleCollection->getFirstItem();
 
+            // If the rule does not exist, create a new one
             if (is_null($rule->getId())) {
                 $rule = $this->ruleFactory->create();
             }
@@ -130,6 +137,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
             $this->fillRuleWithData($rule, $ruleData);
 
             try {
+                // Save the rule
                 $this->catalogRuleRepository->save($rule);
             } catch (\Exception $ex) {
                 $this->logger->logError($ex->getMessage());
@@ -154,8 +162,11 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
      */
     private function fillRuleWithData(Rule $rule, array $ruleData)
     {
-        foreach($ruleData as $key => $value) {
+        // Loop through each key value
+        foreach ($ruleData as $key => $value) {
 
+            // Check if they're the same as what is on the database
+            // If so, skip to the next key value pair
             if ($rule->getData($key) == $value) {
                 if (!is_array($value)) {
                     $this->logger->logComment(sprintf('%s = %s', $key, $value), 2);
@@ -163,13 +174,16 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
                 continue;
             }
 
+            // otherwise, Set the data
             $rule->setData($key, $value);
 
+            // Log it
             if (!is_array($value)) {
                 $this->logger->logInfo(sprintf('%s = %s', $key, $value), 2);
             }
         }
 
+        // Load the rule data into the rule
         $rule->loadPost($rule->getData());
     }
 

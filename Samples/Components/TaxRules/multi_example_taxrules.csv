@@ -1,0 +1,3 @@
+code,tax_rate_ids,customer_tax_class_ids,product_tax_class_ids,priority,calculate_subtotal,position
+VAT Standard,"VAT Standard Rate,Czech Republic,Austria,Belgium",Retail Customer,VAT Standard,1,0,1
+VAT Zero,VAT Zero Rate,Retail Customer,VAT Zero,0,0,0

@@ -153,3 +153,13 @@ customers:
   method: code
   sources:
     - ../configurator/Customers/customers.csv
+sql:
+  enabled: 1
+  method: code
+  sources:
+      - ../configurator/Sql/sql.yaml
+catalog_price_rules:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/catalog_price_rules.yaml

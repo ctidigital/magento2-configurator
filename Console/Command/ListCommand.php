@@ -49,19 +49,18 @@ class ListCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-
             $count = 1;
             foreach ($this->configInterface->getAllComponents() as $component) {
 
-                /* @var \CtiDigital\Configurator\Model\Component\ComponentAbstract $componentClass */
+                /* @var \CtiDigital\Configurator\Component\ComponentAbstract $componentClass */
                 $componentClass = $this->objectManagerInterface->create($component['class']);
                 $comment =
-                    str_pad($count.')', 3)
+                    str_pad($count.') ', 4)
                     . str_pad($componentClass->getComponentAlias(), 20)
                     . ' - ' . $componentClass->getDescription();
                 $output->writeln('<comment>' . $comment . '</comment>');

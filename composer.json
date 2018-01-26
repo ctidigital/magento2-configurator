@@ -19,7 +19,7 @@
     "satooshi/php-coveralls": "^1.0",
     "phpunit/phpunit": "4.1.0"
   },
-  "version": "1.0.1",
+  "version": "1.2.0",
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {

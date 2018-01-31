@@ -163,3 +163,8 @@ catalog_price_rules:
   method: code
   sources:
     - ../configurator/catalog_price_rules.yaml
+shippingtablerates:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/ShippingTableRates/shippingtablerates.yaml

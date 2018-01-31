@@ -1,5 +1,5 @@
 <?php
-namespace CtiDigital\Configurator\Model\Component;
+namespace CtiDigital\Configurator\Component;
 
 use Magento\Store\Model\Website;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -7,6 +7,11 @@ use Symfony\Component\Yaml\Parser;
 use Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 
+/**
+ * Class ShippingTablesRatesTest
+ * @package CtiDigital\Configurator\Component
+ * @SuppressWarnings(PHPMD.LongVariable)
+ */
 class ShippingTablesRatesTest extends \PHPUnit_Framework_TestCase
 {
     private $shippingTableRatesYamlPath;

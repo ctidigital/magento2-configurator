@@ -1,9 +1,9 @@
 <?php
-namespace CtiDigital\Configurator\Model\Component;
+namespace CtiDigital\Configurator\Component;
 
 use Symfony\Component\Yaml\Yaml;
 use Magento\Framework\ObjectManagerInterface;
-use CtiDigital\Configurator\Model\LoggingInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\OfflineShipping\Model\ResourceModel\Carrier\TablerateFactory;
 use Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate;
@@ -16,7 +16,7 @@ class ShippingTableRates extends YamlComponentAbstract
 {
     protected $alias = "shippingtablerates";
     protected $name = "Shipping Table Rates";
-    protected $description = "Component to create shipping table rates";
+    protected $description = "Component to create and maintain Shipping Table Rates";
 
     /**
      * @var TablerateFactory
@@ -42,7 +42,7 @@ class ShippingTableRates extends YamlComponentAbstract
      * @param RegionFactory $regionFactory
      */
     public function __construct(
-        LoggingInterface $log,
+        LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         TablerateFactory $tablerateFactory,
         WebsiteFactory $websiteFactory,
@@ -63,13 +63,13 @@ class ShippingTableRates extends YamlComponentAbstract
      */
     public function processData($data = null)
     {
-        /** @var Tablerate */
+        /** @var Tablerate $tablerateModel */
         $tablerateModel = $this->tablerateFactory->create();
 
-        $shippingRateCount = 0;
+        $shippingRateCount = 1;
         foreach ($data as $website => $shippingRates) {
 
-            /** @var Website */
+            /** @var Website $websiteModel */
             $websiteModel = $this->websiteFactory->create();
             $websiteModel->load($website, 'code');
             $websiteId = $websiteModel->getId();
@@ -87,6 +87,7 @@ class ShippingTableRates extends YamlComponentAbstract
                     $website,
                     $tablerateModel
                 );
+                $shippingRateCount++;
             }
         }
     }
@@ -96,14 +97,14 @@ class ShippingTableRates extends YamlComponentAbstract
      * @param $websiteId
      * @param $shippingRateCount
      * @param $website
-     * @param $tablerateModel
+     * @param Tablerate $tablerateModel
      */
     private function createNewShippingTableRate(
         $shippingRate,
         $websiteId,
         $shippingRateCount,
         $website,
-        $tablerateModel
+        Tablerate $tablerateModel
     ) {
         $columns = [
             'website_id',
@@ -120,6 +121,9 @@ class ShippingTableRates extends YamlComponentAbstract
         $regionModel = $this->regionFactory->create();
         $regionModel = $regionModel->loadByCode($shippingRate['dest_region_code'], $shippingRate['dest_country_id']);
         $regionId = $regionModel->getId();
+        if (is_null($regionId)) {
+            $regionId = 0;
+        }
 
         $this->removeYamlKeysFromDatabaseInsert($shippingRate);
 
@@ -134,14 +138,14 @@ class ShippingTableRates extends YamlComponentAbstract
         $this->log->logInfo(
             sprintf(
                 "Shipping rate #%s for website %s being created",
-                ++$shippingRateCount,
+                $shippingRateCount,
                 $website
             )
         );
         $tablerateModel->getConnection()
-            ->insertArray($tablerateModel->getMainTable(), $columns, [$shippingRate]);
-    }
+            ->insertOnDuplicate($tablerateModel->getMainTable(), [$shippingRate], $columns);
 
+    }
     /**
      * @param array $shippingRate
      */

@@ -6,7 +6,9 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Eav\Model\AttributeRepository;
 
 /**
  * Class Attributes
@@ -31,9 +33,9 @@ class Attributes extends YamlComponentAbstract
     protected $cachedAttributeConfig;
 
     /**
-     * @var Product\Attribute\Repository
+     * @var AttributeRepository
      */
-    protected $productAttributeRepository;
+    protected $attributeRepository;
 
     /**
      * @var array
@@ -59,15 +61,20 @@ class Attributes extends YamlComponentAbstract
         'used_for_promo_rules' => 'is_used_for_promo_rules'
     ];
 
+    /**
+     * @var string
+     */
+    protected $entityTypeId = Product::ENTITY;
+
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
-        Product\Attribute\Repository $repository
+        AttributeRepository $attributeRepository
     ) {
         parent::__construct($log, $objectManager);
         $this->eavSetup = $eavSetup;
-        $this->productAttributeRepository = $repository;
+        $this->attributeRepository = $attributeRepository;
     }
 
     /**
@@ -92,7 +99,7 @@ class Attributes extends YamlComponentAbstract
     {
         $updateAttribute = true;
         $attributeExists = false;
-        $attributeArray = $this->eavSetup->getAttribute(Product::ENTITY, $attributeCode);
+        $attributeArray = $this->eavSetup->getAttribute($this->entityTypeId, $attributeCode);
         if ($attributeArray && $attributeArray['attribute_id']) {
             $attributeExists = true;
             $this->log->logComment(sprintf('Attribute %s exists. Checking for updates.', $attributeCode));
@@ -115,7 +122,7 @@ class Attributes extends YamlComponentAbstract
             }
 
             $this->eavSetup->addAttribute(
-                Product::ENTITY,
+                $this->entityTypeId,
                 $attributeCode,
                 $attributeConfig
             );
@@ -187,7 +194,21 @@ class Attributes extends YamlComponentAbstract
 
     private function manageAttributeOptions($attributeCode, $option)
     {
-        $attributeOptions = $this->productAttributeRepository->get($attributeCode)->getOptions();
+        $attributeOptions = [];
+        try {
+            $attribute = $this->attributeRepository->get($this->entityTypeId, $attributeCode);
+            $attributeOptions = $attribute->getOptions();
+        } catch (NoSuchEntityException $e) {
+            $this->log->logComment(sprintf(
+                'Attribute %s doesn\'t exist',
+                $attributeCode
+            ));
+        } catch (\TypeError $e) {
+            $this->log->logComment(sprintf(
+                'Couldn\'t retrieve options for attribute %s.',
+                $attributeCode
+            ));
+        }
 
         // Loop through existing attributes options
         $existingAttributeOptions = array();

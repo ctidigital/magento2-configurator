@@ -1,4 +1,5 @@
 <?php
+
 namespace CtiDigital\Configurator\Component\Product;
 
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
@@ -12,6 +13,9 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 
 class AttributeOption
 {
+
+    const MULTI_SELECT_DELIMITER = '|';
+
     /**
      * @var ProductAttributeRepositoryInterface
      */
@@ -80,7 +84,8 @@ class AttributeOption
         AttributeOptionLabelInterfaceFactory $labelFactory,
         AttributeOptionInterfaceFactory $optionFactory,
         LoggerInterface $log
-    ) {
+    )
+    {
         $this->attributeRepository = $attributeRepository;
         $this->attrOptionManagement = $attrOptionManagement;
         $this->labelFactory = $labelFactory;
@@ -180,7 +185,7 @@ class AttributeOption
         }
         $attribute = $this->getAttribute($code);
         if (in_array($attribute->getFrontendInput(), $this->allowedInputs) &&
-            $attribute->getBackendModel() == null
+            ($attribute->getBackendModel() == null || $attribute->getBackendModel() == 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend')
         ) {
             return true;
         }
@@ -195,6 +200,15 @@ class AttributeOption
      */
     public function isOptionValueExists($code, $value)
     {
+        $attribute = $this->getAttribute($code);
+
+        if ($attribute->getFrontendInput() == 'multiselect') {
+            $value = explode(self::MULTI_SELECT_DELIMITER, $value);
+            if (!sizeof($value) > 1) {
+                $value = $value[0];
+            }
+        }
+
         if (isset($this->attributeValues[$code]) === false) {
             $attribute = $this->getAttribute($code);
             $options = $attribute->getOptions();
@@ -202,12 +216,32 @@ class AttributeOption
                 $this->attributeValues[$code][] = $optionLabel->getLabel();
             }
         }
-        if (
-            (isset($this->attributeValues[$code]) && in_array($value, $this->attributeValues[$code]))
-            || (isset($this->newValues[$code]) && in_array($value, $this->newValues[$code]))
-        ) {
-            return true;
+
+        if (is_array($value)) {
+            if (isset ($this->attributeValues[$code])) {
+                if (isset ($this->newValues[$code])) {
+                    $diff = array_diff($value, $this->attributeValues[$code], $this->newValues[$code]);
+                } else {
+                    $diff = array_diff($value, $this->attributeValues[$code]);
+                }
+            } else {
+                $diff = array_diff($value, $this->newValues[$code]);
+            }
+
+            if (!sizeof($diff)) {
+                return true;
+            }
+
+        } else {
+
+            if (
+                (isset($this->attributeValues[$code]) && in_array($value, $this->attributeValues[$code]))
+                || (isset($this->newValues[$code]) && in_array($value, $this->newValues[$code]))
+            ) {
+                return true;
+            }
         }
+
         return false;
     }
 
@@ -217,7 +251,19 @@ class AttributeOption
      */
     public function addOption($code, $value)
     {
-        $this->newValues[$code][] = $value;
+        $attribute = $this->getAttribute($code);
+
+        if ($attribute->getFrontendInput() == 'multiselect') {
+            $value = explode(self::MULTI_SELECT_DELIMITER, $value);
+            if (isset($this->newValues[$code])) {
+                $this->newValues[$code] = array_merge($value, $this->newValues[$code]);
+            } else {
+                $this->newValues[$code] = $value;
+            }
+
+        } else {
+            $this->newValues[$code][] = $value;
+        }
     }
 
     /**

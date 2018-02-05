@@ -84,8 +84,7 @@ class AttributeOption
         AttributeOptionLabelInterfaceFactory $labelFactory,
         AttributeOptionInterfaceFactory $optionFactory,
         LoggerInterface $log
-    )
-    {
+    ) {
         $this->attributeRepository = $attributeRepository;
         $this->attrOptionManagement = $attrOptionManagement;
         $this->labelFactory = $labelFactory;
@@ -185,7 +184,8 @@ class AttributeOption
         }
         $attribute = $this->getAttribute($code);
         if (in_array($attribute->getFrontendInput(), $this->allowedInputs) &&
-            ($attribute->getBackendModel() == null || $attribute->getBackendModel() == 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend')
+            ($attribute->getBackendModel() == null
+                || $attribute->getBackendModel() == 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend')
         ) {
             return true;
         }

@@ -99,6 +99,7 @@ It tests the following:
 | SQL                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Catalog Price Rules       | :white_check_mark: | :x:                | :white_check_mark: |
 | Shipping Table Rates      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Customer Attributes       | :white_check_mark: | :x:                | :white_check_mark: |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
 | Orders                    | :x:                | :x:                | :x:                |
 

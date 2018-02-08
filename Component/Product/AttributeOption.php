@@ -1,4 +1,5 @@
 <?php
+
 namespace CtiDigital\Configurator\Component\Product;
 
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
@@ -12,6 +13,9 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 
 class AttributeOption
 {
+
+    const MULTI_SELECT_DELIMITER = '|';
+
     /**
      * @var ProductAttributeRepositoryInterface
      */
@@ -90,6 +94,21 @@ class AttributeOption
 
     /**
      * @param $code
+     * @return bool
+     */
+    public function isMultiSelectAttribute($code)
+    {
+        $attribute = $this->getAttribute($code);
+
+        if ($attribute->getFrontendInput() == 'multiselect') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $code
      * @param $value
      */
     public function processAttributeValues($code, $value)
@@ -98,6 +117,18 @@ class AttributeOption
             if ($this->isOptionAttribute($code) === false) {
                 return;
             }
+
+            if ($this->isMultiselectAttribute($code) === true) {
+                $values = explode(self::MULTI_SELECT_DELIMITER, $value);
+                foreach ($values as $value) {
+                    if ($this->isValidValue($value) === true &&
+                        $this->isOptionValueExists($code, $value) === false) {
+                        $this->addOption($code, $value);
+                    }
+                }
+                return;
+            }
+
             if ($this->isValidValue($value) === false) {
                 return;
             }
@@ -179,8 +210,9 @@ class AttributeOption
             return false;
         }
         $attribute = $this->getAttribute($code);
+        $backendModel = $attribute->getBackendModel();
         if (in_array($attribute->getFrontendInput(), $this->allowedInputs) &&
-            $attribute->getBackendModel() == null
+            ($backendModel == null || $backendModel == 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend')
         ) {
             return true;
         }

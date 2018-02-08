@@ -44,6 +44,17 @@ class Products extends CsvComponentAbstract
     ];
 
     /**
+     * Attributes that may have newlines defined. These will be split into
+     * paragraphs so text looks the same on frontend.
+     *
+     * @var array
+     */
+    protected $attrDescription = [
+        'description',
+        'short_description'
+    ];
+
+    /**
      * @var ImporterFactory
      */
     protected $importerFactory;
@@ -347,6 +358,40 @@ class Products extends CsvComponentAbstract
     }
 
     /**
+     * Format description attribute values where newlines indicate
+     * the position of paragraphs.
+     *
+     * @param $data
+     * @param $column
+     *
+     * @return mixed|string
+     */
+    private function insertParagraphs($data, $column)
+    {
+        if (in_array($column, $this->attrDescription) && !$this->spotHtmlTags($data, "p")) {
+            $data = str_replace(PHP_EOL, "</p>".PHP_EOL."<p>", $data);
+            $data = str_replace("<p></p>".PHP_EOL, "", $data);
+            $data = "<p>".$data."</p>";
+        }
+        return $data;
+    }
+
+    /**
+     * Find html tags in the given string
+     *
+     * @param $string
+     * @param $tagname
+     *
+     * @return int
+     */
+    private function spotHtmlTags($string, $tagname)
+    {
+        $pattern = "/<$tagname?.*>(.*)<\/$tagname>/";
+        preg_match($pattern, $string, $matches);
+        return count($matches);
+    }
+
+    /**
      * Tidy up the value
      *
      * @param $value
@@ -357,6 +402,7 @@ class Products extends CsvComponentAbstract
     private function clean($value, $column)
     {
         $value = $this->replaceSeparator($value, $column);
+        $value = $this->insertParagraphs($value, $column);
         return trim($value);
     }
 

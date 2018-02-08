@@ -5,11 +5,13 @@ attribute_sets:
   groups:
     -
       name: General
+      code: general
       attributes:
         - colour
         - color
     -
       name: Prices
+      code: prices
       attributes:
         - rrp
         - test_attr

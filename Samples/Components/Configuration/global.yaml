@@ -2,3 +2,9 @@ global:
   -
     path: general/country/default
     value: US
+  -
+    path: carriers/tablerate/active
+    value: 1
+  -
+    path: carriers/tablerate/condition_name
+    value: package_value

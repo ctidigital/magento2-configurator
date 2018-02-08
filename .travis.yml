@@ -10,22 +10,23 @@ env:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.1.7
-    - TEST_SUITE=configurator
       MAGE_VERSION=2.1.8
     - TEST_SUITE=configurator
       MAGE_VERSION=2.1.9
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.2.0
+      MAGE_VERSION=2.1.10
+    - TEST_SUITE=configurator
+      MAGE_VERSION=2.2.1
 
 matrix:
   allow_failures:
-    - env: TEST_SUITE=configurator MAGE_VERSION=2.2.0
+    - env: TEST_SUITE=configurator MAGE_VERSION=2.2.1
 
 before_install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then composer require magento/framework:~100.1.0; fi"
   - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then composer require magento/framework:~100.1.0; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then composer require magento/module-catalog:~101.0.0; fi"
   - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then composer require magento/zendframework1:~1.13.0; fi"
 install:
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then composer install --prefer-dist; fi"
@@ -35,7 +36,7 @@ before_script:
 script:
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcs --standard=PSR2 Model/ Console/ Test/ Component/ Api/ Exception/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpmd Model/,Console/,Test/,Component/,Api/,Exception/ text cleancode,codesize,controversial,design,naming,unusedcode; fi"
-  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Console/ Component/ Api/ Exception/; fi"
+  - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then php vendor/bin/phpcpd Model/ Console/ Test/ Component/ Api/ Exception/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then php vendor/bin/phpunit --coverage-clover build/logs/clover.xml Test/Unit/; fi"
   - sh -c "if [ '$TEST_SUITE' = 'configurator' ]; then ./Test/Integration/run-configurator.sh; fi"
 notifications:

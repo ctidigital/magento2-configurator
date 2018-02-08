@@ -94,6 +94,21 @@ class AttributeOption
 
     /**
      * @param $code
+     * @return bool
+     */
+    public function isMultiSelectAttribute($code)
+    {
+        $attribute = $this->getAttribute($code);
+
+        if ($attribute->getFrontendInput() == 'multiselect') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $code
      * @param $value
      */
     public function processAttributeValues($code, $value)
@@ -102,6 +117,18 @@ class AttributeOption
             if ($this->isOptionAttribute($code) === false) {
                 return;
             }
+
+            if ($this->isMultiselectAttribute($code) === true) {
+                $values = explode(self::MULTI_SELECT_DELIMITER, $value);
+                foreach ($values as $value) {
+                    if ($this->isValidValue($value) === true &&
+                        $this->isOptionValueExists($code, $value) === false) {
+                        $this->addOption($code, $value);
+                    }
+                }
+                return;
+            }
+
             if ($this->isValidValue($value) === false) {
                 return;
             }
@@ -183,9 +210,9 @@ class AttributeOption
             return false;
         }
         $attribute = $this->getAttribute($code);
+        $backendModel = $attribute->getBackendModel();
         if (in_array($attribute->getFrontendInput(), $this->allowedInputs) &&
-            ($attribute->getBackendModel() == null
-                || $attribute->getBackendModel() == 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend')
+            ($backendModel == null || $backendModel == 'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend')
         ) {
             return true;
         }
@@ -200,15 +227,6 @@ class AttributeOption
      */
     public function isOptionValueExists($code, $value)
     {
-        $attribute = $this->getAttribute($code);
-
-        if ($attribute->getFrontendInput() == 'multiselect') {
-            $value = explode(self::MULTI_SELECT_DELIMITER, $value);
-            if (!sizeof($value) > 1) {
-                $value = $value[0];
-            }
-        }
-
         if (isset($this->attributeValues[$code]) === false) {
             $attribute = $this->getAttribute($code);
             $options = $attribute->getOptions();
@@ -216,32 +234,12 @@ class AttributeOption
                 $this->attributeValues[$code][] = $optionLabel->getLabel();
             }
         }
-
-        if (is_array($value)) {
-            if (isset ($this->attributeValues[$code])) {
-                if (isset ($this->newValues[$code])) {
-                    $diff = array_diff($value, $this->attributeValues[$code], $this->newValues[$code]);
-                } else {
-                    $diff = array_diff($value, $this->attributeValues[$code]);
-                }
-            } else {
-                $diff = array_diff($value, $this->newValues[$code]);
-            }
-
-            if (!sizeof($diff)) {
-                return true;
-            }
-
-        } else {
-
-            if (
-                (isset($this->attributeValues[$code]) && in_array($value, $this->attributeValues[$code]))
-                || (isset($this->newValues[$code]) && in_array($value, $this->newValues[$code]))
-            ) {
-                return true;
-            }
+        if (
+            (isset($this->attributeValues[$code]) && in_array($value, $this->attributeValues[$code]))
+            || (isset($this->newValues[$code]) && in_array($value, $this->newValues[$code]))
+        ) {
+            return true;
         }
-
         return false;
     }
 
@@ -251,19 +249,7 @@ class AttributeOption
      */
     public function addOption($code, $value)
     {
-        $attribute = $this->getAttribute($code);
-
-        if ($attribute->getFrontendInput() == 'multiselect') {
-            $value = explode(self::MULTI_SELECT_DELIMITER, $value);
-            if (isset($this->newValues[$code])) {
-                $this->newValues[$code] = array_merge($value, $this->newValues[$code]);
-            } else {
-                $this->newValues[$code] = $value;
-            }
-
-        } else {
-            $this->newValues[$code][] = $value;
-        }
+        $this->newValues[$code][] = $value;
     }
 
     /**

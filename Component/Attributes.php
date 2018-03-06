@@ -62,6 +62,14 @@ class Attributes extends YamlComponentAbstract
     ];
 
     /**
+     * @var array
+     */
+    protected $skipCheck = [
+        'option',
+        'used_in_forms'
+    ];
+
+    /**
      * @var string
      */
     protected $entityTypeId = Product::ENTITY;
@@ -147,7 +155,7 @@ class Attributes extends YamlComponentAbstract
 
             $name = $this->mapAttributeConfig($name);
 
-            if ($name == 'option') {
+            if (in_array($name, $this->skipCheck)) {
                 continue;
             }
             if (!array_key_exists($name, $attributeArray)) {

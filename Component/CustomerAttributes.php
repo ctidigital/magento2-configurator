@@ -47,6 +47,18 @@ class CustomerAttributes extends Attributes
      */
     protected $attributeResource;
 
+    /**
+     * @var array
+     */
+    protected $defaultForms = [
+        'values' => [
+            'customer_account_create',
+            'customer_account_edit',
+            'adminhtml_checkout',
+            'adminhtml_customer'
+        ]
+    ];
+
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
@@ -85,29 +97,28 @@ class CustomerAttributes extends Attributes
      */
     protected function addAdditionalValues($attributeCode, $attributeConfiguration)
     {
-        $data = [
-            'attribute_set_id' => self::DEFAULT_ATTRIBUTE_SET_ID,
-            'attribute_group_id' => self::DEFAULT_ATTRIBUTE_GROUP_ID
-        ];
-        if (isset($attributeConfiguration['used_in_forms']) &&
-            isset($attributeConfiguration['used_in_forms']['values'])) {
-            $data['used_in_forms'] = $attributeConfiguration['used_in_forms']['values'];
+        if (!isset($attributeConfiguration['used_in_forms']) ||
+            !isset($attributeConfiguration['used_in_forms']['values'])) {
+            $attributeConfiguration['used_in_forms'] = $this->defaultForms;
         }
+
         /** @var CustomerSetup $customerSetup */
         $customerSetup = $this->customerSetup->create();
         try {
             $attribute = $customerSetup->getEavConfig()
                 ->getAttribute($this->entityTypeId, $attributeCode)
-                ->addData($data);
+                ->addData([
+                    'attribute_set_id' => self::DEFAULT_ATTRIBUTE_SET_ID,
+                    'attribute_group_id' => self::DEFAULT_ATTRIBUTE_GROUP_ID,
+                    'used_in_forms' => $attributeConfiguration['used_in_forms']['values']
+                ]);
+            $this->attributeResource->save($attribute);
         } catch (LocalizedException $e) {
             $this->log->logError(sprintf(
                 'Error applying additional values to %s: %s',
                 $attributeCode,
                 $e->getMessage()
             ));
-        }
-        try {
-            $this->attributeResource->save($attribute);
         } catch (\Exception $e) {
             $this->log->logError(sprintf(
                 'Error saving additional values for %s: %s',

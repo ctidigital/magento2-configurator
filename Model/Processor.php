@@ -174,6 +174,13 @@ class Processor
 
     public function runComponent($componentAlias, $componentConfig)
     {
+
+        try {
+            $this->state->setAreaCode(Area::AREA_ADMINHTML);
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            echo( "Area Code already set\n");
+        }
+
         $this->log->logComment("");
         $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));
         $this->log->logComment(sprintf("| Loading component %s |", $componentAlias));

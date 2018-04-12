@@ -113,12 +113,10 @@ class ShippingTablesRatesTest extends \PHPUnit\Framework\TestCase
 
         $foundShippingRates = 0;
         foreach ($expectedShippingRates as $expectedShippingRate) {
-            if (
-                $this->expectedShippingRateIsFoundInActualShippingRates(
-                    $expectedShippingRate,
-                    $actualWebsiteShippingTableRates
-                )
-            ) {
+            if ($this->expectedShippingRateIsFoundInActualShippingRates(
+                $expectedShippingRate,
+                $actualWebsiteShippingTableRates
+            )) {
                 $foundShippingRates++;
             }
         }

@@ -76,7 +76,6 @@ class ApiIntegrations extends YamlComponentAbstract
                     }
 
                     $this->createApiIntegration($integrationData);
-
                 } catch (ComponentException $e) {
                     $this->log->logError($e->getMessage());
                 }
@@ -95,7 +94,6 @@ class ApiIntegrations extends YamlComponentAbstract
             ->getSize();
 
         if ($integrationCount > 0) {
-
             $integration = $integration
                 ->getCollection()
                 ->addFieldToFilter('name', $integrationData['name'])

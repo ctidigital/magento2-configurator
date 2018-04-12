@@ -6,9 +6,7 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Setup\EavSetup;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Eav\Model\AttributeRepository;
 
 /**
  * Class Attributes
@@ -33,9 +31,9 @@ class Attributes extends YamlComponentAbstract
     protected $cachedAttributeConfig;
 
     /**
-     * @var AttributeRepository
+     * @var Product\Attribute\Repository
      */
-    protected $attributeRepository;
+    protected $productAttributeRepository;
 
     /**
      * @var array
@@ -61,28 +59,15 @@ class Attributes extends YamlComponentAbstract
         'used_for_promo_rules' => 'is_used_for_promo_rules'
     ];
 
-    /**
-     * @var array
-     */
-    protected $skipCheck = [
-        'option',
-        'used_in_forms'
-    ];
-
-    /**
-     * @var string
-     */
-    protected $entityTypeId = Product::ENTITY;
-
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
-        AttributeRepository $attributeRepository
+        Product\Attribute\Repository $repository
     ) {
         parent::__construct($log, $objectManager);
         $this->eavSetup = $eavSetup;
-        $this->attributeRepository = $attributeRepository;
+        $this->productAttributeRepository = $repository;
     }
 
     /**
@@ -107,7 +92,7 @@ class Attributes extends YamlComponentAbstract
     {
         $updateAttribute = true;
         $attributeExists = false;
-        $attributeArray = $this->eavSetup->getAttribute($this->entityTypeId, $attributeCode);
+        $attributeArray = $this->eavSetup->getAttribute(Product::ENTITY, $attributeCode);
         if ($attributeArray && $attributeArray['attribute_id']) {
             $attributeExists = true;
             $this->log->logComment(sprintf('Attribute %s exists. Checking for updates.', $attributeCode));
@@ -120,7 +105,6 @@ class Attributes extends YamlComponentAbstract
         }
 
         if ($updateAttribute) {
-
             if (!array_key_exists('user_defined', $attributeConfig)) {
                 $attributeConfig['user_defined'] = 1;
             }
@@ -130,7 +114,7 @@ class Attributes extends YamlComponentAbstract
             }
 
             $this->eavSetup->addAttribute(
-                $this->entityTypeId,
+                Product::ENTITY,
                 $attributeCode,
                 $attributeConfig
             );
@@ -155,7 +139,7 @@ class Attributes extends YamlComponentAbstract
 
             $name = $this->mapAttributeConfig($name);
 
-            if (in_array($name, $this->skipCheck)) {
+            if ($name == 'option') {
                 continue;
             }
             if (!array_key_exists($name, $attributeArray)) {
@@ -202,21 +186,7 @@ class Attributes extends YamlComponentAbstract
 
     private function manageAttributeOptions($attributeCode, $option)
     {
-        $attributeOptions = [];
-        try {
-            $attribute = $this->attributeRepository->get($this->entityTypeId, $attributeCode);
-            $attributeOptions = $attribute->getOptions();
-        } catch (NoSuchEntityException $e) {
-            $this->log->logComment(sprintf(
-                'Attribute %s doesn\'t exist',
-                $attributeCode
-            ));
-        } catch (\TypeError $e) {
-            $this->log->logComment(sprintf(
-                'Couldn\'t retrieve options for attribute %s.',
-                $attributeCode
-            ));
-        }
+        $attributeOptions = $this->productAttributeRepository->get($attributeCode)->getOptions();
 
         // Loop through existing attributes options
         $existingAttributeOptions = array();

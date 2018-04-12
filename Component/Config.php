@@ -62,7 +62,6 @@ class Config extends YamlComponentAbstract
         try {
             $validScopes = array('global', 'websites', 'stores');
             foreach ($data as $scope => $configurations) {
-
                 if (!in_array($scope, $validScopes)) {
                     throw new ComponentException(sprintf("This is not a valid scope '%s' in your config.", $scope));
                 }
@@ -111,7 +110,6 @@ class Config extends YamlComponentAbstract
     private function setGlobalConfig($path, $value, $encrypted = 0)
     {
         try {
-
             // Encrypted not supported at the moment
             if ($encrypted) {
                 throw new ComponentException("There is no encryption support just yet");
@@ -128,7 +126,6 @@ class Config extends YamlComponentAbstract
             // Save the config
             $this->configResource->saveConfig($path, $value, $scope, 0);
             $this->log->logInfo(sprintf("Global Config: %s = %s", $path, $value));
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -137,7 +134,6 @@ class Config extends YamlComponentAbstract
     private function setWebsiteConfig($path, $value, $code, $encrypted = 0)
     {
         try {
-
             if ($encrypted) {
                 throw new ComponentException("There is no encryption support just yet");
             }
@@ -163,7 +159,6 @@ class Config extends YamlComponentAbstract
             // Save the config
             $this->configResource->saveConfig($path, $value, $scope, $website->getId());
             $this->log->logInfo(sprintf("Website '%s' Config: %s = %s", $code, $path, $value), $logNest);
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -190,7 +185,6 @@ class Config extends YamlComponentAbstract
     private function setStoreConfig($path, $value, $code, $encrypted = 0)
     {
         try {
-
             if ($encrypted) {
                 throw new ComponentException("There is no encryption support just yet");
             }
@@ -214,11 +208,9 @@ class Config extends YamlComponentAbstract
 
             $this->configResource->saveConfig($path, $value, $scope, $storeView->getId());
             $this->log->logInfo(sprintf("Store '%s' Config: %s = %s", $code, $path, $value), $logNest);
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
-
     }
 
     /**

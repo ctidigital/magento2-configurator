@@ -49,7 +49,6 @@ class Rewrites extends CsvComponentAbstract
         parent::__construct($log, $objectManager);
         $this->urlPersist = $urlPersist;
         $this->urlRewriteFactory = $urlRewriteFactory;
-
     }
 
     /**
@@ -79,7 +78,6 @@ class Rewrites extends CsvComponentAbstract
                 }
 
                 $this->createOrUpdateRewriteRule($rewriteArray);
-
             } catch (ComponentException $e) {
                 $this->log->logError($e->getMessage());
             }

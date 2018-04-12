@@ -65,7 +65,7 @@ class Websites extends YamlComponentAbstract
     protected function processData($data = null)
     {
         try {
-            if (!isset ($data['websites'])) {
+            if (!isset($data['websites'])) {
                 throw new ComponentException(
                     sprintf(
                         "No websites found. Are you sure this component '%s' should be enabled?",
@@ -76,19 +76,16 @@ class Websites extends YamlComponentAbstract
 
             // Loop through the websites
             foreach ($data['websites'] as $code => $websiteData) {
-
                 // Process the website
                 $website = $this->processWebsite($code, $websiteData);
 
                 // Loop through the store groups
                 foreach ($websiteData['store_groups'] as $storeGroupData) {
-
                     // Process the store group
                     $storeGroup = $this->processStoreGroup($storeGroupData, $website);
 
                     // Loop through the store views
                     foreach ($storeGroupData['store_views'] as $code => $storeViewData) {
-
                         // Process the store view
                         $this->processStoreView($code, $storeViewData, $storeGroup);
                     }
@@ -121,7 +118,6 @@ class Websites extends YamlComponentAbstract
         $logNest = 1;
 
         try {
-
             $this->log->logComment(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
 
             $website = $this->websiteFactory->create();
@@ -143,7 +139,6 @@ class Websites extends YamlComponentAbstract
 
             // Loop through other website data attributes
             foreach ($website->getData() as $key => $value) {
-
                 // Skip any array based values (likely to be passed from new website creation)
                 if (is_array($value)) {
                     continue;
@@ -151,7 +146,6 @@ class Websites extends YamlComponentAbstract
 
                 // Check if the data from the source has the data and that is different to that in magento
                 if (isset($websiteData[$key]) && $websiteData[$key] != $value) {
-
                     // Set the new data
                     $this->log->logInfo(
                         sprintf("Change '%s' from '%s' to '%s'", $key, $value, $websiteData[$key]),
@@ -160,7 +154,6 @@ class Websites extends YamlComponentAbstract
                     $website->setData($key, $websiteData[$key]);
                     $canSave = true;
                 } else {
-
                     // Skip setting the data
                     if ($website->getId()) {
                         $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value), $logNest);
@@ -171,7 +164,6 @@ class Websites extends YamlComponentAbstract
             }
 
             if ($canSave) {
-
                 // Save the website
                 $website->getResource()->save($website);
                 $this->log->logInfo(sprintf("Saved website '%s'", $code, $logNest));
@@ -193,7 +185,6 @@ class Websites extends YamlComponentAbstract
         $logNest = 2;
 
         try {
-
             if (isset($storeGroupData['group_id'])) {
                 $this->log->logComment(
                     sprintf("Does the store group with id '%s' already exist?", $storeGroupData['group_id']),
@@ -224,7 +215,6 @@ class Websites extends YamlComponentAbstract
                     $logNest
                 );
             } else {
-
                 // Create a new store group and set the basic data from source
                 $this->log->logComment(
                     sprintf("Creating a new website with name '%s'", $storeGroupData['name']),
@@ -237,11 +227,9 @@ class Websites extends YamlComponentAbstract
             }
 
             foreach ($storeGroup->getData() as $key => $value) {
-
                 if (is_array($value)) {
                     continue;
                 }
-
                 // Set data if the data from source exists and is not the same as what is on magento's
                 if (isset($storeGroupData[$key]) && $storeGroupData[$key] != $value) {
                     $this->log->logInfo(
@@ -257,11 +245,9 @@ class Websites extends YamlComponentAbstract
                         $this->log->logInfo(sprintf("New setting for '%s' - '%s'", $key, $value), $logNest);
                     }
                 }
-
             }
 
             if ($canSave) {
-
                 // Save the store group
                 $storeGroup->getResource()->save($storeGroup);
                 $this->log->logInfo(sprintf("Saved store group '%s'", $storeGroup->getName()), $logNest);
@@ -285,7 +271,6 @@ class Websites extends YamlComponentAbstract
         $logNest = 3;
 
         try {
-            
             $this->log->logComment(sprintf("Does the website with code '%s' already exist?", $code), $logNest);
 
             $storeView = $this->storeFactory->create();
@@ -297,7 +282,6 @@ class Websites extends YamlComponentAbstract
             if ($storeView->getId()) {
                 $this->log->logComment(sprintf("Store view already exists with code '%s'", $code), $logNest);
             } else {
-
                 // If it does not exist, just set the existing data up with the store view
                 $canSave = true;
                 $this->reindex = true;
@@ -322,10 +306,8 @@ class Websites extends YamlComponentAbstract
 
             // Loop through other store view data attributes
             foreach ($storeView->getData() as $key => $value) {
-
                 // Check if the data from the source has the data and that is different to that in magento
                 if (isset($storeViewData[$key]) && $storeViewData[$key] != $value) {
-
                     // Set the new data
                     $this->log->logInfo(
                         sprintf("Change '%s' from '%s' to '%s'", $key, $value, $storeViewData[$key]),
@@ -334,7 +316,6 @@ class Websites extends YamlComponentAbstract
                     $storeView->setData($key, $storeViewData[$key]);
                     $canSave = true;
                 } else {
-
                     // Skip setting the data
                     if ($storeView->getId()) {
                         $this->log->logComment(sprintf("No change for '%s' - '%s'", $key, $value), $logNest);
@@ -345,7 +326,6 @@ class Websites extends YamlComponentAbstract
             }
 
             if ($canSave) {
-
                 // Save the store view
                 $storeView->getResource()->save($storeView);
                 $this->eventManager->dispatch('store_add', ['store' => $storeView]);
@@ -409,7 +389,6 @@ class Websites extends YamlComponentAbstract
                     $logNest
                 );
             }
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
         }

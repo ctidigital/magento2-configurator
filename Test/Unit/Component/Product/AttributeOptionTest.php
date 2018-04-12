@@ -138,7 +138,6 @@ class AttributeOptionTest extends \PHPUnit\Framework\TestCase
             $this->attributeOption->processAttributeValues('colour', $newValue);
         }
         $this->assertEquals($expectedResult, $this->attributeOption->getNewOptions());
-
     }
 
     public function testAddOption()

@@ -115,7 +115,6 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
 
             // Check to see we only have one of those rules by name
             if ($ruleCollection->getSize() > 1) {
-
                 // Log an error and skip if there are more than 1 rules
                 $this->logger->logError(sprintf(
                     'There appears to be more than 1 rule in Magento with the name "%s."',
@@ -164,7 +163,6 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     {
         // Loop through each key value
         foreach ($ruleData as $key => $value) {
-
             // Check if they're the same as what is on the database
             // If so, skip to the next key value pair
             if ($rule->getData($key) == $value) {

@@ -77,7 +77,6 @@ class Image
                 ->setUri($value)
                 ->request('GET')
                 ->getBody();
-
         } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }

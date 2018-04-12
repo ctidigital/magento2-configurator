@@ -77,7 +77,6 @@ class RunCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-
             if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Starting Configurator</comment>');
             }
@@ -108,7 +107,6 @@ class RunCommand extends Command
             if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Finished Configurator</comment>');
             }
-
         } catch (ConfiguratorAdapterException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
         }

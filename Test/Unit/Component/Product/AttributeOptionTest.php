@@ -3,7 +3,7 @@ namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 
-class AttributeOptionTest extends \PHPUnit_Framework_TestCase
+class AttributeOptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager

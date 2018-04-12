@@ -11,9 +11,15 @@ class WidgetsTest extends ComponentAbstractTestCase
 {
     protected function componentSetUp()
     {
-        $storeFactory = $this->getMock(StoreFactory::class);
-        $widgetCollection = $this->getMock(WidgetCollection::class, [], [], '', false);
-        $themeCollection = $this->getMock(ThemeCollection::class, [], [], '', false);
+        $storeFactory = $this->getMockBuilder(StoreFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $widgetCollection = $this->getMockBuilder(WidgetCollection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $themeCollection = $this->getMockBuilder(ThemeCollection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->component = new Widgets(
             $this->logInterface,

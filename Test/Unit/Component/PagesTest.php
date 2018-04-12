@@ -13,9 +13,13 @@ class PagesTest extends ComponentAbstractTestCase
     protected function componentSetUp()
     {
         /** @var PageRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $pageRepository */
-        $pageRepository = $this->getMock(PageRepositoryInterface::class);
+        $pageRepository = $this->getMockBuilder(PageRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var PageInterfaceFactory|\PHPUnit_Framework_MockObject_MockObject $pageFactory */
-        $pageFactory = $this->getMock(PageInterfaceFactory::class);
+        $pageFactory = $this->getMockBuilder(PageInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var StoreRepository|\PHPUnit_Framework_MockObject_MockObject $storeRepository */
         $storeRepository = $this->getMockBuilder(StoreRepositoryInterface::class)
             ->disableOriginalConstructor()

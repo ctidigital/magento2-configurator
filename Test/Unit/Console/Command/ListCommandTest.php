@@ -10,7 +10,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ListCommandTest extends \PHPUnit_Framework_TestCase
+class ListCommandTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -45,9 +45,15 @@ class ListCommandTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->listCommandAdapter = $this->getMock(ConfiguratorAdapterInterface::class);
-        $this->configInterface = $this->getMock(ConfigInterface::class);
-        $this->objectManager = $this->getMock(ObjectManagerInterface::class);
+        $this->listCommandAdapter = $this->getMockBuilder(ConfiguratorAdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->configInterface = $this->getMockBuilder(ConfigInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->command = new ListCommand(
             $this->listCommandAdapter,
@@ -55,8 +61,12 @@ class ListCommandTest extends \PHPUnit_Framework_TestCase
             $this->objectManager
         );
 
-        $this->mockInput = $this->getMock(InputInterface::class);
-        $this->mockOutput = $this->getMock(OutputInterface::class);
+        $this->mockInput = $this->getMockBuilder(InputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->mockOutput = $this->getMockBuilder(OutputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMocK();
     }
 
     public function testItIsAConsoleCommand()

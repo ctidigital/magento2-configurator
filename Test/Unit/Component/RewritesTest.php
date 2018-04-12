@@ -9,8 +9,12 @@ class RewritesTest extends ComponentAbstractTestCase
 {
     protected function componentSetUp()
     {
-        $urlPersistInterface = $this->getMock(UrlPersistInterface::class);
-        $urlRewriteFactory = $this->getMock(UrlRewriteFactory::class);
+        $urlPersistInterface = $this->getMockBuilder(UrlPersistInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $urlRewriteFactory = $this->getMockBuilder(UrlRewriteFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->component = new Rewrites(
             $this->logInterface,

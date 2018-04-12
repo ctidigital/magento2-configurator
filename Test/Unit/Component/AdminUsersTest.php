@@ -11,8 +11,12 @@ class AdminUsersTest extends ComponentAbstractTestCase
     protected function componentSetUp()
     {
 
-        $userFactory = $this->getMock(UserFactory::class);
-        $rulesFactory = $this->getMock(RoleFactory::class);
+        $userFactory = $this->getMockBuilder(UserFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $rulesFactory = $this->getMockBuilder(RoleFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->component = new AdminUsers(
             $this->logInterface,

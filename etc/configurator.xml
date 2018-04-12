@@ -25,4 +25,5 @@
     <component name="catalog_price_rules" class="CtiDigital\Configurator\Component\CatalogPriceRules" />
     <component name="sql" class="CtiDigital\Configurator\Component\Sql" />
     <component name="shippingtablerates" class="CtiDigital\Configurator\Component\ShippingTableRates" />
+    <component name="customerattributes" class="CtiDigital\Configurator\Component\CustomerAttributes" />
 </config>

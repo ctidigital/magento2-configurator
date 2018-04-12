@@ -8,6 +8,7 @@ use Magento\Customer\Model\Customer;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Catalog\Model\Product\Attribute\Repository as ProductAttributeRepository;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Customer\Setup\CustomerSetup;
@@ -63,6 +64,7 @@ class CustomerAttributes extends Attributes
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
+        ProductAttributeRepository $productAttributeRepository,
         AttributeRepository $attributeRepository,
         CustomerSetupFactory $customerSetupFactory,
         Attribute $attributeResource
@@ -70,7 +72,7 @@ class CustomerAttributes extends Attributes
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
         $this->customerSetup = $customerSetupFactory;
         $this->attributeResource = $attributeResource;
-        parent::__construct($log, $objectManager, $eavSetup, $attributeRepository);
+        parent::__construct($log, $objectManager, $eavSetup, $productAttributeRepository);
     }
 
     /**

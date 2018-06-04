@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\WebsiteFactory;
@@ -35,6 +36,11 @@ class Config extends YamlComponentAbstract
     protected $collectionFactory;
 
     /**
+     * @var EncryptorInterface
+     */
+    protected $encryptor;
+
+    /**
      * Config constructor.
      *
      * @param LoggerInterface $log
@@ -44,13 +50,15 @@ class Config extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
-        CollectionFactory $collectionFactory
+        CollectionFactory $collectionFactory,
+        EncryptorInterface $encryptor
     ) {
         parent::__construct($log, $objectManager);
 
         $this->configResource = $this->objectManager->create(\Magento\Config\Model\ResourceModel\Config::class);
         $this->scopeConfig = $this->objectManager->create(\Magento\Framework\App\Config::class);
         $this->collectionFactory = $collectionFactory;
+        $this->encryptor = $encryptor;
     }
 
     /**
@@ -68,22 +76,36 @@ class Config extends YamlComponentAbstract
 
                 if ($scope == "global") {
                     foreach ($configurations as $configuration) {
+                        // Handle encryption parameter
+                        $encryption = 0;
+                        if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
+                            $encryption = 1;
+                        }
+
                         $convertedConfiguration = $this->convert($configuration);
                         $this->setGlobalConfig(
                             $convertedConfiguration['path'],
-                            $convertedConfiguration['value']
+                            $convertedConfiguration['value'],
+                            $encryption
                         );
                     }
                 }
 
                 if ($scope == "websites") {
                     foreach ($configurations as $code => $websiteConfigurations) {
+                        // Handle encryption parameter
+                        $encryption = 0;
+                        if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
+                            $encryption = 1;
+                        }
+
                         foreach ($websiteConfigurations as $configuration) {
                             $convertedConfiguration = $this->convert($configuration);
                             $this->setWebsiteConfig(
                                 $convertedConfiguration['path'],
                                 $convertedConfiguration['value'],
-                                $code
+                                $code,
+                                $encryption
                             );
                         }
                     }
@@ -92,11 +114,18 @@ class Config extends YamlComponentAbstract
                 if ($scope == "stores") {
                     foreach ($configurations as $code => $storeConfigurations) {
                         foreach ($storeConfigurations as $configuration) {
+                            // Handle encryption parameter
+                            $encryption = 0;
+                            if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
+                                $encryption = 1;
+                            }
+
                             $convertedConfiguration = $this->convert($configuration);
                             $this->setStoreConfig(
                                 $convertedConfiguration['path'],
                                 $convertedConfiguration['value'],
-                                $code
+                                $code,
+                                $encryption
                             );
                         }
                     }
@@ -110,17 +139,16 @@ class Config extends YamlComponentAbstract
     private function setGlobalConfig($path, $value, $encrypted = 0)
     {
         try {
-            // Encrypted not supported at the moment
-            if ($encrypted) {
-                throw new ComponentException("There is no encryption support just yet");
-            }
-
             // Check existing value, skip if the same
             $scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
             $existingValue = $this->scopeConfig->getValue($path, $scope);
             if ($value == $existingValue) {
                 $this->log->logComment(sprintf("Global Config Already: %s = %s", $path, $value));
                 return;
+            }
+
+            if ($encrypted) {
+                $value = $this->encrypt($value);
             }
 
             // Save the config
@@ -134,10 +162,6 @@ class Config extends YamlComponentAbstract
     private function setWebsiteConfig($path, $value, $code, $encrypted = 0)
     {
         try {
-            if ($encrypted) {
-                throw new ComponentException("There is no encryption support just yet");
-            }
-
             $logNest = 1;
             $scope = 'websites';
 
@@ -154,6 +178,10 @@ class Config extends YamlComponentAbstract
             if ($value == $existingValue) {
                 $this->log->logComment(sprintf("Website '%s' Config Already: %s = %s", $code, $path, $value), $logNest);
                 return;
+            }
+
+            if ($encrypted) {
+                $value = $this->encrypt($value);
             }
 
             // Save the config
@@ -185,10 +213,6 @@ class Config extends YamlComponentAbstract
     private function setStoreConfig($path, $value, $code, $encrypted = 0)
     {
         try {
-            if ($encrypted) {
-                throw new ComponentException("There is no encryption support just yet");
-            }
-
             $logNest = 2;
             $scope = 'stores';
 
@@ -204,6 +228,10 @@ class Config extends YamlComponentAbstract
             if ($value == $existingValue) {
                 $this->log->logComment(sprintf("Store '%s' Config Already: %s = %s", $code, $path, $value), $logNest);
                 return;
+            }
+
+            if ($encrypted) {
+                $value = $this->encrypt($value);
             }
 
             $this->configResource->saveConfig($path, $value, $scope, $storeView->getId());
@@ -244,5 +272,10 @@ class Config extends YamlComponentAbstract
         $themeCollection = $this->collectionFactory->create();
         $theme = $themeCollection->getThemeByFullPath($themePath);
         return $theme->getThemeId();
+    }
+
+    private function encrypt($value)
+    {
+        return $this->encryptor->encrypt($value);
     }
 }

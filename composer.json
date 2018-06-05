@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "symfony/yaml": "4.1.0",
+    "symfony/yaml": "3.3.17",
     "firegento/fastsimpleimport": "dev-master#bbd286d985add80fb7f9d22af7de3d84c6537173"
   },
   "require-dev": {

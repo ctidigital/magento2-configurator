@@ -101,6 +101,7 @@ It tests the following:
 | Shipping Table Rates      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
 | Orders                    | :x:                | :x:                | :x:                |
+| Tiered Prices             | :x:                | :x:                | :x:                |
 
 License
 ----

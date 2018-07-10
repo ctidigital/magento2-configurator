@@ -178,8 +178,10 @@ class Processor
 
         /* @var ComponentAbstract $component */
         $component = $this->componentFactory->create($componentClass);
-        foreach ($componentConfig['sources'] as $source) {
-            $component->setSource($source)->process();
+        if (isset($componentConfig['sources'])) {
+            foreach ($componentConfig['sources'] as $source) {
+                $component->setSource($source)->process();
+            }
         }
 
         // Check if there are environment specific nodes placed

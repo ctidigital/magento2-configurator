@@ -159,7 +159,7 @@ class AttributeSets extends YamlComponentAbstract
             $this->eavSetup->addAttributeToGroup(
                 Product::ENTITY,
                 $attributeSetEntity->getId(),
-                $group['name'],
+                $group['code'],
                 $attributeCode
             );
 

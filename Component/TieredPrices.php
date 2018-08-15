@@ -95,7 +95,6 @@ class TieredPrices extends CsvComponentAbstract
             }
             $priceArray = [];
             foreach ($attributeKeys as $column => $code) {
-                $tieredPrice[$column] = $this->clean($tieredPrice[$column], $code);
                 $priceArray[$code] = $tieredPrice[$column];
                 $this->attributeOption->processAttributeValues($code, $priceArray[$code]);
             }

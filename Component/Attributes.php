@@ -120,7 +120,6 @@ class Attributes extends YamlComponentAbstract
         }
 
         if ($updateAttribute) {
-
             if (!array_key_exists('user_defined', $attributeConfig)) {
                 $attributeConfig['user_defined'] = 1;
             }

@@ -119,7 +119,6 @@ class TieredPrices extends CsvComponentAbstract
             $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($pricesArray);
         } catch (\Exception $e) {
-
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());
@@ -131,7 +130,7 @@ class TieredPrices extends CsvComponentAbstract
      * @param null $data
      * @return array
      */
-    public function getAttributesFromCsv ($data = null)
+    public function getAttributesFromCsv($data = null)
     {
         $attributes = array();
         foreach ($data[0] as $attributeCode) {

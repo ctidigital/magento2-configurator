@@ -5,10 +5,10 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\Product;
+use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Eav\Model\AttributeRepository;
 
 /**
  * Class Attributes
@@ -78,7 +78,7 @@ class Attributes extends YamlComponentAbstract
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
-        AttributeRepository $attributeRepository
+        AttributeRepositoryInterface $attributeRepository
     ) {
         parent::__construct($log, $objectManager);
         $this->eavSetup = $eavSetup;

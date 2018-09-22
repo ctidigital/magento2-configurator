@@ -21,7 +21,7 @@ env:
 
 matrix:
   allow_failures:
-    - php: 7.1
+    - php: 7.0
     - env: TEST_SUITE=configurator MAGE_VERSION=2.1.15
 
 before_install:

@@ -11,18 +11,18 @@ env:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.1.11
+      MAGE_VERSION=2.1.15
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.2.1
+      MAGE_VERSION=2.2.4
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.2.2
+      MAGE_VERSION=2.2.5
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.2.3
+      MAGE_VERSION=2.2.6
 
 matrix:
   allow_failures:
     - php: 7.1
-    - env: TEST_SUITE=configurator MAGE_VERSION=2.1.11
+    - env: TEST_SUITE=configurator MAGE_VERSION=2.1.15
 
 before_install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json

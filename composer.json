@@ -9,6 +9,7 @@
     }
   ],
   "require": {
+    "symfony/yaml": "^3.3",
     "firegento/fastsimpleimport": "1.3.0"
   },
   "require-dev": {

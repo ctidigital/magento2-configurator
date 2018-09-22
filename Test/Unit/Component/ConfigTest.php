@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\Config;
+use Magento\Framework\Encryption\EncryptorInterface;
 
 class ConfigTest extends ComponentAbstractTestCase
 {
@@ -12,7 +13,8 @@ class ConfigTest extends ComponentAbstractTestCase
         $collectionFactory = $this->getMockBuilder('\Magento\Theme\Model\ResourceModel\Theme\CollectionFactory')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->component = new Config($this->logInterface, $this->objectManager, $collectionFactory);
+        $encrypterInterface = $this->getMockBuilder(EncryptorInterface::class)->getMock();
+        $this->component = new Config($this->logInterface, $this->objectManager, $collectionFactory, $encrypterInterface);
         $this->className = Config::class;
     }
 

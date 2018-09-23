@@ -14,6 +14,8 @@ cd magento2
 
 git checkout tags/$1 -b $1
 
+composer update
+
 if [ -z "${TRAVIS_TAG}" ]; then
     echo Require configurator branch: ${TRAVIS_BRANCH} commit: ${TRAVIS_COMMIT}
     composer require ctidigital/magento2-configurator dev-${TRAVIS_BRANCH}\#${TRAVIS_COMMIT}

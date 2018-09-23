@@ -14,7 +14,7 @@ cd magento2
 
 git checkout tags/$1 -b $1
 
-composer update
+composer update --prefer-lowest
 
 if [ -z "${TRAVIS_TAG}" ]; then
     echo Require configurator branch: ${TRAVIS_BRANCH} commit: ${TRAVIS_COMMIT}

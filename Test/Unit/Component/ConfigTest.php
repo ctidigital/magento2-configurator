@@ -14,7 +14,12 @@ class ConfigTest extends ComponentAbstractTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $encrypterInterface = $this->getMockBuilder(EncryptorInterface::class)->getMock();
-        $this->component = new Config($this->logInterface, $this->objectManager, $collectionFactory, $encrypterInterface);
+        $this->component = new Config(
+            $this->logInterface,
+            $this->objectManager,
+            $collectionFactory,
+            $encrypterInterface
+        );
         $this->className = Config::class;
     }
 

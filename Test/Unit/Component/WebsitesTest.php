@@ -36,6 +36,5 @@ class WebsitesTest extends ComponentAbstractTestCase
             $this->storeFactory,
             $this->groupFactory
         );
-
     }
 }

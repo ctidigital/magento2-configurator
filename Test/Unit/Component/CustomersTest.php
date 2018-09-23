@@ -100,12 +100,6 @@ class CustomersTest extends ComponentAbstractTestCase
         $this->component->getColumnHeaders($testData);
     }
 
-    public function testRequiredColumns()
-    {
-        $testData = [['email', '_website', '_store', 'firstname', 'lastname']];
-        $this->component->getColumnHeaders($testData);
-    }
-
     public function testColumnsNotFound()
     {
         $testData = [['_website', '_store', 'firstname', 'notallowed']];

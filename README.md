@@ -10,7 +10,7 @@ A Magento module initially created by [CTI Digital] to create and maintain datab
   - Keep versions of your configurations using your own versioning system.
   - Split your configuration based on the environment you're developing on.
 
-If you're interested to find out more about the background of the configurator, watch this lightning talk by [Rick Steckles] at Mage Titans in Manchester on [YouTube].
+If you're interested to find out more about the background of the configurator, watch this lightning talk by [Raj Chevli] at Mage Titans in Manchester on [YouTube].
 
 This is a work in progress and by no means for use with production environments (and probably not even development environments either just yet).
 
@@ -96,11 +96,13 @@ It tests the following:
 | Up Sell Products          | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Cross Sell Products       | :white_check_mark: | :grey_exclamation: | :white_check_mark: |
 | Customers                 | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| SQL                       | :x:                | :x:                | :x:                |
-| Shipping Table Rates      | :x:                | :x:                | :x:                |
-| Catalog Price Rules       | :x:                | :x:                | :x:                |
+| SQL                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Catalog Price Rules       | :white_check_mark: | :x:                | :white_check_mark: |
+| Shipping Table Rates      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Customer Attributes       | :white_check_mark: | :x:                | :white_check_mark: |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
 | Orders                    | :x:                | :x:                | :x:                |
+| Tiered Prices             | :x:                | :x:                | :x:                |
 
 License
 ----
@@ -109,5 +111,5 @@ MIT
 
 
 [CTI Digital]:http://www.ctidigital.com/
-[YouTube]:https://www.youtube.com/watch?v=u9zHaX8G5_0
-[Rick Steckles]:https://twitter.com/rick_steckles
+[YouTube]:https://www.youtube.com/watch?v=iFkhAzJl2k0
+[Raj Chevli]:https://twitter.com/chevli

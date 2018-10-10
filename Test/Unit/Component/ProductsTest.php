@@ -23,20 +23,14 @@ class ProductsTest extends ComponentAbstractTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $httpClientMock = $this->getMock(
-            'Magento\Framework\HTTP\ZendClientFactory',
-            ['create'],
-            [],
-            '',
-            false
-        );
-        $mockFileFactory = $this->getMock(
-            FileFactory::class,
-            ['create'],
-            [],
-            '',
-            false
-        );
+        $httpClientMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $mockFileFactory = $this->getMockBuilder(FileFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
 
         $this->component = $this->testObjectManager->getObject(
             Products::class,
@@ -268,7 +262,7 @@ class ProductsTest extends ComponentAbstractTestCase
     {
         $attr = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute')
             ->disableOriginalConstructor()
-            ->setMethods(['getFrontend', 'getValue'])
+            ->setMethods(['getFrontend', 'getValue', 'getAttributeCode'])
             ->getMock();
         $attr->expects($this->once())
             ->method('getFrontend')

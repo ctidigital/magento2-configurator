@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package CtiDigital\Configurator\Console\Command
  * @SuppressWarnings(PHPMD)
  */
-class RunCommandTest extends \PHPUnit_Framework_TestCase
+class RunCommandTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -64,22 +64,39 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->runCommandAdapter = $this->getMock(ConfiguratorAdapterInterface::class);
-        $this->configInterface = $this->getMock(ConfigInterface::class);
-        $this->componentFactory = $this->getMock(ComponentFactoryInterface::class);
-        $consoleOutput = $this->getMock(ConsoleOutputInterface::class);
-        $scopeInterface = $this->getMock(ScopeInterface::class);
-        $state = $this->getMock(State::class, array(), array($scopeInterface));
-        $this->loggerInterface = $this->getMock(LoggerInterface::class, array(), array(
-            $consoleOutput
-        ));
+        $this->runCommandAdapter = $this->getMockBuilder(ConfiguratorAdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->configInterface = $this->getMockBuilder(ConfigInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->componentFactory = $this->getMockBuilder(ComponentFactoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $consoleOutput = $this->getMockBuilder(ConsoleOutputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $scopeInterface = $this->getMockBuilder(ScopeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $state = $this->getMockBuilder(State::class)
+            ->disableOriginalConstructor()
+            ->setConstructorArgs([$scopeInterface])
+            ->getMock();
+        $this->loggerInterface = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->setConstructorArgs([$consoleOutput])
+            ->getMock();
 
-        $this->processor = $this->getMock(Processor::class, array(), array(
-            $this->configInterface,
-            $this->loggerInterface,
-            $state,
-            $this->componentFactory
-        ));
+        $this->processor = $this->getMockBuilder(Processor::class)
+            ->disableOriginalConstructor()
+            ->setConstructorArgs([
+                $this->configInterface,
+                $this->loggerInterface,
+                $state,
+                $this->componentFactory
+            ])
+            ->getMock();
 
         $this->command = new RunCommand(
             $this->runCommandAdapter,
@@ -87,8 +104,12 @@ class RunCommandTest extends \PHPUnit_Framework_TestCase
             $this->processor
         );
 
-        $this->mockInput = $this->getMock(InputInterface::class);
-        $this->mockOutput = $this->getMock(OutputInterface::class);
+        $this->mockInput = $this->getMockBuilder(InputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->mockOutput = $this->getMockBuilder(OutputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testItIsAConsoleCommand()

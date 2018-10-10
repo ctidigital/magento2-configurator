@@ -93,21 +93,48 @@ class AttributeSets extends YamlComponentAbstract
      */
     protected function addAttributeGroups(AttributeSetInterface $attributeSetEntity, array $attributeGroupData)
     {
-        /*        if ($attributeSetEntity->getDefaultGroupId()) {
-                    $this->eavSetup->removeAttributeGroup(
-                        Product::ENTITY,
-                        $attributeSetEntity->getId(),
-                        $attributeSetEntity->getDefaultGroupId()
-                    );
-                }*/
+        $attributeSetName = $attributeSetEntity->getAttributeSetName();
 
+        // Loop through the groups that belong to the attribute set
         foreach ($attributeGroupData as $group) {
-            $attributeSetName = $attributeSetEntity->getAttributeSetName();
+            try {
+                // Used to predetermine the code if not using a custom attribute group code
+                if (!isset($group['code'])) {
+                    $group['code'] = $this->eavSetup->convertToAttributeGroupCode($group['name']);
+                }
 
-            // @todo Check if the attribute group is already associated to the attribute set.
-            $this->eavSetup->addAttributeGroup(Product::ENTITY, $attributeSetName, $group['name']);
-            $this->log->logInfo(sprintf('Creating group: "%s"', $group['name']), 1);
-            $this->addAttributeGroupAssociations($attributeSetEntity, $group);
+                // Check if the attribute group exist
+                $attributeGroup = $this->eavSetup->getAttributeGroup(
+                    Product::ENTITY,
+                    $attributeSetName,
+                    $group['code'],
+                    'attribute_set_id'
+                );
+
+                // If not then create the group
+                if (!$attributeGroup) {
+                    $this->eavSetup->addAttributeGroup(Product::ENTITY, $attributeSetName, $group['name']);
+                    $this->log->logInfo(sprintf('Creating group: "%s"', $group['name']), 1);
+                }
+
+                if ($attributeGroup) {
+                    $this->log->logComment(sprintf('Existing group: "%s"', $group['name']), 1);
+                }
+
+                // Attempt to associate the attributes to the group
+                $this->addAttributeGroupAssociations($attributeSetEntity, $group);
+            } catch (\Zend_Db_Statement_Exception $exception) {
+                $this->log->logError(
+                    'Magento sometimes uses different attribute codes to attribute names. '
+                    .'You may require to specify the code too.',
+                    1
+                );
+                $this->log->logError(
+                    sprintf('Attribute Set: %s, Group: %s', $attributeSetName, $group['name']),
+                    1
+                );
+                $this->log->logError($exception->getMessage(), 1);
+            }
         }
     }
 

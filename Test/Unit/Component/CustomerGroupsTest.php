@@ -10,8 +10,12 @@ class CustomerGroupsTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $groupFactory = $this->getMock(GroupFactory::class);
-        $classModelFactory = $this->getMock(ClassModelFactory::class);
+        $groupFactory = $this->getMockBuilder(GroupFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $classModelFactory = $this->getMockBuilder(ClassModelFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->component = new CustomerGroups(
             $this->logInterface,

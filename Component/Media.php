@@ -32,17 +32,14 @@ class Media extends YamlComponentAbstract
     protected function processData($data = null)
     {
         try {
-
             // Load root media path
             $mediaPath = $this->directoryList->getPath(DirectoryList::MEDIA);
 
             // Loop through top level nodes
             foreach ($data as $name => $childNode) {
-
                 // Create a child folder or file item
                 $this->createChildFolderFileItem($mediaPath, $name, $childNode);
             }
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -51,7 +48,6 @@ class Media extends YamlComponentAbstract
     private function createChildFolderFileItem($currentPath, $name, $node, $nest = 0)
     {
         try {
-
             // Update the current path to the new path
             $newPath = $currentPath . DIRECTORY_SEPARATOR . $name;
 
@@ -60,12 +56,10 @@ class Media extends YamlComponentAbstract
 
             // If the node does not have a numeric index
             if (!is_numeric($name)) {
-
                 $nest++;
 
                 // Loop through the child node
                 foreach ($node as $childName => $childNode) {
-
                     // Create a child folder
                     $this->createChildFolderFileItem($newPath, $childName, $childNode, $nest);
                 }
@@ -90,7 +84,6 @@ class Media extends YamlComponentAbstract
 
             // Download the file and place it in the price place
             $this->downloadAndSetFile($newPath, $node, $nest);
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $nest);
         }
@@ -105,10 +98,8 @@ class Media extends YamlComponentAbstract
     {
         // Check if the file/folder exists
         if (!file_exists($newPath)) {
-
             // If the node does not have a numeric index
             if (!is_numeric($name)) {
-
                 // Then it is a directory so create it
                 mkdir($newPath, $this::FULL_ACCESS, true);
                 $this->log->logInfo(sprintf('Created new media directory %s', $name), $nest);
@@ -119,7 +110,6 @@ class Media extends YamlComponentAbstract
 
         // If the node does not have a numeric index
         if (!is_numeric($name)) {
-
             $this->log->logComment(sprintf('Directory Exists %s', $name), $nest);
         }
     }

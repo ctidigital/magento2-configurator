@@ -7,7 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ConfiguratorCommandTest extends \PHPUnit_Framework_TestCase
+class ConfiguratorCommandTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -32,11 +32,17 @@ class ConfiguratorCommandTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->configuratorCommandAdapter = $this->getMock(ConfiguratorAdapterInterface::class);
+        $this->configuratorCommandAdapter = $this->getMockBuilder(ConfiguratorAdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->command = new ConfiguratorCommand($this->configuratorCommandAdapter);
-        $this->mockInput = $this->getMock(InputInterface::class);
-        $this->mockOutput = $this->getMock(OutputInterface::class);
+        $this->mockInput = $this->getMockBuilder(InputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->mockOutput = $this->getMockBuilder(OutputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testItIsAConsoleCommand()

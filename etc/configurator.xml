@@ -22,4 +22,9 @@
     <component name="review_rating" class="CtiDigital\Configurator\Component\ReviewRating" />
     <component name="product_links" class="CtiDigital\Configurator\Component\ProductLinks" />
     <component name="customers" class="CtiDigital\Configurator\Component\Customers" />
+    <component name="catalog_price_rules" class="CtiDigital\Configurator\Component\CatalogPriceRules" />
+    <component name="sql" class="CtiDigital\Configurator\Component\Sql" />
+    <component name="shippingtablerates" class="CtiDigital\Configurator\Component\ShippingTableRates" />
+    <component name="customerattributes" class="CtiDigital\Configurator\Component\CustomerAttributes" />
+    <component name="tiered_prices" class="CtiDigital\Configurator\Component\TieredPrices" />
 </config>

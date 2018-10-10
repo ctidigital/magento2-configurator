@@ -92,7 +92,6 @@ class TaxRules extends CsvComponentAbstract
             } catch (ComponentException $e) {
                 $this->log->logError($e->getMessage());
             }
-
         }
 
         $this->log->logComment(
@@ -106,7 +105,7 @@ class TaxRules extends CsvComponentAbstract
      * @param null $data
      * @return array
      */
-    public function getAttributesFromCsv ($data = null)
+    public function getAttributesFromCsv($data = null)
     {
         $attributes = [];
         foreach ($data as $attributeCode) {
@@ -165,10 +164,9 @@ class TaxRules extends CsvComponentAbstract
         $rateIds = [];
         $rateNamesArray = explode(',', $rateNames);
 
-        $rateFactory = $this->rateFactory->create()->getCollection();
         foreach ($rateNamesArray as $name) {
-            $rate = $rateFactory->addFieldToFilter('code', $name)->getFirstItem();
-
+            $rateFactory = $this->rateFactory->create()->getCollection();
+            $rate = $rateFactory->addFieldToFilter('code', $name)->load()->getFirstItem();
             $rateIds[] = $rate->getId();
         }
 
@@ -197,6 +195,7 @@ class TaxRules extends CsvComponentAbstract
                 $classModel->setClassName($name)
                     ->setClassType($type)
                     ->save();
+                $classId = $classModel->getId();
             }
 
             $taxClassIds[] = $classId;
@@ -216,7 +215,6 @@ class TaxRules extends CsvComponentAbstract
         $ruleCount = $rule->getCollection()->addFieldToFilter('code', $ruleData['code'])->getSize();
 
         if ($ruleCount > 0) {
-
             $this->log->logComment(
                 sprintf('Tax Rule "%s" already exists in database.', $ruleData['code'])
             );
@@ -236,7 +234,5 @@ class TaxRules extends CsvComponentAbstract
         $this->log->logInfo(
             sprintf('Tax Rule "%s" created.', $ruleData['code'])
         );
-
-
     }
 }

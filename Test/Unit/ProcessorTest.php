@@ -10,7 +10,7 @@ use Magento\Framework\App\State;
 use Magento\Framework\Config\ScopeInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
-class ProcessorTest extends \PHPUnit_Framework_TestCase
+class ProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Processor
@@ -34,25 +34,37 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->configInterface = $this->getMock(ConfigInterface::class);
+        $this->configInterface = $this->getMockBuilder(ConfigInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->mockComponentFactory = $this->getMockBuilder(ComponentFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $consoleOutput = $this->getMock(ConsoleOutputInterface::class);
-        $scopeInterface = $this->getMock(ScopeInterface::class);
-        $state = $this->getMock(State::class, array(), array($scopeInterface));
-        $this->loggerInterface = $this->getMock(LoggerInterface::class, array(), array(
-            $consoleOutput,
-        ));
+        $consoleOutput = $this->getMockBuilder(ConsoleOutputInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $scopeInterface = $this->getMockBuilder(ScopeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $state = $this->getMockBuilder(State::class)
+            ->disableOriginalConstructor()
+            ->setConstructorArgs(array($scopeInterface))
+            ->getMock();
+        $this->loggerInterface = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->setConstructorArgs(array($consoleOutput))
+            ->getMock();
 
-        $this->processor = $this->getMock(Processor::class, array(), array(
-            $this->configInterface,
-            $this->loggerInterface,
-            $state,
-            $this->mockComponentFactory,
-        ));
+        $this->processor = $this->getMockBuilder(Processor::class)
+            ->disableOriginalConstructor()
+            ->setConstructorArgs(array(
+                $this->configInterface,
+                $this->loggerInterface,
+                $state,
+                $this->mockComponentFactory,
+            ))->getMock();
     }
 
     public function testICanSetAnEnvironment()

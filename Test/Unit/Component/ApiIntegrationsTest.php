@@ -18,26 +18,18 @@ class ApiIntegrationsTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-//        $aclBuilder = $this->getMock(Builder::class, [], [], '', false);
-//        $roleFactory = $this->getMock(RoleFactory::class, ['create'], [], '', false);
-//        $roleCollectionMock = $this->getMock(RoleCollectionFactory::class, ['create'], [], '', false);
-//        $rulesFactory = $this->getMock(RulesFactory::class, ['create'], [], '', false);
-//        $rulesCollectionMock = $this->getMock(RulesCollectionFactory::class, [], [], '', false);
-//        $rootAclResource = $this->getMock(RootResource::class, ['getId'], [], '', false);
-//        $authorizationService = new AuthorizationService(
-//            $aclBuilder,
-//            $roleFactory,
-//            $roleCollectionMock,
-//            $rulesFactory,
-//            $rulesCollectionMock,
-//            $this->logInterface,
-//            $rootAclResource
-//        );
-
-        $authorizationService = $this->getMock(AuthorizationService::class, [], [], '', false);
-        $integrationFactory = $this->getMock(IntegrationFactory::class);
-        $integrationService = $this->getMock(IntegrationServiceInterface::class);
-        $tokenFactory = $this->getMock(TokenFactory::class);
+        $authorizationService = $this->getMockBuilder(AuthorizationService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $integrationFactory = $this->getMockBuilder(IntegrationFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $integrationService = $this->getMockBuilder(IntegrationServiceInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $tokenFactory = $this->getMockBuilder(TokenFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->component = new ApiIntegrations(
             $this->logInterface,

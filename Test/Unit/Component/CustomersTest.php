@@ -92,7 +92,7 @@ class CustomersTest extends ComponentAbstractTestCase
     public function testDataMissingRows()
     {
         $testData = [];
-        $this->setExpectedException(ComponentException::class);
+        $this->expectException(ComponentException::class);
         $this->component->getColumnHeaders($testData);
     }
 
@@ -105,7 +105,7 @@ class CustomersTest extends ComponentAbstractTestCase
     public function testColumnsNotFound()
     {
         $testData = [['_website', '_store', 'firstname', 'notallowed']];
-        $this->setExpectedException(ComponentException::class, 'The column "email" is required.');
+        $this->expectException(ComponentException::class, 'The column "email" is required.');
         $this->component->getColumnHeaders($testData);
     }
 

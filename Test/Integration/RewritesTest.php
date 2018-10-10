@@ -9,7 +9,7 @@ use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlRewrite;
 use CtiDigital\Configurator\Model\Component\Rewrite;
 
-class RewritesTest extends \PHPUnit_Framework_TestCase
+class RewritesTest extends \PHPUnit\Framework\TestCase
 {
     private $rewritesCsvPath;
 

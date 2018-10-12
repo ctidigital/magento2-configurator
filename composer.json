@@ -9,8 +9,8 @@
     }
   ],
   "require": {
-    "symfony/yaml": "3.3.17",
-    "firegento/fastsimpleimport": "dev-master#bbd286d985add80fb7f9d22af7de3d84c6537173"
+    "symfony/yaml": "3.3.*",
+    "firegento/fastsimpleimport": "1.3.0"
   },
   "require-dev": {
     "phpmd/phpmd": "^2.6",

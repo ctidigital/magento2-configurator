@@ -33,6 +33,11 @@ class CustomersTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
+        $this->importerFactory = $this->getMockBuilder('FireGento\FastSimpleImport\Model\ImporterFactory')
+            ->setMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->searchResults = $this->getMockBuilder('Magento\Framework\Api\SearchResults')
             ->setMethods(['getItems'])
             ->disableOriginalConstructor()
@@ -72,6 +77,11 @@ class CustomersTest extends ComponentAbstractTestCase
             ->method('getDefaultGroup')
             ->willReturn($groupDefault);
 
+        $this->indexerFactory = $this->getMockBuilder('\Magento\Indexer\Model\IndexerFactory')
+            ->setMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->component = $this->testObjectManager->getObject(
             Customers::class,
             [
@@ -87,12 +97,6 @@ class CustomersTest extends ComponentAbstractTestCase
     {
         $testData = [];
         $this->expectException(ComponentException::class);
-        $this->component->getColumnHeaders($testData);
-    }
-
-    public function testRequiredColumns()
-    {
-        $testData = [['email', '_website', '_store', 'firstname', 'lastname']];
         $this->component->getColumnHeaders($testData);
     }
 

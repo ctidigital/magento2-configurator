@@ -2,13 +2,28 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\ReviewRating;
+use Magento\Review\Model\Rating\EntityFactory;
+use Magento\Review\Model\Rating\OptionFactory;
+use Magento\Review\Model\RatingFactory;
+use Magento\Store\Api\StoreRepositoryInterface;
 
 class ReviewRatingTest extends ComponentAbstractTestCase
 {
     protected function componentSetUp()
     {
-        $this->component = $this->testObjectManager->getObject(ReviewRating::class);
+        $ratingFactory = $this->getMockBuilder(RatingFactory::class)->getMock();
+        $storeRepository = $this->getMockBuilder(StoreRepositoryInterface::class)->getMock();
+        $optionFactory = $this->getMockBuilder(OptionFactory::class)->getMock();
+        $entityFactory = $this->getMockBuilder(EntityFactory::class)->getMock();
         $this->className = ReviewRating::class;
+        $this->component = new ReviewRating(
+            $this->logInterface,
+            $this->objectManager,
+            $ratingFactory,
+            $storeRepository,
+            $optionFactory,
+            $entityFactory
+        );
     }
 
     /**

@@ -7,7 +7,7 @@ use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Rating\Entity;
 use Magento\Review\Model\Rating\EntityFactory;
-use Magento\Store\Model\StoreRepository;
+use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Review\Model\Rating\Option;
 use Magento\Review\Model\Rating\OptionFactory;
 
@@ -51,7 +51,7 @@ class ReviewRating extends YamlComponentAbstract
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         RatingFactory $ratingFactory,
-        StoreRepository $storeRepository,
+        StoreRepositoryInterface $storeRepository,
         OptionFactory $optionFactory,
         EntityFactory $entityFactory
     ) {

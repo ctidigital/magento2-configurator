@@ -4,10 +4,10 @@ attributes:
     label: Test Attribute
     type: text
     input: select
-    is_visible_on_front: 1
-    is_filterable: 1
-    is_searchable: 1
-    is_visible_in_advanced_search: 0
+    visible_on_front: 1
+    filterable: 1
+    searchable: 1
+    visible_in_advanced_search: 0
     product_types:
       - simple
     option:

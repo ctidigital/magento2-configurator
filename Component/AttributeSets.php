@@ -97,7 +97,6 @@ class AttributeSets extends YamlComponentAbstract
 
         // Loop through the groups that belong to the attribute set
         foreach ($attributeGroupData as $group) {
-
             try {
                 // Used to predetermine the code if not using a custom attribute group code
                 if (!isset($group['code'])) {
@@ -124,7 +123,6 @@ class AttributeSets extends YamlComponentAbstract
 
                 // Attempt to associate the attributes to the group
                 $this->addAttributeGroupAssociations($attributeSetEntity, $group);
-
             } catch (\Zend_Db_Statement_Exception $exception) {
                 $this->log->logError(
                     'Magento sometimes uses different attribute codes to attribute names. '
@@ -137,7 +135,6 @@ class AttributeSets extends YamlComponentAbstract
                 );
                 $this->log->logError($exception->getMessage(), 1);
             }
-
         }
     }
 
@@ -159,7 +156,7 @@ class AttributeSets extends YamlComponentAbstract
             $this->eavSetup->addAttributeToGroup(
                 Product::ENTITY,
                 $attributeSetEntity->getId(),
-                $group['code'],
+                $group['name'],
                 $attributeCode
             );
 

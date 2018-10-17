@@ -2,8 +2,10 @@
 namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
 use CtiDigital\Configurator\Component\Product\AttributeOption;
+use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
+use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 
-class AttributeOptionTest extends \PHPUnit_Framework_TestCase
+class AttributeOptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
@@ -27,10 +29,15 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['getList', 'get', 'save', 'delete', 'deleteById', 'getCustomAttributesMetadata'])
             ->getMock();
 
+        $optionLabelFactory = $this->getMockBuilder(AttributeOptionLabelInterfaceFactory::class)->getMock();
+        $optionFactory = $this->getMockBuilder(AttributeOptionInterfaceFactory::class)->getMock();
+
         $this->attributeOption = $this->objectManager->getObject(
             AttributeOption::class,
             [
-                'attributeRepository' => $this->attrRepositoryMock
+                'attributeRepository' => $this->attrRepositoryMock,
+                'optionFactory' => $optionFactory,
+                'labelFactory' => $optionLabelFactory
             ]
         );
     }
@@ -138,7 +145,6 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
             $this->attributeOption->processAttributeValues('colour', $newValue);
         }
         $this->assertEquals($expectedResult, $this->attributeOption->getNewOptions());
-
     }
 
     public function testAddOption()

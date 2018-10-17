@@ -12,7 +12,7 @@ use Magento\Framework\ObjectManagerInterface;
  *
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
-abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
+abstract class ComponentAbstractTestCase extends \PHPUnit\Framework\TestCase
 {
 
     /* @var $component ComponentAbstract */
@@ -35,8 +35,12 @@ abstract class ComponentAbstractTestCase extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->testObjectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->objectManager = $this->getMock(ObjectManagerInterface::class);
-        $this->logInterface = $this->getMock(LoggerInterface::class);
+        $this->objectManager = $this->getMockBuilder(ObjectManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->logInterface = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->componentSetUp();
     }
 

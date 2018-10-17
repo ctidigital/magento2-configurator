@@ -12,7 +12,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
  * @package CtiDigital\Configurator\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class ShippingTablesRatesTest extends \PHPUnit_Framework_TestCase
+class ShippingTablesRatesTest extends \PHPUnit\Framework\TestCase
 {
     private $shippingTableRatesYamlPath;
     const BASE_WEBSITE_ID = 1;
@@ -113,12 +113,10 @@ class ShippingTablesRatesTest extends \PHPUnit_Framework_TestCase
 
         $foundShippingRates = 0;
         foreach ($expectedShippingRates as $expectedShippingRate) {
-            if (
-                $this->expectedShippingRateIsFoundInActualShippingRates(
-                    $expectedShippingRate,
-                    $actualWebsiteShippingTableRates
-                )
-            ) {
+            if ($this->expectedShippingRateIsFoundInActualShippingRates(
+                $expectedShippingRate,
+                $actualWebsiteShippingTableRates
+            )) {
                 $foundShippingRates++;
             }
         }

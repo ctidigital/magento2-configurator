@@ -43,10 +43,8 @@ class ProductLinks extends YamlComponentAbstract
     public function processData($data = null)
     {
         try {
-
             // Loop through all the product link types - if there are multiple link types in the yaml file
             foreach ($data as $linkType => $skus) {
-
                 // Validate the link type to see if it is allowed
                 if (!in_array($linkType, $this->allowedLinks)) {
                     throw new ComponentException(sprintf('Link type %s is not supported', $linkType));
@@ -71,10 +69,8 @@ class ProductLinks extends YamlComponentAbstract
     private function processSkus(array $data, $linkType)
     {
         try {
-
             // Loop through the SKUs in the link type
             foreach ($data as $sku => $linkSkus) {
-
                 // Check if the product exists
                 if (!$this->doesProductExist($sku)) {
                     throw new ComponentException(sprintf('SKU (%s) for products to link to is not found', $sku));
@@ -101,12 +97,10 @@ class ProductLinks extends YamlComponentAbstract
     private function processLinks($sku, $linkSkus, $linkType)
     {
         try {
-
             $productLinks = array();
 
             // Loop through all the products that require linking to a product
             foreach ($linkSkus as $position => $linkSku) {
-
                 // Check if the product exists
                 if (!$this->doesProductExist($linkSku)) {
                     throw new ComponentException(sprintf('SKU (%s) to link does not exist', $linkSku));
@@ -123,7 +117,6 @@ class ProductLinks extends YamlComponentAbstract
             // Save product links onto the main product
             $this->productRepository->get($sku)->setProductLinks($productLinks)->save();
             $this->log->logComment(sprintf('Saved product links for %s', $sku), 1);
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), 1);
         } catch (\Exception $e) {

@@ -19,7 +19,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * Class SqlSplitProcessorTest
  * @codingStandardsIgnoreStart
  */
-class SqlSplitProcessorTest extends \PHPUnit_Framework_TestCase
+class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject

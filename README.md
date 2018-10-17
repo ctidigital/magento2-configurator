@@ -102,6 +102,7 @@ It tests the following:
 | Customer Attributes       | :white_check_mark: | :x:                | :white_check_mark: |
 | Shopping Cart Price Rules | :x:                | :x:                | :x:                |
 | Orders                    | :x:                | :x:                | :x:                |
+| Tiered Prices             | :x:                | :x:                | :x:                |
 
 License
 ----

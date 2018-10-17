@@ -144,7 +144,6 @@ class ShippingTableRates extends YamlComponentAbstract
         );
         $tablerateModel->getConnection()
             ->insertOnDuplicate($tablerateModel->getMainTable(), [$shippingRate], $columns);
-
     }
     /**
      * @param array $shippingRate

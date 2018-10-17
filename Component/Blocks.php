@@ -40,12 +40,10 @@ class Blocks extends YamlComponentAbstract
         ObjectManagerInterface $objectManager,
         BlockInterfaceFactory $blockFactory
     ) {
-
         parent::__construct($log, $objectManager);
 
         $this->blockFactory = $blockFactory;
         $this->storeManager = $this->objectManager->create(\Magento\Store\Model\Store::class);
-
     }
 
     /**
@@ -54,11 +52,9 @@ class Blocks extends YamlComponentAbstract
     protected function processData($data = null)
     {
         try {
-
             foreach ($data as $identifier => $data) {
                 $this->processBlock($identifier, $data);
             }
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -72,10 +68,8 @@ class Blocks extends YamlComponentAbstract
     private function processBlock($identifier, $blockData)
     {
         try {
-
             // Loop through the block data
             foreach ($blockData['block'] as $data) {
-
                 $this->log->logComment(sprintf("Checking for existing blocks with identifier '%s'", $identifier));
 
                 // Load a collection blocks
@@ -107,7 +101,6 @@ class Blocks extends YamlComponentAbstract
 
                 // Loop through each attribute of the data array
                 foreach ($data as $key => $value) {
-
                     // Check if content is from a file source
                     if ($key == "source") {
                         $key = 'content';
@@ -130,7 +123,6 @@ class Blocks extends YamlComponentAbstract
 
                     // Check if there is a difference in value
                     if ($block->getData($key) != $value) {
-
                         // If there is, allow the block to be saved
                         $canSave = true;
                         $block->setData($key, $value);
@@ -165,7 +157,6 @@ class Blocks extends YamlComponentAbstract
                         $identifier . ' (' . $block->getId() . ')'
                     ));
                 }
-
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
@@ -186,17 +177,14 @@ class Blocks extends YamlComponentAbstract
         \Magento\Cms\Model\ResourceModel\Block\Collection $blocks,
         $stores = array()
     ) {
-
         // If there is only 1 block and stores hasn't been specified
         if ($blocks->count() == 1 && count($stores) == 0) {
-
             // Return that one block
             return $blocks->getFirstItem();
         }
 
         // If we do have stores specified
         if (count($stores) > 0) {
-
             // Use first store as filter to get the block ID.
             // Ideally, we would want to do something more intelligent here.
             $store = $this->getStoreByCode($stores[0]);
@@ -220,13 +208,11 @@ class Blocks extends YamlComponentAbstract
      */
     private function getStoreByCode($code)
     {
-
         // Load the store object
         $store = $this->storeManager->load($code, 'code');
 
         // Check if we get back a store ID.
         if (!$store->getId()) {
-
             // If not, stop the process by throwing an exception
             throw new ComponentException(sprintf("No store with code '%s' found", $code));
         }

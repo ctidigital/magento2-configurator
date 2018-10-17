@@ -57,7 +57,6 @@ class Widgets extends YamlComponentAbstract
             }
 
             foreach ($widgetData as $key => $value) {
-
                 // @todo handle stores
                 // Comma separated
                 if ($key == "stores") {
@@ -89,7 +88,6 @@ class Widgets extends YamlComponentAbstract
                 $widget->save();
                 $this->log->logInfo(sprintf("Saved Widget %s", $widget->getTitle()), 1);
             }
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -156,7 +154,6 @@ class Widgets extends YamlComponentAbstract
         // Loop through the widget collection to find any matches.
         foreach ($this->widgetCollection as $widget) {
             if ($widget->getTitle() == $widgetTitle && $widget->getInstanceType() == $widgetInstanceType) {
-
                 // Return the widget if there is a match
                 return $widget;
             }

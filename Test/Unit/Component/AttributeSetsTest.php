@@ -16,8 +16,12 @@ class AttributeSetsTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $eavSetup = $this->getMock(EavSetup::class, [], [], '', false);
-        $attributeSetsRepositoryInterface = $this->getMock(AttributeSetRepositoryInterface::class);
+        $eavSetup = $this->getMockBuilder(EavSetup::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $attributeSetsRepositoryInterface = $this->getMockBuilder(AttributeSetRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->component = new AttributeSets(
             $this->logInterface,

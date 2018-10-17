@@ -179,7 +179,6 @@ class Products extends CsvComponentAbstract
             $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($productsArray);
         } catch (\Exception $e) {
-
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());
@@ -191,7 +190,7 @@ class Products extends CsvComponentAbstract
      * @param null $source
      * @return mixed
      */
-    public function getFileType ($source = null)
+    public function getFileType($source = null)
     {
         // Get the file extension so we know how to load the file
         $sourceFileInfo = pathinfo($source);
@@ -210,7 +209,7 @@ class Products extends CsvComponentAbstract
      * @param null $data
      * @return array
      */
-    public function getAttributesFromCsv ($data = null)
+    public function getAttributesFromCsv($data = null)
     {
         $attributes = array();
         foreach ($data[0] as $attributeCode) {
@@ -225,7 +224,7 @@ class Products extends CsvComponentAbstract
      * @param array $data
      * @return bool
      */
-    public function isConfigurable ($data = array())
+    public function isConfigurable($data = array())
     {
         if (isset($data['product_type']) && $data['product_type'] === 'configurable') {
             return true;
@@ -239,7 +238,7 @@ class Products extends CsvComponentAbstract
      * @param $data
      * @return string
      */
-    public function constructConfigurableVariations ($data)
+    public function constructConfigurableVariations($data)
     {
         $variations = '';
         if (isset($data['associated_products']) && isset($data['configurable_attributes'])) {
@@ -277,7 +276,7 @@ class Products extends CsvComponentAbstract
      * @param \Magento\Catalog\Model\Product $productModel
      * @return string
      */
-    public function constructAttributeData (array $attributes, \Magento\Catalog\Model\Product $productModel)
+    public function constructAttributeData(array $attributes, \Magento\Catalog\Model\Product $productModel)
     {
         $skuAttributes = '';
         $attrCounter = 0;

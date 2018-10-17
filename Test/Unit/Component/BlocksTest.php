@@ -10,7 +10,9 @@ class BlocksTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $blockInterface = $this->getMock(BlockInterfaceFactory::class);
+        $blockInterface = $this->getMockBuilder(BlockInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->component = new Blocks($this->logInterface, $this->objectManager, $blockInterface);
         $this->className = Blocks::class;
     }

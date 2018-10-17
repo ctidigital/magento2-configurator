@@ -111,7 +111,6 @@ class Processor
     {
         // If the components list is empty, then the user would want to run all components in the master.yaml
         if (empty($this->components)) {
-
             $this->runAllComponents();
             return;
         }
@@ -122,13 +121,11 @@ class Processor
     private function runIndividualComponents()
     {
         try {
-
             // Get the master yaml
             $master = $this->getMasterYaml();
 
             // Loop through the components
             foreach ($this->components as $componentAlias) {
-
                 // Get the config for the component from the master yaml array
                 if (!isset($master[$componentAlias])) {
                     throw new ComponentException(
@@ -153,13 +150,11 @@ class Processor
     private function runAllComponents()
     {
         try {
-
             // Get the master yaml
             $master = $this->getMasterYaml();
 
             // Loop through components and run them individually in the master.yaml order
             foreach ($master as $componentAlias => $componentConfig) {
-
                 // Run the component in question
                 $this->state->emulateAreaCode(
                     Area::AREA_ADMINHTML,
@@ -183,13 +178,14 @@ class Processor
 
         /* @var ComponentAbstract $component */
         $component = $this->componentFactory->create($componentClass);
-        foreach ($componentConfig['sources'] as $source) {
-            $component->setSource($source)->process();
+        if (isset($componentConfig['sources'])) {
+            foreach ($componentConfig['sources'] as $source) {
+                $component->setSource($source)->process();
+            }
         }
 
         // Check if there are environment specific nodes placed
         if (!isset($componentConfig['env'])) {
-
             // If not, continue to next component
             $this->log->logComment(
                 sprintf("No environment node for '%s' component", $component->getComponentName())
@@ -199,7 +195,6 @@ class Processor
 
         // Check if there is a node for this particular environment
         if (!isset($componentConfig['env'][$this->getEnvironment()])) {
-
             // If not, continue to next component
             $this->log->logComment(
                 sprintf(
@@ -213,7 +208,6 @@ class Processor
 
         // Check if there are sources for the environment
         if (!isset($componentConfig['env'][$this->getEnvironment()]['sources'])) {
-
             // If not continue
             $this->log->logComment(
                 sprintf(
@@ -229,7 +223,6 @@ class Processor
         foreach ((array) $componentConfig['env'][$this->getEnvironment()]['sources'] as $source) {
             $component->setSource($source)->process();
         }
-
     }
 
     /**
@@ -289,7 +282,6 @@ class Processor
     {
         try {
             foreach ($master as $componentAlias => $componentConfig) {
-
                 // Check it has a enabled node
                 if (!isset($componentConfig['enabled'])) {
                     throw new ComponentException(
@@ -307,7 +299,6 @@ class Processor
 
                 if (isset($componentConfig['env'])) {
                     foreach ($componentConfig['env'] as $envData) {
-
                         if (isset($envData['sources'])) {
                             foreach ($envData['sources'] as $i => $source) {
                                 $sourceCount++;
@@ -331,7 +322,6 @@ class Processor
                         )
                     );
                 }
-
             }
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());

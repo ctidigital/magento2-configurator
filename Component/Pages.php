@@ -75,7 +75,6 @@ class Pages extends YamlComponentAbstract
             foreach ($data as $identifier => $data) {
                 $this->processPage($identifier, $data);
             }
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
@@ -115,7 +114,6 @@ class Pages extends YamlComponentAbstract
 
                 // Loop through each attribute of the data array
                 foreach ($pageData as $key => $value) {
-
                     // Check if content is from a file source
                     if ($key == "source") {
                         $key = 'content';
@@ -170,13 +168,10 @@ class Pages extends YamlComponentAbstract
                         $identifier . ' (' . $page->getId() . ')'
                     ));
                 }
-
             }
         } catch (NoSuchEntityException $e) {
             $this->log->logError($e->getMessage());
         }
-
-
     }
 
     /**

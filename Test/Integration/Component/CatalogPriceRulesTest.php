@@ -19,7 +19,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @codingStandardsIgnoreStart
  * @SuppressWarnings(PHPMD)
  */
-class CatalogPriceRulesTest extends \PHPUnit_Framework_TestCase
+class CatalogPriceRulesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RuleFactory

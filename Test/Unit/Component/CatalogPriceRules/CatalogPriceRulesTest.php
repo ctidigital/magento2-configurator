@@ -20,7 +20,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  * @codingStandardsIgnoreStart
  * @SuppressWarnings(PHPMD)
  */
-class CatalogPriceRulesTest extends \PHPUnit_Framework_TestCase
+class CatalogPriceRulesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CatalogPriceRulesProcessor

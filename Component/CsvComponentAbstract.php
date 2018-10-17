@@ -48,7 +48,6 @@ abstract class CsvComponentAbstract extends ComponentAbstract
             $parser = new Csv($file);
 
             return $parser->getData($source);
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }

@@ -50,7 +50,6 @@ class CustomerGroups extends YamlComponentAbstract
     protected function processData($data = null)
     {
         foreach ($data['customergroups'] as $taxClass) {
-
             $taxClassName = $taxClass['taxclass'];
             $taxClassId = $this->getTaxClassIdFromName($taxClassName);
 
@@ -64,7 +63,6 @@ class CustomerGroups extends YamlComponentAbstract
                         $this->log->logError($e->getMessage());
                     }
                 }
-
             }
         }
     }

@@ -9,7 +9,9 @@ class MediaTest extends ComponentAbstractTestCase
 
     protected function componentSetUp()
     {
-        $directoryList = $this->getMock(\Magento\Framework\App\Filesystem\DirectoryList::class, [], [], '', false);
+        $directoryList = $this->getMockBuilder(\Magento\Framework\App\Filesystem\DirectoryList::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->component = new Media($this->logInterface, $this->objectManager, $directoryList);
         $this->className = Media::class;
     }

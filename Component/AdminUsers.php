@@ -54,7 +54,6 @@ class AdminUsers extends YamlComponentAbstract
     {
         //Get Each Role
         foreach ($data['adminusers'] as $roleSet) {
-
             $roleName = $roleSet['rolename'];
             $roleId = $this->getUserRoleFromName($roleName);
 
@@ -68,7 +67,6 @@ class AdminUsers extends YamlComponentAbstract
 
             //Run through users in this Role
             foreach ($roleSet['users'] as $userData) {
-
                 $validData = $this->dataValidator($userData);
                 try {
                     if (!$validData) {
@@ -76,7 +74,6 @@ class AdminUsers extends YamlComponentAbstract
                     }
 
                     $this->createAdminUser($userData, $roleId);
-
                 } catch (\Magento\Framework\Validator\Exception $e) {
                     $this->log->logError(sprintf('Magento Framework Validation Exception: %s', $e->getMessage()));
                 } catch (ComponentException $e) {

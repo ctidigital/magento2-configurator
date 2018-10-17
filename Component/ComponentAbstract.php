@@ -77,9 +77,7 @@ abstract class ComponentAbstract
      */
     public function process()
     {
-
         try {
-
             // Check if a component can be parsed and processed
             if (!$this->canParseAndProcess()) {
                 return; // @todo show some kind of logging
@@ -107,11 +105,9 @@ abstract class ComponentAbstract
 
 //            $this->eventManager->dispatch('configurator_process_component_after',array('object'=>$this));
 //            $this->eventManager->dispatch('configurator_process_component_after'.$this->alias,array('object'=>$this));
-
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
-
     }
 
     /**

@@ -127,6 +127,5 @@ class AdminRoles extends YamlComponentAbstract
         $this->log->logError(
             sprintf('Admin Role "%s" Resources are empty, please check your yaml file', $roleName)
         );
-
     }
 }

@@ -26,4 +26,5 @@
     <component name="sql" class="CtiDigital\Configurator\Component\Sql" />
     <component name="shippingtablerates" class="CtiDigital\Configurator\Component\ShippingTableRates" />
     <component name="customerattributes" class="CtiDigital\Configurator\Component\CustomerAttributes" />
+    <component name="tiered_prices" class="CtiDigital\Configurator\Component\TieredPrices" />
 </config>

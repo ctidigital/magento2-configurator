@@ -148,6 +148,11 @@ product_links:
     - ../configurator/ProductLinks/related.yaml
     - ../configurator/ProductLinks/cross-sells.yaml
     - ../configurator/ProductLinks/up-sells.yaml
+customer_attributes:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/CustomerAttributes/customer_attributes.yaml
 customers:
   enabled: 1
   method: code

@@ -215,6 +215,14 @@ class Attributes extends YamlComponentAbstract
                 'Couldn\'t retrieve options for attribute %s.',
                 $attributeCode
             ));
+        } catch (\BadMethodCallException $e) {
+            // @todo This should not happen. Rerunning customer attribute option appear to cause this exception.
+            $this->log->logComment(sprintf(
+                'Couldn\'t retrieve options for attribute %s: %s',
+                $attributeCode,
+                $e->getMessage()
+            ));
+            return array();
         }
 
         // Loop through existing attributes options

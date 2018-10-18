@@ -206,18 +206,18 @@ class Attributes extends YamlComponentAbstract
             $attribute = $this->attributeRepository->get($this->entityTypeId, $attributeCode);
             $attributeOptions = $attribute->getOptions();
         } catch (NoSuchEntityException $e) {
-            $this->log->logComment(sprintf(
+            $this->log->logError(sprintf(
                 'Attribute %s doesn\'t exist',
                 $attributeCode
             ));
         } catch (\TypeError $e) {
-            $this->log->logComment(sprintf(
+            $this->log->logError(sprintf(
                 'Couldn\'t retrieve options for attribute %s.',
                 $attributeCode
             ));
         } catch (\BadMethodCallException $e) {
             // @todo This should not happen. Rerunning customer attribute option appear to cause this exception.
-            $this->log->logComment(sprintf(
+            $this->log->logError(sprintf(
                 'Couldn\'t retrieve options for attribute %s: %s',
                 $attributeCode,
                 $e->getMessage()

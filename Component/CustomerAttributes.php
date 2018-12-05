@@ -34,7 +34,8 @@ class CustomerAttributes extends Attributes
 
     protected $customerConfigMap = [
         'visible' => 'is_visible',
-        'position' => 'sort_order'
+        'position' => 'sort_order',
+        'system' => 'is_system'
     ];
 
     /**

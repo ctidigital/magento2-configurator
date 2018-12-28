@@ -16,9 +16,11 @@ git checkout tags/$1 -b $1
 
 composer install
 
-echo Temporary change versions to attempt to resolve any dependency issue
-composer require symfony/config:4.1.*
-composer require symfony/dependency-injection:3.3.*
+if [ $(php -r "echo (int) version_compare('$1', '2.3.0', '<');") == '1' ]; then
+    echo Temporary change versions to attempt to resolve any dependency issue
+    composer require symfony/config:4.1.*
+    composer require symfony/dependency-injection:3.3.* 
+fi
 
 if [ -z "${TRAVIS_TAG}" ]; then
     echo Require configurator branch: ${TRAVIS_BRANCH} commit: ${TRAVIS_COMMIT}

@@ -18,7 +18,8 @@ env:
       MAGE_VERSION=2.2.5
     - TEST_SUITE=configurator
       MAGE_VERSION=2.2.6
-
+    - TEST_SUITE=configurator
+      MAGE_VERSION=2.3.0
 matrix:
   allow_failures:
     - php: 7.0

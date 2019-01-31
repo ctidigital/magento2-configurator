@@ -77,12 +77,12 @@ class Products extends CsvComponentAbstract
     /**
      * @var []
      */
-    private $successProducts;
+    private $successProducts = [];
 
     /**
      * @var []
      */
-    private $skippedProducts;
+    private $skippedProducts = [];
 
     /**
      * @var int

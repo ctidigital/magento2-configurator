@@ -13,6 +13,11 @@ class Categories extends YamlComponentAbstract
     protected $description = 'Component to import categories.';
     protected $groupFactory;
     protected $category;
+
+    /**
+     * @var \Magento\Cms\Api\Data\BlockInterfaceFactory
+     */
+    protected $blockFactory;
     private $mainAttributes = [
         'name',
         'is_active',
@@ -26,11 +31,13 @@ class Categories extends YamlComponentAbstract
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Catalog\Model\CategoryFactory $category,
         \Magento\Store\Model\GroupFactory $groupFactory,
-        \Magento\Framework\App\Filesystem\DirectoryList $dirList
+        \Magento\Framework\App\Filesystem\DirectoryList $dirList,
+        \Magento\Cms\Api\Data\BlockInterfaceFactory $blockFactory
     ) {
         $this->category = $category;
         $this->groupFactory = $groupFactory;
         $this->dirList = $dirList;
+        $this->blockFactory = $blockFactory;
         parent::__construct($log, $objectManager);
     }
 
@@ -137,6 +144,25 @@ class Categories extends YamlComponentAbstract
                         }
 
                         $category->setImage($img);
+                        break;
+                    // Attaching cms block
+                    case 'cms_block':
+                        // getting block by name
+                        $block = $this->blockFactory->create()->getCollection()
+                            ->addFieldToFilter('title', $value)
+                            ->setPageSize(1)
+                            ->getFirstItem();
+
+                        // check if block exist
+                        if(!$block) {
+                            $this->log->logError("Can't find cms block with name '%s'", $value);
+                        }
+
+                        // Attach cms block by id
+                        $category->setData('landing_page', $block->getId());
+                        // set category display mode to Satic block and products
+                        $category->setData('display_mode', 'PRODUCTS_AND_PAGE');
+
                         break;
                     default:
                         $category->setCustomAttribute($attribute, $value);

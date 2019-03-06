@@ -93,13 +93,13 @@ class Config extends YamlComponentAbstract
 
                 if ($scope == "websites") {
                     foreach ($configurations as $code => $websiteConfigurations) {
-                        // Handle encryption parameter
-                        $encryption = 0;
-                        if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
-                            $encryption = 1;
-                        }
-
                         foreach ($websiteConfigurations as $configuration) {
+                            // Handle encryption parameter
+                            $encryption = 0;
+                            if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
+                                $encryption = 1;
+                            }
+
                             $convertedConfiguration = $this->convert($configuration);
                             $this->setWebsiteConfig(
                                 $convertedConfiguration['path'],

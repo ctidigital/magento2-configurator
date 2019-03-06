@@ -154,7 +154,7 @@ class Categories extends YamlComponentAbstract
                             ->getFirstItem();
 
                         // check if block exist
-                        if(!$block) {
+                        if (!$block) {
                             $this->log->logError("Can't find cms block with name '%s'", $value);
                         }
 

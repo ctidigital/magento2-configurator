@@ -50,23 +50,23 @@ class OrderStatuses extends YamlComponentAbstract
      *
      * @var StatusResourceFactory
      */
-    protected $statusResourceFactory;
+    protected $statusResource;
 
     /**
      * OrderStatuses constructor.
      * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param StatusFactory $statusFactory
-     * @param StatusResourceFactory $statusResourceFactory
+     * @param StatusResourceFactory $statusResource
      */
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
         StatusFactory $statusFactory,
-        StatusResourceFactory $statusResourceFactory
+        StatusResourceFactory $statusResource
     ) {
         $this->statusFactory = $statusFactory;
-        $this->statusResourceFactory = $statusResourceFactory;
+        $this->statusResource = $statusResource;
         parent::__construct($log, $objectManager);
     }
 
@@ -76,7 +76,7 @@ class OrderStatuses extends YamlComponentAbstract
      */
     public function processData($data = null)
     {
-        if(isset($data['order_statuses'])) {
+        if (isset($data['order_statuses'])) {
             foreach ($data['order_statuses'] as $statusSet) {
                 try {
                     $this->createOrderStatuses($statusSet);
@@ -93,9 +93,9 @@ class OrderStatuses extends YamlComponentAbstract
      */
     public function createOrderStatuses($statusSet)
     {
-        foreach ($statusSet['statuses'] as $statusData){
+        foreach ($statusSet['statuses'] as $statusData) {
             /** @var StatusResource $statusResource */
-            $statusResource = $this->statusResourceFactory->create();
+            $statusResource = $this->statusResource->create();
             /** @var Status $status */
             $status = $this->statusFactory->create();
             $status->setData([

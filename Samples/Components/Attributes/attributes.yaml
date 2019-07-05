@@ -1,6 +1,6 @@
 attributes:
   test_attr:
-    is_global: 1
+    global: 1
     label: Test Attribute
     type: text
     input: select

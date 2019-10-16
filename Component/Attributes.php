@@ -115,8 +115,8 @@ class Attributes extends YamlComponentAbstract
 
             if (isset($attributeConfig['option'])) {
                 $newAttributeOptions = $this->manageAttributeOptions($attributeCode, $attributeConfig['option']);
-                if(!empty($newAttributeOptions)) {
-                    $updateAttribute = true;   
+                if (!empty($newAttributeOptions)) {
+                    $updateAttribute = true;
                 }
                 $attributeConfig['option']['values'] = $newAttributeOptions;
             }

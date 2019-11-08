@@ -8,6 +8,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -16,7 +17,7 @@ use Magento\Framework\ObjectManagerInterface;
 /**
  * Class Sql
  */
-class Sql extends YamlComponentAbstract
+class Sql extends ComponentAbstract
 {
     /**
      * @var string
@@ -48,9 +49,10 @@ class Sql extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         SqlSplitProcessor $processor
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->processor = $processor;
     }

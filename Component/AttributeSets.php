@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Catalog\Model\Product;
@@ -16,7 +17,7 @@ use Magento\Eav\Model\AttributeSetRepository;
  * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class AttributeSets extends YamlComponentAbstract
+class AttributeSets extends ComponentAbstract
 {
     protected $alias = 'attribute_sets';
     protected $name = 'Attribute Sets';
@@ -42,11 +43,12 @@ class AttributeSets extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         EavSetup $eavSetup,
         AttributeSetRepositoryInterface $attributeSetRepository
     ) {
 
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->eavSetup = $eavSetup;
         $this->attributeSetRepository = $attributeSetRepository;

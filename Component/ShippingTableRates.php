@@ -2,6 +2,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use Symfony\Component\Yaml\Yaml;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Authorization\Model\UserContextInterface;
@@ -12,7 +13,7 @@ use Magento\Store\Model\Website;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\Region;
 
-class ShippingTableRates extends YamlComponentAbstract
+class ShippingTableRates extends ComponentAbstract
 {
     protected $alias = "shippingtablerates";
     protected $name = "Shipping Table Rates";
@@ -44,11 +45,12 @@ class ShippingTableRates extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         TablerateFactory $tablerateFactory,
         WebsiteFactory $websiteFactory,
         RegionFactory $regionFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->tablerateFactory = $tablerateFactory;
         $this->websiteFactory = $websiteFactory;
         $this->regionFactory = $regionFactory;

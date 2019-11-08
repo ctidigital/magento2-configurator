@@ -8,6 +8,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentProcessorInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
@@ -15,7 +16,7 @@ use Magento\Framework\ObjectManagerInterface;
 /**
  * Class CatalogPriceRules
  */
-class CatalogPriceRules extends YamlComponentAbstract
+class CatalogPriceRules extends ComponentAbstract
 {
     /**
      * @var string
@@ -47,9 +48,10 @@ class CatalogPriceRules extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         ComponentProcessorInterface $processor
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->processor = $processor;
     }

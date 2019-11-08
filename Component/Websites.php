@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Store\Model\Group;
@@ -15,7 +16,7 @@ use Magento\Indexer\Model\IndexerFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
-class Websites extends YamlComponentAbstract
+class Websites extends ComponentAbstract
 {
 
     protected $alias = 'websites';
@@ -46,13 +47,14 @@ class Websites extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         IndexerFactory $indexerFactory,
         ManagerInterface $eventManager,
         WebsiteFactory $websiteFactory,
         StoreFactory $storeFactory,
         GroupFactory $groupFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->indexer = $indexerFactory;
         $this->eventManager = $eventManager;

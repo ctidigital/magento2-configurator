@@ -2,6 +2,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
@@ -17,7 +18,7 @@ use Magento\Review\Model\Rating\OptionFactory;
  *
  * @SuppressWarnings("CouplingBetweenObjects")
  */
-class ReviewRating extends YamlComponentAbstract
+class ReviewRating extends ComponentAbstract
 {
     const MAX_NUM_RATINGS = 5;
 
@@ -50,6 +51,7 @@ class ReviewRating extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         RatingFactory $ratingFactory,
         StoreRepositoryInterface $storeRepository,
         OptionFactory $optionFactory,
@@ -59,7 +61,7 @@ class ReviewRating extends YamlComponentAbstract
         $this->storeRepository = $storeRepository;
         $this->optionFactory = $optionFactory;
         $this->entityFactory = $entityFactory;
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
     }
 
     public function processData($data = null)

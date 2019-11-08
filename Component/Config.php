@@ -11,8 +11,9 @@ use Magento\Store\Model\WebsiteFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection;
 use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory;
 use Symfony\Component\Yaml\Yaml;
+use Magento\Framework\Serialize\Serializer\Json;
 
-class Config extends YamlComponentAbstract
+class Config extends ComponentAbstract
 {
     const PATH_THEME_ID = 'design/theme/theme_id';
 
@@ -50,10 +51,11 @@ class Config extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         CollectionFactory $collectionFactory,
         EncryptorInterface $encryptor
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->configResource = $this->objectManager->create(\Magento\Config\Model\ResourceModel\Config::class);
         $this->scopeConfig = $this->objectManager->create(\Magento\Framework\App\Config::class);

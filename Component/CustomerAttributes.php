@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Customer\Model\Customer;
 use Magento\Eav\Setup\EavSetup;
@@ -63,6 +64,7 @@ class CustomerAttributes extends Attributes
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         EavSetup $eavSetup,
         AttributeRepository $attributeRepository,
         CustomerSetupFactory $customerSetupFactory,
@@ -71,7 +73,7 @@ class CustomerAttributes extends Attributes
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
         $this->customerSetup = $customerSetupFactory;
         $this->attributeResource = $attributeResource;
-        parent::__construct($log, $objectManager, $eavSetup, $attributeRepository);
+        parent::__construct($log, $objectManager, $json, $eavSetup, $attributeRepository);
     }
 
     /**

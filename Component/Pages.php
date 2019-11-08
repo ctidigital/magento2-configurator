@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
@@ -51,6 +52,7 @@ class Pages extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         PageRepositoryInterface $pageRepository,
         PageInterfaceFactory $pageFactory,
         StoreRepositoryInterface $storeRepository
@@ -59,7 +61,7 @@ class Pages extends YamlComponentAbstract
         $this->pageRepository = $pageRepository;
         $this->storeRepository = $storeRepository;
 
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
     }
 
 

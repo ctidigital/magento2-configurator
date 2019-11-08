@@ -3,11 +3,12 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class TaxRates extends CsvComponentAbstract
+class TaxRates extends ComponentAbstract
 {
     protected $alias = 'taxrates';
     protected $name = 'Tax Rates';
@@ -27,9 +28,10 @@ class TaxRates extends CsvComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         CsvImportHandler $csvImportHandler
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->csvImportHandler = $csvImportHandler;
     }
 

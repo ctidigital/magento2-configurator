@@ -2,6 +2,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Catalog\Model\ProductFactory;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\Image;
@@ -15,7 +16,7 @@ use CtiDigital\Configurator\Exception\ComponentException;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Products extends CsvComponentAbstract
+class Products extends ComponentAbstract
 {
     const SKU_COLUMN_HEADING = 'sku';
     const QTY_COLUMN_HEADING = 'qty';
@@ -102,12 +103,13 @@ class Products extends CsvComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
         Image $image,
         AttributeOption $attributeOption
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
         $this->image = $image;

@@ -2,6 +2,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\ObjectManagerInterface;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
@@ -10,7 +11,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 
-class Customers extends CsvComponentAbstract
+class Customers extends ComponentAbstract
 {
     const CUSTOMER_EMAIL_HEADER = 'email';
     const CUSTOMER_GROUP_HEADER = 'group_id';
@@ -68,6 +69,7 @@ class Customers extends CsvComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         ImporterFactory $importerFactory,
         GroupRepositoryInterface $groupRepository,
         GroupManagementInterface $groupManagement,
@@ -79,7 +81,7 @@ class Customers extends CsvComponentAbstract
         $this->groupManagement = $groupManagement;
         $this->criteriaBuilder = $criteriaBuilder;
         $this->indexerFactory = $indexerFactory;
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
     }
 
     /**

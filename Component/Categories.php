@@ -3,10 +3,11 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Webapi\Exception;
 use Symfony\Component\Yaml\Yaml;
 
-class Categories extends YamlComponentAbstract
+class Categories extends ComponentAbstract
 {
     protected $alias = 'categories';
     protected $name = 'Categories';
@@ -24,6 +25,7 @@ class Categories extends YamlComponentAbstract
     public function __construct(
         \CtiDigital\Configurator\Api\LoggerInterface $log,
         \Magento\Framework\ObjectManagerInterface $objectManager,
+        Json $json,
         \Magento\Catalog\Model\CategoryFactory $category,
         \Magento\Store\Model\GroupFactory $groupFactory,
         \Magento\Framework\App\Filesystem\DirectoryList $dirList
@@ -31,7 +33,7 @@ class Categories extends YamlComponentAbstract
         $this->category = $category;
         $this->groupFactory = $groupFactory;
         $this->dirList = $dirList;
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
     }
 
     public function processData($data = null)

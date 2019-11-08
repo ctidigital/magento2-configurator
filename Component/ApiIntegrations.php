@@ -2,6 +2,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
@@ -47,6 +48,7 @@ class ApiIntegrations extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         IntegrationFactory $integrationFactory,
         IntegrationServiceInterface $integrationService,
         AuthorizationService $authorizationService,

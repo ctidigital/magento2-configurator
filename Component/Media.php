@@ -3,11 +3,12 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\ObjectManagerInterface;
 
-class Media extends YamlComponentAbstract
+class Media extends ComponentAbstract
 {
 
     const FULL_ACCESS = 0777;
@@ -20,9 +21,10 @@ class Media extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         DirectoryList $directoryList
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->directoryList = $directoryList;
     }
 

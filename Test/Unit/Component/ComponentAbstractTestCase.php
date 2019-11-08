@@ -66,4 +66,27 @@ abstract class ComponentAbstractTestCase extends \PHPUnit\Framework\TestCase
             sprintf('No name specified in component %s', $this->className)
         );
     }
+
+    /**
+     * @param $testSource
+     * @param $expected
+     *
+     * @dataProvider isSourceRemoteDataProvider
+     */
+    public function testIsSourceRemote($testSource, $expected)
+    {
+        $this->assertEquals($expected, $this->component->isSourceRemote($testSource));
+    }
+
+    /**
+     * @return array
+     */
+    public static function isSourceRemoteDataProvider()
+    {
+        return [
+            ['https://www.test.com/remote-source.json', true],
+            ['../configurator/Configuration/base-website-config.yaml', false],
+            ['configurator/Configuration/example.csv', false]
+        ];
+    }
 }

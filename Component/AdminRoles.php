@@ -2,6 +2,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Authorization\Model\RoleFactory;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Authorization\Model\RulesFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
@@ -9,7 +10,7 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class AdminRoles extends YamlComponentAbstract
+class AdminRoles extends ComponentAbstract
 {
     protected $alias = 'adminroles';
     protected $name = 'Admin Roles';
@@ -39,10 +40,11 @@ class AdminRoles extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         RoleFactory $roleFactory,
         RulesFactory $rulesFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->roleFactory = $roleFactory;
         $this->rulesFactory = $rulesFactory;

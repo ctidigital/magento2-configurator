@@ -3,12 +3,13 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class ProductLinks extends YamlComponentAbstract
+class ProductLinks extends ComponentAbstract
 {
 
     protected $alias = 'product_links';
@@ -27,6 +28,7 @@ class ProductLinks extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         ProductRepositoryInterface $productRepository,
         ProductLinkInterfaceFactory $productLinkFactory
     ) {

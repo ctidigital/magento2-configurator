@@ -3,13 +3,14 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use Magento\Store\Model\StoreFactory;
 
-class Widgets extends YamlComponentAbstract
+class Widgets extends ComponentAbstract
 {
 
     protected $alias = 'widgets';
@@ -22,11 +23,12 @@ class Widgets extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         WidgetCollection $collection,
         StoreFactory $storeFactory,
         ThemeCollection $themeCollection
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->widgetCollection = $collection;
         $this->themeCollection = $themeCollection;
         $this->storeFactory = $storeFactory;

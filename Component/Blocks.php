@@ -3,11 +3,12 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
 
-class Blocks extends YamlComponentAbstract
+class Blocks extends ComponentAbstract
 {
 
     protected $alias = 'blocks';
@@ -38,9 +39,10 @@ class Blocks extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         BlockInterfaceFactory $blockFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->blockFactory = $blockFactory;
         $this->storeManager = $this->objectManager->create(\Magento\Store\Model\Store::class);

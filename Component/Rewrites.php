@@ -3,12 +3,13 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
-class Rewrites extends CsvComponentAbstract
+class Rewrites extends ComponentAbstract
 {
     protected $alias = "rewrites";
     protected $name = "rewrites";
@@ -43,10 +44,11 @@ class Rewrites extends CsvComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         UrlPersistInterface $urlPersist,
         UrlRewriteFactory $urlRewriteFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->urlPersist = $urlPersist;
         $this->urlRewriteFactory = $urlRewriteFactory;
     }

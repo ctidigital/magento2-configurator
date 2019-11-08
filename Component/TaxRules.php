@@ -3,13 +3,14 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Tax\Model\Calculation\RuleFactory;
 use Magento\Tax\Model\Calculation\RateFactory;
 use Magento\Tax\Model\ClassModelFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class TaxRules extends CsvComponentAbstract
+class TaxRules extends ComponentAbstract
 {
     protected $alias = 'taxrules';
     protected $name = 'Tax Rules';
@@ -51,11 +52,12 @@ class TaxRules extends CsvComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         RateFactory $rateFactory,
         ClassModelFactory $classModelFactory,
         RuleFactory $ruleFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->rateFactory = $rateFactory;
         $this->classModelFactory = $classModelFactory;
         $this->ruleFactory = $ruleFactory;

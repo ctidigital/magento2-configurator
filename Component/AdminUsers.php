@@ -2,13 +2,14 @@
 namespace CtiDigital\Configurator\Component;
 
 use Symfony\Component\Yaml\Yaml;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\User\Model\UserFactory;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class AdminUsers extends YamlComponentAbstract
+class AdminUsers extends ComponentAbstract
 {
     protected $alias = 'adminusers';
     protected $name = 'Admin Users';
@@ -38,10 +39,11 @@ class AdminUsers extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         UserFactory $userFactory,
         RoleFactory $roleFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->userFactory = $userFactory;
         $this->roleFactory = $roleFactory;

@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;
@@ -15,7 +16,7 @@ use Magento\Framework\ObjectManagerInterface;
  * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class Attributes extends YamlComponentAbstract
+class Attributes extends ComponentAbstract
 {
 
     protected $alias = 'attributes';
@@ -77,10 +78,11 @@ class Attributes extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         EavSetup $eavSetup,
         AttributeRepositoryInterface $attributeRepository
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->eavSetup = $eavSetup;
         $this->attributeRepository = $attributeRepository;
     }
@@ -115,9 +117,6 @@ class Attributes extends YamlComponentAbstract
 
             if (isset($attributeConfig['option'])) {
                 $newAttributeOptions = $this->manageAttributeOptions($attributeCode, $attributeConfig['option']);
-                if (!empty($newAttributeOptions)) {
-                    $updateAttribute = true;
-                }
                 $attributeConfig['option']['values'] = $newAttributeOptions;
             }
         }

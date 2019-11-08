@@ -2,13 +2,14 @@
 namespace CtiDigital\Configurator\Component;
 
 use Symfony\Component\Yaml\Yaml;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Customer\Model\GroupFactory;
 use Magento\Tax\Model\ClassModelFactory;
 use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
-class CustomerGroups extends YamlComponentAbstract
+class CustomerGroups extends ComponentAbstract
 {
     protected $alias = 'customergroups';
     protected $name = 'Customer Groups';
@@ -35,10 +36,11 @@ class CustomerGroups extends YamlComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         GroupFactory $groupFactory,
         ClassModelFactory $classModelFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->groupFactory = $groupFactory;
         $this->classModelFactory = $classModelFactory;

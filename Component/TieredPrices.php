@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Component;
 
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
@@ -14,7 +15,7 @@ use CtiDigital\Configurator\Exception\ComponentException;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TieredPrices extends CsvComponentAbstract
+class TieredPrices extends ComponentAbstract
 {
     const SKU_COLUMN_HEADING = 'sku';
     const SEPARATOR = ';';
@@ -59,10 +60,11 @@ class TieredPrices extends CsvComponentAbstract
     public function __construct(
         LoggerInterface $log,
         ObjectManagerInterface $objectManager,
+        Json $json,
         ImporterFactory $importerFactory,
         AttributeOption $attributeOption
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->importerFactory = $importerFactory;
         $this->attributeOption = $attributeOption;
     }

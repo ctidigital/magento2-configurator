@@ -54,7 +54,7 @@ class ApiIntegrations extends YamlComponentAbstract
         AuthorizationService $authorizationService,
         TokenFactory $tokenFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
 
         $this->integrationFactory = $integrationFactory;
         $this->integrationService = $integrationService;

@@ -41,22 +41,19 @@ class Categories extends ComponentAbstract
         if (isset($data['categories'])) {
             foreach ($data['categories'] as $store) {
                 try {
-                    if (isset($store['store_group'])) {
-                        // Get the default category
-                        $category = $this->getDefaultCategory($store['store_group']);
-                        if ($category === false) {
-                            throw new ComponentException(
-                                sprintf('No default category was found for the store group "%s"', $store['store_group'])
-                            );
-                        }
-
-                        if (isset($store['categories'])) {
-                            $this->log->logInfo(
-                                sprintf('Updating categories for "%s"', $store['store_group'])
-                            );
-                            $this->createOrUpdateCategory($category, $store['categories']);
-                        }
+                    $group = $this->getStoreGroup($store);
+                    // Get the default category
+                    $category = $this->getDefaultCategory($group);
+                    if ($category === false) {
+                        throw new ComponentException(
+                            sprintf('No default category was found for the store group "%s"', $group)
+                        );
                     }
+                    if (isset($store['categories'])) {
+                        $this->log->logInfo(sprintf('Updating categories for "%s"', $group));
+                        $this->createOrUpdateCategory($category, $store['categories']);
+                    }
+
                 } catch (ComponentException $e) {
                     $this->log->logError($e->getMessage());
                 }
@@ -129,11 +126,11 @@ class Categories extends ComponentAbstract
                         $path = parse_url($value);
                         $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
 
-                        if (! array_key_exists('host', $path)) {
-                            $value = BP . '/'. trim($value, '/');
+                        if (!array_key_exists('host', $path)) {
+                            $value = BP . '/' . trim($value, '/');
                         }
 
-                        if (! @copy($value, $catMediaDir . $img)) {
+                        if (!@copy($value, $catMediaDir . $img)) {
                             $this->log->logError('Failed to find image: ' . $value, 1);
                             break;
                         }
@@ -169,5 +166,17 @@ class Categories extends ComponentAbstract
                 $this->createOrUpdateCategory($category, $categoryValues['categories']);
             }
         }
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    private function getStoreGroup($data)
+    {
+        if (isset($data['store_group']) === true) {
+            return $data['store_group'];
+        }
+        return 'Main Website Store';
     }
 }

@@ -10,7 +10,7 @@ use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class ApiIntegrations extends YamlComponentAbstract
+class ApiIntegrations extends ComponentAbstract
 {
     protected $alias = 'apiintegrations';
     protected $name = 'Api Integrations';

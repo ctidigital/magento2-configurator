@@ -18,7 +18,7 @@ use Magento\Store\Model\StoreManagerInterface;
  *
  * @package CtiDigital\Configurator\Model\Component
  */
-class Pages extends YamlComponentAbstract
+class Pages extends ComponentAbstract
 {
     protected $alias = 'pages';
     protected $name = 'Pages';

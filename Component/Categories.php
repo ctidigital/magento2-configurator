@@ -13,6 +13,7 @@ class Categories extends ComponentAbstract
     protected $name = 'Categories';
     protected $description = 'Component to import categories.';
     protected $groupFactory;
+    protected $dirList;
     protected $category;
     private $mainAttributes = [
         'name',

@@ -32,7 +32,7 @@ class ProductLinks extends ComponentAbstract
         ProductRepositoryInterface $productRepository,
         ProductLinkInterfaceFactory $productLinkFactory
     ) {
-        parent::__construct($log, $objectManager);
+        parent::__construct($log, $objectManager, $json);
         $this->productRepository = $productRepository;
         $this->productLinkFactory = $productLinkFactory;
     }

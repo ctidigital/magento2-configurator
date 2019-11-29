@@ -54,7 +54,6 @@ class Categories extends ComponentAbstract
                         $this->log->logInfo(sprintf('Updating categories for "%s"', $group));
                         $this->createOrUpdateCategory($category, $store['categories']);
                     }
-
                 } catch (ComponentException $e) {
                     $this->log->logError($e->getMessage());
                 }

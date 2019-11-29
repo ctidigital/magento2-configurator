@@ -134,6 +134,18 @@ abstract class ComponentAbstract
 
     /**
      * @param $source
+     * @return array|bool|false|float|int|mixed|string|null
+     * @throws \Exception
+     */
+    private function getData($source)
+    {
+        return ($this->isSourceRemote($source) === true) ?
+            $this->getRemoteData($source) :
+            file_get_contents(BP . '/' . $source);
+    }
+
+    /**
+     * @param $source
      * @return array|bool|float|int|mixed|string|null
      * @throws \Exception
      */
@@ -176,17 +188,15 @@ abstract class ComponentAbstract
     protected function parseData($source = null)
     {
         $ext = $this->getExtension($source);
-        if ($this->isSourceRemote($source)) {
-            $source = $this->getRemoteData($source);
-        }
+        $sourceData = $this->getData($source);
         if ($ext === self::SOURCE_YAML) {
-            return $this->parseYamlData($source);
+            return $this->parseYamlData($sourceData);
         }
         if ($ext === self::SOURCE_CSV) {
-            return $this->parseCsvData($source);
+            return $this->parseCsvData($sourceData);
         }
         if ($ext === self::SOURCE_JSON) {
-            return $this->parseJsonData($source);
+            return $this->parseJsonData($sourceData);
         }
     }
 
@@ -217,10 +227,7 @@ abstract class ComponentAbstract
      */
     private function parseYamlData($source)
     {
-        $path = BP . '/' . $source;
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $data = file_get_contents($path);
-        return (new Yaml())->parse($data);
+        return (new Yaml())->parse($source);
     }
 
     /**

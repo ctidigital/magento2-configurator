@@ -237,10 +237,18 @@ abstract class ComponentAbstract
      */
     private function parseCsvData($source)
     {
-        $file = new File();
-        $parser = new Csv($file);
-
-        return $parser->getData($source);
+        $lines = explode("\n", $source);
+        $headerRow = str_getcsv(array_shift($lines));
+        $csvData = [$headerRow];
+        foreach ($lines as $line) {
+            $csvLine = str_getcsv($line);
+            $csvRow = [];
+            foreach ($headerRow as $key => $column) {
+                $csvRow[$key] = (array_key_exists($key, $csvLine) === true) ? $csvLine[$key] : '';
+            }
+            $csvData[] = $csvRow;
+        }
+        return $csvData;
     }
 
     /**

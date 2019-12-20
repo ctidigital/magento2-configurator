@@ -28,6 +28,11 @@ abstract class ComponentAbstract
     protected $description = 'Unknown Component';
 
     /**
+     * @var string
+     */
+    private $sourceFileType;
+
+    /**
      * @var Json
      */
     protected $json;
@@ -187,7 +192,7 @@ abstract class ComponentAbstract
      */
     protected function parseData($source = null)
     {
-        $ext = $this->getExtension($source);
+        $ext = ($this->getSourceFileType() !== null) ? $this->getSourceFileType() : $this->getExtension($source);
         $sourceData = $this->getData($source);
         if ($ext === self::SOURCE_YAML) {
             return $this->parseYamlData($sourceData);
@@ -258,6 +263,25 @@ abstract class ComponentAbstract
     private function parseJsonData($source)
     {
         return $jsonData = $this->json->unserialize($source);
+    }
+
+    /**
+     * @param $type
+     */
+    public function setSourceFileType($type)
+    {
+        if ($type !== self::SOURCE_JSON && $type !== self::SOURCE_CSV && $type !== self::SOURCE_YAML) {
+            throw new ComponentException(sprintf('The source file type %s is not valid.', $type));
+        }
+        $this->sourceFileType = $type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceFileType()
+    {
+        return $this->sourceFileType;
     }
 
     /**

@@ -1,0 +1,11 @@
+order_statuses:
+  - state: processing
+    statuses:
+      - code: processing_custom1
+        name: Processing Custom 1
+      - code: processing_custom2
+        name: Processing Custom 2
+  - state: new
+    statuses:
+      - code: new_custom1
+        name: New Custom 1

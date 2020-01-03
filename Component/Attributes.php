@@ -76,12 +76,12 @@ class Attributes extends YamlComponentAbstract
     protected $entityTypeId = Product::ENTITY;
 
     /**
-     * @var bool 
+     * @var bool
      */
     protected $updateAttribute = true;
 
     /**
-     * @var bool 
+     * @var bool
      */
     protected $attributeExists = false;
 

@@ -49,11 +49,11 @@ class SqlSplitProcessor
      *
      * return void
      */
-    public function process($name, $fileContent)
+    public function process($name, $filePath)
     {
         $this->log->logInfo("- Processing file '$name'");
 
-        $queries = $this->extractQueriesFromFile($fileContent);
+        $queries = $this->extractQueriesFromFile($filePath);
 
         $totalSqlCnt = count($queries);
         $cnt = 1;
@@ -82,14 +82,44 @@ class SqlSplitProcessor
     }
 
     /**
-     * Split file content string into separate queries
+     * Split file content string into separate queries, allowing for
+     * multi-line queries using preg_match
      *
      * @param string $fileContent
      *
      * @return array
      */
-    private function extractQueriesFromFile($fileContent)
+    private function extractQueriesFromFile($filePath, $delimiter = ';')
     {
-        return preg_split("/\\r\\n|\\r|\\n/", $fileContent, -1, PREG_SPLIT_NO_EMPTY);
+        $queries = [];
+        $file = fopen($filePath, 'r');
+        if (is_resource($file) === true)
+        {
+            $query = [];
+            while (feof($file) === false)
+            {
+                $query[] = fgets($file);
+
+                if (preg_match('~' . preg_quote($delimiter, '~') . '\s*$~iS', end($query)) === 1)
+                {
+                    $query = trim(implode('', $query));
+
+                    $queries[] = $query;
+
+                    while (ob_get_level() > 0)
+                    {
+                        ob_end_flush();
+                    }
+                    flush();
+                }
+
+                if (is_string($query) === true)
+                {
+                    $query = [];
+                }
+            }
+        }
+        fclose($file);
+        return $queries;
     }
 }

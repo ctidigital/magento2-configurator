@@ -179,6 +179,7 @@ class Products extends CsvComponentAbstract
             $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($productsArray);
         } catch (\Exception $e) {
+            $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());
@@ -385,6 +386,7 @@ class Products extends CsvComponentAbstract
      */
     private function spotHtmlTags($string, $tagname)
     {
+        $matches = [];
         $pattern = "/<$tagname?.*>(.*)<\/$tagname>/";
         preg_match($pattern, $string, $matches);
         return count($matches);

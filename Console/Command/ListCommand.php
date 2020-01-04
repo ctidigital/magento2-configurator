@@ -26,7 +26,7 @@ class ListCommand extends Command
     /**
      * @var ObjectManagerInterface
      */
-    private $objectManagerInterface;
+    private $objectManager;
 
     public function __construct(
         ConfiguratorAdapterInterface $configuratorAdapter,
@@ -34,7 +34,7 @@ class ListCommand extends Command
         ObjectManagerInterface $objectManager
     ) {
         parent::__construct();
-        $this->objectManagerInterface = $objectManager;
+        $this->objectManager = $objectManager;
         $this->configuratorAdapter = $configuratorAdapter;
         $this->configInterface = $config;
     }
@@ -57,7 +57,7 @@ class ListCommand extends Command
             $count = 1;
             foreach ($this->configInterface->getAllComponents() as $component) {
                 /* @var \CtiDigital\Configurator\Component\ComponentAbstract $componentClass */
-                $componentClass = $this->objectManagerInterface->create($component['class']);
+                $componentClass = $this->objectManager->create($component['class']);
                 $comment =
                     str_pad($count.') ', 4)
                     . str_pad($componentClass->getComponentAlias(), 20)

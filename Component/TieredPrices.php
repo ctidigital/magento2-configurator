@@ -119,6 +119,7 @@ class TieredPrices extends CsvComponentAbstract
             $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($pricesArray);
         } catch (\Exception $e) {
+            $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());

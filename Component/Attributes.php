@@ -2,21 +2,20 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Class Attributes
  * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class Attributes extends ComponentAbstract
+class Attributes implements ComponentInterface
 {
 
     protected $alias = 'attributes';
@@ -37,6 +36,11 @@ class Attributes extends ComponentAbstract
      * @var AttributeRepository
      */
     protected $attributeRepository;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
 
     /**
      * @var array
@@ -86,22 +90,26 @@ class Attributes extends ComponentAbstract
      */
     protected $attributeExists = false;
 
+    /**
+     * Attributes constructor.
+     * @param EavSetup $eavSetup
+     * @param AttributeRepositoryInterface $attributeRepository
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         EavSetup $eavSetup,
-        AttributeRepositoryInterface $attributeRepository
+        AttributeRepositoryInterface $attributeRepository,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
         $this->eavSetup = $eavSetup;
         $this->attributeRepository = $attributeRepository;
+        $this->log = $log;
     }
 
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    public function execute($attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['attributes'] as $attributeCode => $attributeConfiguration) {

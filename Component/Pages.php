@@ -2,13 +2,12 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -18,7 +17,7 @@ use Magento\Store\Model\StoreManagerInterface;
  *
  * @package CtiDigital\Configurator\Model\Component
  */
-class Pages extends ComponentAbstract
+class Pages implements ComponentInterface
 {
     protected $alias = 'pages';
     protected $name = 'Pages';
@@ -41,29 +40,28 @@ class Pages extends ComponentAbstract
     private $storeRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * Pages constructor.
-     *
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param PageRepositoryInterface $pageRepository
      * @param PageInterfaceFactory $pageFactory
      * @param StoreRepositoryInterface $storeRepository
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         PageRepositoryInterface $pageRepository,
         PageInterfaceFactory $pageFactory,
-        StoreRepositoryInterface $storeRepository
+        StoreRepositoryInterface $storeRepository,
+        LoggerInterface $log
     ) {
         $this->pageFactory = $pageFactory;
         $this->pageRepository = $pageRepository;
         $this->storeRepository = $storeRepository;
-
-        parent::__construct($log, $objectManager, $json);
+        $this->log = $log;
     }
-
 
     /**
      * Loop through the data array and process page data
@@ -71,7 +69,7 @@ class Pages extends ComponentAbstract
      * @param $data
      * @return void
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             foreach ($data as $identifier => $data) {

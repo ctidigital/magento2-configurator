@@ -2,19 +2,39 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\Webapi\Exception;
-use Symfony\Component\Yaml\Yaml;
+use Magento\Catalog\Model\CategoryFactory;
+use Magento\Store\Model\GroupFactory;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
-class Categories extends ComponentAbstract
+class Categories implements ComponentInterface
 {
     protected $alias = 'categories';
     protected $name = 'Categories';
     protected $description = 'Component to import categories.';
-    protected $groupFactory;
-    protected $dirList;
-    protected $category;
+
+    /**
+     * @var GroupFactory
+     */
+    private $groupFactory;
+
+    /**
+     * @var DirectoryList
+     */
+    private $dirList;
+
+    /**
+     * @var CategoryFactory
+     */
+    private $category;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
     private $mainAttributes = [
         'name',
         'is_active',
@@ -23,21 +43,26 @@ class Categories extends ComponentAbstract
         'description'
     ];
 
+    /**
+     * Categories constructor.
+     * @param CategoryFactory $category
+     * @param GroupFactory $groupFactory
+     * @param DirectoryList $dirList
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        \CtiDigital\Configurator\Api\LoggerInterface $log,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        Json $json,
-        \Magento\Catalog\Model\CategoryFactory $category,
-        \Magento\Store\Model\GroupFactory $groupFactory,
-        \Magento\Framework\App\Filesystem\DirectoryList $dirList
+        CategoryFactory $category,
+        GroupFactory $groupFactory,
+        DirectoryList $dirList,
+        LoggerInterface $log
     ) {
         $this->category = $category;
         $this->groupFactory = $groupFactory;
         $this->dirList = $dirList;
-        parent::__construct($log, $objectManager, $json);
+        $this->log = $log;
     }
 
-    public function processData($data = null)
+    public function execute($data = null)
     {
         if (isset($data['categories'])) {
             foreach ($data['categories'] as $store) {

@@ -11,7 +11,6 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="configurator" xsi:type="object">CtiDigital\Configurator\Console\Command\ConfiguratorCommand</item>
                 <item name="configurator:list" xsi:type="object">CtiDigital\Configurator\Console\Command\ListCommand</item>
                 <item name="configurator:run" xsi:type="object">CtiDigital\Configurator\Console\Command\RunCommand</item>
             </argument>

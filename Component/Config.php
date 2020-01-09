@@ -2,18 +2,18 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\WebsiteFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection;
 use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory;
-use Symfony\Component\Yaml\Yaml;
-use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Config\Model\ResourceModel\Config as ConfigResource;
+use Magento\Framework\App\Config as ScopeConfig;
 
-class Config extends ComponentAbstract
+class Config implements ComponentInterface
 {
     const PATH_THEME_ID = 'design/theme/theme_id';
 
@@ -22,12 +22,12 @@ class Config extends ComponentAbstract
     protected $description = 'Component to set the store/system configuration values';
 
     /**
-     * @var \Magento\Config\Model\ResourceModel\Config
+     * @var ConfigResource
      */
     protected $configResource;
 
     /**
-     * @var \Magento\Framework\App\Config
+     * @var ScopeConfig
      */
     protected $scopeConfig;
 
@@ -42,32 +42,36 @@ class Config extends ComponentAbstract
     protected $encryptor;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * Config constructor.
-     *
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
+     * @param ConfigResource $configResource
+     * @param ScopeConfig $scopeConfig
      * @param CollectionFactory $collectionFactory
+     * @param EncryptorInterface $encryptor
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
+        ConfigResource $configResource,
+        ScopeConfig $scopeConfig,
         CollectionFactory $collectionFactory,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
-
-        $this->configResource = $this->objectManager->create(\Magento\Config\Model\ResourceModel\Config::class);
-        $this->scopeConfig = $this->objectManager->create(\Magento\Framework\App\Config::class);
+        $this->configResource = $configResource;
+        $this->scopeConfig = $scopeConfig;
         $this->collectionFactory = $collectionFactory;
         $this->encryptor = $encryptor;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             $validScopes = array('global', 'websites', 'stores');

@@ -2,36 +2,43 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\ObjectManagerInterface;
 
-class Media extends ComponentAbstract
+class Media implements ComponentInterface
 {
-
     const FULL_ACCESS = 0777;
 
     protected $alias = 'media';
     protected $name = 'Media';
     protected $description = 'Component to download/maintain media.';
+
+    /**
+     * @var DirectoryList
+     */
     protected $directoryList;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
-        DirectoryList $directoryList
+        DirectoryList $directoryList,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
         $this->directoryList = $directoryList;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             // Load root media path

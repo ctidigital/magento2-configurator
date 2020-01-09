@@ -3,8 +3,6 @@
 namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Exception\ConfiguratorAdapterException;
-use CtiDigital\Configurator\Api\ConfigInterface;
-use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
 use CtiDigital\Configurator\Model\Processor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -15,28 +13,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RunCommand extends Command
 {
     /**
-     * @var ConfiguratorAdapterInterface
-     */
-    private $configuratorAdapter;
-
-    /**
-     * @var ConfigInterface|CtiDigital\Configurator\Console\Command\RunCommand
-     */
-    private $configInterface;
-
-    /**
      * @var Processor
      */
     private $processor;
 
     public function __construct(
-        ConfiguratorAdapterInterface $configuratorAdapter,
-        ConfigInterface $config,
         Processor $processor
     ) {
         parent::__construct();
-        $this->configuratorAdapter = $configuratorAdapter;
-        $this->configInterface = $config;
         $this->processor = $processor;
     }
 

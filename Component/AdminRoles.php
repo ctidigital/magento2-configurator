@@ -1,6 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
@@ -10,11 +11,15 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class AdminRoles extends ComponentAbstract
+class AdminRoles implements ComponentInterface
 {
     protected $alias = 'adminroles';
     protected $name = 'Admin Roles';
     protected $description = 'Component to create Admin Roles';
+    /**
+     * @var LoggerInterface
+     */
+    protected $log;
 
     /**
      * RoleFactory
@@ -32,20 +37,13 @@ class AdminRoles extends ComponentAbstract
 
     /**
      * AdminRoles constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param RoleFactory $roleFactory
      * @param RulesFactory $rulesFactory
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         RoleFactory $roleFactory,
         RulesFactory $rulesFactory
     ) {
-        parent::__construct($log, $objectManager, $json);
-
         $this->roleFactory = $roleFactory;
         $this->rulesFactory = $rulesFactory;
     }
@@ -53,9 +51,8 @@ class AdminRoles extends ComponentAbstract
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    protected function execute($data = null)
     {
-
         if (isset($data['adminroles'])) {
             foreach ($data['adminroles'] as $role) {
                 try {
@@ -67,6 +64,15 @@ class AdminRoles extends ComponentAbstract
                 }
             }
         }
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->log = $logger;
+        return $this;
     }
 
     /**

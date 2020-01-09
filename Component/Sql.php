@@ -7,17 +7,16 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Class Sql
  */
-class Sql extends ComponentAbstract
+class Sql implements ComponentInterface
 {
     /**
      * @var string
@@ -40,21 +39,21 @@ class Sql extends ComponentAbstract
     private $processor;
 
     /**
-     * {@inheritdoc}
-     *
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * Sql constructor.
+     * @param SqlSplitProcessor $processor
      * @param LoggerInterface $log
-     * @param ResourceConnection $resource
-     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
-        SqlSplitProcessor $processor
+        SqlSplitProcessor $processor,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
-
         $this->processor = $processor;
+        $this->log = $log;
     }
 
     /**
@@ -64,7 +63,7 @@ class Sql extends ComponentAbstract
      *
      * @return void
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         if (!isset($data['sql'])) {
             return;

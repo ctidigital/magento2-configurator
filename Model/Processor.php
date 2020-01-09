@@ -2,6 +2,7 @@
 
 namespace CtiDigital\Configurator\Model;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\ComponentAbstract;
 use CtiDigital\Configurator\Exception\ComponentException;
@@ -10,9 +11,14 @@ use CtiDigital\Configurator\Component\Factory\ComponentFactoryInterface;
 use Symfony\Component\Yaml\Parser;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
+use Symfony\Component\Yaml\Yaml;
 
 class Processor
 {
+    const SOURCE_YAML = 'yaml';
+    const SOURCE_CSV = 'csv';
+    const SOURCE_JSON = 'json';
+
     /**
      * @var string
      */
@@ -176,14 +182,15 @@ class Processor
 
         $componentClass = $this->configInterface->getComponentByName($componentAlias);
 
-        /* @var ComponentAbstract $component */
+        /* @var ComponentInterface $component */
         $component = $this->componentFactory->create($componentClass);
-        if (isset($componentConfig['type']) === true) {
-            $component->setSourceFileType($componentConfig['type']);
-        }
+
+        $sourceType = (isset($componentConfig['type']) === true) ? $componentConfig['type'] : null;
+
         if (isset($componentConfig['sources'])) {
             foreach ($componentConfig['sources'] as $source) {
-                $component->setSource($source)->process();
+                $sourceData = $this->parseData($source, $sourceType);
+                $component->execute($sourceData);
             }
         }
 
@@ -191,7 +198,7 @@ class Processor
         if (!isset($componentConfig['env'])) {
             // If not, continue to next component
             $this->log->logComment(
-                sprintf("No environment node for '%s' component", $component->getComponentName())
+                sprintf("No environment node for '%s' component", $componentAlias)
             );
             return;
         }
@@ -203,7 +210,7 @@ class Processor
                 sprintf(
                     "No '%s' environment specific node for '%s' component",
                     $this->getEnvironment(),
-                    $component->getComponentName()
+                    $componentAlias
                 )
             );
             return;
@@ -216,7 +223,7 @@ class Processor
                 sprintf(
                     "No '%s' environment specific sources for '%s' component",
                     $this->getEnvironment(),
-                    $component->getComponentName()
+                    $componentAlias
                 )
             );
             return;
@@ -224,7 +231,9 @@ class Processor
 
         // If there are sources for the environment, process them
         foreach ((array) $componentConfig['env'][$this->getEnvironment()]['sources'] as $source) {
-            $component->setSource($source)->process();
+            $sourceType = (isset($componentConfig['type']) === true) ? $componentConfig['type'] : null;
+            $sourceData = $this->parseData($source, $sourceType);
+            $component->execute($sourceData);
         }
     }
 
@@ -269,7 +278,7 @@ class Processor
 
         $this->log->logComment(sprintf("The %s component has %s class name.", $componentName, $componentClass));
         $component = $this->componentFactory->create($componentClass);
-        if ($component instanceof ComponentAbstract) {
+        if ($component instanceof ComponentInterface) {
             return true;
         }
         return false;
@@ -329,5 +338,136 @@ class Processor
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
+    }
+
+    private function parseData($source, $sourceType)
+    {
+        if ($this->canParseAndProcess($source) === true) {
+            $ext = ($sourceType !== null) ? $sourceType : $this->getExtension($source);
+            $sourceData = $this->getData($source);
+            if ($ext === self::SOURCE_YAML) {
+                return $this->parseYamlData($sourceData);
+            }
+            if ($ext === self::SOURCE_CSV) {
+                return $this->parseCsvData($sourceData);
+            }
+            if ($ext === self::SOURCE_JSON) {
+                return $this->parseJsonData($sourceData);
+            }
+        }
+    }
+
+    /**
+     * This method is used to check whether the data from file or a third party
+     * can be parsed and processed. (e.g. does a YAML file exist for it?)
+     *
+     * This will determine whether the component is enabled or disabled.
+     *
+     * @return bool
+     */
+    private function canParseAndProcess($source)
+    {
+        $path = BP . '/' . $source;
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        if ($this->isSourceRemote($source) === false && !file_exists($path)) {
+            throw new ComponentException(
+                sprintf("Could not find file in path %s", $path)
+            );
+        }
+        return true;
+    }
+
+    /**
+     * @return true
+     */
+    public function isSourceRemote($source)
+    {
+        return (filter_var($source, FILTER_VALIDATE_URL) !== false) ? true : false;
+    }
+
+    /**
+     * @param $source
+     * @return string
+     * @throws \Exception
+     */
+    private function getExtension($source)
+    {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        if (strtolower($extension) === 'yaml') {
+            return self::SOURCE_YAML;
+        }
+        if (strtolower($extension) === 'csv') {
+            return self::SOURCE_CSV;
+        }
+        if (strtolower($extension) === 'json') {
+            return self::SOURCE_JSON;
+        }
+        throw new ComponentException(sprintf('Source "%s" does not have a valid file extension.', $source));
+    }
+
+    /**
+     * @param $source
+     * @return array|bool|false|float|int|mixed|string|null
+     * @throws \Exception
+     */
+    private function getData($source)
+    {
+        return ($this->isSourceRemote($source) === true) ?
+            $this->getRemoteData($source) :
+            file_get_contents(BP . '/' . $source);
+    }
+
+    /**
+     * @param $source
+     * @return array|bool|float|int|mixed|string|null
+     * @throws \Exception
+     */
+    public function getRemoteData($source)
+    {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $remoteFile = file_get_contents($source, false, $streamContext);
+        return $remoteFile;
+    }
+
+    /**
+     * @param $source
+     * @return mixed
+     */
+    private function parseYamlData($source)
+    {
+        return (new Yaml())->parse($source);
+    }
+
+    /**
+     * @param $source
+     * @return array
+     * @throws \Exception
+     */
+    private function parseCsvData($source)
+    {
+        $lines = explode("\n", $source);
+        $headerRow = str_getcsv(array_shift($lines));
+        $csvData = [$headerRow];
+        foreach ($lines as $line) {
+            $csvLine = str_getcsv($line);
+            $csvRow = [];
+            foreach ($headerRow as $key => $column) {
+                $csvRow[$key] = (array_key_exists($key, $csvLine) === true) ? $csvLine[$key] : '';
+            }
+            $csvData[] = $csvRow;
+        }
+        return $csvData;
+    }
+
+    /**
+     * @param $source
+     * @return array|bool|float|int|mixed|string|null
+     */
+    private function parseJsonData($source)
+    {
+        return $jsonData = json_decode($source);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Model\Store;
 
-class Blocks extends ComponentAbstract
+class Blocks implements ComponentInterface
 {
 
     protected $alias = 'blocks';
@@ -31,27 +31,30 @@ class Blocks extends ComponentAbstract
     protected $searchBuilder;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * Blocks constructor.
      * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param BlockInterfaceFactory $blockFactory
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
-        BlockInterfaceFactory $blockFactory
+        BlockInterfaceFactory $blockFactory,
+        Store $store,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
-
         $this->blockFactory = $blockFactory;
-        $this->storeManager = $this->objectManager->create(\Magento\Store\Model\Store::class);
+        $this->storeManager = $store;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             foreach ($data as $identifier => $data) {

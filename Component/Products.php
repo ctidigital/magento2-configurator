@@ -1,9 +1,8 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\Image;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
@@ -16,7 +15,7 @@ use CtiDigital\Configurator\Exception\ComponentException;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Products extends ComponentAbstract
+class Products implements ComponentInterface
 {
     const SKU_COLUMN_HEADING = 'sku';
     const QTY_COLUMN_HEADING = 'qty';
@@ -77,6 +76,11 @@ class Products extends ComponentAbstract
     protected $attributeOption;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var []
      */
     private $successProducts = [];
@@ -93,28 +97,24 @@ class Products extends ComponentAbstract
 
     /**
      * Products constructor.
-     *
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param ImporterFactory $importerFactory
      * @param ProductFactory $productFactory
      * @param Image $image
      * @param AttributeOption $attributeOption
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
         Image $image,
-        AttributeOption $attributeOption
+        AttributeOption $attributeOption,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
         $this->image = $image;
         $this->attributeOption = $attributeOption;
+        $this->log = $log;
     }
 
     /**
@@ -123,7 +123,7 @@ class Products extends ComponentAbstract
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
         if (!isset($data[0])) {

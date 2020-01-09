@@ -2,6 +2,7 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Exception\ComponentException;
@@ -19,7 +20,7 @@ use Magento\Customer\Model\ResourceModel\Attribute;
  * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class CustomerAttributes extends Attributes
+class CustomerAttributes implements ComponentInterface
 {
     const DEFAULT_ATTRIBUTE_SET_ID = 1;
     const DEFAULT_ATTRIBUTE_GROUP_ID = 1;
@@ -50,6 +51,11 @@ class CustomerAttributes extends Attributes
     protected $attributeResource;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var array
      */
     protected $defaultForms = [
@@ -61,25 +67,31 @@ class CustomerAttributes extends Attributes
         ]
     ];
 
+    /**
+     * CustomerAttributes constructor.
+     * @param EavSetup $eavSetup
+     * @param AttributeRepository $attributeRepository
+     * @param CustomerSetupFactory $customerSetupFactory
+     * @param Attribute $attributeResource
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         EavSetup $eavSetup,
         AttributeRepository $attributeRepository,
         CustomerSetupFactory $customerSetupFactory,
-        Attribute $attributeResource
+        Attribute $attributeResource,
+        LoggerInterface $log
     ) {
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
         $this->customerSetup = $customerSetupFactory;
         $this->attributeResource = $attributeResource;
-        parent::__construct($log, $objectManager, $json, $eavSetup, $attributeRepository);
+        $this->log = $log;
     }
 
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    public function execute($attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['customer_attributes'] as $attributeCode => $attributeConfiguration) {

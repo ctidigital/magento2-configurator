@@ -7,6 +7,7 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\ComponentProcessorInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
@@ -16,7 +17,7 @@ use Magento\Framework\ObjectManagerInterface;
 /**
  * Class CatalogPriceRules
  */
-class CatalogPriceRules extends ComponentAbstract
+class CatalogPriceRules implements ComponentInterface
 {
     /**
      * @var string
@@ -39,6 +40,11 @@ class CatalogPriceRules extends ComponentAbstract
     private $processor;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * CatalogPriceRules constructor.
      *
      * @param LoggerInterface $log
@@ -46,14 +52,11 @@ class CatalogPriceRules extends ComponentAbstract
      * @param ComponentProcessorInterface $processor
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
-        ComponentProcessorInterface $processor
+        ComponentProcessorInterface $processor,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
-
         $this->processor = $processor;
+        $this->log = $log;
     }
 
     /**
@@ -63,7 +66,7 @@ class CatalogPriceRules extends ComponentAbstract
      *
      * @return void
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         $rules = $data['rules'] ?: [];
         $config = $data['config'] ?: [];

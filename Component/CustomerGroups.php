@@ -1,15 +1,13 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use Symfony\Component\Yaml\Yaml;
-use Magento\Framework\Serialize\Serializer\Json;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Customer\Model\GroupFactory;
 use Magento\Tax\Model\ClassModelFactory;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
-class CustomerGroups extends ComponentAbstract
+class CustomerGroups implements ComponentInterface
 {
     protected $alias = 'customergroups';
     protected $name = 'Customer Groups';
@@ -25,6 +23,10 @@ class CustomerGroups extends ComponentAbstract
      */
     protected $classModelFactory;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
 
     /**
      * AdminRoles constructor.
@@ -34,22 +36,19 @@ class CustomerGroups extends ComponentAbstract
      * @param ClassModelFactory $classModelFactory
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         GroupFactory $groupFactory,
-        ClassModelFactory $classModelFactory
+        ClassModelFactory $classModelFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
-
         $this->groupFactory = $groupFactory;
         $this->classModelFactory = $classModelFactory;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         foreach ($data['customergroups'] as $taxClass) {
             $taxClassName = $taxClass['taxclass'];

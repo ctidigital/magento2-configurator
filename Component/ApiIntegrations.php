@@ -1,6 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Integration\Model\IntegrationFactory;
@@ -10,7 +11,7 @@ use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class ApiIntegrations extends ComponentAbstract
+class ApiIntegrations implements ComponentInterface
 {
     protected $alias = 'apiintegrations';
     protected $name = 'Api Integrations';
@@ -37,35 +38,36 @@ class ApiIntegrations extends ComponentAbstract
     protected $tokenFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $log;
+
+    /**
      * ApiIntegrations constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param IntegrationFactory $integrationFactory
      * @param IntegrationServiceInterface $integrationService
      * @param AuthorizationService $authorizationService
      * @param TokenFactory $tokenFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         IntegrationFactory $integrationFactory,
         IntegrationServiceInterface $integrationService,
         AuthorizationService $authorizationService,
-        TokenFactory $tokenFactory
+        TokenFactory $tokenFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
-
         $this->integrationFactory = $integrationFactory;
         $this->integrationService = $integrationService;
         $this->authorizationService = $authorizationService;
         $this->tokenFactory = $tokenFactory;
+        $this->log = $log;
     }
 
     /**
      * @param array $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         if (isset($data['apiintegrations'])) {
             foreach ($data['apiintegrations'] as $integrationData) {

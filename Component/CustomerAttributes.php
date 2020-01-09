@@ -100,6 +100,9 @@ class CustomerAttributes extends Attributes
      */
     protected function addAdditionalValues($attributeCode, $attributeConfiguration)
     {
+        if ($this->attributeExists) {
+            return;
+        }
         if (!isset($attributeConfiguration['used_in_forms']) ||
             !isset($attributeConfiguration['used_in_forms']['values'])) {
             $attributeConfiguration['used_in_forms'] = $this->defaultForms;

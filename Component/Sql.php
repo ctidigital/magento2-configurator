@@ -77,8 +77,7 @@ class Sql extends ComponentAbstract
                 $this->log->logError("{$path} does not exist. Skipping.");
                 continue;
             }
-            $fileContent = file_get_contents($path);
-            $this->processor->process($name, $fileContent);
+            $this->processor->process($name, $path);
         }
     }
 }

@@ -49,6 +49,7 @@ class Attributes extends ComponentAbstract
         'required' => 'is_required',
         'source' => 'source_model',
         'backend' => 'backend_model',
+        'frontend' => 'frontend_model',
         'searchable' => 'is_searchable',
         'global' => 'is_global',
         'filterable_in_search' => 'is_filterable_in_search',
@@ -74,6 +75,16 @@ class Attributes extends ComponentAbstract
      * @var string
      */
     protected $entityTypeId = Product::ENTITY;
+
+    /**
+     * @var bool
+     */
+    protected $updateAttribute = true;
+
+    /**
+     * @var bool
+     */
+    protected $attributeExists = false;
 
     public function __construct(
         LoggerInterface $log,
@@ -107,21 +118,24 @@ class Attributes extends ComponentAbstract
      */
     protected function processAttribute($attributeCode, array $attributeConfig)
     {
-        $updateAttribute = true;
-        $attributeExists = false;
+        $this->updateAttribute = true;
+        $this->attributeExists = false;
         $attributeArray = $this->eavSetup->getAttribute($this->entityTypeId, $attributeCode);
         if ($attributeArray && $attributeArray['attribute_id']) {
-            $attributeExists = true;
+            $this->attributeExists = true;
             $this->log->logComment(sprintf('Attribute %s exists. Checking for updates.', $attributeCode));
-            $updateAttribute = $this->checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig);
+            $this->updateAttribute = $this->checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig);
 
             if (isset($attributeConfig['option'])) {
                 $newAttributeOptions = $this->manageAttributeOptions($attributeCode, $attributeConfig['option']);
+                if (!empty($newAttributeOptions)) {
+                    $this->updateAttribute = true;
+                }
                 $attributeConfig['option']['values'] = $newAttributeOptions;
             }
         }
 
-        if ($updateAttribute) {
+        if ($this->updateAttribute) {
             if (!array_key_exists('user_defined', $attributeConfig)) {
                 $attributeConfig['user_defined'] = 1;
             }
@@ -136,7 +150,7 @@ class Attributes extends ComponentAbstract
                 $attributeConfig
             );
 
-            if ($attributeExists) {
+            if ($this->attributeExists) {
                 $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
                 return;
             }

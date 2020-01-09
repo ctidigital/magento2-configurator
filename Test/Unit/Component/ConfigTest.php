@@ -17,6 +17,7 @@ class ConfigTest extends ComponentAbstractTestCase
         $this->component = new Config(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $collectionFactory,
             $encrypterInterface
         );

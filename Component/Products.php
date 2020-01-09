@@ -31,7 +31,8 @@ class Products extends ComponentAbstract
         'image',
         'small_image',
         'thumbnail',
-        'media_image'
+        'media_image',
+        'additional_images'
     ];
 
     /**
@@ -131,6 +132,7 @@ class Products extends ComponentAbstract
             );
         }
         $attributeKeys = $this->getAttributesFromCsv($data);
+        $this->image->setSeparator(self::SEPARATOR);
         $this->skuColumn = $this->getSkuColumnIndex($attributeKeys);
         $totalColumnCount = count($attributeKeys);
         unset($data[0]);
@@ -181,6 +183,7 @@ class Products extends ComponentAbstract
             $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($productsArray);
         } catch (\Exception $e) {
+            $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());

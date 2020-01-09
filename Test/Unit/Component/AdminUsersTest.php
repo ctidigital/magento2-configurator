@@ -21,6 +21,7 @@ class AdminUsersTest extends ComponentAbstractTestCase
         $this->component = new AdminUsers(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $userFactory,
             $rulesFactory
         );

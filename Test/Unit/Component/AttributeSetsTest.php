@@ -26,6 +26,7 @@ class AttributeSetsTest extends ComponentAbstractTestCase
         $this->component = new AttributeSets(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $eavSetup,
             $attributeSetsRepositoryInterface
         );

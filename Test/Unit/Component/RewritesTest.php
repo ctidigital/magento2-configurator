@@ -19,6 +19,7 @@ class RewritesTest extends ComponentAbstractTestCase
         $this->component = new Rewrites(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $urlPersistInterface,
             $urlRewriteFactory
         );

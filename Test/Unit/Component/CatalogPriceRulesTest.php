@@ -33,6 +33,7 @@ class CatalogPriceRulesTest extends ComponentAbstractTestCase
         $this->component = new CatalogPriceRules(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $this->mockComponentProcessor
         );
 

@@ -30,6 +30,7 @@ class WebsitesTest extends ComponentAbstractTestCase
         $this->component = new Websites(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $this->indexerFactory,
             $this->eventManager,
             $this->websiteFactory,

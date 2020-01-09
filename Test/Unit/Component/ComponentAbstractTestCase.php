@@ -4,6 +4,7 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\ComponentAbstract;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
@@ -24,6 +25,9 @@ abstract class ComponentAbstractTestCase extends \PHPUnit\Framework\TestCase
     /* @var $logInterface LoggerInterface */
     protected $logInterface;
 
+    /* @var $json Json */
+    protected $json;
+
     /* @var $testObjectManager \Magento\Framework\TestFramework\Unit\Helper\ObjectManager */
     protected $testObjectManager;
 
@@ -39,6 +43,9 @@ abstract class ComponentAbstractTestCase extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->logInterface = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->json = $this->getMockBuilder(Json::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->componentSetUp();

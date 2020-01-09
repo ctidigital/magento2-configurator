@@ -21,6 +21,7 @@ class AdminRolesTest extends ComponentAbstractTestCase
         $this->component = new AdminRoles(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $roleFactory,
             $rulesFactory
         );

@@ -20,6 +20,7 @@ class CustomerGroupsTest extends ComponentAbstractTestCase
         $this->component = new CustomerGroups(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $groupFactory,
             $classModelFactory
         );

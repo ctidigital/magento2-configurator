@@ -15,7 +15,7 @@ class AttributesTest extends ComponentAbstractTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $attributeRepository = $this->getMockBuilder(AttributeRepositoryInterface::class)->getMock();
-        $this->component = new Attributes($this->logInterface, $this->objectManager, $eavSetup, $attributeRepository);
+        $this->component = new Attributes($this->logInterface, $this->objectManager, $this->json, $eavSetup, $attributeRepository);
         $this->className = Attributes::class;
     }
 }

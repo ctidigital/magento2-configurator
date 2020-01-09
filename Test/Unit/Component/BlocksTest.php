@@ -13,7 +13,7 @@ class BlocksTest extends ComponentAbstractTestCase
         $blockInterface = $this->getMockBuilder(BlockInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->component = new Blocks($this->logInterface, $this->objectManager, $blockInterface);
+        $this->component = new Blocks($this->logInterface, $this->objectManager, $this->json, $blockInterface);
         $this->className = Blocks::class;
     }
 }

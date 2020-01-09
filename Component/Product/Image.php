@@ -28,6 +28,11 @@ class Image
     protected $importerConfig;
 
     /**
+     * @var string
+     */
+    private $separator = ';';
+
+    /**
      * Image constructor.
      *
      * @param LoggerInterface $log
@@ -45,6 +50,22 @@ class Image
         $this->filesystem = $filesystem;
         $this->importerConfig = $importerConfig;
         $this->httpClientFactory = $httpClientFactory;
+    }
+
+    /**
+     * @param $separator
+     */
+    public function setSeparator($separator)
+    {
+        $this->separator = $separator;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSeparator()
+    {
+        return $this->separator;
     }
 
     /**
@@ -91,7 +112,12 @@ class Image
      */
     public function getFileName($url)
     {
-        return basename($url);
+        $imageName = basename($url);
+        // Remove any URL entities
+        $imageName = urldecode($imageName);
+        // Replace spaces with -
+        $imageName = preg_replace('/\s+/', '-', $imageName);
+        return $imageName;
     }
 
     /**
@@ -144,20 +170,28 @@ class Image
      */
     public function getImage($value)
     {
-        if ($this->isValueURL($value) === false) {
-            return $value;
+        $validImages = [];
+        $images = explode(',', $value);
+        foreach ($images as $image) {
+            if ($this->isValueURL($image) === false) {
+                $validImages[] = $image;
+                continue;
+            }
+            if ($this->localFileExists($image)) {
+                $validImages[] = $this->getFileName($image);
+                continue;
+            }
+            $this->log->logInfo(sprintf('Downloading image %s', $image));
+            $file = $this->downloadFile($image);
+            if (strlen($file) > 0) {
+                $fileName = $this->getFileName($image);
+                $fileContent = $this->saveFile($fileName, $file);
+                if ($fileContent !== '') {
+                    $validImages[] = $fileContent;
+                }
+            }
         }
-        if ($this->localFileExists($value)) {
-            return $this->getFileName($value);
-        }
-        $this->log->logInfo(sprintf('Downloading image %s', $value));
-        $file = $this->downloadFile($value);
-        if (strlen($file) > 0) {
-            $fileName = $this->getFileName($value);
-            $fileContent = $this->saveFile($fileName, $file);
-            return $fileContent;
-        }
-        return $value;
+        return implode($this->getSeparator(), $validImages);
     }
 
     /**

@@ -24,6 +24,7 @@ class WidgetsTest extends ComponentAbstractTestCase
         $this->component = new Widgets(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $widgetCollection,
             $storeFactory,
             $themeCollection

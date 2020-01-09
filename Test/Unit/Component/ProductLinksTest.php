@@ -17,6 +17,7 @@ class ProductLinksTest extends ComponentAbstractTestCase
         $this->component = new ProductLinks(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $productRepository,
             $productLinkFactory
         );

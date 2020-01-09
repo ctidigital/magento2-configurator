@@ -12,7 +12,7 @@ class MediaTest extends ComponentAbstractTestCase
         $directoryList = $this->getMockBuilder(\Magento\Framework\App\Filesystem\DirectoryList::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->component = new Media($this->logInterface, $this->objectManager, $directoryList);
+        $this->component = new Media($this->logInterface, $this->objectManager, $this->json, $directoryList);
         $this->className = Media::class;
     }
 }

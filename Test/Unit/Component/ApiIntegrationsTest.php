@@ -34,6 +34,7 @@ class ApiIntegrationsTest extends ComponentAbstractTestCase
         $this->component = new ApiIntegrations(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $integrationFactory,
             $integrationService,
             $authorizationService,

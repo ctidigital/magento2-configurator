@@ -23,6 +23,7 @@ class TaxRulesTest extends ComponentAbstractTestCase
         $this->component = new TaxRules(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $rateFactory,
             $classModelFactory,
             $ruleFactory

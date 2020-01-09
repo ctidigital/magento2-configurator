@@ -19,6 +19,7 @@ class ReviewRatingTest extends ComponentAbstractTestCase
         $this->component = new ReviewRating(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $ratingFactory,
             $storeRepository,
             $optionFactory,

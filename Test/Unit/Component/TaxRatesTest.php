@@ -15,6 +15,7 @@ class TaxRatesTest extends ComponentAbstractTestCase
         $this->component = new TaxRates(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $csvImportHandler
         );
 

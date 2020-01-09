@@ -17,6 +17,7 @@ class SqlTest extends ComponentAbstractTestCase
         $this->component = new Sql(
             $this->logInterface,
             $this->objectManager,
+            $this->json,
             $mockSqlSplitProc
         );
 

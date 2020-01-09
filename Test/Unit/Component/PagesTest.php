@@ -29,6 +29,7 @@ class PagesTest extends ComponentAbstractTestCase
             new Pages(
                 $this->logInterface,
                 $this->objectManager,
+                $this->json,
                 $pageRepository,
                 $pageFactory,
                 $storeRepository

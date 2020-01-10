@@ -2,8 +2,10 @@
 namespace CtiDigital\Configurator\Component\Product;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
+use FireGento\FastSimpleImport\Helper\Config;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Http\ZendClientFactory;
 
 class Image
 {
@@ -13,7 +15,7 @@ class Image
     protected $log;
 
     /**
-     * @var \Magento\Framework\Http\ZendClientFactory
+     * @var ZendClientFactory
      */
     protected $httpClientFactory;
 
@@ -23,7 +25,7 @@ class Image
     protected $filesystem;
 
     /**
-     * @var \FireGento\FastSimpleImport\Helper\Config
+     * @var Config
      */
     protected $importerConfig;
 
@@ -34,22 +36,21 @@ class Image
 
     /**
      * Image constructor.
-     *
-     * @param LoggerInterface $log
      * @param Filesystem $filesystem
-     * @param \FireGento\FastSimpleImport\Helper\Config $importerConfig
-     * @param \Magento\Framework\Http\ZendClientFactory $httpClientFactory
+     * @param Config $importerConfig
+     * @param ZendClientFactory $httpClientFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
         Filesystem $filesystem,
-        \FireGento\FastSimpleImport\Helper\Config $importerConfig,
-        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory
+        Config $importerConfig,
+        ZendClientFactory $httpClientFactory,
+        LoggerInterface $log
     ) {
-        $this->log = $log;
         $this->filesystem = $filesystem;
         $this->importerConfig = $importerConfig;
         $this->httpClientFactory = $httpClientFactory;
+        $this->log = $log;
     }
 
     /**

@@ -21,7 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RunCommandTest extends \PHPUnit\Framework\TestCase
 {
-
     /**
      * @var RunCommand
      */
@@ -36,11 +35,6 @@ class RunCommandTest extends \PHPUnit\Framework\TestCase
      * @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $mockOutput;
-
-    /**
-     * @var ConfiguratorAdapterInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $runCommandAdapter;
 
     /**
      * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -64,12 +58,6 @@ class RunCommandTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->runCommandAdapter = $this->getMockBuilder(ConfiguratorAdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configInterface = $this->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->componentFactory = $this->getMockBuilder(ComponentFactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -99,8 +87,6 @@ class RunCommandTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->command = new RunCommand(
-            $this->runCommandAdapter,
-            $this->configInterface,
             $this->processor
         );
 

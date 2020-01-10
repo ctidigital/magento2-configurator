@@ -25,6 +25,7 @@ class ComponentList implements ComponentListInterface
         if (array_key_exists($componentAlias, $this->components) === true) {
             return $this->components[$componentAlias];
         }
+        return false;
     }
 
     /**

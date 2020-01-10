@@ -63,11 +63,6 @@
         </arguments>
     </type>
 
-    <type name="CtiDigital\Configurator\Model\Processor">
-        <arguments>
-            <argument name="componentFactory" xsi:type="object">CtiDigital\Configurator\Component\Factory\ComponentFactory</argument>
-        </arguments>
-    </type>
     <type name="CtiDigital\Configurator\Component\CatalogPriceRules">
         <arguments>
             <argument name="processor" xsi:type="object">CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor</argument>

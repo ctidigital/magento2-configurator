@@ -6,7 +6,7 @@ interface ComponentListInterface
 {
     /**
      * @param $componentAlias
-     * @return ComponentInterface
+     * @return ComponentInterface|bool
      */
     public function getComponent($componentAlias);
 

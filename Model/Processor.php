@@ -4,11 +4,9 @@ namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\FileComponentInterface;
+use CtiDigital\Configurator\Api\ComponentListInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use CtiDigital\Configurator\Component\ComponentAbstract;
 use CtiDigital\Configurator\Exception\ComponentException;
-use CtiDigital\Configurator\Api\ConfigInterface;
-use CtiDigital\Configurator\Component\Factory\ComponentFactoryInterface;
 use Symfony\Component\Yaml\Parser;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
@@ -26,19 +24,14 @@ class Processor
     protected $environment;
 
     /**
-     * @var array
+     * @var []
      */
-    protected $components = array();
+    protected $components = [];
 
     /**
-     * @var ConfigInterface
+     * @var ComponentListInterface
      */
-    protected $configInterface;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $log;
+    protected $componentList;
 
     /**
      * @var State
@@ -46,28 +39,24 @@ class Processor
     protected $state;
 
     /**
-     * @var ComponentFactoryInterface
+     * @var LoggerInterface
      */
-    protected $componentFactory;
+    protected $log;
 
     /**
      * Processor constructor.
-     *
-     * @param ConfigInterface $configInterface
-     * @param ComponentFactoryInterface $componentFactory
-     * @param LoggerInterface $logging
+     * @param ComponentListInterface $componentList
      * @param State $state
+     * @param LoggerInterface $logging
      */
     public function __construct(
-        ConfigInterface $configInterface,
-        LoggerInterface $logging,
+        ComponentListInterface $componentList,
         State $state,
-        ComponentFactoryInterface $componentFactory
+        LoggerInterface $logging
     ) {
-        $this->log = $logging;
-        $this->configInterface = $configInterface;
+        $this->componentList = $componentList;
         $this->state = $state;
-        $this->componentFactory = $componentFactory;
+        $this->log = $logging;
     }
 
     public function getLogger()
@@ -181,10 +170,8 @@ class Processor
         $this->log->logComment(sprintf("| Loading component %s |", $componentAlias));
         $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));
 
-        $componentClass = $this->configInterface->getComponentByName($componentAlias);
-
         /* @var ComponentInterface $component */
-        $component = $this->componentFactory->create($componentClass);
+        $component = $this->componentList->getComponent($componentAlias);
 
         $sourceType = (isset($componentConfig['type']) === true) ? $componentConfig['type'] : null;
 
@@ -247,10 +234,12 @@ class Processor
     {
         // Read master yaml
         $masterPath = BP . '/app/etc/master.yaml';
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (!file_exists($masterPath)) {
             throw new ComponentException("Master YAML does not exist. Please create one in $masterPath");
         }
         $this->log->logComment(sprintf("Found Master YAML"));
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $yamlContents = file_get_contents($masterPath);
         $yaml = new Parser();
         $master = $yaml->parse($yamlContents);
@@ -272,15 +261,8 @@ class Processor
         if ($this->log->getLogLevel() > \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_NORMAL) {
             $this->log->logQuestion(sprintf("Does the %s component exist?", $componentName));
         }
-        $componentClass = $this->configInterface->getComponentByName($componentName);
+        $component = $this->componentList->getComponent($componentName);
 
-        if (!$componentClass) {
-            $this->log->logError(sprintf("The %s component has no class name.", $componentName));
-            return false;
-        }
-
-        $this->log->logComment(sprintf("The %s component has %s class name.", $componentName, $componentClass));
-        $component = $this->componentFactory->create($componentClass);
         if ($component instanceof ComponentInterface) {
             return true;
         }
@@ -303,26 +285,29 @@ class Processor
                         sprintf('It appears %s does not have a "enabled" node. This is required.', $componentAlias)
                     );
                 }
-
                 // Check it has at least 1 data source
-                $sourceCount = 0;
-                if (isset($componentConfig['sources'])) {
-                    foreach ($componentConfig['sources'] as $i => $source) {
-                        $sourceCount++;
-                    }
+                $componentHasSource = false;
+
+                if (isset($componentConfig['sources']) &&
+                    is_array($componentConfig['sources']) &&
+                    count($componentConfig['sources']) > 0 === true
+                ) {
+                    $componentHasSource = true;
                 }
 
-                if (isset($componentConfig['env'])) {
+                if (isset($componentConfig['env']) === true) {
                     foreach ($componentConfig['env'] as $envData) {
-                        if (isset($envData['sources'])) {
-                            foreach ($envData['sources'] as $i => $source) {
-                                $sourceCount++;
-                            }
+                        if (isset($envData['sources']) &&
+                            is_array($envData['sources']) &&
+                            count($envData['sources']) > 0 === true
+                        ) {
+                            $componentHasSource = true;
+                            break;
                         }
                     }
                 }
 
-                if ($sourceCount < 1) {
+                if ($componentHasSource === false) {
                     throw new ComponentException(
                         sprintf('It appears there are no data sources for the %s component.', $componentAlias)
                     );

@@ -38,17 +38,17 @@ class RunCommand extends Command
             'c',
             InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
             'Test',
-            array()
+            []
         );
 
         $this
             ->setName('configurator:run')
             ->setDescription('Run configurator components')
             ->setDefinition(
-                new InputDefinition(array(
+                new InputDefinition([
                     $environmentOption,
                     $componentOption
-                ))
+                ])
             );
     }
 

@@ -224,4 +224,20 @@ class Blocks implements ComponentInterface
 
         return $store;
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

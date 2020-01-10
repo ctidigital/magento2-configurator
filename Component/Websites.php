@@ -397,4 +397,20 @@ class Websites implements ComponentInterface
             $this->log->logError($e->getMessage(), $logNest);
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

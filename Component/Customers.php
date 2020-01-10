@@ -225,4 +225,20 @@ class Customers implements ComponentInterface
         $customerGrid->load('customer_grid');
         $customerGrid->reindexAll();
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

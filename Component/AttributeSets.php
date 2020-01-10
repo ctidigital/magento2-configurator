@@ -179,4 +179,20 @@ class AttributeSets implements ComponentInterface
 
         throw new ComponentException('Could not find attribute set name.');
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

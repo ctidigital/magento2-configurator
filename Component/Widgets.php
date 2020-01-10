@@ -242,4 +242,20 @@ class Widgets implements ComponentInterface
         }
         return implode(',', $storeIds);
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

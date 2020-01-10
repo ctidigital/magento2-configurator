@@ -75,4 +75,20 @@ class CatalogPriceRules implements ComponentInterface
             ->setConfig($config)
             ->process();
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

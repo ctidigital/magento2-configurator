@@ -2,6 +2,7 @@
 
 namespace CtiDigital\Configurator\Console\Command;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Model\ComponentList;
 use CtiDigital\Configurator\Exception\ConfiguratorAdapterException;
 use CtiDigital\Configurator\Api\ConfigInterface;
@@ -56,11 +57,11 @@ class ListCommand extends Command
         try {
             $count = 1;
             foreach ($this->configInterface->getAllComponents() as $component) {
-                /* @var \CtiDigital\Configurator\Component\ComponentAbstract $componentClass */
+                /* @var ComponentInterface $componentClass */
                 $componentClass = $this->objectManagerInterface->create($component['class']);
                 $comment =
                     str_pad($count.') ', 4)
-                    . str_pad($componentClass->getComponentAlias(), 20)
+                    . str_pad($componentClass->getAlias(), 20)
                     . ' - ' . $componentClass->getDescription();
                 $output->writeln('<comment>' . $comment . '</comment>');
                 $count++;

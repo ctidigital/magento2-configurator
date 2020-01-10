@@ -134,4 +134,20 @@ class AdminRoles implements ComponentInterface
             sprintf('Admin Role "%s" Resources are empty, please check your yaml file', $roleName)
         );
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

@@ -261,4 +261,20 @@ class Attributes implements ComponentInterface
 
         return $optionsToAdd;
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

@@ -25,6 +25,8 @@ class ReviewRating implements ComponentInterface
 
     protected $name = 'Review Rating';
 
+    protected $description = 'Component to create review ratings';
+
     protected $entityId;
 
     /**
@@ -230,5 +232,21 @@ class ReviewRating implements ComponentInterface
             $this->entityId = $entity->getIdByCode('product');
         }
         return $this->entityId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

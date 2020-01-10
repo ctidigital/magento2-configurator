@@ -41,7 +41,7 @@ class ListCommandTest extends \PHPUnit\Framework\TestCase
     /**
      * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $objectManager = array();
+    private $objectManager;
 
     protected function setUp()
     {

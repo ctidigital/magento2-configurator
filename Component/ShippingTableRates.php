@@ -153,4 +153,20 @@ class ShippingTableRates implements ComponentInterface
         unset($shippingRate['dest_region_code']);
         unset($shippingRate['website_code']);
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

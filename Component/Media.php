@@ -134,4 +134,20 @@ class Media implements ComponentInterface
         file_put_contents($path, $fileContents);
         $this->log->logInfo(sprintf('Created new file: %s', $path), $nest);
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

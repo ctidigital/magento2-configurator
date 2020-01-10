@@ -9,4 +9,14 @@ interface ComponentInterface
      * @return void
      */
     public function execute($data);
+
+    /**
+     * @return string
+     */
+    public function getAlias();
+
+    /**
+     * @return string
+     */
+    public function getDescription();
 }

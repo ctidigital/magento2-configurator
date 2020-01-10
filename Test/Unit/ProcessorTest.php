@@ -25,7 +25,12 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @var ComponentFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $mockComponentFactory;
+    private $componentFactory;
+
+    /**
+     * @var State|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $state;
 
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -37,7 +42,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
         $this->configInterface = $this->getMockBuilder(ConfigInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mockComponentFactory = $this->getMockBuilder(ComponentFactory::class)
+        $this->componentFactory = $this->getMockBuilder(ComponentFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -48,28 +53,25 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
         $scopeInterface = $this->getMockBuilder(ScopeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $state = $this->getMockBuilder(State::class)
+        $this->state = $this->getMockBuilder(State::class)
             ->disableOriginalConstructor()
-            ->setConstructorArgs(array($scopeInterface))
+            ->setConstructorArgs([$scopeInterface])
             ->getMock();
         $this->loggerInterface = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->setConstructorArgs(array($consoleOutput))
+            ->setConstructorArgs([$consoleOutput])
             ->getMock();
 
-        $this->processor = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->setConstructorArgs(array(
-                $this->configInterface,
-                $this->loggerInterface,
-                $state,
-                $this->mockComponentFactory,
-            ))->getMock();
+        $this->processor = new Processor(
+            $this->configInterface,
+            $this->loggerInterface,
+            $this->state,
+            $this->componentFactory
+        );
     }
 
     public function testICanSetAnEnvironment()
     {
-        $this->markTestSkipped("To do - Test we can set environments");
         $environment = 'stage';
         $this->processor->setEnvironment($environment);
         $this->assertEquals($environment, $this->processor->getEnvironment());
@@ -77,7 +79,6 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testICanAddASingleComponent()
     {
-        $this->markTestSkipped("To do - Test a single component can be added");
         $component = 'websites';
         $this->processor->addComponent($component);
         $this->assertArrayHasKey($component, $this->processor->getComponents());
@@ -85,7 +86,6 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testICanAddMultipleComponents()
     {
-        $this->markTestSkipped("To do - Test multiple components can be added");
         $components = ['website', 'config'];
         foreach ($components as $component) {
             $this->processor->addComponent($component);

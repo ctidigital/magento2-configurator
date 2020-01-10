@@ -2,14 +2,11 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Customer\Model\Customer;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Customer\Setup\CustomerSetup;
@@ -20,7 +17,7 @@ use Magento\Customer\Model\ResourceModel\Attribute;
  * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class CustomerAttributes implements ComponentInterface
+class CustomerAttributes extends Attributes
 {
     const DEFAULT_ATTRIBUTE_SET_ID = 1;
     const DEFAULT_ATTRIBUTE_GROUP_ID = 1;
@@ -144,5 +141,21 @@ class CustomerAttributes implements ComponentInterface
                 $e->getMessage()
             ));
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

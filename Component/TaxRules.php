@@ -238,4 +238,20 @@ class TaxRules implements ComponentInterface
             sprintf('Tax Rule "%s" created.', $ruleData['code'])
         );
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

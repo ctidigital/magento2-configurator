@@ -170,4 +170,20 @@ class ApiIntegrations implements ComponentInterface
         $token->setType('access');
         $token->save();
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

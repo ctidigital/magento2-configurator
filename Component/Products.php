@@ -422,4 +422,20 @@ class Products implements ComponentInterface
     {
         return array_search(self::SKU_COLUMN_HEADING, $headers);
     }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

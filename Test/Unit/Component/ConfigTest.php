@@ -8,6 +8,8 @@ use Magento\Framework\App\Config as ScopeConfig;
 use Magento\Theme\Model\ResourceModel\Theme\Collection;
 use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Store\Model\StoreFactory;
+use Magento\Store\Model\WebsiteFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
@@ -43,6 +45,16 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     private $encryptorInterface;
 
     /**
+     * @var WebsiteFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $websiteFactory;
+
+    /**
+     * @var StoreFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $storeFactory;
+
+    /**
      * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $log;
@@ -66,6 +78,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->encryptorInterface = $this->getMockBuilder(EncryptorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->websiteFactory = $this->getMockBuilder(WebsiteFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->storeFactory = $this->getMockBuilder(StoreFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->log = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -74,6 +92,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             $this->scopeConfig,
             $this->collectionFactory,
             $this->encryptorInterface,
+            $this->websiteFactory,
+            $this->storeFactory,
             $this->log
         );
     }

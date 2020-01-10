@@ -5,6 +5,7 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\WebsiteFactory;
@@ -42,6 +43,16 @@ class Config implements ComponentInterface
     protected $encryptor;
 
     /**
+     * @var WebsiteFactory
+     */
+    protected $websiteFactory;
+
+    /**
+     * @var StoreFactory
+     */
+    protected $storeFactory;
+
+    /**
      * @var LoggerInterface
      */
     private $log;
@@ -58,12 +69,16 @@ class Config implements ComponentInterface
         ScopeConfig $scopeConfig,
         CollectionFactory $collectionFactory,
         EncryptorInterface $encryptor,
+        WebsiteFactory $websiteFactory,
+        StoreFactory $storeFactory,
         LoggerInterface $log
     ) {
         $this->configResource = $configResource;
         $this->scopeConfig = $scopeConfig;
         $this->collectionFactory = $collectionFactory;
         $this->encryptor = $encryptor;
+        $this->websiteFactory = $websiteFactory;
+        $this->storeFactory = $storeFactory;
         $this->log = $log;
     }
 
@@ -99,13 +114,12 @@ class Config implements ComponentInterface
 
                 if ($scope == "websites") {
                     foreach ($configurations as $code => $websiteConfigurations) {
-                        // Handle encryption parameter
-                        $encryption = 0;
-                        if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
-                            $encryption = 1;
-                        }
-
                         foreach ($websiteConfigurations as $configuration) {
+                            // Handle encryption parameter
+                            $encryption = 0;
+                            if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
+                                $encryption = 1;
+                            }
                             $convertedConfiguration = $this->convert($configuration);
                             $this->setWebsiteConfig(
                                 $convertedConfiguration['path'],
@@ -146,7 +160,7 @@ class Config implements ComponentInterface
     {
         try {
             // Check existing value, skip if the same
-            $scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+            $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
             $existingValue = $this->scopeConfig->getValue($path, $scope);
             if ($value == $existingValue) {
                 $this->log->logComment(sprintf("Global Config Already: %s = %s", $path, $value));
@@ -171,9 +185,8 @@ class Config implements ComponentInterface
             $logNest = 1;
             $scope = 'websites';
 
-            // Prepare Website ID
-            $websiteFactory = new WebsiteFactory($this->objectManager, \Magento\Store\Model\Website::class);
-            $website = $websiteFactory->create();
+            // Prepare Website ID;
+            $website = $this->websiteFactory->create();
             $website->load($code, 'code');
             if (!$website->getId()) {
                 throw new ComponentException(sprintf("There is no website with the code '%s'", $code));
@@ -222,8 +235,7 @@ class Config implements ComponentInterface
             $logNest = 2;
             $scope = 'stores';
 
-            $storeFactory = new StoreFactory($this->objectManager, \Magento\Store\Model\Store::class);
-            $storeView = $storeFactory->create();
+            $storeView = $this->storeFactory->create();
             $storeView->load($code, 'code');
             if (!$storeView->getId()) {
                 throw new ComponentException(sprintf("There is no store view with the code '%s'", $code));

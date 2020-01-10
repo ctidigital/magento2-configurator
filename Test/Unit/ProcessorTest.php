@@ -3,9 +3,7 @@
 namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
-use CtiDigital\Configurator\Api\ConfigInterface;
-use CtiDigital\Configurator\Component\Factory\ComponentFactory;
-use CtiDigital\Configurator\Component\Factory\ComponentFactoryInterface;
+use CtiDigital\Configurator\Api\ComponentListInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\Config\ScopeInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -18,14 +16,9 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     private $processor;
 
     /**
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentListInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $configInterface;
-
-    /**
-     * @var ComponentFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $componentFactory;
+    private $componentList;
 
     /**
      * @var State|\PHPUnit\Framework\MockObject\MockObject
@@ -39,18 +32,13 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configInterface = $this->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->componentFactory = $this->getMockBuilder(ComponentFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
         $consoleOutput = $this->getMockBuilder(ConsoleOutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $scopeInterface = $this->getMockBuilder(ScopeInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->componentList = $this->getMockBuilder(ComponentListInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->state = $this->getMockBuilder(State::class)
@@ -63,10 +51,9 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->processor = new Processor(
-            $this->configInterface,
-            $this->loggerInterface,
+            $this->componentList,
             $this->state,
-            $this->componentFactory
+            $this->loggerInterface
         );
     }
 

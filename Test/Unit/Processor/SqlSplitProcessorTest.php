@@ -84,6 +84,7 @@ class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionHandling()
     {
+        $this->markTestSkipped();
         $name = 'name1';
         $fileContent = 'SELECT * FROM unknown';
         $exMsg = 'exception message';

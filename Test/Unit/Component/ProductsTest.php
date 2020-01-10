@@ -2,46 +2,76 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\Products;
+use FireGento\FastSimpleImport\Model\ImporterFactory;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Framework\App\Response\Http\FileFactory;
+use Magento\Catalog\Model\Product;
+use CtiDigital\Configurator\Component\Product\Image;
+use CtiDigital\Configurator\Component\Product\AttributeOption;
+use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Eav\Model\Entity\Attribute;
 
-class ProductsTest extends ComponentAbstractTestCase
+class ProductsTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var Products
+     */
+    private $products;
+
+    /**
+     * @var ImporterFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $importerFactory;
+
     /**
      * @var ProductFactory | \PHPUnit_Framework_MockObject_MockObject
      */
-    private $productFactoryMock;
+    private $productFactory;
 
-    protected function componentSetUp()
+    /**
+     * @var Image|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $image;
+
+    /**
+     * @var AttributeOption|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $attributeOption;
+
+    /**
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $log;
+
+    protected function setUp()
     {
-        $importerFactoryMock = $this->getMockBuilder('Firegento\FastSimpleImport\Model\ImporterFactory')
+        $this->importerFactory = $this->getMockBuilder(ImporterFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productFactoryMock = $this->getMockBuilder('Magento\Catalog\Model\ProductFactory')
+        $this->productFactory = $this->getMockBuilder(ProductFactory::class)
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $httpClientMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
+        $this->image = $this->getMockBuilder(Image::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-        $mockFileFactory = $this->getMockBuilder(FileFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
             ->getMock();
 
-        $this->component = $this->testObjectManager->getObject(
-            Products::class,
-            [
-                'importerFactory' => $importerFactoryMock,
-                'productFactory' => $this->productFactoryMock,
-                'httpClientFactory' => $httpClientMock,
-                'fileFactory' => $mockFileFactory
-            ]
+        $this->attributeOption = $this->getMockBuilder(AttributeOption::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->log = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->products = new Products(
+            $this->importerFactory,
+            $this->productFactory,
+            $this->image,
+            $this->attributeOption,
+            $this->log
         );
-        $this->className = Products::class;
     }
 
     public function testGetSkuColumnIndex()
@@ -58,7 +88,7 @@ class ProductsTest extends ComponentAbstractTestCase
         ];
 
         $expected = 4;
-        $this->assertEquals($expected, $this->component->getSkuColumnIndex($columns));
+        $this->assertEquals($expected, $this->products->getSkuColumnIndex($columns));
     }
 
     public function testGetAttributesFromCsv()
@@ -97,7 +127,7 @@ class ProductsTest extends ComponentAbstractTestCase
             'description'
         ];
 
-        $this->assertEquals($expected, $this->component->getAttributesFromCsv($importData));
+        $this->assertEquals($expected, $this->products->getAttributesFromCsv($importData));
     }
 
     public function testIsConfigurable()
@@ -105,7 +135,7 @@ class ProductsTest extends ComponentAbstractTestCase
         $importData = [
             'product_type' => 'configurable'
         ];
-        $this->assertTrue($this->component->isConfigurable($importData));
+        $this->assertTrue($this->products->isConfigurable($importData));
     }
 
     public function testIsNotAConfigurable()
@@ -113,7 +143,7 @@ class ProductsTest extends ComponentAbstractTestCase
         $importData = [
             'product_type' => 'simple'
         ];
-        $this->assertFalse($this->component->isConfigurable($importData));
+        $this->assertFalse($this->products->isConfigurable($importData));
     }
 
     public function testConstructVariations()
@@ -176,15 +206,15 @@ class ProductsTest extends ComponentAbstractTestCase
                 )
             );
 
-        $this->productFactoryMock->expects($this->at(0))
+        $this->productFactory->expects($this->at(0))
             ->method('create')
             ->willReturn($simpleMockA);
 
-        $this->productFactoryMock->expects($this->at(1))
+        $this->productFactory->expects($this->at(1))
             ->method('create')
             ->willReturn($simpleMockB);
 
-        $this->assertEquals($expected, $this->component->constructConfigurableVariations($configurableData));
+        $this->assertEquals($expected, $this->products->constructConfigurableVariations($configurableData));
     }
 
     public function testIsStockSet()
@@ -194,7 +224,7 @@ class ProductsTest extends ComponentAbstractTestCase
             'is_in_stock' => 1,
             'qty' => 1
         ];
-        $this->assertTrue($this->component->isStockSpecified($testData));
+        $this->assertTrue($this->products->isStockSpecified($testData));
     }
 
     public function testStockIsNotSet()
@@ -203,7 +233,7 @@ class ProductsTest extends ComponentAbstractTestCase
             'sku' => 1,
             'name' => 'Test'
         ];
-        $this->assertFalse($this->component->isStockSpecified($testData));
+        $this->assertFalse($this->products->isStockSpecified($testData));
     }
 
     public function testSetStock()
@@ -219,7 +249,7 @@ class ProductsTest extends ComponentAbstractTestCase
             'is_in_stock' => 1,
             'qty' => 1
         ];
-        $this->assertEquals($expectedData, $this->component->setStock($testData));
+        $this->assertEquals($expectedData, $this->products->setStock($testData));
     }
 
     public function testNotSetStock()
@@ -234,12 +264,12 @@ class ProductsTest extends ComponentAbstractTestCase
             'name' => 'Test',
             'is_in_stock' => 0,
         ];
-        $this->assertEquals($expectedData, $this->component->setStock($testData));
+        $this->assertEquals($expectedData, $this->products->setStock($testData));
     }
 
     private function createProduct($productId)
     {
-        $productMock = $this->getMockBuilder('Magento\Catalog\Model\Product')
+        $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
             ->getMock();
@@ -260,7 +290,7 @@ class ProductsTest extends ComponentAbstractTestCase
 
     private function createMockAttribute($attributeCode, $value)
     {
-        $attr = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute')
+        $attr = $this->getMockBuilder(Attribute::class)
             ->disableOriginalConstructor()
             ->setMethods(['getFrontend', 'getValue', 'getAttributeCode'])
             ->getMock();

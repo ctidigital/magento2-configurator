@@ -2,12 +2,13 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Api\ComponentInterface;
+use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 
-class TaxRates implements ComponentInterface
+class TaxRates implements FileComponentInterface
 {
     protected $alias = 'taxrates';
     protected $name = 'Tax Rates';
@@ -38,19 +39,12 @@ class TaxRates implements ComponentInterface
 
     /**
      * @param null $data
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     public function execute($data = null)
     {
-        //Check Row Data exists
-        if (!isset($data[0])) {
-            throw new ComponentException(
-                sprintf('No row data found.')
-            );
-        }
-
         try {
-            $filePath =  BP . '/' . $this->source;
+            $filePath =  BP . '/' . $data;
             $this->log->logInfo(
                 sprintf('"%s" is being imported', $filePath)
             );

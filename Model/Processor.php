@@ -3,6 +3,7 @@
 namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
+use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\ComponentAbstract;
 use CtiDigital\Configurator\Exception\ComponentException;
@@ -189,7 +190,9 @@ class Processor
 
         if (isset($componentConfig['sources'])) {
             foreach ($componentConfig['sources'] as $source) {
-                $sourceData = $this->parseData($source, $sourceType);
+                $sourceData = ($component instanceof FileComponentInterface) ?
+                    $source :
+                    $this->parseData($source, $sourceType);
                 $component->execute($sourceData);
             }
         }

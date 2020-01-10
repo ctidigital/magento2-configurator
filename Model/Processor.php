@@ -264,9 +264,17 @@ class Processor
 
         // If there are sources for the environment, process them
         foreach ((array) $componentConfig['env'][$this->getEnvironment()]['sources'] as $source) {
-            $sourceType = (isset($componentConfig['type']) === true) ? $componentConfig['type'] : null;
-            $sourceData = $this->parseData($source, $sourceType);
-            $component->execute($sourceData);
+            try {
+                $sourceType = (isset($componentConfig['type']) === true) ? $componentConfig['type'] : null;
+                $sourceData = $this->parseData($source, $sourceType);
+                $component->execute($sourceData);
+            } catch (ComponentException $e) {
+                if ($this->isIgnoreMissingFiles() === true) {
+                    $this->log->logInfo("Skipping file {$source} as it could not be found.");
+                    continue;
+                }
+                throw $e;
+            }
         }
     }
 

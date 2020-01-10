@@ -2,10 +2,10 @@
 namespace CtiDigital\Configurator\Component\Product;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
-use FireGento\FastSimpleImport\Helper\Config;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Http\ZendClientFactory;
+use FireGento\FastSimpleImport\Helper\Config;
+use Magento\Framework\HTTP\ZendClientFactory;
 
 class Image
 {

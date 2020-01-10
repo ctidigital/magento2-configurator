@@ -9,10 +9,8 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\ComponentProcessorInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Class CatalogPriceRules

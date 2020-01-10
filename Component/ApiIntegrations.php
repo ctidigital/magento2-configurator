@@ -2,8 +2,6 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;

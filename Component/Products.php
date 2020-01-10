@@ -14,6 +14,7 @@ use CtiDigital\Configurator\Exception\ComponentException;
  * @package CtiDigital\Configurator\Model\Component
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Products implements ComponentInterface
 {

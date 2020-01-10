@@ -26,7 +26,7 @@ class Widgets implements ComponentInterface
     /**
      * @var WidgetInstanceFactory
      */
-    private $widgetInstanceFactory;
+    private $widgetFactory;
 
     /**
      * @var ThemeCollection
@@ -46,20 +46,20 @@ class Widgets implements ComponentInterface
     /**
      * Widgets constructor.
      * @param WidgetCollection $collection
-     * @param WidgetInstanceFactory $widgetInstanceFactory
+     * @param WidgetInstanceFactory $widgetFactory
      * @param StoreFactory $storeFactory
      * @param ThemeCollection $themeCollection
      * @param LoggerInterface $log
      */
     public function __construct(
         WidgetCollection $collection,
-        WidgetInstanceFactory $widgetInstanceFactory,
+        WidgetInstanceFactory $widgetFactory,
         StoreFactory $storeFactory,
         ThemeCollection $themeCollection,
         LoggerInterface $log
     ) {
         $this->widgetCollection = $collection;
-        $this->widgetInstanceFactory = $widgetInstanceFactory;
+        $this->widgetFactory = $widgetFactory;
         $this->themeCollection = $themeCollection;
         $this->storeFactory = $storeFactory;
         $this->log = $log;
@@ -89,7 +89,7 @@ class Widgets implements ComponentInterface
                 /**
                  * @var Instance $widget
                  */
-                $widget = $this->widgetInstanceFactory->create();
+                $widget = $this->widgetFactory->create();
             }
 
             foreach ($widgetData as $key => $value) {
@@ -133,7 +133,7 @@ class Widgets implements ComponentInterface
     {
         $this->log->logComment(sprintf("Checking if %s is a valid instance", $instanceType));
         $instanceType = '\\' . $instanceType;
-        $instance = $this->widgetInstanceFactory->create($instanceType);
+        $instance = $this->widgetFactory->create($instanceType);
         if (!$instance instanceof $instanceType) {
             throw new ComponentException("Instance %s is invalid", $instanceType);
         }

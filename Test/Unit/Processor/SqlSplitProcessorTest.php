@@ -14,6 +14,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Exception;
 
 /**
  * Class SqlSplitProcessorTest
@@ -93,7 +94,7 @@ class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
         $this->mockConnection
             ->expects($this->any())
             ->method('query')
-            ->willThrowException(new \Exception($exMsg));
+            ->willThrowException(new Exception($exMsg));
 
         $this->mockLogger
             ->expects($this->at(1))

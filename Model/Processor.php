@@ -12,6 +12,12 @@ use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Class Processor
+ * @package CtiDigital\Configurator\Model
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class Processor
 {
     const SOURCE_YAML = 'yaml';

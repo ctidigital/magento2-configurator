@@ -2,88 +2,53 @@
 namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
 use CtiDigital\Configurator\Component\Product\AttributeOption;
-use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
-use Magento\Eav\Api\AttributeOptionManagementInterface;
-use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
-use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Magento\Eav\Model\Entity\Attribute\Option;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
+use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 
-class AttributeOptionTest extends TestCase
+class AttributeOptionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductAttributeRepositoryInterface | PHPUnit_Framework_MockObject_MockObject
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
-    private $attrRepository;
+    protected $objectManager;
 
     /**
-     * @var AttributeOptionManagementInterface|MockObject
+     * @var \Magento\Catalog\Api\ProductAttributeRepositoryInterface | \PHPUnit_Framework_MockObject_MockObject
      */
-    private $attrOptionManagement;
-
-    /**
-     * @var AttributeOptionLabelInterfaceFactory|MockObject
-     */
-    private $attrOptionLabelFact;
-
-    /**
-     * @var AttributeOptionInterfaceFactory|MockObject
-     */
-    private $attrOptionFactory;
-
-    /**
-     * @var LoggerInterface|MockObject
-     */
-    private $log;
-
+    protected $attrRepositoryMock;
     /**
      * @var AttributeOption
      */
-    private $attributeOption;
+    protected $attributeOption;
 
     protected function setUp()
     {
-        $this->attrRepository = $this->getMockBuilder(ProductAttributeRepositoryInterface::class)
+        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->attrRepositoryMock = $this->getMockBuilder('Magento\Catalog\Api\ProductAttributeRepositoryInterface')
             ->disableOriginalConstructor()
             ->setMethods(['getList', 'get', 'save', 'delete', 'deleteById', 'getCustomAttributesMetadata'])
             ->getMock();
 
-        $this->attrOptionManagement = $this->getMockBuilder(AttributeOptionManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionLabelFactory = $this->getMockBuilder(AttributeOptionLabelInterfaceFactory::class)->getMock();
+        $optionFactory = $this->getMockBuilder(AttributeOptionInterfaceFactory::class)->getMock();
 
-        $this->attrOptionLabelFact = $this->getMockBuilder(AttributeOptionLabelInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->attrOptionFactory = $this->getMockBuilder(AttributeOptionInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->log = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->attributeOption = new AttributeOption(
-            $this->attrRepository,
-            $this->attrOptionManagement,
-            $this->attrOptionLabelFact,
-            $this->attrOptionFactory,
-            $this->log
+        $this->attributeOption = $this->objectManager->getObject(
+            AttributeOption::class,
+            [
+                'attributeRepository' => $this->attrRepositoryMock,
+                'optionFactory' => $optionFactory,
+                'labelFactory' => $optionLabelFactory
+            ]
         );
     }
 
     public function testAttributeIsDropdown()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'select', []);
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $this->assertTrue($this->attributeOption->isOptionAttribute('colour'));
@@ -92,10 +57,10 @@ class AttributeOptionTest extends TestCase
     public function testAttributeIsMultiSelect()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'multiselect', []);
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $this->assertTrue($this->attributeOption->isOptionAttribute('colour'));
@@ -104,10 +69,10 @@ class AttributeOptionTest extends TestCase
     public function testAttributeIsNotAllowed()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'text', null);
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $this->assertFalse($this->attributeOption->isOptionAttribute('colour'));
@@ -116,13 +81,13 @@ class AttributeOptionTest extends TestCase
     public function testAttributeBackendModelIsNotProcessed()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'select', []);
         $attributeMock->expects($this->once())
             ->method('getBackendModel')
             ->willReturn('/test/');
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $this->assertFalse($this->attributeOption->isOptionAttribute('colour'));
@@ -131,10 +96,10 @@ class AttributeOptionTest extends TestCase
     public function testOptionValueDoesNotExist()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'select', ['Red']);
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $this->assertFalse($this->attributeOption->isOptionValueExists('colour', 'White'));
@@ -143,10 +108,10 @@ class AttributeOptionTest extends TestCase
     public function testOptionValueExists()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'select', ['Red']);
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $this->assertTrue($this->attributeOption->isOptionValueExists('colour', 'Red'));
@@ -155,10 +120,10 @@ class AttributeOptionTest extends TestCase
     public function testNewOptionIsNotDuplicated()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'select', ['Red']);
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $newValues = [
@@ -185,10 +150,10 @@ class AttributeOptionTest extends TestCase
     public function testAddOption()
     {
         /**
-         * @var Attribute $attributeMock
+         * @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attributeMock
          */
         $attributeMock = $this->createMockAttribute('colour', 'select', ['Red', 'Green']);
-        $this->attrRepository->expects($this->once())
+        $this->attrRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($attributeMock);
         $values = [
@@ -206,9 +171,9 @@ class AttributeOptionTest extends TestCase
     private function createMockAttribute($code, $input, $values)
     {
         /**
-         * @var PHPUnit_Framework_MockObject_MockObject $attributeMock
+         * @var \PHPUnit_Framework_MockObject_MockObject $attributeMock
          */
-        $attributeMock = $this->getMockBuilder(Attribute::class)
+        $attributeMock = $this->getMockBuilder('Magento\Catalog\Model\ResourceModel\Eav\Attribute')
             ->disableOriginalConstructor()
             ->setMethods(['getAttributeCode', 'getFrontendInput', 'getOptions', 'getBackendModel', 'getIsUserDefined'])
             ->getMock();
@@ -221,7 +186,7 @@ class AttributeOptionTest extends TestCase
         if (is_array($values)) {
             $attributeOptions = [];
             foreach ($values as $attributeValue) {
-                $option = $this->getMockBuilder(Option::class)
+                $option = $this->getMockBuilder('Magento\Eav\Model\Entity\Attribute\Option')
                     ->disableOriginalConstructor()
                     ->setMethods(['getLabel'])
                     ->getMock();

@@ -191,6 +191,13 @@ class Processor
         }
     }
 
+    /**
+     * @param $componentAlias
+     * @param $componentConfig
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function runComponent($componentAlias, $componentConfig)
     {
         $this->log->logComment("");
@@ -478,7 +485,7 @@ class Processor
         foreach ($lines as $line) {
             $csvLine = str_getcsv($line);
             $csvRow = [];
-            foreach ($headerRow as $key => $column) {
+            foreach (array_keys($headerRow) as $key) {
                 $csvRow[$key] = (array_key_exists($key, $csvLine) === true) ? $csvLine[$key] : '';
             }
             $csvData[] = $csvRow;
@@ -492,6 +499,6 @@ class Processor
      */
     private function parseJsonData($source)
     {
-        return $jsonData = json_decode($source);
+        return json_decode($source);
     }
 }

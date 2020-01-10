@@ -2,15 +2,14 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Tax\Model\Calculation\RuleFactory;
 use Magento\Tax\Model\Calculation\RateFactory;
 use Magento\Tax\Model\ClassModelFactory;
-use CtiDigital\Configurator\Exception\ComponentException;
 
-class TaxRules extends ComponentAbstract
+class TaxRules implements ComponentInterface
 {
     protected $alias = 'taxrules';
     protected $name = 'Tax Rules';
@@ -42,31 +41,33 @@ class TaxRules extends ComponentAbstract
     protected $classModelFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * TaxRules constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param RateFactory $rateFactory
      * @param ClassModelFactory $classModelFactory
      * @param RuleFactory $ruleFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         RateFactory $rateFactory,
         ClassModelFactory $classModelFactory,
-        RuleFactory $ruleFactory
+        RuleFactory $ruleFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
         $this->rateFactory = $rateFactory;
         $this->classModelFactory = $classModelFactory;
         $this->ruleFactory = $ruleFactory;
+        $this->log = $log;
     }
 
     /**
      * @param array|null $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         //Check Row Data exists
         if (!isset($data[0])) {

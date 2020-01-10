@@ -2,13 +2,12 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 
-class TaxRates extends ComponentAbstract
+class TaxRates implements ComponentInterface
 {
     protected $alias = 'taxrates';
     protected $name = 'Tax Rates';
@@ -20,25 +19,28 @@ class TaxRates extends ComponentAbstract
     protected $csvImportHandler;
 
     /**
-     * TaxRules constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * TaxRates constructor.
      * @param CsvImportHandler $csvImportHandler
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
-        CsvImportHandler $csvImportHandler
+        CsvImportHandler $csvImportHandler,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
         $this->csvImportHandler = $csvImportHandler;
+        $this->log = $log;
     }
 
     /**
-     * @param array|null $data
+     * @param null $data
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         //Check Row Data exists
         if (!isset($data[0])) {

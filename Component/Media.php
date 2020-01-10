@@ -4,10 +4,8 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\ObjectManagerInterface;
 
 class Media implements ComponentInterface
 {

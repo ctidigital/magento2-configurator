@@ -2,9 +2,8 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
@@ -14,11 +13,9 @@ use Magento\Store\Model\Website;
 use Magento\Store\Model\WebsiteFactory;
 use Magento\Indexer\Model\IndexerFactory;
 use Magento\Framework\Event\ManagerInterface;
-use Symfony\Component\Yaml\Yaml;
 
-class Websites extends ComponentAbstract
+class Websites implements ComponentInterface
 {
-
     protected $alias = 'websites';
     protected $name = 'Websites';
     protected $description = 'Component to manage Websites, Stores and Store Views';
@@ -44,36 +41,41 @@ class Websites extends ComponentAbstract
      */
     protected $groupFactory;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * Websites constructor.
+     * @param IndexerFactory $indexerFactory
+     * @param ManagerInterface $eventManager
+     * @param WebsiteFactory $websiteFactory
+     * @param StoreFactory $storeFactory
+     * @param GroupFactory $groupFactory
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         IndexerFactory $indexerFactory,
         ManagerInterface $eventManager,
         WebsiteFactory $websiteFactory,
         StoreFactory $storeFactory,
-        GroupFactory $groupFactory
+        GroupFactory $groupFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
-
         $this->indexer = $indexerFactory;
         $this->eventManager = $eventManager;
         $this->websiteFactory = $websiteFactory;
         $this->storeFactory = $storeFactory;
         $this->groupFactory = $groupFactory;
+        $this->log = $log;
     }
 
-
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             if (!isset($data['websites'])) {
-                throw new ComponentException(
-                    sprintf(
-                        "No websites found. Are you sure this component '%s' should be enabled?",
-                        $this->getComponentAlias()
-                    )
-                );
+                throw new ComponentException("No websites found.");
             }
 
             // Loop through the websites

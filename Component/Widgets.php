@@ -2,39 +2,70 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
+use Magento\Widget\Model\Widget\Instance;
+use Magento\Widget\Model\Widget\InstanceFactory as WidgetInstanceFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use Magento\Store\Model\StoreFactory;
 
-class Widgets extends ComponentAbstract
+class Widgets implements ComponentInterface
 {
 
     protected $alias = 'widgets';
     protected $name = 'Widgets';
     protected $description = 'Component to manage CMS Widgets';
-    protected $widgetCollection;
-    protected $themeCollection;
-    protected $storeFactory;
 
+    /**
+     * @var WidgetCollection
+     */
+    private $widgetCollection;
+
+    /**
+     * @var WidgetInstanceFactory
+     */
+    private $widgetInstanceFactory;
+
+    /**
+     * @var ThemeCollection
+     */
+    private $themeCollection;
+
+    /**
+     * @var StoreFactory
+     */
+    private $storeFactory;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * Widgets constructor.
+     * @param WidgetCollection $collection
+     * @param WidgetInstanceFactory $widgetInstanceFactory
+     * @param StoreFactory $storeFactory
+     * @param ThemeCollection $themeCollection
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         WidgetCollection $collection,
+        WidgetInstanceFactory $widgetInstanceFactory,
         StoreFactory $storeFactory,
-        ThemeCollection $themeCollection
+        ThemeCollection $themeCollection,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
         $this->widgetCollection = $collection;
+        $this->widgetInstanceFactory = $widgetInstanceFactory;
         $this->themeCollection = $themeCollection;
         $this->storeFactory = $storeFactory;
+        $this->log = $log;
     }
 
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             foreach ($data as $widgetData) {
@@ -53,9 +84,12 @@ class Widgets extends ComponentAbstract
             $widget = $this->findWidgetByInstanceTypeAndTitle($widgetData['instance_type'], $widgetData['title']);
 
             $canSave = false;
-            if (is_null($widget)) {
+            if ($widget === null) {
                 $canSave = true;
-                $widget = $this->objectManager->create(\Magento\Widget\Model\Widget\Instance::class);
+                /**
+                 * @var Instance $widget
+                 */
+                $widget = $this->widgetInstanceFactory->create();
             }
 
             foreach ($widgetData as $key => $value) {
@@ -99,7 +133,7 @@ class Widgets extends ComponentAbstract
     {
         $this->log->logComment(sprintf("Checking if %s is a valid instance", $instanceType));
         $instanceType = '\\' . $instanceType;
-        $instance = $this->objectManager->create($instanceType);
+        $instance = $this->widgetInstanceFactory->create($instanceType);
         if (!$instance instanceof $instanceType) {
             throw new ComponentException("Instance %s is invalid", $instanceType);
         }
@@ -127,7 +161,6 @@ class Widgets extends ComponentAbstract
             ->addFieldToFilter('title', $widgetTitle)
             ->load();
         // @todo add store filter
-
 
         // If we have more than 1, throw an exception for now. Needs store filter to drill down the widgets further
         // into a single widget.
@@ -188,7 +221,6 @@ class Widgets extends ComponentAbstract
      */
     public function populateWidgetParameters(array $parameters)
     {
-
         // Default property return
         return serialize($parameters);
     }
@@ -199,7 +231,7 @@ class Widgets extends ComponentAbstract
      */
     public function getCommaSeparatedStoreIds($stores)
     {
-        $storeIds = array();
+        $storeIds = [];
         foreach ($stores as $code) {
             $storeView = $this->storeFactory->create();
             $storeView->load($code, 'code');

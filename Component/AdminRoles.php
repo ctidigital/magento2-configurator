@@ -3,8 +3,6 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Authorization\Model\RoleFactory;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Authorization\Model\RulesFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Authorization\Model\UserContextInterface;
@@ -51,7 +49,7 @@ class AdminRoles implements ComponentInterface
     /**
      * @param $data
      */
-    protected function execute($data = null)
+    public function execute($data = null)
     {
         if (isset($data['adminroles'])) {
             foreach ($data['adminroles'] as $role) {

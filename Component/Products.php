@@ -138,14 +138,14 @@ class Products implements ComponentInterface
         unset($data[0]);
 
         // Prepare the data
-        $productsArray = array();
+        $productsArray = [];
 
         foreach ($data as $product) {
             if (count($product) !== $totalColumnCount) {
                 $this->skippedProducts[] = $product[$this->skuColumn];
                 continue;
             }
-            $productArray = array();
+            $productArray = [];
             foreach ($attributeKeys as $column => $code) {
                 $product[$column] = $this->clean($product[$column], $code);
                 if (in_array($code, $this->imageAttributes)) {
@@ -198,6 +198,7 @@ class Products implements ComponentInterface
     public function getFileType($source = null)
     {
         // Get the file extension so we know how to load the file
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $sourceFileInfo = pathinfo($source);
         if (!isset($sourceFileInfo['extension'])) {
             throw new ComponentException(
@@ -216,7 +217,7 @@ class Products implements ComponentInterface
      */
     public function getAttributesFromCsv($data = null)
     {
-        $attributes = array();
+        $attributes = [];
         foreach ($data[0] as $attributeCode) {
             $attributes[] = $attributeCode;
         }
@@ -229,7 +230,7 @@ class Products implements ComponentInterface
      * @param array $data
      * @return bool
      */
-    public function isConfigurable($data = array())
+    public function isConfigurable($data = [])
     {
         if (isset($data['product_type']) && $data['product_type'] === 'configurable') {
             return true;

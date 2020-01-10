@@ -9,9 +9,7 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
-use Magento\Framework\App\ResourceConnection;
 
 /**
  * Class Sql
@@ -72,6 +70,7 @@ class Sql implements ComponentInterface
         $this->log->logInfo('Beginning of custom queries configuration:');
         foreach ($data['sql'] as $name => $sqlFile) {
             $path = BP . '/' . $sqlFile;
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             if (false === file_exists($path)) {
                 $this->log->logError("{$path} does not exist. Skipping.");
                 continue;

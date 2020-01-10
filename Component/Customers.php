@@ -1,17 +1,17 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\Serialize\Serializer\Json;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\ObjectManagerInterface;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use Magento\ImportExport\Model\Import;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Api\GroupManagementInterface;
+use Magento\Indexer\Model\IndexerFactory;
 
-class Customers extends ComponentAbstract
+class Customers implements ComponentInterface
 {
     const CUSTOMER_EMAIL_HEADER = 'email';
     const CUSTOMER_GROUP_HEADER = 'group_id';
@@ -25,11 +25,6 @@ class Customers extends ComponentAbstract
         '_website',
         '_store',
     ];
-
-    /**
-     * @var \Magento\Indexer\Model\IndexerFactory
-     */
-    protected $indexerFactory;
 
     /**
      * @var ImporterFactory
@@ -52,6 +47,16 @@ class Customers extends ComponentAbstract
     protected $criteriaBuilder;
 
     /**
+     * @var IndexerFactory
+     */
+    protected $indexerFactory;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var array
      */
     protected $customerGroups;
@@ -67,21 +72,19 @@ class Customers extends ComponentAbstract
     protected $columnHeaders = [];
 
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         ImporterFactory $importerFactory,
         GroupRepositoryInterface $groupRepository,
         GroupManagementInterface $groupManagement,
         SearchCriteriaBuilder $criteriaBuilder,
-        \Magento\Indexer\Model\IndexerFactory $indexerFactory
+        IndexerFactory $indexerFactory,
+        LoggerInterface $log
     ) {
         $this->importerFactory = $importerFactory;
         $this->groupRepository = $groupRepository;
         $this->groupManagement = $groupManagement;
         $this->criteriaBuilder = $criteriaBuilder;
         $this->indexerFactory = $indexerFactory;
-        parent::__construct($log, $objectManager, $json);
+        $this->log = $log;
     }
 
     /**
@@ -89,7 +92,7 @@ class Customers extends ComponentAbstract
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         $this->getColumnHeaders($data);
         unset($data[0]);

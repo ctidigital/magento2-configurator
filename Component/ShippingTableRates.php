@@ -1,11 +1,8 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use Symfony\Component\Yaml\Yaml;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Authorization\Model\UserContextInterface;
 use Magento\OfflineShipping\Model\ResourceModel\Carrier\TablerateFactory;
 use Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate;
 use Magento\Store\Model\WebsiteFactory;
@@ -13,7 +10,7 @@ use Magento\Store\Model\Website;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\Region;
 
-class ShippingTableRates extends ComponentAbstract
+class ShippingTableRates implements ComponentInterface
 {
     protected $alias = "shippingtablerates";
     protected $name = "Shipping Table Rates";
@@ -35,27 +32,28 @@ class ShippingTableRates extends ComponentAbstract
     protected $regionFactory;
 
     /**
-     * AdminRoles constructor.
-     * @param LoggingInterface $log
-     * @param ObjectManagerInterface $objectManager
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * ShippingTableRates constructor.
      * @param TablerateFactory $tablerateFactory
      * @param WebsiteFactory $websiteFactory
      * @param RegionFactory $regionFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        Json $json,
         TablerateFactory $tablerateFactory,
         WebsiteFactory $websiteFactory,
-        RegionFactory $regionFactory
+        RegionFactory $regionFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager, $json);
         $this->tablerateFactory = $tablerateFactory;
         $this->websiteFactory = $websiteFactory;
         $this->regionFactory = $regionFactory;
+        $this->log = $log;
     }
-
 
     /**
      * This method should be used to process the data and populate the Magento Database.
@@ -63,7 +61,7 @@ class ShippingTableRates extends ComponentAbstract
      * @param array $data
      * @return void
      */
-    public function processData($data = null)
+    public function execute($data = null)
     {
         /** @var Tablerate $tablerateModel */
         $tablerateModel = $this->tablerateFactory->create();
@@ -123,7 +121,7 @@ class ShippingTableRates extends ComponentAbstract
         $regionModel = $this->regionFactory->create();
         $regionModel = $regionModel->loadByCode($shippingRate['dest_region_code'], $shippingRate['dest_country_id']);
         $regionId = $regionModel->getId();
-        if (is_null($regionId)) {
+        if ($regionId === null) {
             $regionId = 0;
         }
 

@@ -37,8 +37,16 @@ class RunCommand extends Command
             'component',
             'c',
             InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-            'Test',
+            'The component to be run',
             []
+        );
+
+        $ignoreMissingFiles = new InputOption(
+            'ignore-missing-files',
+            'i',
+            InputOption::VALUE_OPTIONAL,
+            'Configurator continues if a source file is missing',
+            false
         );
 
         $this
@@ -47,7 +55,8 @@ class RunCommand extends Command
             ->setDefinition(
                 new InputDefinition([
                     $environmentOption,
-                    $componentOption
+                    $componentOption,
+                    $ignoreMissingFiles
                 ])
             );
     }
@@ -67,6 +76,9 @@ class RunCommand extends Command
 
             $environment = $input->getOption('env');
             $components = $input->getOption('component');
+            if ($input->getOption('ignore-missing-files') !== false) {
+                $this->processor->setIgnoreMissingFiles(true);
+            }
 
             $logLevel = OutputInterface::VERBOSITY_NORMAL;
             $verbose = $input->getOption('verbose');

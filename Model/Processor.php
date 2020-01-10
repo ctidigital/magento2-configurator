@@ -50,6 +50,11 @@ class Processor
     protected $log;
 
     /**
+     * @var bool
+     */
+    protected $ignoreMissingFiles = false;
+
+    /**
      * Processor constructor.
      * @param ComponentListInterface $componentList
      * @param State $state
@@ -68,6 +73,23 @@ class Processor
     public function getLogger()
     {
         return $this->log;
+    }
+
+    /**
+     * @param bool $setting
+     * @return void
+     */
+    public function setIgnoreMissingFiles($setting)
+    {
+        $this->ignoreMissingFiles = $setting;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIgnoreMissingFiles()
+    {
+        return $this->ignoreMissingFiles;
     }
 
     /**
@@ -183,10 +205,18 @@ class Processor
 
         if (isset($componentConfig['sources'])) {
             foreach ($componentConfig['sources'] as $source) {
-                $sourceData = ($component instanceof FileComponentInterface) ?
-                    $source :
-                    $this->parseData($source, $sourceType);
-                $component->execute($sourceData);
+                try {
+                    $sourceData = ($component instanceof FileComponentInterface) ?
+                        $source :
+                        $this->parseData($source, $sourceType);
+                    $component->execute($sourceData);
+                } catch (ComponentException $e) {
+                    if ($this->isIgnoreMissingFiles() === true) {
+                        $this->log->logInfo("Skipping file {$source} as it could not be found.");
+                        continue;
+                    }
+                    throw $e;
+                }
             }
         }
 

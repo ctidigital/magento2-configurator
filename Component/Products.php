@@ -391,6 +391,7 @@ class Products implements ComponentInterface
      */
     private function spotHtmlTags($string, $tagname)
     {
+        $matches = [];
         $pattern = "/<$tagname?.*>(.*)<\/$tagname>/";
         preg_match($pattern, $string, $matches);
         return count($matches);

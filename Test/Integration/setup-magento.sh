@@ -16,10 +16,6 @@ git checkout tags/$1 -b $1
 
 composer install
 
-echo Temporary change versions to attempt to resolve any dependency issue
-composer require symfony/config:4.1.*
-composer require symfony/dependency-injection:3.3.*
-
 if [ -z "${TRAVIS_TAG}" ]; then
     echo Require configurator branch: ${TRAVIS_BRANCH} commit: ${TRAVIS_COMMIT}
     composer require ctidigital/magento2-configurator dev-${TRAVIS_BRANCH}\#${TRAVIS_COMMIT}

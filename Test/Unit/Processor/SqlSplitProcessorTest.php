@@ -21,6 +21,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
  */
 class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
 {
+    const TEST_SQL_PATH = '/Unit/_files/sql/test.sql';
+
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -86,7 +88,6 @@ class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->markTestSkipped();
         $name = 'name1';
-        $fileContent = 'SELECT * FROM unknown';
         $exMsg = 'exception message';
 
         $this->mockConnection
@@ -103,6 +104,6 @@ class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('rollBack');
 
-        $this->processor->process($name, $fileContent);
+        $this->processor->process($name, dirname(dirname(__DIR__)) . self::TEST_SQL_PATH);
     }
 }

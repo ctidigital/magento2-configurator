@@ -45,7 +45,7 @@ class SqlSplitProcessor
 
     /**
      * @param string $name
-     * @param string $fileContent
+     * @param string $filePath
      *
      * return void
      */
@@ -85,12 +85,14 @@ class SqlSplitProcessor
      * Split file content string into separate queries, allowing for
      * multi-line queries using preg_match
      *
-     * @param string $fileContent
+     * @param string $filePath
+     * @param string $delimiter
      *
      * @return array
      */
     private function extractQueriesFromFile($filePath, $delimiter = ';')
     {
+        $obBaseLevel = ob_get_level();
         $queries = [];
         $file = fopen($filePath, 'r');
         if (is_resource($file) === true) {
@@ -103,7 +105,7 @@ class SqlSplitProcessor
 
                     $queries[] = $query;
 
-                    while (ob_get_level() > 0) {
+                    while (ob_get_level() > $obBaseLevel) {
                         ob_end_flush();
                     }
                     flush();

@@ -79,6 +79,7 @@ class CustomerAttributes extends Attributes
         Attribute $attributeResource,
         LoggerInterface $log
     ) {
+        parent::__construct($eavSetup, $attributeRepository, $log);
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
         $this->customerSetup = $customerSetupFactory;
         $this->attributeResource = $attributeResource;

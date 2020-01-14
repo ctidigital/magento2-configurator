@@ -14,6 +14,8 @@ cd magento2
 
 git checkout tags/$1 -b $1
 
+# Update symfony/service-contracts as recommended in https://github.com/magento/magento2/issues/24937
+composer update symfony/service-contracts
 composer install
 
 if [ -z "${TRAVIS_TAG}" ]; then

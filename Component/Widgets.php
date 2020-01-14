@@ -79,8 +79,6 @@ class Widgets implements ComponentInterface
     public function processWidget($widgetData)
     {
         try {
-            $this->validateInstanceType($widgetData['instance_type']);
-
             $widget = $this->findWidgetByInstanceTypeAndTitle($widgetData['instance_type'], $widgetData['title']);
 
             $canSave = false;
@@ -127,18 +125,6 @@ class Widgets implements ComponentInterface
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
-    }
-
-    public function validateInstanceType($instanceType)
-    {
-        $this->log->logComment(sprintf("Checking if %s is a valid instance", $instanceType));
-        $instanceType = '\\' . $instanceType;
-        $instance = $this->widgetFactory->create($instanceType);
-        if (!$instance instanceof $instanceType) {
-            throw new ComponentException("Instance %s is invalid", $instanceType);
-        }
-        $this->log->logComment(sprintf("Found instance %s.", $instanceType));
-        // @todo validate parameters somehow using the $fields
     }
 
     /**

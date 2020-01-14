@@ -12,7 +12,7 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
 
 /**
- * Class Sql
+ * Class Sql - Runs raw SQL queries - generally a fallback for when a configurator component is not available.
  */
 class Sql implements ComponentInterface
 {

@@ -106,7 +106,7 @@ class Websites implements ComponentInterface
                 $indexProcess->load('catalog_product_price');
                 $indexProcess->reindexAll();
             }
-        } catch (ComponentException $e) {
+        } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }
     }

@@ -13,8 +13,7 @@ use Magento\Framework\App\Area;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class Processor
- * @package CtiDigital\Configurator\Model
+ * Class Processor - The overarching class that reads and processes the configurator files.
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
@@ -454,7 +453,7 @@ class Processor
     {
         return ($this->isSourceRemote($source) === true) ?
             $this->getRemoteData($source) :
-            file_get_contents(BP . '/' . $source);
+            file_get_contents(BP . '/' . $source); // phpcs:ignore Magento2.Functions.DiscouragedFunction
     }
 
     /**

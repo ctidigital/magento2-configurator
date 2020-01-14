@@ -103,7 +103,7 @@ class RunCommand extends Command
             if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Finished Configurator</comment>');
             }
-        } catch (ConfiguratorAdapterException $e) {
+        } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
         }
     }

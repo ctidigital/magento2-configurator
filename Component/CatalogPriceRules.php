@@ -12,9 +12,6 @@ use CtiDigital\Configurator\Api\ComponentProcessorInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 
-/**
- * Class CatalogPriceRules
- */
 class CatalogPriceRules implements ComponentInterface
 {
     /**

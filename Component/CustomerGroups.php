@@ -92,12 +92,9 @@ class CustomerGroups implements ComponentInterface
             ->setTaxClassId($taxClassId)
             ->save();
 
-
         $this->log->logInfo(
             sprintf('Customer Group "%s" created', $groupName)
         );
-
-        return;
     }
 
     /**

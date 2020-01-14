@@ -94,10 +94,12 @@ class SqlSplitProcessor
     {
         $obBaseLevel = ob_get_level();
         $queries = [];
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $file = fopen($filePath, 'r');
         if (is_resource($file) === true) {
             $query = [];
             while (feof($file) === false) {
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
                 $query[] = fgets($file);
 
                 if (preg_match('~' . preg_quote($delimiter, '~') . '\s*$~iS', end($query)) === 1) {
@@ -116,6 +118,7 @@ class SqlSplitProcessor
                 }
             }
         }
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         fclose($file);
         return $queries;
     }

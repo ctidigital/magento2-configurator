@@ -86,10 +86,10 @@ class Config implements ComponentInterface
      * @param $data
      * @SuppressWarnings(PHPMD)
      */
-    public function execute($data = null)
+    public function execute($data = null) //phpcs:ignore Generic.Metrics.NestingLevel
     {
         try {
-            $validScopes = array('global', 'websites', 'stores');
+            $validScopes = ['global', 'websites', 'stores'];
             foreach ($data as $scope => $configurations) {
                 if (!in_array($scope, $validScopes)) {
                     throw new ComponentException(sprintf("This is not a valid scope '%s' in your config.", $scope));

@@ -117,6 +117,7 @@ class Pages implements ComponentInterface
                     // Check if content is from a file source
                     if ($key == "source") {
                         $key = 'content';
+                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
                         $value = file_get_contents(BP . '/' . $value);
                     }
 
@@ -152,7 +153,7 @@ class Pages implements ComponentInterface
                     $page->unsetData('store_id');
                     $page->unsetData('store_data');
 
-                    $stores = array();
+                    $stores = [];
                     foreach ($pageData['stores'] as $code) {
                         $stores[] = $store = $this->storeRepository->get($code)->getId();
                     }

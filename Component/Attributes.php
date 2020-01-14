@@ -246,11 +246,11 @@ class Attributes implements ComponentInterface
                 $attributeCode,
                 $e->getMessage()
             ));
-            return array();
+            return [];
         }
 
         // Loop through existing attributes options
-        $existingAttributeOptions = array();
+        $existingAttributeOptions = [];
         foreach ($attributeOptions as $attributeOption) {
             $value = $attributeOption->getLabel();
             $existingAttributeOptions[] = $value;

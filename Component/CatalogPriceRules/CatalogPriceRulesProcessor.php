@@ -128,7 +128,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
             $rule = $ruleCollection->getFirstItem();
 
             // If the rule does not exist, create a new one
-            if (is_null($rule->getId())) {
+            if ($rule->getId() === null) {
                 $rule = $this->ruleFactory->create();
             }
 

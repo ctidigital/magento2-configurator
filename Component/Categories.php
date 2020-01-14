@@ -123,10 +123,11 @@ class Categories implements ComponentInterface
      * @param array $categories
      * @param \Magento\Catalog\Model\Category $parentCategory
      * @SuppressWarnings(PHPMD)
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function createOrUpdateCategory(
         \Magento\Catalog\Model\Category $parentCategory,
-        $categories = array()
+        $categories = []
     ) {
         foreach ($categories as $categoryValues) {
             // Load the category using its name and parent category
@@ -147,7 +148,9 @@ class Categories implements ComponentInterface
                     case 'category':
                         break;
                     case 'image':
+                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
                         $img = basename($value);
+                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
                         $path = parse_url($value);
                         $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
 
@@ -155,6 +158,7 @@ class Categories implements ComponentInterface
                             $value = BP . '/' . trim($value, '/');
                         }
 
+                        // phpcs:ignore
                         if (!@copy($value, $catMediaDir . $img)) {
                             $this->log->logError('Failed to find image: ' . $value, 1);
                             break;

@@ -10,6 +10,7 @@ use Magento\Widget\Model\Widget\Instance;
 use Magento\Widget\Model\Widget\InstanceFactory as WidgetInstanceFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use Magento\Store\Model\StoreFactory;
+use Magento\Framework\Serialize\SerializerInterface;
 
 class Widgets implements ComponentInterface
 {
@@ -39,6 +40,11 @@ class Widgets implements ComponentInterface
     private $storeFactory;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * @var LoggerInterface
      */
     private $log;
@@ -49,6 +55,7 @@ class Widgets implements ComponentInterface
      * @param WidgetInstanceFactory $widgetFactory
      * @param StoreFactory $storeFactory
      * @param ThemeCollection $themeCollection
+     * @param SerializerInterface $serializer
      * @param LoggerInterface $log
      */
     public function __construct(
@@ -56,12 +63,14 @@ class Widgets implements ComponentInterface
         WidgetInstanceFactory $widgetFactory,
         StoreFactory $storeFactory,
         ThemeCollection $themeCollection,
+        SerializerInterface $serializer,
         LoggerInterface $log
     ) {
         $this->widgetCollection = $collection;
         $this->widgetFactory = $widgetFactory;
         $this->themeCollection = $themeCollection;
         $this->storeFactory = $storeFactory;
+        $this->serializer = $serializer;
         $this->log = $log;
     }
 
@@ -208,7 +217,7 @@ class Widgets implements ComponentInterface
     public function populateWidgetParameters(array $parameters)
     {
         // Default property return
-        return serialize($parameters);
+        return $this->serializer->serialize($parameters);
     }
 
     /**

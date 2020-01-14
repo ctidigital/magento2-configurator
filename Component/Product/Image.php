@@ -5,6 +5,7 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use FireGento\FastSimpleImport\Helper\Config;
+use Magento\Framework\HTTP\ZendClient;
 use Magento\Framework\HTTP\ZendClientFactory;
 
 class Image
@@ -89,7 +90,7 @@ class Image
     public function downloadFile($value)
     {
         /**
-         * @var \Magento\Framework\HTTP\ZendClient $client
+         * @var ZendClient $client
          */
         $client = $this->httpClientFactory->create();
         $response = '';
@@ -113,6 +114,7 @@ class Image
      */
     public function getFileName($url)
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $imageName = basename($url);
         // Remove any URL entities
         $imageName = urldecode($imageName);
@@ -130,7 +132,9 @@ class Image
      */
     public function saveFile($fileName, $value)
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $name = pathinfo($fileName, PATHINFO_FILENAME);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $ext = pathinfo($fileName, PATHINFO_EXTENSION);
 
         $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);

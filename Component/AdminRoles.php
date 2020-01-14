@@ -2,22 +2,18 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Authorization\Model\RulesFactory;
-use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
-use CtiDigital\Configurator\Exception\ComponentException;
 
 class AdminRoles implements ComponentInterface
 {
     protected $alias = 'adminroles';
     protected $name = 'Admin Roles';
     protected $description = 'Component to create Admin Roles';
-    /**
-     * @var LoggerInterface
-     */
-    protected $log;
 
     /**
      * RoleFactory
@@ -34,16 +30,23 @@ class AdminRoles implements ComponentInterface
     protected $rulesFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * AdminRoles constructor.
      * @param RoleFactory $roleFactory
      * @param RulesFactory $rulesFactory
      */
     public function __construct(
         RoleFactory $roleFactory,
-        RulesFactory $rulesFactory
+        RulesFactory $rulesFactory,
+        LoggerInterface $log
     ) {
         $this->roleFactory = $roleFactory;
         $this->rulesFactory = $rulesFactory;
+        $this->log = $log;
     }
 
     /**
@@ -62,15 +65,6 @@ class AdminRoles implements ComponentInterface
                 }
             }
         }
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->log = $logger;
-        return $this;
     }
 
     /**

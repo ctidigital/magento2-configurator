@@ -1,5 +1,14 @@
 attribute_sets:
 -
+  name: Default
+  inherit: Default
+  groups:
+    -
+      name: General
+      code: general
+      attributes:
+        - color
+-
   name: Shirts
   inherit: Default
   groups:

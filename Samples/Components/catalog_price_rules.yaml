@@ -1,5 +1,5 @@
 config:
-   apply_all: true
+  apply_all: true
 rules:
   rule1:
     name: Test Rule
@@ -14,8 +14,8 @@ rules:
     from_date:
     ### Date format dd/mm/yyyy
     to_date: 11/10/2021
-    conditions_serialized: a:7:{s:4:"type";s:48:"Magento\CatalogRule\Model\Rule\Condition\Combine";s:9:"attribute";N;s:8:"operator";N;s:5:"value";s:1:"1";s:18:"is_value_processed";N;s:10:"aggregator";s:3:"all";s:10:"conditions";a:1:{i:0;a:5:{s:4:"type";s:48:"Magento\CatalogRule\Model\Rule\Condition\Product";s:9:"attribute";s:3:"sku";s:8:"operator";s:2:"==";s:5:"value";s:5:"12asd";s:18:"is_value_processed";b:0;}}}
-    actions_serialized: a:4:{s:4:"type";s:48:"Magento\CatalogRule\Model\Rule\Action\Collection";s:9:"attribute";N;s:8:"operator";s:1:"=";s:5:"value";N;}
+    conditions_serialized: '{"type":"Magento\\CatalogRule\\Model\\Rule\\Condition\\Combine","attribute":null,"operator":null,"value":"1","is_value_processed":null,"aggregator":"all","conditions":[{"type":"Magento\\CatalogRule\\Model\\Rule\\Condition\\Product","attribute":"sku","operator":"==","value":"12asd","is_value_processed":false}]}'
+    actions_serialized: '{"type":"Magento\\CatalogRule\\Model\\Rule\\Action\\Collection","attribute":null,"operator":"=","value":null}'
     ### Values: [by_fixed|by_percent|to_percent|to_fixed]
     simple_action: by_fixed
     ### Range: 0-100
@@ -32,8 +32,8 @@ rules:
       - 0
     from_date: 11/2/2018
     to_date: 11/10/2021
-    conditions_serialized: a:7:{s:4:"type";s:48:"Magento\CatalogRule\Model\Rule\Condition\Combine";s:9:"attribute";N;s:8:"operator";N;s:5:"value";s:1:"1";s:18:"is_value_processed";N;s:10:"aggregator";s:3:"all";s:10:"conditions";a:1:{i:0;a:5:{s:4:"type";s:48:"Magento\CatalogRule\Model\Rule\Condition\Product";s:9:"attribute";s:3:"sku";s:8:"operator";s:2:"==";s:5:"value";s:5:"12asd";s:18:"is_value_processed";b:0;}}}
-    actions_serialized: a:4:{s:4:"type";s:48:"Magento\CatalogRule\Model\Rule\Action\Collection";s:9:"attribute";N;s:8:"operator";s:1:"=";s:5:"value";N;}
+    conditions_serialized: '{"type":"Magento\\CatalogRule\\Model\\Rule\\Condition\\Combine","attribute":null,"operator":null,"value":"1","is_value_processed":null,"aggregator":"all","conditions":[{"type":"Magento\\CatalogRule\\Model\\Rule\\Condition\\Product","attribute":"sku","operator":"==","value":"12asd","is_value_processed":false}]}'
+    actions_serialized: '{"type":"Magento\\CatalogRule\\Model\\Rule\\Action\\Collection","attribute":null,"operator":"=","value":null}'
     simple_action: by_percent
     discount_amount: 100
     stop_rules_processing: 1

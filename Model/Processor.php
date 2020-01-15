@@ -463,8 +463,12 @@ class Processor
      */
     public function getRemoteData($source)
     {
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+        try {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+        } catch (\Exception $e) {
+            return '';
+        }
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $remoteFile = file_get_contents($source, false, $streamContext);
         return $remoteFile;

@@ -10,9 +10,6 @@ use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
 
 /**
- * Class Products
- * @package CtiDigital\Configurator\Model\Component
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */

@@ -11,12 +11,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Class Pages
- * Process Magento CMS Pages
- *
- * @package CtiDigital\Configurator\Model\Component
- */
 class Pages implements ComponentInterface
 {
     protected $alias = 'pages';

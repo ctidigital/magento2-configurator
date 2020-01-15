@@ -12,9 +12,6 @@ use Magento\Review\Model\Rating\Option;
 use Magento\Review\Model\Rating\OptionFactory;
 
 /**
- * Class ReviewRating
- * @package CtiDigital\Configurator\Model\Component
- *
  * @SuppressWarnings("CouplingBetweenObjects")
  */
 class ReviewRating implements ComponentInterface

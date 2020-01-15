@@ -13,8 +13,6 @@ use Magento\Customer\Setup\CustomerSetup;
 use Magento\Customer\Model\ResourceModel\Attribute;
 
 /**
- * Class CustomerAttributes
- * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
 class CustomerAttributes extends Attributes

@@ -9,9 +9,6 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 
 /**
- * Class Products
- * @package CtiDigital\Configurator\Model\Component
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class TieredPrices implements ComponentInterface

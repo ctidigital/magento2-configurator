@@ -11,8 +11,6 @@ use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
- * Class Attributes
- * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
 class Attributes implements ComponentInterface

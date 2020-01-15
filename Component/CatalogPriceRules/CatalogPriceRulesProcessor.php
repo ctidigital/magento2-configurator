@@ -15,9 +15,6 @@ use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\Rule\Job;
 
-/**
- * Class CatalogPriceRulesProcessor
- */
 class CatalogPriceRulesProcessor implements ComponentProcessorInterface
 {
     /**

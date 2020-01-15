@@ -11,9 +11,6 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 
-/**
- * Class SqlSplitProcessor
- */
 class SqlSplitProcessor
 {
     /**

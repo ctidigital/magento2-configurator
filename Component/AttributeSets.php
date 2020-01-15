@@ -12,8 +12,6 @@ use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Model\AttributeSetRepository;
 
 /**
- * Class AttributeSets
- * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
 class AttributeSets implements ComponentInterface

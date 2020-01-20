@@ -2,27 +2,68 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\ReviewRating;
-use Magento\Review\Model\Rating\EntityFactory;
-use Magento\Review\Model\Rating\OptionFactory;
 use Magento\Review\Model\RatingFactory;
 use Magento\Store\Api\StoreRepositoryInterface;
+use Magento\Review\Model\Rating\OptionFactory;
+use Magento\Review\Model\Rating\EntityFactory;
+use CtiDigital\Configurator\Api\LoggerInterface;
 
-class ReviewRatingTest extends ComponentAbstractTestCase
+class ReviewRatingTest extends \PHPUnit\Framework\TestCase
 {
-    protected function componentSetUp()
+    /**
+     * @var ReviewRating
+     */
+    private $reviewRating;
+
+    /**
+     * @var RatingFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $ratingFactory;
+
+    /**
+     * @var StoreRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $storeRepository;
+
+    /**
+     * @var OptionFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $optionFactory;
+
+    /**
+     * @var EntityFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $entityFactory;
+
+    /**
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $log;
+
+    protected function setUp()
     {
-        $ratingFactory = $this->getMockBuilder(RatingFactory::class)->getMock();
-        $storeRepository = $this->getMockBuilder(StoreRepositoryInterface::class)->getMock();
-        $optionFactory = $this->getMockBuilder(OptionFactory::class)->getMock();
-        $entityFactory = $this->getMockBuilder(EntityFactory::class)->getMock();
-        $this->className = ReviewRating::class;
-        $this->component = new ReviewRating(
-            $this->logInterface,
-            $this->objectManager,
-            $ratingFactory,
-            $storeRepository,
-            $optionFactory,
-            $entityFactory
+        $this->ratingFactory = $this->getMockBuilder(RatingFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $this->storeRepository = $this->getMockBuilder(StoreRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->optionFactory = $this->getMockBuilder(OptionFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->entityFactory = $this->getMockBuilder(EntityFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->log = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->reviewRating = new ReviewRating(
+            $this->ratingFactory,
+            $this->storeRepository,
+            $this->optionFactory,
+            $this->entityFactory,
+            $this->log
         );
     }
 
@@ -45,11 +86,7 @@ class ReviewRatingTest extends ComponentAbstractTestCase
             'Price'     => []
         ];
 
-        /**
-         * @var ReviewRating $reviewRating
-         */
-        $reviewRating = $this->testObjectManager->getObject(ReviewRating::class);
-        $this->assertEquals($expectedData, $reviewRating->getReviewRatings($data));
+        $this->assertEquals($expectedData, $this->reviewRating->getReviewRatings($data));
     }
 
     /**
@@ -70,24 +107,10 @@ class ReviewRatingTest extends ComponentAbstractTestCase
             ->method('getId')
             ->willReturn(1);
 
-        $mockRatingFactory = $this->getMockBuilder('\Magento\Review\Model\RatingFactory')
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
-        $mockRatingFactory->expects($this->once())
+        $this->ratingFactory->expects($this->once())
             ->method('create')
             ->willReturn($mockRating);
-        /**
-         * @var ReviewRating $reviewRating
-         */
-        $reviewRating = $this->testObjectManager->getObject(
-            ReviewRating::class,
-            [
-                'ratingFactory' => $mockRatingFactory
-            ]
-        );
-        $rating = $reviewRating->getReviewRating('value');
+        $rating = $this->reviewRating->getReviewRating('value');
         $this->assertEquals(1, $rating->getId());
     }
 
@@ -109,24 +132,11 @@ class ReviewRatingTest extends ComponentAbstractTestCase
             ->method('getId')
             ->willReturn(null);
 
-        $mockRatingFactory = $this->getMockBuilder('\Magento\Review\Model\RatingFactory')
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
-        $mockRatingFactory->expects($this->once())
+        $this->ratingFactory->expects($this->once())
             ->method('create')
             ->willReturn($mockRating);
-        /**
-         * @var ReviewRating $reviewRating
-         */
-        $reviewRating = $this->testObjectManager->getObject(
-            ReviewRating::class,
-            [
-                'ratingFactory' => $mockRatingFactory
-            ]
-        );
-        $rating = $reviewRating->getReviewRating('price');
+
+        $rating = $this->reviewRating->getReviewRating('price');
         $this->assertNull($rating->getId());
     }
 }

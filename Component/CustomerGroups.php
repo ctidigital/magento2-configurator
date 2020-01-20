@@ -1,14 +1,13 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use Symfony\Component\Yaml\Yaml;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Customer\Model\GroupFactory;
 use Magento\Tax\Model\ClassModelFactory;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
-class CustomerGroups extends YamlComponentAbstract
+class CustomerGroups implements ComponentInterface
 {
     protected $alias = 'customergroups';
     protected $name = 'Customer Groups';
@@ -24,6 +23,10 @@ class CustomerGroups extends YamlComponentAbstract
      */
     protected $classModelFactory;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
 
     /**
      * AdminRoles constructor.
@@ -33,21 +36,19 @@ class CustomerGroups extends YamlComponentAbstract
      * @param ClassModelFactory $classModelFactory
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         GroupFactory $groupFactory,
-        ClassModelFactory $classModelFactory
+        ClassModelFactory $classModelFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->groupFactory = $groupFactory;
         $this->classModelFactory = $classModelFactory;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         foreach ($data['customergroups'] as $taxClass) {
             $taxClassName = $taxClass['taxclass'];
@@ -91,12 +92,9 @@ class CustomerGroups extends YamlComponentAbstract
             ->setTaxClassId($taxClassId)
             ->save();
 
-
         $this->log->logInfo(
             sprintf('Customer Group "%s" created', $groupName)
         );
-
-        return;
     }
 
     /**
@@ -120,5 +118,21 @@ class CustomerGroups extends YamlComponentAbstract
         }
 
         return $taxclassId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -3,8 +3,6 @@
 namespace CtiDigital\Configurator\Console\Command;
 
 use CtiDigital\Configurator\Exception\ConfiguratorAdapterException;
-use CtiDigital\Configurator\Api\ConfigInterface;
-use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
 use CtiDigital\Configurator\Model\Processor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -15,28 +13,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RunCommand extends Command
 {
     /**
-     * @var ConfiguratorAdapterInterface
-     */
-    private $configuratorAdapter;
-
-    /**
-     * @var ConfigInterface|CtiDigital\Configurator\Console\Command\RunCommand
-     */
-    private $configInterface;
-
-    /**
      * @var Processor
      */
     private $processor;
 
     public function __construct(
-        ConfiguratorAdapterInterface $configuratorAdapter,
-        ConfigInterface $config,
         Processor $processor
     ) {
         parent::__construct();
-        $this->configuratorAdapter = $configuratorAdapter;
-        $this->configInterface = $config;
         $this->processor = $processor;
     }
 
@@ -53,18 +37,27 @@ class RunCommand extends Command
             'component',
             'c',
             InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-            'Test',
-            array()
+            'The component to be run',
+            []
+        );
+
+        $ignoreMissingFiles = new InputOption(
+            'ignore-missing-files',
+            'i',
+            InputOption::VALUE_OPTIONAL,
+            'Configurator continues if a source file is missing',
+            false
         );
 
         $this
             ->setName('configurator:run')
             ->setDescription('Run configurator components')
             ->setDefinition(
-                new InputDefinition(array(
+                new InputDefinition([
                     $environmentOption,
-                    $componentOption
-                ))
+                    $componentOption,
+                    $ignoreMissingFiles
+                ])
             );
     }
 
@@ -83,6 +76,9 @@ class RunCommand extends Command
 
             $environment = $input->getOption('env');
             $components = $input->getOption('component');
+            if ($input->getOption('ignore-missing-files') !== false) {
+                $this->processor->setIgnoreMissingFiles(true);
+            }
 
             $logLevel = OutputInterface::VERBOSITY_NORMAL;
             $verbose = $input->getOption('verbose');
@@ -107,7 +103,7 @@ class RunCommand extends Command
             if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Finished Configurator</comment>');
             }
-        } catch (ConfiguratorAdapterException $e) {
+        } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
         }
     }

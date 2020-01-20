@@ -2,34 +2,41 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\ObjectManagerInterface;
 
-class Media extends YamlComponentAbstract
+class Media implements ComponentInterface
 {
-
     const FULL_ACCESS = 0777;
 
     protected $alias = 'media';
     protected $name = 'Media';
     protected $description = 'Component to download/maintain media.';
+
+    /**
+     * @var DirectoryList
+     */
     protected $directoryList;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        DirectoryList $directoryList
+        DirectoryList $directoryList,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->directoryList = $directoryList;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             // Load root media path
@@ -77,6 +84,7 @@ class Media extends YamlComponentAbstract
 
             $newPath = $currentPath . DIRECTORY_SEPARATOR . $node['name'];
 
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             if (file_exists($newPath)) {
                 $this->log->logComment(sprintf('File already exists: %s', $newPath), $nest);
                 return;
@@ -97,10 +105,12 @@ class Media extends YamlComponentAbstract
     private function checkAndCreateFolder($newPath, $name, $nest)
     {
         // Check if the file/folder exists
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (!file_exists($newPath)) {
             // If the node does not have a numeric index
             if (!is_numeric($name)) {
                 // Then it is a directory so create it
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
                 mkdir($newPath, $this::FULL_ACCESS, true);
                 $this->log->logInfo(sprintf('Created new media directory %s', $name), $nest);
             }
@@ -122,9 +132,26 @@ class Media extends YamlComponentAbstract
     private function downloadAndSetFile($path, $node, $nest)
     {
         $this->log->logInfo(sprintf('Downloading contents of file from %s', $node['location']), $nest);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $fileContents = file_get_contents($node['location']);
-
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         file_put_contents($path, $fileContents);
         $this->log->logInfo(sprintf('Created new file: %s', $path), $nest);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

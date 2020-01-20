@@ -2,20 +2,18 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Class Attributes
- * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class Attributes extends YamlComponentAbstract
+class Attributes implements ComponentInterface
 {
 
     protected $alias = 'attributes';
@@ -36,6 +34,11 @@ class Attributes extends YamlComponentAbstract
      * @var AttributeRepository
      */
     protected $attributeRepository;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
 
     /**
      * @var array
@@ -76,30 +79,35 @@ class Attributes extends YamlComponentAbstract
     protected $entityTypeId = Product::ENTITY;
 
     /**
-     * @var bool 
+     * @var bool
      */
     protected $updateAttribute = true;
 
     /**
-     * @var bool 
+     * @var bool
      */
     protected $attributeExists = false;
 
+    /**
+     * Attributes constructor.
+     * @param EavSetup $eavSetup
+     * @param AttributeRepositoryInterface $attributeRepository
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
-        AttributeRepositoryInterface $attributeRepository
+        AttributeRepositoryInterface $attributeRepository,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->eavSetup = $eavSetup;
         $this->attributeRepository = $attributeRepository;
+        $this->log = $log;
     }
 
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    public function execute($attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['attributes'] as $attributeCode => $attributeConfiguration) {
@@ -236,11 +244,11 @@ class Attributes extends YamlComponentAbstract
                 $attributeCode,
                 $e->getMessage()
             ));
-            return array();
+            return [];
         }
 
         // Loop through existing attributes options
-        $existingAttributeOptions = array();
+        $existingAttributeOptions = [];
         foreach ($attributeOptions as $attributeOption) {
             $value = $attributeOption->getLabel();
             $existingAttributeOptions[] = $value;
@@ -250,5 +258,21 @@ class Attributes extends YamlComponentAbstract
         //$optionsToRemove = array_diff($existingAttributeOptions, $option['values']);
 
         return $optionsToAdd;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

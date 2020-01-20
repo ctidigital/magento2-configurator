@@ -2,17 +2,39 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Webapi\Exception;
-use Symfony\Component\Yaml\Yaml;
+use Magento\Catalog\Model\CategoryFactory;
+use Magento\Store\Model\GroupFactory;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
-class Categories extends YamlComponentAbstract
+class Categories implements ComponentInterface
 {
     protected $alias = 'categories';
     protected $name = 'Categories';
     protected $description = 'Component to import categories.';
-    protected $groupFactory;
-    protected $category;
+
+    /**
+     * @var GroupFactory
+     */
+    private $groupFactory;
+
+    /**
+     * @var DirectoryList
+     */
+    private $dirList;
+
+    /**
+     * @var CategoryFactory
+     */
+    private $category;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
     private $mainAttributes = [
         'name',
         'is_active',
@@ -21,39 +43,41 @@ class Categories extends YamlComponentAbstract
         'description'
     ];
 
+    /**
+     * Categories constructor.
+     * @param CategoryFactory $category
+     * @param GroupFactory $groupFactory
+     * @param DirectoryList $dirList
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        \CtiDigital\Configurator\Api\LoggerInterface $log,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Catalog\Model\CategoryFactory $category,
-        \Magento\Store\Model\GroupFactory $groupFactory,
-        \Magento\Framework\App\Filesystem\DirectoryList $dirList
+        CategoryFactory $category,
+        GroupFactory $groupFactory,
+        DirectoryList $dirList,
+        LoggerInterface $log
     ) {
         $this->category = $category;
         $this->groupFactory = $groupFactory;
         $this->dirList = $dirList;
-        parent::__construct($log, $objectManager);
+        $this->log = $log;
     }
 
-    public function processData($data = null)
+    public function execute($data = null)
     {
         if (isset($data['categories'])) {
             foreach ($data['categories'] as $store) {
                 try {
-                    if (isset($store['store_group'])) {
-                        // Get the default category
-                        $category = $this->getDefaultCategory($store['store_group']);
-                        if ($category === false) {
-                            throw new ComponentException(
-                                sprintf('No default category was found for the store group "%s"', $store['store_group'])
-                            );
-                        }
-
-                        if (isset($store['categories'])) {
-                            $this->log->logInfo(
-                                sprintf('Updating categories for "%s"', $store['store_group'])
-                            );
-                            $this->createOrUpdateCategory($category, $store['categories']);
-                        }
+                    $group = $this->getStoreGroup($store);
+                    // Get the default category
+                    $category = $this->getDefaultCategory($group);
+                    if ($category === false) {
+                        throw new ComponentException(
+                            sprintf('No default category was found for the store group "%s"', $group)
+                        );
+                    }
+                    if (isset($store['categories'])) {
+                        $this->log->logInfo(sprintf('Updating categories for "%s"', $group));
+                        $this->createOrUpdateCategory($category, $store['categories']);
                     }
                 } catch (ComponentException $e) {
                     $this->log->logError($e->getMessage());
@@ -99,10 +123,11 @@ class Categories extends YamlComponentAbstract
      * @param array $categories
      * @param \Magento\Catalog\Model\Category $parentCategory
      * @SuppressWarnings(PHPMD)
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
     public function createOrUpdateCategory(
         \Magento\Catalog\Model\Category $parentCategory,
-        $categories = array()
+        $categories = []
     ) {
         foreach ($categories as $categoryValues) {
             // Load the category using its name and parent category
@@ -123,15 +148,18 @@ class Categories extends YamlComponentAbstract
                     case 'category':
                         break;
                     case 'image':
+                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
                         $img = basename($value);
+                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
                         $path = parse_url($value);
                         $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
 
-                        if (! array_key_exists('host', $path)) {
-                            $value = BP . '/'. trim($value, '/');
+                        if (!array_key_exists('host', $path)) {
+                            $value = BP . '/' . trim($value, '/');
                         }
 
-                        if (! @copy($value, $catMediaDir . $img)) {
+                        // phpcs:ignore
+                        if (!@copy($value, $catMediaDir . $img)) {
                             $this->log->logError('Failed to find image: ' . $value, 1);
                             break;
                         }
@@ -167,5 +195,33 @@ class Categories extends YamlComponentAbstract
                 $this->createOrUpdateCategory($category, $categoryValues['categories']);
             }
         }
+    }
+
+    /**
+     * @param $data
+     * @return string
+     */
+    private function getStoreGroup($data)
+    {
+        if (isset($data['store_group']) === true) {
+            return $data['store_group'];
+        }
+        return 'Main Website Store';
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -1,14 +1,13 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use Symfony\Component\Yaml\Yaml;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\User\Model\UserFactory;
 use Magento\Authorization\Model\RoleFactory;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class AdminUsers extends YamlComponentAbstract
+class AdminUsers implements ComponentInterface
 {
     protected $alias = 'adminusers';
     protected $name = 'Admin Users';
@@ -29,28 +28,30 @@ class AdminUsers extends YamlComponentAbstract
     protected $roleFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * AdminUsers constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param UserFactory $userFactory
      * @param RoleFactory $roleFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         UserFactory $userFactory,
-        RoleFactory $roleFactory
+        RoleFactory $roleFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->userFactory = $userFactory;
         $this->roleFactory = $roleFactory;
+        $this->log = $log;
     }
 
     /**
      * @param data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         //Get Each Role
         foreach ($data['adminusers'] as $roleSet) {
@@ -170,5 +171,21 @@ class AdminUsers extends YamlComponentAbstract
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

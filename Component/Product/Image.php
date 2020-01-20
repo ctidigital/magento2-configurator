@@ -4,6 +4,9 @@ namespace CtiDigital\Configurator\Component\Product;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use FireGento\FastSimpleImport\Helper\Config;
+use Magento\Framework\HTTP\ZendClient;
+use Magento\Framework\HTTP\ZendClientFactory;
 
 class Image
 {
@@ -13,7 +16,7 @@ class Image
     protected $log;
 
     /**
-     * @var \Magento\Framework\Http\ZendClientFactory
+     * @var ZendClientFactory
      */
     protected $httpClientFactory;
 
@@ -23,28 +26,48 @@ class Image
     protected $filesystem;
 
     /**
-     * @var \FireGento\FastSimpleImport\Helper\Config
+     * @var Config
      */
     protected $importerConfig;
 
     /**
+     * @var string
+     */
+    private $separator = ';';
+
+    /**
      * Image constructor.
-     *
-     * @param LoggerInterface $log
      * @param Filesystem $filesystem
-     * @param \FireGento\FastSimpleImport\Helper\Config $importerConfig
-     * @param \Magento\Framework\Http\ZendClientFactory $httpClientFactory
+     * @param Config $importerConfig
+     * @param ZendClientFactory $httpClientFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
         Filesystem $filesystem,
-        \FireGento\FastSimpleImport\Helper\Config $importerConfig,
-        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory
+        Config $importerConfig,
+        ZendClientFactory $httpClientFactory,
+        LoggerInterface $log
     ) {
-        $this->log = $log;
         $this->filesystem = $filesystem;
         $this->importerConfig = $importerConfig;
         $this->httpClientFactory = $httpClientFactory;
+        $this->log = $log;
+    }
+
+    /**
+     * @param $separator
+     */
+    public function setSeparator($separator)
+    {
+        $this->separator = $separator;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSeparator()
+    {
+        return $this->separator;
     }
 
     /**
@@ -67,7 +90,7 @@ class Image
     public function downloadFile($value)
     {
         /**
-         * @var \Magento\Framework\HTTP\ZendClient $client
+         * @var ZendClient $client
          */
         $client = $this->httpClientFactory->create();
         $response = '';
@@ -91,7 +114,13 @@ class Image
      */
     public function getFileName($url)
     {
-        return basename($url);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $imageName = basename($url);
+        // Remove any URL entities
+        $imageName = urldecode($imageName);
+        // Replace spaces with -
+        $imageName = preg_replace('/\s+/', '-', $imageName);
+        return $imageName;
     }
 
     /**
@@ -103,7 +132,9 @@ class Image
      */
     public function saveFile($fileName, $value)
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $name = pathinfo($fileName, PATHINFO_FILENAME);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $ext = pathinfo($fileName, PATHINFO_EXTENSION);
 
         $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
@@ -144,20 +175,28 @@ class Image
      */
     public function getImage($value)
     {
-        if ($this->isValueURL($value) === false) {
-            return $value;
+        $validImages = [];
+        $images = explode(',', $value);
+        foreach ($images as $image) {
+            if ($this->isValueURL($image) === false) {
+                $validImages[] = $image;
+                continue;
+            }
+            if ($this->localFileExists($image)) {
+                $validImages[] = $this->getFileName($image);
+                continue;
+            }
+            $this->log->logInfo(sprintf('Downloading image %s', $image));
+            $file = $this->downloadFile($image);
+            if (strlen($file) > 0) {
+                $fileName = $this->getFileName($image);
+                $fileContent = $this->saveFile($fileName, $file);
+                if ($fileContent !== '') {
+                    $validImages[] = $fileContent;
+                }
+            }
         }
-        if ($this->localFileExists($value)) {
-            return $this->getFileName($value);
-        }
-        $this->log->logInfo(sprintf('Downloading image %s', $value));
-        $file = $this->downloadFile($value);
-        if (strlen($file) > 0) {
-            $fileName = $this->getFileName($value);
-            $fileContent = $this->saveFile($fileName, $file);
-            return $fileContent;
-        }
-        return $value;
+        return implode($this->getSeparator(), $validImages);
     }
 
     /**

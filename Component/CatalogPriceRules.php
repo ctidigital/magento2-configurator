@@ -7,15 +7,12 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\ComponentProcessorInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
-use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Class CatalogPriceRules
- */
-class CatalogPriceRules extends YamlComponentAbstract
+class CatalogPriceRules implements ComponentInterface
 {
     /**
      * @var string
@@ -38,6 +35,11 @@ class CatalogPriceRules extends YamlComponentAbstract
     private $processor;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * CatalogPriceRules constructor.
      *
      * @param LoggerInterface $log
@@ -45,13 +47,11 @@ class CatalogPriceRules extends YamlComponentAbstract
      * @param ComponentProcessorInterface $processor
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        ComponentProcessorInterface $processor
+        ComponentProcessorInterface $processor,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->processor = $processor;
+        $this->log = $log;
     }
 
     /**
@@ -61,7 +61,7 @@ class CatalogPriceRules extends YamlComponentAbstract
      *
      * @return void
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         $rules = $data['rules'] ?: [];
         $config = $data['config'] ?: [];
@@ -69,5 +69,21 @@ class CatalogPriceRules extends YamlComponentAbstract
         $this->processor->setData($rules)
             ->setConfig($config)
             ->process();
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -2,19 +2,16 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
-use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
+use FireGento\FastSimpleImport\Model\ImporterFactory;
 
 /**
- * Class Products
- * @package CtiDigital\Configurator\Model\Component
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TieredPrices extends CsvComponentAbstract
+class TieredPrices implements ComponentInterface
 {
     const SKU_COLUMN_HEADING = 'sku';
     const SEPARATOR = ';';
@@ -34,6 +31,11 @@ class TieredPrices extends CsvComponentAbstract
     protected $attributeOption;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var []
      */
     private $successPrices;
@@ -49,22 +51,19 @@ class TieredPrices extends CsvComponentAbstract
     private $skuColumn;
 
     /**
-     * Products constructor.
-     *
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
+     * TieredPrices constructor.
      * @param ImporterFactory $importerFactory
      * @param AttributeOption $attributeOption
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
-        AttributeOption $attributeOption
+        AttributeOption $attributeOption,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->importerFactory = $importerFactory;
         $this->attributeOption = $attributeOption;
+        $this->log = $log;
     }
 
     /**
@@ -73,7 +72,7 @@ class TieredPrices extends CsvComponentAbstract
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
         if (!isset($data[0])) {
@@ -119,6 +118,7 @@ class TieredPrices extends CsvComponentAbstract
             $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($pricesArray);
         } catch (\Exception $e) {
+            $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());
@@ -132,7 +132,7 @@ class TieredPrices extends CsvComponentAbstract
      */
     public function getAttributesFromCsv($data = null)
     {
-        $attributes = array();
+        $attributes = [];
         foreach ($data[0] as $attributeCode) {
             $attributes[] = $attributeCode;
         }
@@ -149,5 +149,21 @@ class TieredPrices extends CsvComponentAbstract
     public function getSkuColumnIndex($headers)
     {
         return array_search(self::SKU_COLUMN_HEADING, $headers);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -2,39 +2,60 @@
 namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
 use CtiDigital\Configurator\Component\Product\Image;
+use Magento\Framework\Filesystem;
+use FireGento\FastSimpleImport\Helper\Config;
+use Magento\Framework\HTTP\ZendClient;
+use Magento\Framework\HTTP\ZendClientFactory;
+use CtiDigital\Configurator\Api\LoggerInterface;
 
 class ImageTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
-     */
-    protected $objectManager;
-
-    /**
      * @var Image
      */
-    protected $component;
+    private $image;
 
     /**
-     * @var \Magento\Framework\HTTP\ZendClientFactory | \PHPUnit_Framework_MockObject_MockObject
+     * @var Filesystem|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $httpFactoryMock;
+    private $fileSystem;
 
     /**
-     * @var \Magento\Framework\HTTP\ZendClient | \PHPUnit_Framework_MockObject_MockObject
+     * @var Config|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $httpMock;
+    private $config;
+
+    /**
+     * @var ZendClientFactory | \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $httpFactoryMock;
+
+    /**
+     * @var ZendClient | \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $httpMock;
+
+    /**
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $log;
 
     protected function setUp()
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->fileSystem = $this->getMockBuilder(Filesystem::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->httpMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClient')
+        $this->config = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->httpMock = $this->getMockBuilder(ZendClient::class)
             ->disableOriginalConstructor()
             ->setMethods(['setUri', 'request', 'getBody'])
             ->getMock();
 
-        $this->httpFactoryMock = $this->getMockBuilder('Magento\Framework\HTTP\ZendClientFactory')
+        $this->httpFactoryMock = $this->getMockBuilder(ZendClientFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
@@ -43,11 +64,15 @@ class ImageTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->willReturn($this->httpMock);
 
-        $this->component = $this->objectManager->getObject(
-            Image::class,
-            [
-                'httpClientFactory' => $this->httpFactoryMock
-            ]
+        $this->log = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->image = new Image(
+            $this->fileSystem,
+            $this->config,
+            $this->httpFactoryMock,
+            $this->log
         );
     }
 
@@ -55,8 +80,8 @@ class ImageTest extends \PHPUnit\Framework\TestCase
     {
         $testUrl = "http://test.com/media/item.png";
         $testFilename = 'item.png';
-        $this->assertNotFalse($this->component->isValueUrl($testUrl));
-        $this->assertFalse($this->component->isValueUrl($testFilename));
+        $this->assertNotFalse($this->image->isValueUrl($testUrl));
+        $this->assertFalse($this->image->isValueUrl($testFilename));
     }
 
     public function testDownloadFile()
@@ -64,12 +89,12 @@ class ImageTest extends \PHPUnit\Framework\TestCase
         $this->httpMock->expects($this->any())->method('setUri')->willReturnSelf();
         $this->httpMock->expects($this->any())->method('request')->willReturnSelf();
         $this->httpMock->expects($this->any())->method('getBody')->willReturn('testbinarycontent');
-        $this->assertEquals('testbinarycontent', $this->component->downloadFile('http://test.com/media/item.png'));
+        $this->assertEquals('testbinarycontent', $this->image->downloadFile('http://test.com/media/item.png'));
     }
 
     public function testGetFileName()
     {
         $testUrl = "http://test.com/media/item.png";
-        $this->assertEquals('item.png', $this->component->getFileName($testUrl));
+        $this->assertEquals('item.png', $this->image->getFileName($testUrl));
     }
 }

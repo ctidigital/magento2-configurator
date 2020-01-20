@@ -2,12 +2,13 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 
-class TaxRates extends CsvComponentAbstract
+class TaxRates implements FileComponentInterface
 {
     protected $alias = 'taxrates';
     protected $name = 'Tax Rates';
@@ -19,34 +20,31 @@ class TaxRates extends CsvComponentAbstract
     protected $csvImportHandler;
 
     /**
-     * TaxRules constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * TaxRates constructor.
      * @param CsvImportHandler $csvImportHandler
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        CsvImportHandler $csvImportHandler
+        CsvImportHandler $csvImportHandler,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->csvImportHandler = $csvImportHandler;
+        $this->log = $log;
     }
 
     /**
-     * @param array|null $data
+     * @param null $data
+     * @throws LocalizedException
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
-        //Check Row Data exists
-        if (!isset($data[0])) {
-            throw new ComponentException(
-                sprintf('No row data found.')
-            );
-        }
-
         try {
-            $filePath =  BP . '/' . $this->source;
+            $filePath =  BP . '/' . $data;
             $this->log->logInfo(
                 sprintf('"%s" is being imported', $filePath)
             );
@@ -58,5 +56,21 @@ class TaxRates extends CsvComponentAbstract
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

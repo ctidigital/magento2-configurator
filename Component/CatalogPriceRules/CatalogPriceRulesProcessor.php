@@ -15,9 +15,6 @@ use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\Rule\Job;
 
-/**
- * Class CatalogPriceRulesProcessor
- */
 class CatalogPriceRulesProcessor implements ComponentProcessorInterface
 {
     /**
@@ -38,7 +35,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     /**
      * @var CatalogRuleRepositoryInterface
      */
-    private $catalogRuleRepository;
+    private $catalogRuleRepo;
 
     /**
      * @var Job
@@ -66,7 +63,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     ) {
         $this->logger = $logger;
         $this->ruleFactory = $ruleFactory;
-        $this->catalogRuleRepository = $catalogRuleRepo;
+        $this->catalogRuleRepo = $catalogRuleRepo;
         $this->ruleJob = $ruleJob;
     }
 
@@ -128,7 +125,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
             $rule = $ruleCollection->getFirstItem();
 
             // If the rule does not exist, create a new one
-            if (is_null($rule->getId())) {
+            if ($rule->getId() === null) {
                 $rule = $this->ruleFactory->create();
             }
 
@@ -137,7 +134,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
 
             try {
                 // Save the rule
-                $this->catalogRuleRepository->save($rule);
+                $this->catalogRuleRepo->save($rule);
             } catch (\Exception $ex) {
                 $this->logger->logError($ex->getMessage());
             }

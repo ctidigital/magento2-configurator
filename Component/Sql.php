@@ -7,16 +7,14 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Class Sql
+ * Class Sql - Runs raw SQL queries - generally a fallback for when a configurator component is not available.
  */
-class Sql extends YamlComponentAbstract
+class Sql implements ComponentInterface
 {
     /**
      * @var string
@@ -39,20 +37,21 @@ class Sql extends YamlComponentAbstract
     private $processor;
 
     /**
-     * {@inheritdoc}
-     *
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * Sql constructor.
+     * @param SqlSplitProcessor $processor
      * @param LoggerInterface $log
-     * @param ResourceConnection $resource
-     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        SqlSplitProcessor $processor
+        SqlSplitProcessor $processor,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->processor = $processor;
+        $this->log = $log;
     }
 
     /**
@@ -62,7 +61,7 @@ class Sql extends YamlComponentAbstract
      *
      * @return void
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         if (!isset($data['sql'])) {
             return;
@@ -71,11 +70,28 @@ class Sql extends YamlComponentAbstract
         $this->log->logInfo('Beginning of custom queries configuration:');
         foreach ($data['sql'] as $name => $sqlFile) {
             $path = BP . '/' . $sqlFile;
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             if (false === file_exists($path)) {
                 $this->log->logError("{$path} does not exist. Skipping.");
                 continue;
             }
             $this->processor->process($name, $path);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

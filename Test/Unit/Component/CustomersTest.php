@@ -3,47 +3,76 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\Customers;
 use CtiDigital\Configurator\Exception\ComponentException;
+use FireGento\FastSimpleImport\Model\ImporterFactory;
+use Magento\Customer\Api\GroupRepositoryInterface;
+use Magento\Customer\Api\GroupManagementInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SearchCriteria;
+use Magento\Framework\Api\SearchResults;
+use Magento\Indexer\Model\IndexerFactory;
+use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Customer\Model\Data\Group;
 
-class CustomersTest extends ComponentAbstractTestCase
+class CustomersTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Magento\Customer\Model\ResourceModel\GroupRepository | |PHPUnit_Framework_MockObject_MockObject
+     * @var Customers
+     */
+    private $customers;
+
+    /**
+     * @var ImporterFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $importerFactory;
+
+    /**
+     * @var GroupRepositoryInterface | |PHPUnit_Framework_MockObject_MockObject
      */
     private $groupRepository;
 
     /**
-     * @var \Magento|Framework\Api\SearchResults | \PHPUnit_Framework_MockObject_MockObject
+     * @var GroupManagementInterface | \PHPUnit_Framework_MockObject_MockObject
      */
-    private $searchResults;
+    private $groupManagement;
 
     /**
-     * @var \Magento\Framework\Api\SearchCriteria | \PHPUnit_Framework_MockObject_MockObject
+     * @var SearchCriteriaBuilder | \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $searchBuilder;
+
+    /**
+     * @var SearchCriteria | \PHPUnit_Framework_MockObject_MockObject
      */
     private $searchCriteria;
 
     /**
-     * @var \Magento\Framework\Api\SearchCriteriaBuilder | \PHPUnit_Framework_MockObject_MockObject
+     * @var SearchResults | \PHPUnit_Framework_MockObject_MockObject
      */
-    private $searchCriteriaBuilder;
+    private $searchResults;
 
     /**
-     * @var \Magento\Customer\Api\GroupManagementInterface | \PHPUnit_Framework_MockObject_MockObject
+     * @var IndexerFactory|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $groupManagement;
+    private $indexerFactory;
 
-    protected function componentSetUp()
+    /**
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $log;
+
+    protected function setUp()
     {
-        $this->importerFactory = $this->getMockBuilder('FireGento\FastSimpleImport\Model\ImporterFactory')
+        $this->importerFactory = $this->getMockBuilder(ImporterFactory::class)
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->searchResults = $this->getMockBuilder('Magento\Framework\Api\SearchResults')
+        $this->searchResults = $this->getMockBuilder(SearchResults::class)
             ->setMethods(['getItems'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->groupRepository = $this->getMockBuilder('Magento\Customer\Api\GroupRepositoryInterface')
+        $this->groupRepository = $this->getMockBuilder(GroupRepositoryInterface::class)
             ->setMethods(['save', 'getById', 'delete', 'deleteById', 'getList'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -52,21 +81,9 @@ class CustomersTest extends ComponentAbstractTestCase
             ->method('getList')
             ->willReturn($this->searchResults);
 
-        $this->searchCriteria = $this->getMockBuilder('Magento\Framework\Api\SearchCriteria')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->searchCriteriaBuilder = $this->getMockBuilder('Magento\Framework\Api\SearchCriteriaBuilder')
-            ->setMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchCriteriaBuilder->expects($this->any())
-            ->method('create')
-            ->willReturn($this->searchCriteria);
-
         $groupDefault = $this->createCustomerGroup(1);
 
-        $this->groupManagement = $this->getMockBuilder('Magento\Customer\Api\GroupManagementInterface')
+        $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
             ->setMethods(
                 ['isReadOnly', 'getNotLoggedInGroup', 'getLoggedInGroups', 'getAllCustomersGroup', 'getDefaultGroup']
             )
@@ -77,34 +94,49 @@ class CustomersTest extends ComponentAbstractTestCase
             ->method('getDefaultGroup')
             ->willReturn($groupDefault);
 
-        $this->indexerFactory = $this->getMockBuilder('\Magento\Indexer\Model\IndexerFactory')
+        $this->searchCriteria = $this->getMockBuilder(SearchCriteria::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->searchBuilder = $this->getMockBuilder(SearchCriteriaBuilder::class)
+            ->setMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->searchBuilder->expects($this->any())
+            ->method('create')
+            ->willReturn($this->searchCriteria);
+
+        $this->indexerFactory = $this->getMockBuilder(IndexerFactory::class)
             ->setMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->component = $this->testObjectManager->getObject(
-            Customers::class,
-            [
-                'groupRepository' => $this->groupRepository,
-                'groupManagement' => $this->groupManagement,
-                'criteriaBuilder' => $this->searchCriteriaBuilder,
-            ]
+        $this->log = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->customers = new Customers(
+            $this->importerFactory,
+            $this->groupRepository,
+            $this->groupManagement,
+            $this->searchBuilder,
+            $this->indexerFactory,
+            $this->log
         );
-        $this->className = Customers::class;
     }
 
     public function testDataMissingRows()
     {
         $testData = [];
         $this->expectException(ComponentException::class);
-        $this->component->getColumnHeaders($testData);
+        $this->customers->getColumnHeaders($testData);
     }
 
     public function testColumnsNotFound()
     {
         $testData = [['_website', '_store', 'firstname', 'notallowed']];
         $this->expectException(ComponentException::class, 'The column "email" is required.');
-        $this->component->getColumnHeaders($testData);
+        $this->customers->getColumnHeaders($testData);
     }
 
     public function testGetColumns()
@@ -114,8 +146,8 @@ class CustomersTest extends ComponentAbstractTestCase
             ['email', '_website', '_store', 'firstname', 'lastname'],
             ['example@example.com', 'base', 'Default', 'Test', 'Test']
         ];
-        $this->component->getColumnHeaders($testData);
-        $this->assertEquals($expected, $this->component->getHeaders());
+        $this->customers->getColumnHeaders($testData);
+        $this->assertEquals($expected, $this->customers->getHeaders());
     }
 
     public function testGroupIsValid()
@@ -126,7 +158,7 @@ class CustomersTest extends ComponentAbstractTestCase
         $this->searchResults->expects($this->any())
             ->method('getItems')
             ->willReturn($groups);
-        $this->assertTrue($this->component->isValidGroup(1));
+        $this->assertTrue($this->customers->isValidGroup(1));
     }
 
     public function testGroupNotValid()
@@ -137,17 +169,17 @@ class CustomersTest extends ComponentAbstractTestCase
         $this->searchResults->expects($this->any())
             ->method('getItems')
             ->willReturn($groups);
-        $this->assertFalse($this->component->isValidGroup(4));
+        $this->assertFalse($this->customers->isValidGroup(4));
     }
 
     public function testGetDefault()
     {
-        $this->assertEquals(1, $this->component->getDefaultGroupId());
+        $this->assertEquals(1, $this->customers->getDefaultGroupId());
     }
 
     private function createCustomerGroup($groupId)
     {
-        $group = $this->getMockBuilder('Magento\Customer\Model\Data\Group')
+        $group = $this->getMockBuilder(Group::class)
             ->setMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();

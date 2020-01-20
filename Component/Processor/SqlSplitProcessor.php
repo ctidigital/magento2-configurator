@@ -11,9 +11,6 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 
-/**
- * Class SqlSplitProcessor
- */
 class SqlSplitProcessor
 {
     /**
@@ -45,7 +42,7 @@ class SqlSplitProcessor
 
     /**
      * @param string $name
-     * @param string $fileContent
+     * @param string $filePath
      *
      * return void
      */
@@ -85,40 +82,40 @@ class SqlSplitProcessor
      * Split file content string into separate queries, allowing for
      * multi-line queries using preg_match
      *
-     * @param string $fileContent
+     * @param string $filePath
+     * @param string $delimiter
      *
      * @return array
      */
     private function extractQueriesFromFile($filePath, $delimiter = ';')
     {
+        $obBaseLevel = ob_get_level();
         $queries = [];
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $file = fopen($filePath, 'r');
-        if (is_resource($file) === true)
-        {
+        if (is_resource($file) === true) {
             $query = [];
-            while (feof($file) === false)
-            {
+            while (feof($file) === false) {
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
                 $query[] = fgets($file);
 
-                if (preg_match('~' . preg_quote($delimiter, '~') . '\s*$~iS', end($query)) === 1)
-                {
+                if (preg_match('~' . preg_quote($delimiter, '~') . '\s*$~iS', end($query)) === 1) {
                     $query = trim(implode('', $query));
 
                     $queries[] = $query;
 
-                    while (ob_get_level() > 0)
-                    {
+                    while (ob_get_level() > $obBaseLevel) {
                         ob_end_flush();
                     }
                     flush();
                 }
 
-                if (is_string($query) === true)
-                {
+                if (is_string($query) === true) {
                     $query = [];
                 }
             }
         }
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         fclose($file);
         return $queries;
     }

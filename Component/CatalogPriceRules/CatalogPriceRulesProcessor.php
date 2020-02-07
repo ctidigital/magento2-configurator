@@ -10,7 +10,6 @@ namespace CtiDigital\Configurator\Component\CatalogPriceRules;
 use CtiDigital\Configurator\Api\ComponentProcessorInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\CatalogRule\Api\CatalogRuleRepositoryInterface;
-use Magento\CatalogRule\Api\CatalogRuleRepositoryInterfaceProxy;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\Rule\Job;
@@ -58,7 +57,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     public function __construct(
         LoggerInterface $logger,
         RuleInterfaceFactory $ruleFactory,
-        CatalogRuleRepositoryInterfaceProxy $catalogRuleRepo,
+        CatalogRuleRepositoryInterface\Proxy $catalogRuleRepo,
         Job $ruleJob
     ) {
         $this->logger = $logger;

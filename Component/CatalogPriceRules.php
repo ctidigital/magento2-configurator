@@ -8,8 +8,8 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
-use CtiDigital\Configurator\Api\ComponentProcessorInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 
 class CatalogPriceRules implements ComponentInterface
@@ -30,7 +30,7 @@ class CatalogPriceRules implements ComponentInterface
     protected $description = 'Component to manage Catalog Price Rules';
 
     /**
-     * @var ComponentProcessorInterface
+     * @var CatalogPriceRulesProcessor
      */
     private $processor;
 
@@ -43,11 +43,10 @@ class CatalogPriceRules implements ComponentInterface
      * CatalogPriceRules constructor.
      *
      * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
-     * @param ComponentProcessorInterface $processor
+     * @param CatalogPriceRulesProcessor $processor
      */
     public function __construct(
-        ComponentProcessorInterface $processor,
+        CatalogPriceRulesProcessor $processor,
         LoggerInterface $log
     ) {
         $this->processor = $processor;

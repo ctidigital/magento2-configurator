@@ -42,7 +42,7 @@
                 <item name="review_rating" xsi:type="object">CtiDigital\Configurator\Component\ReviewRating</item>
                 <item name="product_links" xsi:type="object">CtiDigital\Configurator\Component\ProductLinks</item>
                 <item name="customers" xsi:type="object">CtiDigital\Configurator\Component\Customers</item>
-                <item name="catalog_price_rules" xsi:type="object">CtiDigital\Configurator\Component\CatalogPriceRules</item>
+                <item name="catalog_price_rules" xsi:type="object">CtiDigital\Configurator\Component\CatalogPriceRules\Proxy</item>
                 <item name="sql" xsi:type="object">CtiDigital\Configurator\Component\Sql</item>
                 <item name="shippingtablerates" xsi:type="object">CtiDigital\Configurator\Component\ShippingTableRates</item>
                 <item name="customer_attributes" xsi:type="object">CtiDigital\Configurator\Component\CustomerAttributes</item>
@@ -55,7 +55,7 @@
         <arguments>
             <argument name="context" xsi:type="object">Magento\Framework\Module\Setup\Context</argument>
         </arguments>
-    </virtualType>
+    </virtualType>cti
 
     <type name="Magento\Eav\Setup\EavSetup">
         <arguments>

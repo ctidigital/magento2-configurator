@@ -51,13 +51,13 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
      *
      * @param LoggerInterface $logger
      * @param RuleInterfaceFactory $ruleFactory
-     * @param CatalogRuleRepositoryInterfaceProxy $catalogRuleRepo
+     * @param CatalogRuleRepositoryInterface $catalogRuleRepo
      * @param Job $ruleJob
      */
     public function __construct(
         LoggerInterface $logger,
         RuleInterfaceFactory $ruleFactory,
-        CatalogRuleRepositoryInterface\Proxy $catalogRuleRepo,
+        CatalogRuleRepositoryInterface $catalogRuleRepo,
         Job $ruleJob
     ) {
         $this->logger = $logger;

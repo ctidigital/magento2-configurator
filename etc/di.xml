@@ -55,7 +55,7 @@
         <arguments>
             <argument name="context" xsi:type="object">Magento\Framework\Module\Setup\Context</argument>
         </arguments>
-    </virtualType>cti
+    </virtualType>
 
     <type name="Magento\Eav\Setup\EavSetup">
         <arguments>

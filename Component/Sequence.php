@@ -82,17 +82,19 @@ class Sequence implements ComponentInterface
 
     protected function newSequenceTable($store, $overrides)
     {
-        $configKeys = ['suffix', 'startValue', 'step', 'warningValue', 'maxValue', 'prefix'];
+        $configKeys = ['suffix', 'startValue', 'step', 'warningValue', 'maxValue'];
         $configValues = [];
         foreach ($configKeys as $key) {
-            if ($key != 'prefix') {
-                $configValues[$key] = $this->sequenceConfig->get($key);
-            } else {
-                $configValues[$key] = $store->getId();
-            }
+            $configValues[$key] = $this->sequenceConfig->get($key);
             if (isset($overrides[$key])) {
                 $configValues[$key] = $overrides[$key];
             }
+        }
+
+        // Prefix Value
+        $configValues['prefix'] = $store->getId();
+        if (isset($overrides['prefix'])) {
+            $configValues['prefix'] = $overrides['prefix'];
         }
 
         foreach ($this->entityPool->getEntities() as $entityType) {

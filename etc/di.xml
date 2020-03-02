@@ -24,6 +24,7 @@
             <argument name="components" xsi:type="array">
                 <item name="websites" xsi:type="object">CtiDigital\Configurator\Component\Websites</item>
                 <item name="config" xsi:type="object">CtiDigital\Configurator\Component\Config</item>
+                <item name="sequence" xsi:type="object">CtiDigital\Configurator\Component\Sequence</item>
                 <item name="attributes" xsi:type="object">CtiDigital\Configurator\Component\Attributes</item>
                 <item name="attribute_sets" xsi:type="object">CtiDigital\Configurator\Component\AttributeSets</item>
                 <item name="adminroles" xsi:type="object">CtiDigital\Configurator\Component\AdminRoles</item>

@@ -18,6 +18,11 @@ config:
   sources:
     - ../configurator/Configuration/global.yaml
     - ../configurator/Configuration/base-website-config.yaml
+sequence:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Sequence/sequence.yaml
 attributes:
   enabled: 1
   method: code

@@ -1,3 +1,7 @@
 stores:
-  base:
+  default:
     prefix: PREFIX_
+    startValue: 5000
+  usa_en_us:
+    prefix: USA_
+    startValue: 1000

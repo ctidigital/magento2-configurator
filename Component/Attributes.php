@@ -2,20 +2,18 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Class Attributes
- * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class Attributes extends YamlComponentAbstract
+class Attributes implements ComponentInterface
 {
 
     protected $alias = 'attributes';
@@ -38,6 +36,11 @@ class Attributes extends YamlComponentAbstract
     protected $attributeRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var array
      */
     protected $attributeConfigMap = [
@@ -48,6 +51,7 @@ class Attributes extends YamlComponentAbstract
         'required' => 'is_required',
         'source' => 'source_model',
         'backend' => 'backend_model',
+        'frontend' => 'frontend_model',
         'searchable' => 'is_searchable',
         'global' => 'is_global',
         'filterable_in_search' => 'is_filterable_in_search',
@@ -74,21 +78,36 @@ class Attributes extends YamlComponentAbstract
      */
     protected $entityTypeId = Product::ENTITY;
 
+    /**
+     * @var bool
+     */
+    protected $updateAttribute = true;
+
+    /**
+     * @var bool
+     */
+    protected $attributeExists = false;
+
+    /**
+     * Attributes constructor.
+     * @param EavSetup $eavSetup
+     * @param AttributeRepositoryInterface $attributeRepository
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
-        AttributeRepositoryInterface $attributeRepository
+        AttributeRepositoryInterface $attributeRepository,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->eavSetup = $eavSetup;
         $this->attributeRepository = $attributeRepository;
+        $this->log = $log;
     }
 
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    public function execute($attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['attributes'] as $attributeCode => $attributeConfiguration) {
@@ -105,21 +124,24 @@ class Attributes extends YamlComponentAbstract
      */
     protected function processAttribute($attributeCode, array $attributeConfig)
     {
-        $updateAttribute = true;
-        $attributeExists = false;
+        $this->updateAttribute = true;
+        $this->attributeExists = false;
         $attributeArray = $this->eavSetup->getAttribute($this->entityTypeId, $attributeCode);
         if ($attributeArray && $attributeArray['attribute_id']) {
-            $attributeExists = true;
+            $this->attributeExists = true;
             $this->log->logComment(sprintf('Attribute %s exists. Checking for updates.', $attributeCode));
-            $updateAttribute = $this->checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig);
+            $this->updateAttribute = $this->checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig);
 
             if (isset($attributeConfig['option'])) {
                 $newAttributeOptions = $this->manageAttributeOptions($attributeCode, $attributeConfig['option']);
+                if (!empty($newAttributeOptions)) {
+                    $this->updateAttribute = true;
+                }
                 $attributeConfig['option']['values'] = $newAttributeOptions;
             }
         }
 
-        if ($updateAttribute) {
+        if ($this->updateAttribute) {
             if (!array_key_exists('user_defined', $attributeConfig)) {
                 $attributeConfig['user_defined'] = 1;
             }
@@ -134,7 +156,7 @@ class Attributes extends YamlComponentAbstract
                 $attributeConfig
             );
 
-            if ($attributeExists) {
+            if ($this->attributeExists) {
                 $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
                 return;
             }
@@ -222,11 +244,11 @@ class Attributes extends YamlComponentAbstract
                 $attributeCode,
                 $e->getMessage()
             ));
-            return array();
+            return [];
         }
 
         // Loop through existing attributes options
-        $existingAttributeOptions = array();
+        $existingAttributeOptions = [];
         foreach ($attributeOptions as $attributeOption) {
             $value = $attributeOption->getLabel();
             $existingAttributeOptions[] = $value;
@@ -236,5 +258,21 @@ class Attributes extends YamlComponentAbstract
         //$optionsToRemove = array_diff($existingAttributeOptions, $option['values']);
 
         return $optionsToAdd;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -2,21 +2,19 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\Data\AttributeSetInterface;
 use Magento\Eav\Setup\EavSetup;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Eav\Model\AttributeSetRepository;
 
 /**
- * Class AttributeSets
- * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class AttributeSets extends YamlComponentAbstract
+class AttributeSets implements ComponentInterface
 {
     protected $alias = 'attribute_sets';
     protected $name = 'Attribute Sets';
@@ -33,6 +31,11 @@ class AttributeSets extends YamlComponentAbstract
     protected $attributeSetRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * AttributeSets constructor.
      * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
@@ -40,22 +43,19 @@ class AttributeSets extends YamlComponentAbstract
      * @param AttributeSetRepositoryInterface $attributeSetRepository
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
-        AttributeSetRepositoryInterface $attributeSetRepository
+        AttributeSetRepositoryInterface $attributeSetRepository,
+        LoggerInterface $log
     ) {
-
-        parent::__construct($log, $objectManager);
-
         $this->eavSetup = $eavSetup;
         $this->attributeSetRepository = $attributeSetRepository;
+        $this->log = $log;
     }
 
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    public function execute($attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['attribute_sets'] as $attributeSetConfiguration) {
@@ -176,5 +176,21 @@ class AttributeSets extends YamlComponentAbstract
         }
 
         throw new ComponentException('Could not find attribute set name.');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -2,37 +2,50 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class ProductLinks extends YamlComponentAbstract
+class ProductLinks implements ComponentInterface
 {
-
     protected $alias = 'product_links';
     protected $name = 'Product Links';
     protected $description = 'Component to create and maintain product links (related/up-sells/cross-sells)';
 
-
-    // @var Magento\Catalog\Api\Data\ProductLinkInterfaceFactory $productLinkFactory
+    /**
+     * @var ProductLinkInterfaceFactory
+     */
     protected $productLinkFactory;
 
+    /**
+     * @var ProductRepositoryInterface
+     */
     protected $productRepository;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
 
     protected $allowedLinks = ['relation', 'up_sell', 'cross_sell'];
     protected $linkTypeMap = ['relation' => 'related', 'up_sell' => 'upsell', 'cross_sell' => 'crosssell'];
 
+    /**
+     * ProductLinks constructor.
+     * @param ProductRepositoryInterface $productRepository
+     * @param ProductLinkInterfaceFactory $productLinkFactory
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         ProductRepositoryInterface $productRepository,
-        ProductLinkInterfaceFactory $productLinkFactory
+        ProductLinkInterfaceFactory $productLinkFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->productRepository = $productRepository;
         $this->productLinkFactory = $productLinkFactory;
+        $this->log = $log;
     }
 
     /**
@@ -40,7 +53,7 @@ class ProductLinks extends YamlComponentAbstract
      *
      * @param $data
      */
-    public function processData($data = null)
+    public function execute($data = null)
     {
         try {
             // Loop through all the product link types - if there are multiple link types in the yaml file
@@ -97,7 +110,7 @@ class ProductLinks extends YamlComponentAbstract
     private function processLinks($sku, $linkSkus, $linkType)
     {
         try {
-            $productLinks = array();
+            $productLinks = [];
 
             // Loop through all the products that require linking to a product
             foreach ($linkSkus as $position => $linkSku) {
@@ -137,5 +150,21 @@ class ProductLinks extends YamlComponentAbstract
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

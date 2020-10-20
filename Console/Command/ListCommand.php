@@ -2,11 +2,8 @@
 
 namespace CtiDigital\Configurator\Console\Command;
 
-use CtiDigital\Configurator\Model\ComponentList;
+use CtiDigital\Configurator\Api\ComponentListInterface;
 use CtiDigital\Configurator\Exception\ConfiguratorAdapterException;
-use CtiDigital\Configurator\Api\ConfigInterface;
-use CtiDigital\Configurator\Api\ConfiguratorAdapterInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,29 +11,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ListCommand extends Command
 {
     /**
-     * @var ConfiguratorAdapterInterface
+     * @var ComponentListInterface
      */
-    private $configuratorAdapter;
+    private $componentList;
 
     /**
-     * @var ConfigInterface|CtiDigital\Configurator\Console\Command\ListCommand
+     * ListCommand constructor.
+     * @param ComponentListInterface $componentList
      */
-    private $configInterface;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManagerInterface;
-
     public function __construct(
-        ConfiguratorAdapterInterface $configuratorAdapter,
-        ConfigInterface $config,
-        ObjectManagerInterface $objectManager
+        ComponentListInterface $componentList
     ) {
         parent::__construct();
-        $this->objectManagerInterface = $objectManager;
-        $this->configuratorAdapter = $configuratorAdapter;
-        $this->configInterface = $config;
+        $this->componentList = $componentList;
     }
 
     protected function configure()
@@ -55,13 +42,11 @@ class ListCommand extends Command
     {
         try {
             $count = 1;
-            foreach ($this->configInterface->getAllComponents() as $component) {
-                /* @var \CtiDigital\Configurator\Component\ComponentAbstract $componentClass */
-                $componentClass = $this->objectManagerInterface->create($component['class']);
+            foreach ($this->componentList->getAllComponents() as $component) {
                 $comment =
                     str_pad($count.') ', 4)
-                    . str_pad($componentClass->getComponentAlias(), 20)
-                    . ' - ' . $componentClass->getDescription();
+                    . str_pad($component->getAlias(), 20)
+                    . ' - ' . $component->getDescription();
                 $output->writeln('<comment>' . $comment . '</comment>');
                 $count++;
             }

@@ -2,22 +2,16 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Class Pages
- * Process Magento CMS Pages
- *
- * @package CtiDigital\Configurator\Model\Component
- */
-class Pages extends YamlComponentAbstract
+class Pages implements ComponentInterface
 {
     protected $alias = 'pages';
     protected $name = 'Pages';
@@ -40,28 +34,28 @@ class Pages extends YamlComponentAbstract
     private $storeRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * Pages constructor.
-     *
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param PageRepositoryInterface $pageRepository
      * @param PageInterfaceFactory $pageFactory
      * @param StoreRepositoryInterface $storeRepository
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         PageRepositoryInterface $pageRepository,
         PageInterfaceFactory $pageFactory,
-        StoreRepositoryInterface $storeRepository
+        StoreRepositoryInterface $storeRepository,
+        LoggerInterface $log
     ) {
         $this->pageFactory = $pageFactory;
         $this->pageRepository = $pageRepository;
         $this->storeRepository = $storeRepository;
-
-        parent::__construct($log, $objectManager);
+        $this->log = $log;
     }
-
 
     /**
      * Loop through the data array and process page data
@@ -69,7 +63,7 @@ class Pages extends YamlComponentAbstract
      * @param $data
      * @return void
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             foreach ($data as $identifier => $data) {
@@ -117,6 +111,7 @@ class Pages extends YamlComponentAbstract
                     // Check if content is from a file source
                     if ($key == "source") {
                         $key = 'content';
+                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
                         $value = file_get_contents(BP . '/' . $value);
                     }
 
@@ -152,7 +147,7 @@ class Pages extends YamlComponentAbstract
                     $page->unsetData('store_id');
                     $page->unsetData('store_data');
 
-                    $stores = array();
+                    $stores = [];
                     foreach ($pageData['stores'] as $code) {
                         $stores[] = $store = $this->storeRepository->get($code)->getId();
                     }
@@ -199,5 +194,21 @@ class Pages extends YamlComponentAbstract
                 $pageData[$key] = $value;
             }
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

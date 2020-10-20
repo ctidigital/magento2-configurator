@@ -2,17 +2,19 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\WebsiteFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection;
 use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory;
-use Symfony\Component\Yaml\Yaml;
+use Magento\Config\Model\ResourceModel\Config as ConfigResource;
+use Magento\Framework\App\Config as ScopeConfig;
 
-class Config extends YamlComponentAbstract
+class Config implements ComponentInterface
 {
     const PATH_THEME_ID = 'design/theme/theme_id';
 
@@ -21,12 +23,12 @@ class Config extends YamlComponentAbstract
     protected $description = 'Component to set the store/system configuration values';
 
     /**
-     * @var \Magento\Config\Model\ResourceModel\Config
+     * @var ConfigResource
      */
     protected $configResource;
 
     /**
-     * @var \Magento\Framework\App\Config
+     * @var ScopeConfig
      */
     protected $scopeConfig;
 
@@ -41,34 +43,53 @@ class Config extends YamlComponentAbstract
     protected $encryptor;
 
     /**
+     * @var WebsiteFactory
+     */
+    protected $websiteFactory;
+
+    /**
+     * @var StoreFactory
+     */
+    protected $storeFactory;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * Config constructor.
-     *
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
+     * @param ConfigResource $configResource
+     * @param ScopeConfig $scopeConfig
      * @param CollectionFactory $collectionFactory
+     * @param EncryptorInterface $encryptor
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
+        ConfigResource $configResource,
+        ScopeConfig $scopeConfig,
         CollectionFactory $collectionFactory,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        WebsiteFactory $websiteFactory,
+        StoreFactory $storeFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
-        $this->configResource = $this->objectManager->create(\Magento\Config\Model\ResourceModel\Config::class);
-        $this->scopeConfig = $this->objectManager->create(\Magento\Framework\App\Config::class);
+        $this->configResource = $configResource;
+        $this->scopeConfig = $scopeConfig;
         $this->collectionFactory = $collectionFactory;
         $this->encryptor = $encryptor;
+        $this->websiteFactory = $websiteFactory;
+        $this->storeFactory = $storeFactory;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processData($data = null)
+    public function execute($data = null) //phpcs:ignore Generic.Metrics.NestingLevel
     {
         try {
-            $validScopes = array('global', 'websites', 'stores');
+            $validScopes = ['global', 'websites', 'stores'];
             foreach ($data as $scope => $configurations) {
                 if (!in_array($scope, $validScopes)) {
                     throw new ComponentException(sprintf("This is not a valid scope '%s' in your config.", $scope));
@@ -93,13 +114,12 @@ class Config extends YamlComponentAbstract
 
                 if ($scope == "websites") {
                     foreach ($configurations as $code => $websiteConfigurations) {
-                        // Handle encryption parameter
-                        $encryption = 0;
-                        if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
-                            $encryption = 1;
-                        }
-
                         foreach ($websiteConfigurations as $configuration) {
+                            // Handle encryption parameter
+                            $encryption = 0;
+                            if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
+                                $encryption = 1;
+                            }
                             $convertedConfiguration = $this->convert($configuration);
                             $this->setWebsiteConfig(
                                 $convertedConfiguration['path'],
@@ -140,7 +160,7 @@ class Config extends YamlComponentAbstract
     {
         try {
             // Check existing value, skip if the same
-            $scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+            $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
             $existingValue = $this->scopeConfig->getValue($path, $scope);
             if ($value == $existingValue) {
                 $this->log->logComment(sprintf("Global Config Already: %s = %s", $path, $value));
@@ -165,9 +185,8 @@ class Config extends YamlComponentAbstract
             $logNest = 1;
             $scope = 'websites';
 
-            // Prepare Website ID
-            $websiteFactory = new WebsiteFactory($this->objectManager, \Magento\Store\Model\Website::class);
-            $website = $websiteFactory->create();
+            // Prepare Website ID;
+            $website = $this->websiteFactory->create();
             $website->load($code, 'code');
             if (!$website->getId()) {
                 throw new ComponentException(sprintf("There is no website with the code '%s'", $code));
@@ -216,8 +235,7 @@ class Config extends YamlComponentAbstract
             $logNest = 2;
             $scope = 'stores';
 
-            $storeFactory = new StoreFactory($this->objectManager, \Magento\Store\Model\Store::class);
-            $storeView = $storeFactory->create();
+            $storeView = $this->storeFactory->create();
             $storeView->load($code, 'code');
             if (!$storeView->getId()) {
                 throw new ComponentException(sprintf("There is no store view with the code '%s'", $code));
@@ -277,5 +295,21 @@ class Config extends YamlComponentAbstract
     private function encrypt($value)
     {
         return $this->encryptor->encrypt($value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

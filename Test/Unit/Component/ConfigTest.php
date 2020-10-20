@@ -3,24 +3,99 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\Config;
+use Magento\Config\Model\ResourceModel\Config as ConfigResource;
+use Magento\Framework\App\Config as ScopeConfig;
+use Magento\Theme\Model\ResourceModel\Theme\Collection;
+use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Store\Model\StoreFactory;
+use Magento\Store\Model\WebsiteFactory;
+use CtiDigital\Configurator\Api\LoggerInterface;
 
-class ConfigTest extends ComponentAbstractTestCase
+class ConfigTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var Config
+     */
+    private $config;
 
-    protected function componentSetUp()
+    /**
+     * @var ConfigResource|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $configResource;
+
+    /**
+     * @var ScopeConfig|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $scopeConfig;
+
+    /**
+     * @var Collection|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $collection;
+
+    /**
+     * @var CollectionFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $collectionFactory;
+
+    /**
+     * @var EncryptorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $encryptorInterface;
+
+    /**
+     * @var WebsiteFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $websiteFactory;
+
+    /**
+     * @var StoreFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $storeFactory;
+
+    /**
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $log;
+
+    protected function setUp()
     {
-        $collectionFactory = $this->getMockBuilder('\Magento\Theme\Model\ResourceModel\Theme\CollectionFactory')
+        $this->configResource = $this->getMockBuilder(ConfigResource::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $encrypterInterface = $this->getMockBuilder(EncryptorInterface::class)->getMock();
-        $this->component = new Config(
-            $this->logInterface,
-            $this->objectManager,
-            $collectionFactory,
-            $encrypterInterface
+        $this->scopeConfig = $this->getMockBuilder(ScopeConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->collection = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->collectionFactory = $this->getMockBuilder(CollectionFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $this->collectionFactory->expects($this->any())->method('create')->willReturn($this->collection);
+        $this->encryptorInterface = $this->getMockBuilder(EncryptorInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->websiteFactory = $this->getMockBuilder(WebsiteFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->storeFactory = $this->getMockBuilder(StoreFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->log = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->config = new Config(
+            $this->configResource,
+            $this->scopeConfig,
+            $this->collectionFactory,
+            $this->encryptorInterface,
+            $this->websiteFactory,
+            $this->storeFactory,
+            $this->log
         );
-        $this->className = Config::class;
     }
 
     /**
@@ -28,11 +103,7 @@ class ConfigTest extends ComponentAbstractTestCase
      */
     public function testIsConfigTheme()
     {
-        /**
-         * @var Config $config
-         */
-        $config = $this->testObjectManager->getObject(Config::class);
-        $this->assertTrue($config->isConfigTheme($config::PATH_THEME_ID, 'theme'));
+        $this->assertTrue($this->config->isConfigTheme(Config::PATH_THEME_ID, 'theme'));
     }
 
     /**
@@ -40,11 +111,7 @@ class ConfigTest extends ComponentAbstractTestCase
      */
     public function testIsConfigThemeWithAnId()
     {
-        /**
-         * @var Config $config
-         */
-        $config = $this->testObjectManager->getObject(Config::class);
-        $this->assertTrue($config->isConfigTheme($config::PATH_THEME_ID, '1'));
+        $this->assertTrue($this->config->isConfigTheme(Config::PATH_THEME_ID, '1'));
     }
 
     /**
@@ -52,11 +119,7 @@ class ConfigTest extends ComponentAbstractTestCase
      */
     public function testNotConfigTheme()
     {
-        /**
-         * @var Config $config
-         */
-        $config = $this->testObjectManager->getObject(Config::class);
-        $this->assertFalse($config->isConfigTheme('a/path', '1'));
+        $this->assertFalse($this->config->isConfigTheme('a/path', '1'));
     }
 
     /**
@@ -73,32 +136,11 @@ class ConfigTest extends ComponentAbstractTestCase
             ->method('getThemeId')
             ->willReturn(3);
 
-        $mockFactory = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Theme\CollectionFactory')
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
-        $mockCollection = $this->getMockBuilder('Magento\Theme\Model\ResourceModel\Theme\Collection')
-            ->disableOriginalConstructor()
-            ->setMethods(['getThemeByFullPath'])
-            ->getMock();
-
-        $mockCollection->expects($this->once())
+        $this->collection->expects($this->once())
             ->method('getThemeByFullPath')
             ->with('frontend/test/theme')
             ->willReturn($mockThemeModel);
 
-        $mockFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($mockCollection);
-
-        $config = $this->testObjectManager->getObject(
-            Config::class,
-            [
-                'collectionFactory' => $mockFactory
-            ]
-        );
-
-        $this->assertEquals(3, $config->getThemeIdByPath('frontend/test/theme'));
+        $this->assertEquals(3, $this->config->getThemeIdByPath('frontend/test/theme'));
     }
 }

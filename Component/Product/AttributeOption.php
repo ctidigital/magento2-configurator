@@ -146,7 +146,7 @@ class AttributeOption
                  * @var AttributeOptionInterface $option
                  */
                 $option = $this->optionFactory->create();
-                $option->setLabel($optionLabel);
+                $option->setLabel($label);
                 $option->setStoreLabels([$optionLabel]);
                 $option->setSortOrder(0);
                 $option->setIsDefault(false);

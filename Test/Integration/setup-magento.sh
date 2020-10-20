@@ -14,11 +14,9 @@ cd magento2
 
 git checkout tags/$1 -b $1
 
+# Update symfony/service-contracts as recommended in https://github.com/magento/magento2/issues/24937
+composer update symfony/service-contracts
 composer install
-
-echo Temporary change versions to attempt to resolve any dependency issue
-composer require symfony/config:4.1.*
-composer require symfony/dependency-injection:3.3.*
 
 if [ -z "${TRAVIS_TAG}" ]; then
     echo Require configurator branch: ${TRAVIS_BRANCH} commit: ${TRAVIS_COMMIT}
@@ -28,7 +26,7 @@ else
     composer require ctidigital/magento2-configurator ${TRAVIS_TAG:1}
 fi
 
-php bin/magento setup:install --admin-email "test@test.com" --admin-firstname "CTI" --admin-lastname "Test" --admin-password "password123" --admin-user "admin" --backend-frontname admin --base-url "http://configurator.dev" --db-host 127.0.0.1 --db-name configurator --db-user root --session-save files --use-rewrites 1 --use-secure 0 -vvv
+php bin/magento setup:install --cleanup-database --admin-email "test@test.com" --admin-firstname "CTI" --admin-lastname "Test" --admin-password "password123" --admin-user "admin" --backend-frontname admin --base-url "http://configurator.dev" --db-host 127.0.0.1 --db-name configurator --db-user root --session-save files --use-rewrites 1 --use-secure 0 -vvv
 
 echo Go to app etc folder
 cd app/etc

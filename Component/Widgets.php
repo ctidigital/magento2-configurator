@@ -2,37 +2,79 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Widget\Model\ResourceModel\Widget\Instance\Collection as WidgetCollection;
+use Magento\Widget\Model\Widget\Instance;
+use Magento\Widget\Model\Widget\InstanceFactory as WidgetInstanceFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use Magento\Store\Model\StoreFactory;
+use Magento\Framework\Serialize\SerializerInterface;
 
-class Widgets extends YamlComponentAbstract
+class Widgets implements ComponentInterface
 {
 
     protected $alias = 'widgets';
     protected $name = 'Widgets';
     protected $description = 'Component to manage CMS Widgets';
-    protected $widgetCollection;
-    protected $themeCollection;
-    protected $storeFactory;
 
+    /**
+     * @var WidgetCollection
+     */
+    private $widgetCollection;
+
+    /**
+     * @var WidgetInstanceFactory
+     */
+    private $widgetFactory;
+
+    /**
+     * @var ThemeCollection
+     */
+    private $themeCollection;
+
+    /**
+     * @var StoreFactory
+     */
+    private $storeFactory;
+
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * Widgets constructor.
+     * @param WidgetCollection $collection
+     * @param WidgetInstanceFactory $widgetFactory
+     * @param StoreFactory $storeFactory
+     * @param ThemeCollection $themeCollection
+     * @param SerializerInterface $serializer
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         WidgetCollection $collection,
+        WidgetInstanceFactory $widgetFactory,
         StoreFactory $storeFactory,
-        ThemeCollection $themeCollection
+        ThemeCollection $themeCollection,
+        SerializerInterface $serializer,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->widgetCollection = $collection;
+        $this->widgetFactory = $widgetFactory;
         $this->themeCollection = $themeCollection;
         $this->storeFactory = $storeFactory;
+        $this->serializer = $serializer;
+        $this->log = $log;
     }
 
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             foreach ($data as $widgetData) {
@@ -46,14 +88,15 @@ class Widgets extends YamlComponentAbstract
     public function processWidget($widgetData)
     {
         try {
-            $this->validateInstanceType($widgetData['instance_type']);
-
             $widget = $this->findWidgetByInstanceTypeAndTitle($widgetData['instance_type'], $widgetData['title']);
 
             $canSave = false;
-            if (is_null($widget)) {
+            if ($widget === null) {
                 $canSave = true;
-                $widget = $this->objectManager->create(\Magento\Widget\Model\Widget\Instance::class);
+                /**
+                 * @var Instance $widget
+                 */
+                $widget = $this->widgetFactory->create();
             }
 
             foreach ($widgetData as $key => $value) {
@@ -93,18 +136,6 @@ class Widgets extends YamlComponentAbstract
         }
     }
 
-    public function validateInstanceType($instanceType)
-    {
-        $this->log->logComment(sprintf("Checking if %s is a valid instance", $instanceType));
-        $instanceType = '\\' . $instanceType;
-        $instance = $this->objectManager->create($instanceType);
-        if (!$instance instanceof $instanceType) {
-            throw new ComponentException("Instance %s is invalid", $instanceType);
-        }
-        $this->log->logComment(sprintf("Found instance %s.", $instanceType));
-        // @todo validate parameters somehow using the $fields
-    }
-
     /**
      * @param $widgetInstanceType
      * @param $widgetTitle
@@ -125,7 +156,6 @@ class Widgets extends YamlComponentAbstract
             ->addFieldToFilter('title', $widgetTitle)
             ->load();
         // @todo add store filter
-
 
         // If we have more than 1, throw an exception for now. Needs store filter to drill down the widgets further
         // into a single widget.
@@ -186,9 +216,8 @@ class Widgets extends YamlComponentAbstract
      */
     public function populateWidgetParameters(array $parameters)
     {
-
         // Default property return
-        return serialize($parameters);
+        return $this->serializer->serialize($parameters);
     }
 
     /**
@@ -197,7 +226,7 @@ class Widgets extends YamlComponentAbstract
      */
     public function getCommaSeparatedStoreIds($stores)
     {
-        $storeIds = array();
+        $storeIds = [];
         foreach ($stores as $code) {
             $storeView = $this->storeFactory->create();
             $storeView->load($code, 'code');
@@ -207,5 +236,21 @@ class Widgets extends YamlComponentAbstract
             $storeIds[] = $storeView->getId();
         }
         return implode(',', $storeIds);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

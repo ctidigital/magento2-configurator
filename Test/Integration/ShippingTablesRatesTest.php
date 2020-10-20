@@ -8,8 +8,7 @@ use Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 
 /**
- * Class ShippingTablesRatesTest
- * @package CtiDigital\Configurator\Component
+ * Class ShippingTablesRatesTest - Test to run against Shipping Table Rates
  * @SuppressWarnings(PHPMD.LongVariable)
  */
 class ShippingTablesRatesTest extends \PHPUnit\Framework\TestCase
@@ -33,7 +32,7 @@ class ShippingTablesRatesTest extends \PHPUnit\Framework\TestCase
      * From directory_country_region table
      * @var array
      */
-    private $regionIdMap = array('BER' => 82);
+    private $regionIdMap = ['BER' => 82];
 
     /**
      * @var ShippingTableRates

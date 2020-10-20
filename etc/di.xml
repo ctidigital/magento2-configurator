@@ -7,13 +7,47 @@
                 type="CtiDigital\Configurator\Model\Configurator\Config" />
     <preference for="CtiDigital\Configurator\Api\LoggerInterface"
                 type="CtiDigital\Configurator\Model\Logging" />
+    <preference for="CtiDigital\Configurator\Api\ComponentListInterface"
+                type="CtiDigital\Configurator\Component\ComponentList" />
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="configurator" xsi:type="object">CtiDigital\Configurator\Console\Command\ConfiguratorCommand</item>
                 <item name="configurator:list" xsi:type="object">CtiDigital\Configurator\Console\Command\ListCommand</item>
                 <item name="configurator:run" xsi:type="object">CtiDigital\Configurator\Console\Command\RunCommand</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="CtiDigital\Configurator\Api\ComponentListInterface">
+        <arguments>
+            <argument name="components" xsi:type="array">
+                <item name="websites" xsi:type="object">CtiDigital\Configurator\Component\Websites</item>
+                <item name="config" xsi:type="object">CtiDigital\Configurator\Component\Config</item>
+                <item name="sequence" xsi:type="object">CtiDigital\Configurator\Component\Sequence</item>
+                <item name="attributes" xsi:type="object">CtiDigital\Configurator\Component\Attributes</item>
+                <item name="attribute_sets" xsi:type="object">CtiDigital\Configurator\Component\AttributeSets</item>
+                <item name="adminroles" xsi:type="object">CtiDigital\Configurator\Component\AdminRoles</item>
+                <item name="adminusers" xsi:type="object">CtiDigital\Configurator\Component\AdminUsers</item>
+                <item name="customergroups" xsi:type="object">CtiDigital\Configurator\Component\CustomerGroups</item>
+                <item name="categories" xsi:type="object">CtiDigital\Configurator\Component\Categories</item>
+                <item name="taxrates" xsi:type="object">CtiDigital\Configurator\Component\TaxRates</item>
+                <item name="taxrules" xsi:type="object">CtiDigital\Configurator\Component\TaxRules</item>
+                <item name="products" xsi:type="object">CtiDigital\Configurator\Component\Products</item>
+                <item name="blocks" xsi:type="object">CtiDigital\Configurator\Component\Blocks</item>
+                <item name="pages" xsi:type="object">CtiDigital\Configurator\Component\Pages</item>
+                <item name="apiintegrations" xsi:type="object">CtiDigital\Configurator\Component\ApiIntegrations</item>
+                <item name="widgets" xsi:type="object">CtiDigital\Configurator\Component\Widgets</item>
+                <item name="media" xsi:type="object">CtiDigital\Configurator\Component\Media</item>
+                <item name="rewrites" xsi:type="object">CtiDigital\Configurator\Component\Rewrites</item>
+                <item name="review_rating" xsi:type="object">CtiDigital\Configurator\Component\ReviewRating</item>
+                <item name="product_links" xsi:type="object">CtiDigital\Configurator\Component\ProductLinks</item>
+                <item name="customers" xsi:type="object">CtiDigital\Configurator\Component\Customers</item>
+                <item name="catalog_price_rules" xsi:type="object">CtiDigital\Configurator\Component\CatalogPriceRules\Proxy</item>
+                <item name="sql" xsi:type="object">CtiDigital\Configurator\Component\Sql</item>
+                <item name="shippingtablerates" xsi:type="object">CtiDigital\Configurator\Component\ShippingTableRates</item>
+                <item name="customer_attributes" xsi:type="object">CtiDigital\Configurator\Component\CustomerAttributes</item>
+                <item name="tiered_prices" xsi:type="object">CtiDigital\Configurator\Component\TieredPrices</item>
             </argument>
         </arguments>
     </type>
@@ -30,11 +64,6 @@
         </arguments>
     </type>
 
-    <type name="CtiDigital\Configurator\Model\Processor">
-        <arguments>
-            <argument name="componentFactory" xsi:type="object">CtiDigital\Configurator\Component\Factory\ComponentFactory</argument>
-        </arguments>
-    </type>
     <type name="CtiDigital\Configurator\Component\CatalogPriceRules">
         <arguments>
             <argument name="processor" xsi:type="object">CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor</argument>

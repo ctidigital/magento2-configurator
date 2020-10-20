@@ -2,14 +2,14 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Tax\Model\Calculation\RuleFactory;
 use Magento\Tax\Model\Calculation\RateFactory;
 use Magento\Tax\Model\ClassModelFactory;
-use CtiDigital\Configurator\Exception\ComponentException;
 
-class TaxRules extends CsvComponentAbstract
+class TaxRules implements ComponentInterface
 {
     protected $alias = 'taxrules';
     protected $name = 'Tax Rules';
@@ -41,30 +41,33 @@ class TaxRules extends CsvComponentAbstract
     protected $classModelFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * TaxRules constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param RateFactory $rateFactory
      * @param ClassModelFactory $classModelFactory
      * @param RuleFactory $ruleFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         RateFactory $rateFactory,
         ClassModelFactory $classModelFactory,
-        RuleFactory $ruleFactory
+        RuleFactory $ruleFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->rateFactory = $rateFactory;
         $this->classModelFactory = $classModelFactory;
         $this->ruleFactory = $ruleFactory;
+        $this->log = $log;
     }
 
     /**
      * @param array|null $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         //Check Row Data exists
         if (!isset($data[0])) {
@@ -234,5 +237,21 @@ class TaxRules extends CsvComponentAbstract
         $this->log->logInfo(
             sprintf('Tax Rule "%s" created.', $ruleData['code'])
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

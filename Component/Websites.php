@@ -2,8 +2,8 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
@@ -13,11 +13,9 @@ use Magento\Store\Model\Website;
 use Magento\Store\Model\WebsiteFactory;
 use Magento\Indexer\Model\IndexerFactory;
 use Magento\Framework\Event\ManagerInterface;
-use Symfony\Component\Yaml\Yaml;
 
-class Websites extends YamlComponentAbstract
+class Websites implements ComponentInterface
 {
-
     protected $alias = 'websites';
     protected $name = 'Websites';
     protected $description = 'Component to manage Websites, Stores and Store Views';
@@ -43,35 +41,41 @@ class Websites extends YamlComponentAbstract
      */
     protected $groupFactory;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * Websites constructor.
+     * @param IndexerFactory $indexerFactory
+     * @param ManagerInterface $eventManager
+     * @param WebsiteFactory $websiteFactory
+     * @param StoreFactory $storeFactory
+     * @param GroupFactory $groupFactory
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         IndexerFactory $indexerFactory,
         ManagerInterface $eventManager,
         WebsiteFactory $websiteFactory,
         StoreFactory $storeFactory,
-        GroupFactory $groupFactory
+        GroupFactory $groupFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->indexer = $indexerFactory;
         $this->eventManager = $eventManager;
         $this->websiteFactory = $websiteFactory;
         $this->storeFactory = $storeFactory;
         $this->groupFactory = $groupFactory;
+        $this->log = $log;
     }
 
-
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             if (!isset($data['websites'])) {
-                throw new ComponentException(
-                    sprintf(
-                        "No websites found. Are you sure this component '%s' should be enabled?",
-                        $this->getComponentAlias()
-                    )
-                );
+                throw new ComponentException("No websites found.");
             }
 
             // Loop through the websites
@@ -102,7 +106,7 @@ class Websites extends YamlComponentAbstract
                 $indexProcess->load('catalog_product_price');
                 $indexProcess->reindexAll();
             }
-        } catch (ComponentException $e) {
+        } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }
     }
@@ -392,5 +396,21 @@ class Websites extends YamlComponentAbstract
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

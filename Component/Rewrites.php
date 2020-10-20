@@ -2,13 +2,13 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Framework\ObjectManagerInterface;
-use Magento\UrlRewrite\Model\UrlRewriteFactory;
-use Magento\UrlRewrite\Model\UrlPersistInterface;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\UrlRewrite\Model\UrlRewriteFactory;
+use Magento\UrlRewrite\Model\UrlPersistInterface;
 
-class Rewrites extends CsvComponentAbstract
+class Rewrites implements ComponentInterface
 {
     protected $alias = "rewrites";
     protected $name = "rewrites";
@@ -34,27 +34,30 @@ class Rewrites extends CsvComponentAbstract
     protected $urlRewriteFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * Rewrites constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param UrlPersistInterface $urlPersist
      * @param UrlRewriteFactory $urlRewriteFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         UrlPersistInterface $urlPersist,
-        UrlRewriteFactory $urlRewriteFactory
+        UrlRewriteFactory $urlRewriteFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->urlPersist = $urlPersist;
         $this->urlRewriteFactory = $urlRewriteFactory;
+        $this->log = $log;
     }
 
     /**
      * @param array|null $data
      */
-    public function processData($data = null)
+    public function execute($data = null)
     {
         $headerRowAttributes = $this->getAttributesFromHeaderRow($data);
 
@@ -97,7 +100,7 @@ class Rewrites extends CsvComponentAbstract
     public function getAttributesFromHeaderRow($data = null)
     {
         $this->checkHeaderRowExists($data);
-        $attributes = array();
+        $attributes = [];
         foreach ($data[0] as $attributeCode) {
             $attributes[] = $attributeCode;
         }
@@ -171,5 +174,21 @@ class Rewrites extends CsvComponentAbstract
             $rewriteArray[$code] = $rewriteDataCsvRow[$column];
         }
         return $rewriteArray;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

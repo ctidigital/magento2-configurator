@@ -2,12 +2,13 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Model\Store;
 
-class Blocks extends YamlComponentAbstract
+class Blocks implements ComponentInterface
 {
 
     protected $alias = 'blocks';
@@ -30,26 +31,30 @@ class Blocks extends YamlComponentAbstract
     protected $searchBuilder;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * Blocks constructor.
      * @param LoggerInterface $log
      * @param ObjectManagerInterface $objectManager
      * @param BlockInterfaceFactory $blockFactory
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        BlockInterfaceFactory $blockFactory
+        BlockInterfaceFactory $blockFactory,
+        Store $store,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->blockFactory = $blockFactory;
-        $this->storeManager = $this->objectManager->create(\Magento\Store\Model\Store::class);
+        $this->storeManager = $store;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         try {
             foreach ($data as $identifier => $data) {
@@ -81,7 +86,7 @@ class Blocks extends YamlComponentAbstract
 
                 // Check if there are existing blocks
                 if ($blocks->count()) {
-                    $stores = array();
+                    $stores = [];
 
                     // Check if stores are specified
                     if (isset($data['stores'])) {
@@ -93,7 +98,7 @@ class Blocks extends YamlComponentAbstract
                 }
 
                 // If there is still no block to play with, create a new block object.
-                if (is_null($block)) {
+                if ($block === null) {
                     $block = $this->blockFactory->create();
                     $block->setIdentifier($identifier);
                     $canSave = true;
@@ -105,6 +110,7 @@ class Blocks extends YamlComponentAbstract
                     if ($key == "source") {
                         $key = 'content';
                         //TODO load this with Magento's code, and also check for file existing
+                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
                         $value = file_get_contents(BP . '/' . $value);
                     }
 
@@ -142,7 +148,7 @@ class Blocks extends YamlComponentAbstract
                 if (isset($data['stores'])) {
                     $block->unsetData('store_id');
                     $block->unsetData('store_data');
-                    $stores = array();
+                    $stores = [];
                     foreach ($data['stores'] as $code) {
                         $stores[] = $this->getStoreByCode($code)->getId();
                     }
@@ -163,7 +169,6 @@ class Blocks extends YamlComponentAbstract
         }
     }
 
-
     /**
      * Find the block to process given the identifier, block collection and optionally stores
      *
@@ -175,7 +180,7 @@ class Blocks extends YamlComponentAbstract
     private function getBlockToProcess(
         $identifier,
         \Magento\Cms\Model\ResourceModel\Block\Collection $blocks,
-        $stores = array()
+        $stores = []
     ) {
         // If there is only 1 block and stores hasn't been specified
         if ($blocks->count() == 1 && count($stores) == 0) {
@@ -218,5 +223,21 @@ class Blocks extends YamlComponentAbstract
         }
 
         return $store;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

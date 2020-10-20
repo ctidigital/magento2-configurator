@@ -7,15 +7,12 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Customer\Model\Customer;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Customer\Setup\CustomerSetup;
 use Magento\Customer\Model\ResourceModel\Attribute;
 
 /**
- * Class CustomerAttributes
- * @package CtiDigital\Configurator\Model\Component
  * @SuppressWarnings(PHPMD.LongVariable)
  */
 class CustomerAttributes extends Attributes
@@ -49,6 +46,11 @@ class CustomerAttributes extends Attributes
     protected $attributeResource;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var array
      */
     protected $defaultForms = [
@@ -60,24 +62,32 @@ class CustomerAttributes extends Attributes
         ]
     ];
 
+    /**
+     * CustomerAttributes constructor.
+     * @param EavSetup $eavSetup
+     * @param AttributeRepository $attributeRepository
+     * @param CustomerSetupFactory $customerSetupFactory
+     * @param Attribute $attributeResource
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         EavSetup $eavSetup,
         AttributeRepository $attributeRepository,
         CustomerSetupFactory $customerSetupFactory,
-        Attribute $attributeResource
+        Attribute $attributeResource,
+        LoggerInterface $log
     ) {
+        parent::__construct($eavSetup, $attributeRepository, $log);
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
         $this->customerSetup = $customerSetupFactory;
         $this->attributeResource = $attributeResource;
-        parent::__construct($log, $objectManager, $eavSetup, $attributeRepository);
+        $this->log = $log;
     }
 
     /**
      * @param array $attributeConfigurationData
      */
-    protected function processData($attributeConfigurationData = null)
+    public function execute($attributeConfigurationData = null)
     {
         try {
             foreach ($attributeConfigurationData['customer_attributes'] as $attributeCode => $attributeConfiguration) {
@@ -98,6 +108,9 @@ class CustomerAttributes extends Attributes
      */
     protected function addAdditionalValues($attributeCode, $attributeConfiguration)
     {
+        if ($this->attributeExists) {
+            return;
+        }
         if (!isset($attributeConfiguration['used_in_forms']) ||
             !isset($attributeConfiguration['used_in_forms']['values'])) {
             $attributeConfiguration['used_in_forms'] = $this->defaultForms;
@@ -127,5 +140,21 @@ class CustomerAttributes extends Attributes
                 $e->getMessage()
             ));
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

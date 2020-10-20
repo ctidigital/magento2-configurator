@@ -7,15 +7,12 @@
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Api\ComponentProcessorInterface;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor;
 use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
-use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Class CatalogPriceRules
- */
-class CatalogPriceRules extends YamlComponentAbstract
+class CatalogPriceRules implements ComponentInterface
 {
     /**
      * @var string
@@ -33,25 +30,27 @@ class CatalogPriceRules extends YamlComponentAbstract
     protected $description = 'Component to manage Catalog Price Rules';
 
     /**
-     * @var ComponentProcessorInterface
+     * @var CatalogPriceRulesProcessor
      */
     private $processor;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
 
     /**
      * CatalogPriceRules constructor.
      *
      * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
-     * @param ComponentProcessorInterface $processor
+     * @param CatalogPriceRulesProcessor $processor
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        ComponentProcessorInterface $processor
+        CatalogPriceRulesProcessor $processor,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->processor = $processor;
+        $this->log = $log;
     }
 
     /**
@@ -61,7 +60,7 @@ class CatalogPriceRules extends YamlComponentAbstract
      *
      * @return void
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         $rules = $data['rules'] ?: [];
         $config = $data['config'] ?: [];
@@ -69,5 +68,21 @@ class CatalogPriceRules extends YamlComponentAbstract
         $this->processor->setData($rules)
             ->setConfig($config)
             ->process();
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Framework\ObjectManagerInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\Image;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
@@ -10,12 +10,10 @@ use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
 
 /**
- * Class Products
- * @package CtiDigital\Configurator\Model\Component
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Products extends CsvComponentAbstract
+class Products implements ComponentInterface
 {
     const SKU_COLUMN_HEADING = 'sku';
     const QTY_COLUMN_HEADING = 'qty';
@@ -30,7 +28,8 @@ class Products extends CsvComponentAbstract
         'image',
         'small_image',
         'thumbnail',
-        'media_image'
+        'media_image',
+        'additional_images'
     ];
 
     /**
@@ -75,6 +74,11 @@ class Products extends CsvComponentAbstract
     protected $attributeOption;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * @var []
      */
     private $successProducts = [];
@@ -91,27 +95,24 @@ class Products extends CsvComponentAbstract
 
     /**
      * Products constructor.
-     *
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param ImporterFactory $importerFactory
      * @param ProductFactory $productFactory
      * @param Image $image
      * @param AttributeOption $attributeOption
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
         Image $image,
-        AttributeOption $attributeOption
+        AttributeOption $attributeOption,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
         $this->image = $image;
         $this->attributeOption = $attributeOption;
+        $this->log = $log;
     }
 
     /**
@@ -120,7 +121,7 @@ class Products extends CsvComponentAbstract
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         // Get the first row of the CSV file for the attribute columns.
         if (!isset($data[0])) {
@@ -129,19 +130,20 @@ class Products extends CsvComponentAbstract
             );
         }
         $attributeKeys = $this->getAttributesFromCsv($data);
+        $this->image->setSeparator(self::SEPARATOR);
         $this->skuColumn = $this->getSkuColumnIndex($attributeKeys);
         $totalColumnCount = count($attributeKeys);
         unset($data[0]);
 
         // Prepare the data
-        $productsArray = array();
+        $productsArray = [];
 
         foreach ($data as $product) {
             if (count($product) !== $totalColumnCount) {
                 $this->skippedProducts[] = $product[$this->skuColumn];
                 continue;
             }
-            $productArray = array();
+            $productArray = [];
             foreach ($attributeKeys as $column => $code) {
                 $product[$column] = $this->clean($product[$column], $code);
                 if (in_array($code, $this->imageAttributes)) {
@@ -179,6 +181,7 @@ class Products extends CsvComponentAbstract
             $import->setMultipleValueSeparator(self::SEPARATOR);
             $import->processImport($productsArray);
         } catch (\Exception $e) {
+            $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($import->getLogTrace());
         $this->log->logError($import->getErrorMessages());
@@ -193,6 +196,7 @@ class Products extends CsvComponentAbstract
     public function getFileType($source = null)
     {
         // Get the file extension so we know how to load the file
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $sourceFileInfo = pathinfo($source);
         if (!isset($sourceFileInfo['extension'])) {
             throw new ComponentException(
@@ -211,7 +215,7 @@ class Products extends CsvComponentAbstract
      */
     public function getAttributesFromCsv($data = null)
     {
-        $attributes = array();
+        $attributes = [];
         foreach ($data[0] as $attributeCode) {
             $attributes[] = $attributeCode;
         }
@@ -224,7 +228,7 @@ class Products extends CsvComponentAbstract
      * @param array $data
      * @return bool
      */
-    public function isConfigurable($data = array())
+    public function isConfigurable($data = [])
     {
         if (isset($data['product_type']) && $data['product_type'] === 'configurable') {
             return true;
@@ -385,6 +389,7 @@ class Products extends CsvComponentAbstract
      */
     private function spotHtmlTags($string, $tagname)
     {
+        $matches = [];
         $pattern = "/<$tagname?.*>(.*)<\/$tagname>/";
         preg_match($pattern, $string, $matches);
         return count($matches);
@@ -415,5 +420,21 @@ class Products extends CsvComponentAbstract
     public function getSkuColumnIndex($headers)
     {
         return array_search(self::SKU_COLUMN_HEADING, $headers);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

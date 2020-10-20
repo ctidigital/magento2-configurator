@@ -10,39 +10,49 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 use CtiDigital\Configurator\Api\ComponentProcessorInterface;
 use CtiDigital\Configurator\Component\CatalogPriceRules;
 use CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor;
+use CtiDigital\Configurator\Api\LoggerInterface;
 
 /**
  * Class CatalogPriceRulesTest
  * @codingStandardsIgnoreStart
  * @SuppressWarnings(PHPMD)
  */
-class CatalogPriceRulesTest extends ComponentAbstractTestCase
+class CatalogPriceRulesTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var CatalogPriceRules
+     */
+    private $catalogPriceRules;
+
+    /**
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $log;
+
     /**
      * @var ComponentProcessorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $mockComponentProcessor;
 
-    protected function componentSetUp()
+    protected function setUp()
     {
         $this->mockComponentProcessor = $this->getMockBuilder(CatalogPriceRulesProcessor::class)
             ->disableOriginalConstructor()
             ->setMethods(['setData', 'setConfig', 'process'])
             ->getMock();
 
-        $this->component = new CatalogPriceRules(
-            $this->logInterface,
-            $this->objectManager,
-            $this->mockComponentProcessor
-        );
+        $this->log = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->className = CatalogPriceRules::class;
+        $this->catalogPriceRules = new CatalogPriceRules(
+            $this->mockComponentProcessor,
+            $this->log
+        );
     }
 
     public function testProcessDataExecution()
     {
-        $this->markTestSkipped('Test will be skipped until CI configuration will be fixed');
-
         $this->mockComponentProcessor->expects($this->once())
             ->method('setData')
             ->willReturn($this->mockComponentProcessor);
@@ -54,6 +64,6 @@ class CatalogPriceRulesTest extends ComponentAbstractTestCase
         $this->mockComponentProcessor->expects($this->once())
             ->method('process');
 
-        $this->component->process();
+        $this->catalogPriceRules->execute();
     }
 }

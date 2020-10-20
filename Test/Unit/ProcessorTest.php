@@ -3,9 +3,7 @@
 namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
-use CtiDigital\Configurator\Api\ConfigInterface;
-use CtiDigital\Configurator\Component\Factory\ComponentFactory;
-use CtiDigital\Configurator\Component\Factory\ComponentFactoryInterface;
+use CtiDigital\Configurator\Api\ComponentListInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\Config\ScopeInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -18,14 +16,14 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     private $processor;
 
     /**
-     * @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentListInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $configInterface;
+    private $componentList;
 
     /**
-     * @var ComponentFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var State|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $mockComponentFactory;
+    private $state;
 
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -34,42 +32,33 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->configInterface = $this->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mockComponentFactory = $this->getMockBuilder(ComponentFactory::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['create'])
-            ->getMock();
-
         $consoleOutput = $this->getMockBuilder(ConsoleOutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $scopeInterface = $this->getMockBuilder(ScopeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $state = $this->getMockBuilder(State::class)
+        $this->componentList = $this->getMockBuilder(ComponentListInterface::class)
             ->disableOriginalConstructor()
-            ->setConstructorArgs(array($scopeInterface))
+            ->getMock();
+        $this->state = $this->getMockBuilder(State::class)
+            ->disableOriginalConstructor()
+            ->setConstructorArgs([$scopeInterface])
             ->getMock();
         $this->loggerInterface = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->setConstructorArgs(array($consoleOutput))
+            ->setConstructorArgs([$consoleOutput])
             ->getMock();
 
-        $this->processor = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->setConstructorArgs(array(
-                $this->configInterface,
-                $this->loggerInterface,
-                $state,
-                $this->mockComponentFactory,
-            ))->getMock();
+        $this->processor = new Processor(
+            $this->componentList,
+            $this->state,
+            $this->loggerInterface
+        );
     }
 
     public function testICanSetAnEnvironment()
     {
-        $this->markTestSkipped("To do - Test we can set environments");
         $environment = 'stage';
         $this->processor->setEnvironment($environment);
         $this->assertEquals($environment, $this->processor->getEnvironment());
@@ -77,7 +66,6 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testICanAddASingleComponent()
     {
-        $this->markTestSkipped("To do - Test a single component can be added");
         $component = 'websites';
         $this->processor->addComponent($component);
         $this->assertArrayHasKey($component, $this->processor->getComponents());
@@ -85,7 +73,6 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testICanAddMultipleComponents()
     {
-        $this->markTestSkipped("To do - Test multiple components can be added");
         $components = ['website', 'config'];
         foreach ($components as $component) {
             $this->processor->addComponent($component);

@@ -1,7 +1,7 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Framework\ObjectManagerInterface;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
@@ -9,7 +9,7 @@ use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-class ApiIntegrations extends YamlComponentAbstract
+class ApiIntegrations implements ComponentInterface
 {
     protected $alias = 'apiintegrations';
     protected $name = 'Api Integrations';
@@ -36,34 +36,36 @@ class ApiIntegrations extends YamlComponentAbstract
     protected $tokenFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $log;
+
+    /**
      * ApiIntegrations constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param IntegrationFactory $integrationFactory
      * @param IntegrationServiceInterface $integrationService
      * @param AuthorizationService $authorizationService
      * @param TokenFactory $tokenFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         IntegrationFactory $integrationFactory,
         IntegrationServiceInterface $integrationService,
         AuthorizationService $authorizationService,
-        TokenFactory $tokenFactory
+        TokenFactory $tokenFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->integrationFactory = $integrationFactory;
         $this->integrationService = $integrationService;
         $this->authorizationService = $authorizationService;
         $this->tokenFactory = $tokenFactory;
+        $this->log = $log;
     }
 
     /**
      * @param array $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
         if (isset($data['apiintegrations'])) {
             foreach ($data['apiintegrations'] as $integrationData) {
@@ -165,5 +167,21 @@ class ApiIntegrations extends YamlComponentAbstract
         $token->createVerifierToken($consumerId);
         $token->setType('access');
         $token->save();
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

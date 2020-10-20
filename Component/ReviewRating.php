@@ -1,8 +1,8 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Rating\Entity;
@@ -12,18 +12,17 @@ use Magento\Review\Model\Rating\Option;
 use Magento\Review\Model\Rating\OptionFactory;
 
 /**
- * Class ReviewRating
- * @package CtiDigital\Configurator\Model\Component
- *
  * @SuppressWarnings("CouplingBetweenObjects")
  */
-class ReviewRating extends YamlComponentAbstract
+class ReviewRating implements ComponentInterface
 {
     const MAX_NUM_RATINGS = 5;
 
     protected $alias = 'review_rating';
 
     protected $name = 'Review Rating';
+
+    protected $description = 'Component to create review ratings';
 
     protected $entityId;
 
@@ -47,22 +46,34 @@ class ReviewRating extends YamlComponentAbstract
      */
     protected $entityFactory;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
+     * ReviewRating constructor.
+     * @param RatingFactory $ratingFactory
+     * @param StoreRepositoryInterface $storeRepository
+     * @param OptionFactory $optionFactory
+     * @param EntityFactory $entityFactory
+     * @param LoggerInterface $log
+     */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         RatingFactory $ratingFactory,
         StoreRepositoryInterface $storeRepository,
         OptionFactory $optionFactory,
-        EntityFactory $entityFactory
+        EntityFactory $entityFactory,
+        LoggerInterface $log
     ) {
         $this->ratingFactory = $ratingFactory;
         $this->storeRepository = $storeRepository;
         $this->optionFactory = $optionFactory;
         $this->entityFactory = $entityFactory;
-        parent::__construct($log, $objectManager);
+        $this->log = $log;
     }
 
-    public function processData($data = null)
+    public function execute($data = null)
     {
         $reviewRatings = $this->getReviewRatings($data);
 
@@ -218,5 +229,21 @@ class ReviewRating extends YamlComponentAbstract
             $this->entityId = $entity->getIdByCode('product');
         }
         return $this->entityId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

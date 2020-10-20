@@ -1,15 +1,15 @@
 <?php
 namespace CtiDigital\Configurator\Component;
 
-use Magento\Authorization\Model\RoleFactory;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Authorization\Model\RulesFactory;
+use CtiDigital\Configurator\Api\ComponentInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use Magento\Authorization\Model\RoleFactory;
+use Magento\Authorization\Model\RulesFactory;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
-use CtiDigital\Configurator\Exception\ComponentException;
 
-class AdminRoles extends YamlComponentAbstract
+class AdminRoles implements ComponentInterface
 {
     protected $alias = 'adminroles';
     protected $name = 'Admin Roles';
@@ -30,30 +30,30 @@ class AdminRoles extends YamlComponentAbstract
     protected $rulesFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    private $log;
+
+    /**
      * AdminRoles constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param RoleFactory $roleFactory
      * @param RulesFactory $rulesFactory
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
         RoleFactory $roleFactory,
-        RulesFactory $rulesFactory
+        RulesFactory $rulesFactory,
+        LoggerInterface $log
     ) {
-        parent::__construct($log, $objectManager);
-
         $this->roleFactory = $roleFactory;
         $this->rulesFactory = $rulesFactory;
+        $this->log = $log;
     }
 
     /**
      * @param $data
      */
-    protected function processData($data = null)
+    public function execute($data = null)
     {
-
         if (isset($data['adminroles'])) {
             foreach ($data['adminroles'] as $role) {
                 try {
@@ -127,5 +127,21 @@ class AdminRoles extends YamlComponentAbstract
         $this->log->logError(
             sprintf('Admin Role "%s" Resources are empty, please check your yaml file', $roleName)
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -7,6 +7,11 @@ use Magento\Authorization\Model\RoleFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
+/**
+ * Class AdminUsers
+ * @package CtiDigital\Configurator\Component
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class AdminUsers implements ComponentInterface
 {
     protected $alias = 'adminusers';

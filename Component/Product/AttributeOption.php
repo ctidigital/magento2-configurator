@@ -10,6 +10,11 @@ use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
 use Magento\Catalog\Model\Product;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
+/**
+ * Class AttributeOption
+ * @package CtiDigital\Configurator\Component\Product
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class AttributeOption
 {
     /**

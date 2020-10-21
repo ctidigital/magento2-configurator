@@ -9,6 +9,11 @@ use Magento\Authorization\Model\RulesFactory;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 
+/**
+ * Class AdminRoles
+ * @package CtiDigital\Configurator\Component
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class AdminRoles implements ComponentInterface
 {
     protected $alias = 'adminroles';

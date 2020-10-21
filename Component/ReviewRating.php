@@ -13,6 +13,7 @@ use Magento\Review\Model\Rating\OptionFactory;
 
 /**
  * @SuppressWarnings("CouplingBetweenObjects")
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class ReviewRating implements ComponentInterface
 {

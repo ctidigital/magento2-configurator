@@ -9,6 +9,9 @@ use Magento\Catalog\Model\CategoryFactory;
 use Magento\Store\Model\GroupFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
+/**
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class Categories implements ComponentInterface
 {
     protected $alias = 'categories';

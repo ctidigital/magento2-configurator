@@ -9,6 +9,9 @@ use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
+/**
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class ApiIntegrations implements ComponentInterface
 {
     protected $alias = 'apiintegrations';

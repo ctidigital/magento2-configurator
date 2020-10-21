@@ -10,8 +10,6 @@ use Magento\Integration\Api\IntegrationServiceInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
 /**
- * Class ApiIntegrations
- * @package CtiDigital\Configurator\Component
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class ApiIntegrations implements ComponentInterface

@@ -15,8 +15,6 @@ use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\Rule\Job;
 
 /**
- * Class CatalogPriceRulesProcessor
- * @package CtiDigital\Configurator\Component\CatalogPriceRules
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class CatalogPriceRulesProcessor implements ComponentProcessorInterface

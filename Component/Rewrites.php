@@ -9,8 +9,6 @@ use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 
 /**
- * Class Rewrites
- * @package CtiDigital\Configurator\Component
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class Rewrites implements ComponentInterface

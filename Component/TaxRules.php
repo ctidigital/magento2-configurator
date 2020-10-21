@@ -10,8 +10,6 @@ use Magento\Tax\Model\Calculation\RateFactory;
 use Magento\Tax\Model\ClassModelFactory;
 
 /**
- * Class TaxRules
- * @package CtiDigital\Configurator\Component
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class TaxRules implements ComponentInterface

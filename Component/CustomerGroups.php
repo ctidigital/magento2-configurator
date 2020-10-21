@@ -8,8 +8,6 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
 /**
- * Class CustomerGroups
- * @package CtiDigital\Configurator\Component
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class CustomerGroups implements ComponentInterface

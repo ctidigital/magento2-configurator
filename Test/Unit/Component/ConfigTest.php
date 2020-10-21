@@ -30,6 +30,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     private $scopeConfig;
 
     /**
+     * @var ScopeConfig\Initial|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $initialConfig;
+
+    /**
      * @var Collection|\PHPUnit\Framework\MockObject\MockObject
      */
     private $collection;
@@ -67,6 +72,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->scopeConfig = $this->getMockBuilder(ScopeConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->initialConfig = $this->getMockBuilder(ScopeConfig\Initial::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->collection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -90,6 +98,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->config = new Config(
             $this->configResource,
             $this->scopeConfig,
+            $this->initialConfig,
             $this->collectionFactory,
             $this->encryptorInterface,
             $this->websiteFactory,

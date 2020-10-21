@@ -17,7 +17,7 @@ use Magento\Framework\App\Config as ScopeConfig;
 class Config implements ComponentInterface
 {
     const PATH_THEME_ID = 'design/theme/theme_id';
-    const CLASS_ENCRYPTED = 'Magento\Config\Model\Config\Backend\Encrypted';
+    const ENCRYPTED_MODEL = \Magento\Config\Model\Config\Backend\Encrypted::class;
 
     protected $alias = 'config';
     protected $name = 'Configuration';
@@ -179,9 +179,9 @@ class Config implements ComponentInterface
     {
         $metaData = $this->initialConfig->getMetadata();
 
-        foreach($metaData as $path => $processor) {
-            if($path == $configuration['path']) {
-                if (isset($processor['backendModel']) && $processor['backendModel'] === self::CLASS_ENCRYPTED) {
+        foreach ($metaData as $path => $processor) {
+            if ($path == $configuration['path']) {
+                if (isset($processor['backendModel']) && $processor['backendModel'] === self::ENCRYPTED_MODEL) {
                     $encryption = 1;
                 }
             }

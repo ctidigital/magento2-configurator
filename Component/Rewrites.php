@@ -8,6 +8,9 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class Rewrites implements ComponentInterface
 {
     protected $alias = "rewrites";

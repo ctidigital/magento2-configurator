@@ -17,6 +17,7 @@ use Magento\Framework\App\Config as ScopeConfig;
 class Config implements ComponentInterface
 {
     const PATH_THEME_ID = 'design/theme/theme_id';
+    const ENCRYPTED_MODEL = \Magento\Config\Model\Config\Backend\Encrypted::class;
 
     protected $alias = 'config';
     protected $name = 'Configuration';
@@ -58,15 +59,25 @@ class Config implements ComponentInterface
     private $log;
 
     /**
+     * @var ScopeConfig\Initial
+     */
+    private $initialConfig;
+
+    /**
      * Config constructor.
      * @param ConfigResource $configResource
      * @param ScopeConfig $scopeConfig
+     * @param ScopeConfig\Initial $initialConfig
      * @param CollectionFactory $collectionFactory
      * @param EncryptorInterface $encryptor
+     * @param WebsiteFactory $websiteFactory
+     * @param StoreFactory $storeFactory
+     * @param LoggerInterface $log
      */
     public function __construct(
         ConfigResource $configResource,
         ScopeConfig $scopeConfig,
+        ScopeConfig\Initial $initialConfig,
         CollectionFactory $collectionFactory,
         EncryptorInterface $encryptor,
         WebsiteFactory $websiteFactory,
@@ -75,6 +86,7 @@ class Config implements ComponentInterface
     ) {
         $this->configResource = $configResource;
         $this->scopeConfig = $scopeConfig;
+        $this->initialConfig = $initialConfig;
         $this->collectionFactory = $collectionFactory;
         $this->encryptor = $encryptor;
         $this->websiteFactory = $websiteFactory;
@@ -98,12 +110,15 @@ class Config implements ComponentInterface
                 if ($scope == "global") {
                     foreach ($configurations as $configuration) {
                         // Handle encryption parameter
+
                         $encryption = 0;
                         if (isset($configuration['encryption']) && $configuration['encryption'] == 1) {
                             $encryption = 1;
                         }
 
                         $convertedConfiguration = $this->convert($configuration);
+                        // Check if the path uses an encryption model. If yes, set encryption to true
+                        $encryption = $this->determineEncryption($convertedConfiguration, $encryption);
                         $this->setGlobalConfig(
                             $convertedConfiguration['path'],
                             $convertedConfiguration['value'],
@@ -121,6 +136,8 @@ class Config implements ComponentInterface
                                 $encryption = 1;
                             }
                             $convertedConfiguration = $this->convert($configuration);
+                            // Check if the path uses an encryption model. If yes, set encryption to true
+                            $encryption = $this->determineEncryption($convertedConfiguration, $encryption);
                             $this->setWebsiteConfig(
                                 $convertedConfiguration['path'],
                                 $convertedConfiguration['value'],
@@ -141,6 +158,8 @@ class Config implements ComponentInterface
                             }
 
                             $convertedConfiguration = $this->convert($configuration);
+                            // Check if the path uses an encryption model. If yes, set encryption to true
+                            $encryption = $this->determineEncryption($convertedConfiguration, $encryption);
                             $this->setStoreConfig(
                                 $convertedConfiguration['path'],
                                 $convertedConfiguration['value'],
@@ -154,6 +173,21 @@ class Config implements ComponentInterface
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage());
         }
+    }
+
+    private function determineEncryption(array $configuration, $encryption)
+    {
+        $metaData = $this->initialConfig->getMetadata();
+
+        foreach ($metaData as $path => $processor) {
+            if ($path == $configuration['path']) {
+                if (isset($processor['backendModel']) && $processor['backendModel'] === self::ENCRYPTED_MODEL) {
+                    $encryption = 1;
+                }
+            }
+        }
+
+        return $encryption;
     }
 
     private function setGlobalConfig($path, $value, $encrypted = 0)

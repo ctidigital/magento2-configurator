@@ -7,6 +7,9 @@ use Magento\Tax\Model\ClassModelFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class CustomerGroups implements ComponentInterface
 {
     protected $alias = 'customergroups';

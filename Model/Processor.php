@@ -16,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
  * Class Processor - The overarching class that reads and processes the configurator files.
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class Processor
 {

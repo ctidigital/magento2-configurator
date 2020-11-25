@@ -433,6 +433,12 @@ class Processor
     {
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $extension = pathinfo($source, PATHINFO_EXTENSION);
+
+        // For remote files, use the mime type to determine the extension
+        if ($this->isRemoteSource($source)) {
+          $extension = $this->getRemoteContentExtension($source);
+        }
+
         if (strtolower($extension) === 'yaml') {
             return self::SOURCE_YAML;
         }
@@ -455,6 +461,29 @@ class Processor
         return ($this->isSourceRemote($source) === true) ?
             $this->getRemoteData($source) :
             file_get_contents(BP . '/' . $source); // phpcs:ignore Magento2.Functions.DiscouragedFunction
+    }
+
+    /**
+     * @param $source
+     * @return array|bool|false|float|int|mixed|string|null
+     * @throws \Exception
+     */
+    private function getRemoteContentExtension($source)
+    {
+      try {
+          // phpcs:ignore Magento2.Functions.DiscouragedFunction
+          $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+      } catch (\Exception $e) {
+          return '';
+      }
+
+      // phpcs:ignore Magento2.Functions.DiscouragedFunction
+      $headers = get_headers($source, 1);
+      $contentType = array_key_exists('Content-Type', $headers) ? $headers['Content-Type'] : '';
+
+      // Parse the 'extension' from the content type
+      preg_match('%^text/([a-z]+)%', $contentType, $matches);
+      return (count($matches) == 2) ? $matches[1] : null;
     }
 
     /**

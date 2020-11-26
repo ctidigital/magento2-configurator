@@ -383,14 +383,17 @@ class Processor
     {
         if ($this->canParseAndProcess($source) === true) {
             $ext = ($sourceType !== null) ? $sourceType : $this->getExtension($source);
-            $sourceData = $this->getData($source);
+
             if ($ext === self::SOURCE_YAML) {
+                $sourceData = $this->getData($source);
                 return $this->parseYamlData($sourceData);
             }
             if ($ext === self::SOURCE_CSV) {
-                return $this->parseCsvData($sourceData);
+                // Data is read directly from the source by parseCsvData()
+                return $this->parseCsvData($source);
             }
             if ($ext === self::SOURCE_JSON) {
+                $sourceData = $this->getData($source);
                 return $this->parseJsonData($sourceData);
             }
         }
@@ -435,7 +438,7 @@ class Processor
         $extension = pathinfo($source, PATHINFO_EXTENSION);
 
         // For remote files, use the mime type to determine the extension
-        if ($this->isRemoteSource($source)) {
+        if ($this->isSourceRemote($source)) {
             $extension = $this->getRemoteContentExtension($source);
         }
 
@@ -520,17 +523,33 @@ class Processor
      */
     private function parseCsvData($source)
     {
-        $lines = explode("\n", $source);
-        $headerRow = str_getcsv(array_shift($lines));
+        // Get a handle to the source data, whether it's remote or local
+        $remoteSource = $this->isSourceRemote($source);
+
+        if ($remoteSource) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+            $handle = fopen($source, 'r', false, $streamContext);
+        }
+        else {
+            $handle = fopen($source, 'r');
+        }
+
+        // Read the header row
+        $headerRow = fgetcsv($handle);
         $csvData = [$headerRow];
-        foreach ($lines as $line) {
-            $csvLine = str_getcsv($line);
+
+        // Read all other rows and build up an array, with row headers as keys
+        while (($csvLine = fgetcsv($handle)) !== FALSE) {
             $csvRow = [];
+
             foreach (array_keys($headerRow) as $key) {
                 $csvRow[$key] = (array_key_exists($key, $csvLine) === true) ? $csvLine[$key] : '';
             }
+
             $csvData[] = $csvRow;
         }
+
         return $csvData;
     }
 

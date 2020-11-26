@@ -7,6 +7,7 @@ use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\ComponentListInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Exception;
 use Symfony\Component\Yaml\Parser;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
@@ -481,10 +482,11 @@ class Processor
         }
 
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $headers = get_headers($source, 1);
+        $headers = get_headers($source, 1, $streamContext);
         $contentType = array_key_exists('Content-Type', $headers) ? $headers['Content-Type'] : '';
 
         // Parse the 'extension' from the content type
+        $matches = [];
         preg_match('%^text/([a-z]+)%', $contentType, $matches);
         return (count($matches) == 2) ? $matches[1] : null;
     }
@@ -525,20 +527,33 @@ class Processor
     {
         // Get a handle to the source data, whether it's remote or local
         if ($this->isSourceRemote($source)) {
+            try {
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
+                $streamContext = stream_context_create(['ssl' =>
+                    [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false
+                    ]
+                ]);
+
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
+                $handle = fopen($source, 'r', false, $streamContext);
+            } catch (Exception $ex) {
+                throw new ComponentException("Can't open CSV source for reading: {$ex->getMessage()}");
+            }
+        } else {
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-            $handle = fopen($source, 'r', false, $streamContext);
-        }
-        else {
             $handle = fopen($source, 'r');
         }
 
         // Read the header row
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $headerRow = fgetcsv($handle);
         $csvData = [$headerRow];
 
         // Read all other rows and build up an array, with row headers as keys
-        while (($csvLine = fgetcsv($handle)) !== FALSE) {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        while (($csvLine = fgetcsv($handle)) !== false) {
             $csvRow = [];
 
             foreach (array_keys($headerRow) as $key) {
@@ -548,6 +563,7 @@ class Processor
             $csvData[] = $csvRow;
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         fclose($handle);
         return $csvData;
     }

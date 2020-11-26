@@ -548,6 +548,7 @@ class Processor
             $csvData[] = $csvRow;
         }
 
+        fclose($handle);
         return $csvData;
     }
 

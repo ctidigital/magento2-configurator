@@ -524,9 +524,7 @@ class Processor
     private function parseCsvData($source)
     {
         // Get a handle to the source data, whether it's remote or local
-        $remoteSource = $this->isSourceRemote($source);
-
-        if ($remoteSource) {
+        if ($this->isSourceRemote($source)) {
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
             $handle = fopen($source, 'r', false, $streamContext);

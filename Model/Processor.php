@@ -520,10 +520,9 @@ class Processor
 
     /**
      * @param $source
-     * @return array
-     * @throws \Exception
+     * @return mixed
      */
-    private function parseCsvData($source)
+    private function getFileHandle($source)
     {
         // Get a handle to the source data, whether it's remote or local
         if ($this->isSourceRemote($source)) {
@@ -537,14 +536,24 @@ class Processor
                 ]);
 
                 // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                $handle = fopen($source, 'r', false, $streamContext);
+                return fopen($source, 'r', false, $streamContext);
             } catch (Exception $ex) {
                 throw new ComponentException("Can't open CSV source for reading: {$ex->getMessage()}");
             }
-        } else {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $handle = fopen($source, 'r');
         }
+
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        return fopen($source, 'r');
+    }
+
+    /**
+     * @param $source
+     * @return array
+     * @throws \Exception
+     */
+    private function parseCsvData($source)
+    {
+        $handle = $this->getFileHandle($source);
 
         // Read the header row
         // phpcs:ignore Magento2.Functions.DiscouragedFunction

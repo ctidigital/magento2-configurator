@@ -8,6 +8,8 @@ use CtiDigital\Configurator\Component\Product\Image;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Component\Product\ValidatorFactory;
+use CtiDigital\Configurator\Component\Product\Validator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -70,6 +72,11 @@ class Products implements ComponentInterface
     protected $image;
 
     /**
+     * @var ValidatorFactory
+     */
+    protected $validatorFactory;
+
+    /**
      * @var AttributeOption
      */
     protected $attributeOption;
@@ -99,6 +106,7 @@ class Products implements ComponentInterface
      * @param ImporterFactory $importerFactory
      * @param ProductFactory $productFactory
      * @param Image $image
+     * @param ValidatorFactory $validatorFactory
      * @param AttributeOption $attributeOption
      * @param LoggerInterface $log
      */
@@ -106,12 +114,14 @@ class Products implements ComponentInterface
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
         Image $image,
+        ValidatorFactory $validatorFactory,
         AttributeOption $attributeOption,
         LoggerInterface $log
     ) {
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
         $this->image = $image;
+        $this->validatorFactory = $validatorFactory;
         $this->attributeOption = $attributeOption;
         $this->log = $log;
     }
@@ -176,11 +186,20 @@ class Products implements ComponentInterface
             );
         }
         $this->attributeOption->saveOptions();
-        $this->log->logInfo(sprintf('Attempting to import %s rows', count($this->successProducts)));
+        $this->log->logInfo('Validating import...');
+        $validatorImport = $this->importerFactory->create();
+        $validatorImport->setMultipleValueSeparator(self::SEPARATOR);
+        /**
+         * @var Validator $validatorModel
+         */
+        $validatorModel = $this->validatorFactory->create();
+        $validatedProductsArray = $validatorModel->getValidatedImport($validatorImport, $productsArray);
+        $this->log->logInfo(sprintf('Removed %s products after validation.', count($validatorModel->getRemovedRows())));
+        $this->log->logInfo(sprintf('Attempting to import %s rows', count($validatedProductsArray)));
         try {
             $import = $this->importerFactory->create();
             $import->setMultipleValueSeparator(self::SEPARATOR);
-            $import->processImport($productsArray);
+            $import->processImport($validatedProductsArray);
         } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }

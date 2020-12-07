@@ -165,9 +165,11 @@ class Products implements ComponentInterface
             }
             if ($this->isConfigurable($productArray)) {
                 $variations = $this->constructConfigurableVariations($productArray);
-                if (strlen($variations) > 0) {
-                    $productArray['configurable_variations'] = $variations;
+                if (strlen($variations) === 0) {
+                    $this->skippedProducts[] = $product[$this->skuColumn];
+                    continue;
                 }
+                $productArray['configurable_variations'] = $variations;
                 unset($productArray['associated_products']);
                 unset($productArray['configurable_attributes']);
             }
@@ -273,6 +275,9 @@ class Products implements ComponentInterface
                 $productsCount = count($products);
                 $count = 0;
                 foreach ($products as $sku) {
+                    if ($count > $productsCount) {
+                        $variations .= '|';
+                    }
                     $productModel = $this->productFactory->create();
                     $id = $productModel->getIdBySku($sku);
                     $productModel->load($id);
@@ -283,9 +288,6 @@ class Products implements ComponentInterface
                             $variations .= 'sku=' . $sku . self::SEPARATOR . $configSkuAttributes;
                         }
                         $count++;
-                        if ($count < $productsCount) {
-                            $variations .= '|';
-                        }
                     }
                 }
             }

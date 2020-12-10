@@ -275,7 +275,7 @@ class Products implements ComponentInterface
                 $productsCount = count($products);
                 $count = 0;
                 foreach ($products as $sku) {
-                    if ($count > $productsCount) {
+                    if ($count > 0 && $count < $productsCount) {
                         $variations .= '|';
                     }
                     $productModel = $this->productFactory->create();

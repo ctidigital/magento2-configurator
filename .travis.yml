@@ -10,13 +10,13 @@ env:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
     - TEST_SUITE=configurator
-    - TEST_SUITE=configurator
       MAGE_VERSION=2.3.6
     - TEST_SUITE=configurator
       MAGE_VERSION=2.4.1
 
 before_install:
   - phpenv config-rm xdebug.ini || true
+  - composer self-update --1
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - sh -c "if [ '$TEST_SUITE' = 'phpcs' ]; then composer require magento/framework:^103.0.1; fi"
   - sh -c "if [ '$TEST_SUITE' = 'unit' ]; then composer require magento/framework:^103.0.1; fi"

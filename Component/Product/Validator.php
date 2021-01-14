@@ -76,12 +76,12 @@ class Validator
     private function writeLog($rowData, $row, $attributeCode, $errorMessage, $type = self::IMPORT_DATA_ACTION_REMOVE)
     {
         $sku = isset($rowData['sku']) ? $rowData['sku'] : null;
-        $productIdentifierMessage = ($sku !== null) ? sprintf('SKU: %s', $sku) : sprintf('Row Number : %s', $row);
+        $identifierMessage = ($sku !== null) ? sprintf('SKU: %s', $sku) : sprintf('Row Number : %s', $row);
         switch ($type) {
             case self::IMPORT_DATA_ACTION_NULLIFY:
                 $message = sprintf(
                     '%s Error: %s Resolution: Unset the value for attribute code %s',
-                    $productIdentifierMessage,
+                    $identifierMessage,
                     $errorMessage,
                     $attributeCode
                 );
@@ -89,7 +89,7 @@ class Validator
             default:
                 $message = sprintf(
                     '%s Error: %s Resolution: Removed the row due to error with attribute code %s',
-                    $productIdentifierMessage,
+                    $identifierMessage,
                     $errorMessage,
                     $attributeCode
                 );

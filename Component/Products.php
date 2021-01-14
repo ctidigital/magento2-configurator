@@ -195,13 +195,13 @@ class Products implements ComponentInterface
          * @var Validator $validatorModel
          */
         $validatorModel = $this->validatorFactory->create();
-        $validatedProductsArray = $validatorModel->getValidatedImport($validatorImport, $productsArray);
+        $validatedProducts = $validatorModel->getValidatedImport($validatorImport, $productsArray);
         $this->log->logInfo(sprintf('Removed %s products after validation.', count($validatorModel->getRemovedRows())));
-        $this->log->logInfo(sprintf('Attempting to import %s rows', count($validatedProductsArray)));
+        $this->log->logInfo(sprintf('Attempting to import %s rows', count($validatedProducts)));
         try {
             $import = $this->importerFactory->create();
             $import->setMultipleValueSeparator(self::SEPARATOR);
-            $import->processImport($validatedProductsArray);
+            $import->processImport($validatedProducts);
         } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }
@@ -260,6 +260,7 @@ class Products implements ComponentInterface
 
     /**
      * Create the configurable product string
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param $data
      * @return string

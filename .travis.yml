@@ -1,7 +1,6 @@
 dist: trusty
 language: php
 php:
-  - 7.2
   - 7.3
 services:
   - mysql
@@ -11,20 +10,10 @@ env:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.2.5
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.3.1
+      MAGE_VERSION=2.3.6
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.3.2
-    - TEST_SUITE=configurator
-      MAGE_VERSION=2.3.3
-
-matrix:
-  allow_failures:
-    - php: 7.2
-    - env: TEST_SUITE=configurator MAGE_VERSION=2.2.5
-    - env: TEST_SUITE=configurator MAGE_VERSION=2.3.1
-    - env: TEST_SUITE=configurator MAGE_VERSION=2.3.2
+      MAGE_VERSION=2.4.1
 
 before_install:
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json

@@ -8,6 +8,7 @@ use Magento\Catalog\Model\Product;
 use CtiDigital\Configurator\Component\Product\Image;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Component\Product\ValidatorFactory;
 use Magento\Eav\Model\Entity\Attribute;
 
 class ProductsTest extends \PHPUnit\Framework\TestCase
@@ -42,6 +43,11 @@ class ProductsTest extends \PHPUnit\Framework\TestCase
      */
     private $log;
 
+    /**
+     * @var ValidatorFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $validatorFactory;
+
     protected function setUp()
     {
         $this->importerFactory = $this->getMockBuilder(ImporterFactory::class)
@@ -65,10 +71,15 @@ class ProductsTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->validatorFactory = $this->getMockBuilder(ValidatorFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->products = new Products(
             $this->importerFactory,
             $this->productFactory,
             $this->image,
+            $this->validatorFactory,
             $this->attributeOption,
             $this->log
         );

@@ -79,10 +79,20 @@ class Validator
         $productIdentifierMessage = ($sku !== null) ? sprintf('SKU: %s', $sku) : sprintf('Row Number : %s', $row);
         switch ($type) {
             case self::IMPORT_DATA_ACTION_NULLIFY:
-                $message = sprintf('%s Error: %s Resolution: Unset the value for attribute code %s', $productIdentifierMessage, $errorMessage, $attributeCode);
+                $message = sprintf(
+                    '%s Error: %s Resolution: Unset the value for attribute code %s',
+                    $productIdentifierMessage,
+                    $errorMessage,
+                    $attributeCode
+                );
                 break;
             default:
-                $message = sprintf('%s Error: %s Resolution: Removed the row due to error with attribute code %s', $productIdentifierMessage, $errorMessage, $attributeCode);
+                $message = sprintf(
+                    '%s Error: %s Resolution: Removed the row due to error with attribute code %s',
+                    $productIdentifierMessage,
+                    $errorMessage,
+                    $attributeCode
+                );
                 $this->removedRows[$row] = $message;
                 break;
         }
@@ -146,13 +156,25 @@ class Validator
                 switch ($failedRow['action']) {
                     case self::IMPORT_DATA_ACTION_NULLIFY:
                         if (isset($importLines[$row][$attributeCode])) {
-                            $this->writeLog($importLines[$row], $row, $attributeCode, $failedRow['message'], self::IMPORT_DATA_ACTION_NULLIFY);
+                            $this->writeLog(
+                                $importLines[$row],
+                                $row,
+                                $attributeCode,
+                                $failedRow['message'],
+                                self::IMPORT_DATA_ACTION_NULLIFY
+                            );
                             $importLines[$row][$attributeCode] = null;
                         }
                         break;
                     default:
                         if (isset($importLines[$row])) {
-                            $this->writeLog($importLines[$row], $row, $attributeCode, $failedRow['message'], self::IMPORT_DATA_ACTION_REMOVE);
+                            $this->writeLog(
+                                $importLines[$row],
+                                $row,
+                                $attributeCode,
+                                $failedRow['message'],
+                                self::IMPORT_DATA_ACTION_REMOVE
+                            );
                             unset($importLines[$row]);
                         }
                 }
@@ -194,7 +216,9 @@ class Validator
         }, $rows);
 
         $attributeCode = $this->getAttributeCodeFromError($error);
-        $action = (in_array($attributeCode, self::ATTRIBUTES_NULLIFY_ALLOW_LIST)) ? self::IMPORT_DATA_ACTION_NULLIFY : self::IMPORT_DATA_ACTION_REMOVE;
+        $action = (in_array($attributeCode, self::ATTRIBUTES_NULLIFY_ALLOW_LIST)) ?
+            self::IMPORT_DATA_ACTION_NULLIFY :
+            self::IMPORT_DATA_ACTION_REMOVE;
 
         return [
             'action' => $action,

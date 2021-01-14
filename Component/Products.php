@@ -8,6 +8,8 @@ use CtiDigital\Configurator\Component\Product\Image;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 use FireGento\FastSimpleImport\Model\ImporterFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Component\Product\ValidatorFactory;
+use CtiDigital\Configurator\Component\Product\Validator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -70,6 +72,11 @@ class Products implements ComponentInterface
     protected $image;
 
     /**
+     * @var ValidatorFactory
+     */
+    protected $validatorFactory;
+
+    /**
      * @var AttributeOption
      */
     protected $attributeOption;
@@ -99,6 +106,7 @@ class Products implements ComponentInterface
      * @param ImporterFactory $importerFactory
      * @param ProductFactory $productFactory
      * @param Image $image
+     * @param ValidatorFactory $validatorFactory
      * @param AttributeOption $attributeOption
      * @param LoggerInterface $log
      */
@@ -106,12 +114,14 @@ class Products implements ComponentInterface
         ImporterFactory $importerFactory,
         ProductFactory $productFactory,
         Image $image,
+        ValidatorFactory $validatorFactory,
         AttributeOption $attributeOption,
         LoggerInterface $log
     ) {
         $this->productFactory= $productFactory;
         $this->importerFactory = $importerFactory;
         $this->image = $image;
+        $this->validatorFactory = $validatorFactory;
         $this->attributeOption = $attributeOption;
         $this->log = $log;
     }
@@ -155,9 +165,11 @@ class Products implements ComponentInterface
             }
             if ($this->isConfigurable($productArray)) {
                 $variations = $this->constructConfigurableVariations($productArray);
-                if (strlen($variations) > 0) {
-                    $productArray['configurable_variations'] = $variations;
+                if (strlen($variations) === 0) {
+                    $this->skippedProducts[] = $product[$this->skuColumn];
+                    continue;
                 }
+                $productArray['configurable_variations'] = $variations;
                 unset($productArray['associated_products']);
                 unset($productArray['configurable_attributes']);
             }
@@ -176,11 +188,20 @@ class Products implements ComponentInterface
             );
         }
         $this->attributeOption->saveOptions();
-        $this->log->logInfo(sprintf('Attempting to import %s rows', count($this->successProducts)));
+        $this->log->logInfo('Validating import...');
+        $validatorImport = $this->importerFactory->create();
+        $validatorImport->setMultipleValueSeparator(self::SEPARATOR);
+        /**
+         * @var Validator $validatorModel
+         */
+        $validatorModel = $this->validatorFactory->create();
+        $validatedProducts = $validatorModel->getValidatedImport($validatorImport, $productsArray);
+        $this->log->logInfo(sprintf('Removed %s products after validation.', count($validatorModel->getRemovedRows())));
+        $this->log->logInfo(sprintf('Attempting to import %s rows', count($validatedProducts)));
         try {
             $import = $this->importerFactory->create();
             $import->setMultipleValueSeparator(self::SEPARATOR);
-            $import->processImport($productsArray);
+            $import->processImport($validatedProducts);
         } catch (\Exception $e) {
             $this->log->logError($e->getMessage());
         }
@@ -239,6 +260,7 @@ class Products implements ComponentInterface
 
     /**
      * Create the configurable product string
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param $data
      * @return string
@@ -254,6 +276,9 @@ class Products implements ComponentInterface
                 $productsCount = count($products);
                 $count = 0;
                 foreach ($products as $sku) {
+                    if ($count > 0 && $count < $productsCount) {
+                        $variations .= '|';
+                    }
                     $productModel = $this->productFactory->create();
                     $id = $productModel->getIdBySku($sku);
                     $productModel->load($id);
@@ -264,9 +289,6 @@ class Products implements ComponentInterface
                             $variations .= 'sku=' . $sku . self::SEPARATOR . $configSkuAttributes;
                         }
                         $count++;
-                        if ($count < $productsCount) {
-                            $variations .= '|';
-                        }
                     }
                 }
             }

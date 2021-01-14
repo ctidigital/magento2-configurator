@@ -4,6 +4,7 @@ php:
   - 7.3
 services:
   - mysql
+  - elasticsearch
 sudo: required
 env:
   matrix:

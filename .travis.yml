@@ -11,8 +11,6 @@ env:
     - TEST_SUITE=unit
     - TEST_SUITE=phpcs
     - TEST_SUITE=configurator
-      MAGE_VERSION=2.3.6
-    - TEST_SUITE=configurator
       MAGE_VERSION=2.4.1
 
 before_install:

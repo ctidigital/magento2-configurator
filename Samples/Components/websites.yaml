@@ -16,6 +16,7 @@ websites:
     store_groups:
       -
         name: Configurator's Website Store US
+        code: usa_en
         root_category_id: 2
         default_store: usa_en_us
         store_views:

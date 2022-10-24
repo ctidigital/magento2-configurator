@@ -40,7 +40,7 @@ class ReviewRatingTest extends \PHPUnit\Framework\TestCase
      */
     private $log;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->ratingFactory = $this->getMockBuilder(RatingFactory::class)
             ->disableOriginalConstructor()

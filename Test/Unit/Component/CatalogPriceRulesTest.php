@@ -34,7 +34,7 @@ class CatalogPriceRulesTest extends \PHPUnit\Framework\TestCase
      */
     private $mockComponentProcessor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockComponentProcessor = $this->getMockBuilder(CatalogPriceRulesProcessor::class)
             ->disableOriginalConstructor()

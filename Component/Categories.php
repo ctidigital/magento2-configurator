@@ -152,13 +152,13 @@ class Categories implements ComponentInterface
                         break;
                     case 'image':
                         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                        $img = basename($value);
+                        $img = basename((string) $value);
                         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                        $path = parse_url($value);
+                        $path = parse_url((string) $value);
                         $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
 
                         if (!array_key_exists('host', $path)) {
-                            $value = BP . '/' . trim($value, '/');
+                            $value = BP . '/' . trim((string) $value, '/');
                         }
 
                         // phpcs:ignore

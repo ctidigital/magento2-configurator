@@ -57,7 +57,7 @@ class CatalogPriceRulesTest extends \PHPUnit\Framework\TestCase
      */
     private $mockLogger;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->markTestSkipped('Test will be skipped until CI configuration will be fixed');
 

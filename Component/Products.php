@@ -269,8 +269,8 @@ class Products implements ComponentInterface
     {
         $variations = '';
         if (isset($data['associated_products']) && isset($data['configurable_attributes'])) {
-            $products = explode(',', $data['associated_products']);
-            $attributes = explode(',', $data['configurable_attributes']);
+            $products = explode(',', (string) $data['associated_products']);
+            $attributes = explode(',', (string) $data['configurable_attributes']);
 
             if (is_array($products) && is_array($attributes)) {
                 $productsCount = count($products);
@@ -378,7 +378,7 @@ class Products implements ComponentInterface
     private function replaceSeparator($data, $column)
     {
         if (in_array($column, $this->attrSeparator)) {
-            return str_replace(',', self::SEPARATOR, $data);
+            return str_replace(',', self::SEPARATOR, (string) $data);
         }
         return $data;
     }
@@ -395,7 +395,7 @@ class Products implements ComponentInterface
     private function insertParagraphs($data, $column)
     {
         if (in_array($column, $this->attrDescription) && !$this->spotHtmlTags($data, "p")) {
-            $data = str_replace(PHP_EOL, "</p>".PHP_EOL."<p>", $data);
+            $data = str_replace(PHP_EOL, "</p>".PHP_EOL."<p>", (string) $data);
             $data = str_replace("<p></p>".PHP_EOL, "", $data);
             $data = "<p>".$data."</p>";
         }
@@ -414,7 +414,7 @@ class Products implements ComponentInterface
     {
         $matches = [];
         $pattern = "/<$tagname?.*>(.*)<\/$tagname>/";
-        preg_match($pattern, $string, $matches);
+        preg_match($pattern, (string) $string, $matches);
         return count($matches);
     }
 
@@ -430,7 +430,7 @@ class Products implements ComponentInterface
     {
         $value = $this->replaceSeparator($value, $column);
         $value = $this->insertParagraphs($value, $column);
-        return trim($value);
+        return trim((string) $value);
     }
 
     /**

@@ -202,9 +202,9 @@ class Processor
     public function runComponent($componentAlias, $componentConfig)
     {
         $this->log->logComment("");
-        $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));
+        $this->log->logComment(str_pad("----------------------", (22 + strlen((string) $componentAlias)), "-"));
         $this->log->logComment(sprintf("| Loading component %s |", $componentAlias));
-        $this->log->logComment(str_pad("----------------------", (22 + strlen($componentAlias)), "-"));
+        $this->log->logComment(str_pad("----------------------", (22 + strlen((string) $componentAlias)), "-"));
 
         /* @var ComponentInterface $component */
         $component = $this->componentList->getComponent($componentAlias);
@@ -436,20 +436,20 @@ class Processor
     private function getExtension($source)
     {
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        $extension = pathinfo((string) $source, PATHINFO_EXTENSION);
 
         // For remote files, use the mime type to determine the extension
         if ($this->isSourceRemote($source)) {
             $extension = $this->getRemoteContentExtension($source);
         }
 
-        if (strtolower($extension) === 'yaml') {
+        if (strtolower((string) $extension) === 'yaml') {
             return self::SOURCE_YAML;
         }
-        if (strtolower($extension) === 'csv') {
+        if (strtolower((string) $extension) === 'csv') {
             return self::SOURCE_CSV;
         }
-        if (strtolower($extension) === 'json') {
+        if (strtolower((string) $extension) === 'json') {
             return self::SOURCE_JSON;
         }
         throw new ComponentException(sprintf('Source "%s" does not have a valid file extension.', $source));
@@ -487,7 +487,7 @@ class Processor
 
         // Parse the 'extension' from the content type
         $matches = [];
-        preg_match('%^text/([a-z]+)%', $contentType, $matches);
+        preg_match('%^text/([a-z]+)%', (string) $contentType, $matches);
         return (count($matches) == 2) ? $matches[1] : null;
     }
 
@@ -583,6 +583,6 @@ class Processor
      */
     private function parseJsonData($source)
     {
-        return json_decode($source);
+        return json_decode((string) $source);
     }
 }

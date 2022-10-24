@@ -48,7 +48,7 @@ class ProductsTest extends \PHPUnit\Framework\TestCase
      */
     private $validatorFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->importerFactory = $this->getMockBuilder(ImporterFactory::class)
             ->disableOriginalConstructor()

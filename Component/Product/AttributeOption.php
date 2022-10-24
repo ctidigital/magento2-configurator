@@ -120,7 +120,7 @@ class AttributeOption
      */
     public function isValidValue($value)
     {
-        if (strlen($value) > 0) {
+        if (strlen((string) $value) > 0) {
             return true;
         }
         return false;

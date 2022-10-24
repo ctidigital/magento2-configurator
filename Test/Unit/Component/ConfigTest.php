@@ -64,7 +64,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     private $log;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configResource = $this->getMockBuilder(ConfigResource::class)
             ->disableOriginalConstructor()

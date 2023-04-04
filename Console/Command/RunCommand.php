@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Console\Command;
 
@@ -13,18 +14,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RunCommand extends Command
 {
     /**
-     * @var Processor
+     * @param Processor $processor
      */
-    private $processor;
-
     public function __construct(
-        Processor $processor
+        private readonly Processor $processor
     ) {
         parent::__construct();
-        $this->processor = $processor;
     }
 
-    protected function configure()
+    /**
+     * @return void
+     */
+    protected function configure(): void
     {
         $environmentOption = new InputOption(
             'env',
@@ -64,10 +65,10 @@ class RunCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @SuppressWarnings(PHPMD)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
@@ -76,6 +77,7 @@ class RunCommand extends Command
 
             $environment = $input->getOption('env');
             $components = $input->getOption('component');
+
             if ($input->getOption('ignore-missing-files') !== false) {
                 $this->processor->setIgnoreMissingFiles(true);
             }
@@ -103,8 +105,17 @@ class RunCommand extends Command
             if ($output->getVerbosity() > OutputInterface::VERBOSITY_NORMAL) {
                 $output->writeln('<comment>Finished Configurator</comment>');
             }
+
+            return self::SUCCESS;
+
+        } catch (ConfiguratorAdapterException $e) {
+            $output->writeln('<error>' . $e->getMessage() . '</error>');
+
+            return self::INVALID;
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+
+            return self::FAILURE;
         }
     }
 }

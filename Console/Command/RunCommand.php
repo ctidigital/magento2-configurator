@@ -64,7 +64,7 @@ class RunCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @SuppressWarnings(PHPMD)
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -105,6 +105,8 @@ class RunCommand extends Command
             }
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+            return Command::FAILURE;
         }
+        return Command::SUCCESS;
     }
 }

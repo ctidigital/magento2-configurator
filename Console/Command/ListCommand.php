@@ -52,8 +52,8 @@ class ListCommand extends Command
             }
         } catch (ConfiguratorAdapterException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-            return Command::FAILURE;
+            return 1;
         }
-        return Command::SUCCESS;
+        return 0;
     }
 }

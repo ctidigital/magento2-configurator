@@ -105,8 +105,8 @@ class RunCommand extends Command
             }
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-            return Command::FAILURE;
+            return 1;
         }
-        return Command::SUCCESS;
+        return 0;
     }
 }

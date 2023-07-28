@@ -126,6 +126,10 @@ class AdminUsers implements ComponentInterface
             ->setIsActive(true)
             ->setRoleId($roleId);
 
+        if (array_key_exists('interface_locale', $userData)) {
+            $user->setInterfaceLocale($userData['interface_locale']);
+        }
+
         if ($user->validate()) {
             $user->save();
 

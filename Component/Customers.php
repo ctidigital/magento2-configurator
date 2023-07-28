@@ -117,7 +117,7 @@ class Customers implements ComponentInterface
                 $row[$columnHeader] = $customer[$key];
 
                 if ($columnHeader === self::CUSTOMER_EMAIL_HEADER &&
-                    strlen($row[self::CUSTOMER_EMAIL_HEADER]) === 0) {
+                    strlen((string) $row[self::CUSTOMER_EMAIL_HEADER]) === 0) {
                     // If no email address is specified then it's an extra address being specified.
                     $extraItem = true;
                 }
@@ -195,7 +195,7 @@ class Customers implements ComponentInterface
      */
     public function isValidGroup($group)
     {
-        if (strlen($group) === 0) {
+        if (strlen((string) $group) === 0) {
             return false;
         }
         if ($this->customerGroups === null) {

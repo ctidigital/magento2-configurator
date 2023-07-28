@@ -194,7 +194,7 @@ class Validator
     {
         $matches = [];
         $attributeCode = null;
-        preg_match('/attribute\s([^\s]*)/', $error, $matches);
+        preg_match('/attribute\s([^\s]*)/', (string) $error, $matches);
         if (isset($matches[1])) {
             $attributeCode = $matches[1];
         }

@@ -60,7 +60,7 @@ class CustomersTest extends \PHPUnit\Framework\TestCase
      */
     private $log;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->importerFactory = $this->getMockBuilder(ImporterFactory::class)
             ->setMethods(['create'])

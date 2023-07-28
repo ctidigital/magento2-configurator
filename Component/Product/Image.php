@@ -4,7 +4,7 @@ namespace CtiDigital\Configurator\Component\Product;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use FireGento\FastSimpleImport\Helper\Config;
+use FireGento\FastSimpleImport\Model\Config;
 use Magento\Framework\HTTP\ZendClient;
 use Magento\Framework\HTTP\ZendClientFactory;
 

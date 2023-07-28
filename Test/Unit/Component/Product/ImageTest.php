@@ -3,7 +3,7 @@ namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
 use CtiDigital\Configurator\Component\Product\Image;
 use Magento\Framework\Filesystem;
-use FireGento\FastSimpleImport\Helper\Config;
+use FireGento\FastSimpleImport\Model\Config;
 use Magento\Framework\HTTP\ZendClient;
 use Magento\Framework\HTTP\ZendClientFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;

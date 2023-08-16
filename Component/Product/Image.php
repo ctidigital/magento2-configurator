@@ -207,11 +207,12 @@ class Image
      */
     public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file)
     {
-        $configurationValue = $this->importerConfig->getImportFileDir();
-        if (!empty($configurationValue)) {
-            return $file->getRelativePath($configurationValue);
+        try {
+            $configurationValue = $this->importerConfig->getImportFileDir();
+             return $file->getRelativePath($configurationValue);
+        } catch (\TypeError $e) {
+            return $file->getRelativePath('import');
         }
-        return $file->getRelativePath('import');
     }
 
     /**

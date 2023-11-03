@@ -5,8 +5,9 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use FireGento\FastSimpleImport\Model\Config;
-use Magento\Framework\HTTP\ZendClient;
-use Magento\Framework\HTTP\ZendClientFactory;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientFactory;
+use GuzzleHttp\Exception\GuzzleException;
 
 class Image
 {
@@ -14,11 +15,6 @@ class Image
      * @var LoggerInterface
      */
     protected $log;
-
-    /**
-     * @var ZendClientFactory
-     */
-    protected $httpClientFactory;
 
     /**
      * @var Filesystem
@@ -36,21 +32,25 @@ class Image
     private $separator = ';';
 
     /**
-     * Image constructor.
+     * @var ClientFactory
+     */
+    private ClientFactory $clientFactory;
+
+    /**
      * @param Filesystem $filesystem
      * @param Config $importerConfig
-     * @param ZendClientFactory $httpClientFactory
+     * @param ClientFactory $clientFactory
      * @param LoggerInterface $log
      */
     public function __construct(
         Filesystem $filesystem,
         Config $importerConfig,
-        ZendClientFactory $httpClientFactory,
+        ClientFactory $clientFactory,
         LoggerInterface $log
     ) {
         $this->filesystem = $filesystem;
         $this->importerConfig = $importerConfig;
-        $this->httpClientFactory = $httpClientFactory;
+        $this->clientFactory = $clientFactory;
         $this->log = $log;
     }
 
@@ -90,19 +90,19 @@ class Image
     public function downloadFile($value)
     {
         /**
-         * @var ZendClient $client
+         * @var Client $client
          */
-        $client = $this->httpClientFactory->create();
+        $client = $this->clientFactory->create(['config' => [
+            'base_uri' => $value
+        ]]);
         $response = '';
 
         try {
-            $response = $client
-                ->setUri($value)
-                ->request('GET')
-                ->getBody();
-        } catch (\Exception $e) {
+            $response = $client->request('GET')->getBody();
+        } catch (GuzzleException $e) {
             $this->log->logError($e->getMessage());
         }
+
         return $response;
     }
 
@@ -207,11 +207,12 @@ class Image
      */
     public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file)
     {
-        $configurationValue = $this->importerConfig->getImportFileDir();
-        if (!empty($configurationValue)) {
-            return $file->getRelativePath($configurationValue);
+        try {
+            $configurationValue = $this->importerConfig->getImportFileDir();
+             return $file->getRelativePath($configurationValue);
+        } catch (\TypeError $e) {
+            return $file->getRelativePath('import');
         }
-        return $file->getRelativePath('import');
     }
 
     /**

@@ -60,9 +60,8 @@ class CustomerGroups implements ComponentInterface
             if ($taxClassId) {
                 foreach ($taxClass['groups'] as $group) {
                     try {
-                        if (isset($group['name'])) {
-                            $this->createCustomerGroup($group['name'], $taxClassId);
-                        }
+                        $this->validateGroupName($group);
+                        $this->createCustomerGroup($group['name'], $taxClassId);
                     } catch (ComponentException $e) {
                         $this->log->logError($e->getMessage());
                     }
@@ -98,6 +97,26 @@ class CustomerGroups implements ComponentInterface
         $this->log->logInfo(
             sprintf('Customer Group "%s" created', $groupName)
         );
+    }
+
+    /**
+     * perform customer group name validation
+     *
+     * @param array $group
+     * @return null
+     * @throw ComponentException
+     */
+    private function validateGroupName(array $group)
+    {
+        if (!isset($group['name'])) {
+            throw new ComponentException(__('The customer group name is mandatory'));
+        }
+
+        if (strlen($group['name'])>32) {
+            throw new ComponentException(
+                __('The customer group name "%1" is too long (maximum length is 32 characters)', $group['name'])
+            );
+        }
     }
 
     /**

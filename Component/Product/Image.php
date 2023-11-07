@@ -8,6 +8,7 @@ use FireGento\FastSimpleImport\Model\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientFactory;
 use GuzzleHttp\Exception\GuzzleException;
+use Magento\Framework\Webapi\Rest\Request;
 
 class Image
 {
@@ -92,14 +93,12 @@ class Image
         /**
          * @var Client $client
          */
-        $client = $this->clientFactory->create(['config' => [
-            'base_uri' => $value
-        ]]);
-        $response = '';
+        $client = $this->clientFactory->create();
 
         try {
-            $response = $client->request('GET')->getBody();
+            $response = $client->request(Request::HTTP_METHOD_GET, $value)->getBody();
         } catch (GuzzleException $e) {
+            $response = '';
             $this->log->logError($e->getMessage());
         }
 
@@ -114,12 +113,17 @@ class Image
      */
     public function getFileName($url)
     {
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $imageName = basename((string) $url);
-        // Remove any URL entities
-        $imageName = urldecode($imageName);
-        // Replace spaces with -
-        $imageName = preg_replace('/\s+/', '-', $imageName);
+        if (preg_match('/http:\/\/placehold\.it\/(.*)\/jpg$/', $url, $match)) {
+            $imageName = sprintf('%s.jpg', $match[1]);
+        } else {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            $imageName = basename((string) $url);
+            // Remove any URL entities
+            $imageName = urldecode($imageName);
+            // Replace spaces with -
+            $imageName = preg_replace('/\s+/', '-', $imageName);
+        }
+
         return $imageName;
     }
 

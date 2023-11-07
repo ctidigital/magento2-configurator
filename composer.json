@@ -20,7 +20,7 @@
     "phpunit/phpunit": "^6.2",
     "magento/magento-coding-standard": "5"
   },
-  "version": "3.2.0",
+  "version": "3.2.1",
   "autoload": {
     "files": [ "registration.php" ],
     "psr-4": {

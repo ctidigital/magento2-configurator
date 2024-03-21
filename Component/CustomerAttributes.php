@@ -75,9 +75,11 @@ class CustomerAttributes extends Attributes
         AttributeRepository $attributeRepository,
         CustomerSetupFactory $customerSetupFactory,
         Attribute $attributeResource,
-        LoggerInterface $log
+        LoggerInterface $log,
+        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
+        \Magento\Eav\Model\Config $eavConfig
     ) {
-        parent::__construct($eavSetup, $attributeRepository, $log);
+        parent::__construct($eavSetup, $attributeRepository, $log, $attrOptionCollectionFactory, $eavConfig);
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
         $this->customerSetup = $customerSetupFactory;
         $this->attributeResource = $attributeResource;

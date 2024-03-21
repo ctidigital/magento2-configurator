@@ -34,3 +34,82 @@ attributes:
     product_types:
       - bundle
       - simple
+  book_format:
+    global: 1
+    label: Book Format
+    type: int
+    input: select
+    visible_on_front: 1
+    filterable: 1
+    filterable_in_search: 1
+    required: 0
+    searchable: 1
+    visible_in_advanced_search: 1
+    used_for_promo_rules: 0
+    used_in_product_listing: 1
+    position: 10
+    product_types:
+      - simple
+      - configurable
+    option:
+      values:
+        - "Hardback"
+        - "Paperback"
+  colour_with_swatches:
+    global: 1
+    label: Colour
+    type: int
+    input: swatch_visual
+    visible_on_front: 1
+    filterable: 1
+    filterable_in_search: 1
+    required: 0
+    searchable: 1
+    visible_in_advanced_search: 1
+    used_for_promo_rules: 0
+    used_in_product_listing: 1
+    position: 20
+    product_types:
+      - simple
+      - configurable
+    option:
+      values:
+        'Aqua blue': '#A1DAD7'
+        'Aqua marine': '#7FFFD4'
+        'Black': '#000000'
+        'Blue': '#0000FF'
+        'Bottle green': '#093624'
+        'Bright blue': '#2EFFFA'
+        'Brown': '#964B00'
+        'Cerise pink': '#DA3287'
+        'Cinnabar': '#E34234'
+        'Dark brown': '#5F1811'
+        'Dark green': '#105B10'
+        'Dark grey': '#484747'
+        'Dark purple': '#3A0156'
+        'Denim blue': '#1560BD'
+        'Forest green': '#228B22'
+        'French navy': '#005280'
+        'Grape': '#381A51'
+        'Green': '#00FF00'
+        'Grey': '#808080'
+        'Indigo denim': '#3752B3'
+        'Khaki': '#F0E68C'
+        'Lemon yellow': '#FDE910'
+        'Light blue': '#D6E6FF'
+        'Light green': '#D6FFD8'
+        'Light grey': '#DEDEDE'
+        'Lime green': '#BFFF00'
+        'Mustard yellow': '#FFDB58'
+        'Navy blue': '#000080'
+        'Orange': '#FF681F'
+        'Pale Green': '#72836E'
+        'Pink': '#FFC0CB'
+        'Purple': '#660099'
+        'Red': '#FF0000'
+        'Sky blue': '#76D7EA'
+        'Slate grey': '#708090'
+        'Tomato red': '#FF3100'
+        'Turquoise': '#30D5C8'
+        'White': '#FFFFFF'
+        'Yellow': '#FFFF00'

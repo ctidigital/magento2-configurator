@@ -34,27 +34,6 @@ attributes:
     product_types:
       - bundle
       - simple
-  book_format:
-    global: 1
-    label: Book Format
-    type: int
-    input: select
-    visible_on_front: 1
-    filterable: 1
-    filterable_in_search: 1
-    required: 0
-    searchable: 1
-    visible_in_advanced_search: 1
-    used_for_promo_rules: 0
-    used_in_product_listing: 1
-    position: 10
-    product_types:
-      - simple
-      - configurable
-    option:
-      values:
-        - "Hardback"
-        - "Paperback"
   colour_with_swatches:
     global: 1
     label: Colour

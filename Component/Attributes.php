@@ -332,7 +332,6 @@ class Attributes implements ComponentInterface
         $attributeData['update_product_preview_image'] = 1;
         $attributeData['use_product_image_for_swatch'] = 0;
         $attributeData['optionvisual'] = $this->getOptionSwatch($attributeData, $attributeConfig['option']['values']);
-        $attributeData['defaultvisual'] = $this->getOptionDefaultVisual($attributeData);
         $attributeData['swatchvisual'] = $this->getOptionSwatchVisual($attributeData);
         $attribute->addData($attributeData);
         $attribute->save();
@@ -355,7 +354,6 @@ class Attributes implements ComponentInterface
         $attributeData['update_product_preview_image'] = 1;
         $attributeData['use_product_image_for_swatch'] = 0;
         $attributeData['optiontext'] = $this->getOptionSwatch($attributeData, $attributeConfig['option']['values']);
-        $attributeData['defaulttext'] = $this->getOptionDefaultText($attributeData);
         $attributeData['swatchtext'] = $this->getOptionSwatchText($attributeData);
         $attribute->addData($attributeData);
         $attribute->save();
@@ -403,16 +401,6 @@ class Attributes implements ComponentInterface
      * @param array $attributeData
      * @return array
      */
-    private function getOptionDefaultVisual(array $attributeData): array
-    {
-        $optionSwatch = $this->getOptionSwatchVisual($attributeData);
-        return [array_keys($optionSwatch['value'])[0]];
-    }
-
-    /**
-     * @param array $attributeData
-     * @return array
-     */
     private function getOptionSwatchText(array $attributeData): array
     {
         $optionSwatch = ['value' => []];
@@ -420,16 +408,6 @@ class Attributes implements ComponentInterface
             $optionSwatch['value'][$optionKey] = [$optionValue, ''];
         }
         return $optionSwatch;
-    }
-
-    /**
-     * @param array $attributeData
-     * @return array
-     */
-    private function getOptionDefaultText(array $attributeData): array
-    {
-        $optionSwatch = $this->getOptionSwatchText($attributeData);
-        return [array_keys($optionSwatch['value'])[0]];
     }
 
     /**

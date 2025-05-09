@@ -3,14 +3,15 @@
 namespace CtiDigital\Configurator\Model;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
-use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\ComponentListInterface;
+use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Exception;
-use Symfony\Component\Yaml\Parser;
-use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -202,9 +203,9 @@ class Processor
     public function runComponent($componentAlias, $componentConfig)
     {
         $this->log->logComment("");
-        $this->log->logComment(str_pad("----------------------", (22 + strlen((string) $componentAlias)), "-"));
+        $this->log->logComment(str_pad("----------------------", (22 + strlen((string)$componentAlias)), "-"));
         $this->log->logComment(sprintf("| Loading component %s |", $componentAlias));
-        $this->log->logComment(str_pad("----------------------", (22 + strlen((string) $componentAlias)), "-"));
+        $this->log->logComment(str_pad("----------------------", (22 + strlen((string)$componentAlias)), "-"));
 
         /* @var ComponentInterface $component */
         $component = $this->componentList->getComponent($componentAlias);
@@ -264,7 +265,7 @@ class Processor
         }
 
         // If there are sources for the environment, process them
-        foreach ((array) $componentConfig['env'][$this->getEnvironment()]['sources'] as $source) {
+        foreach ((array)$componentConfig['env'][$this->getEnvironment()]['sources'] as $source) {
             try {
                 $sourceType = (isset($componentConfig['type']) === true) ? $componentConfig['type'] : null;
                 $sourceData = $this->parseData($source, $sourceType);
@@ -310,7 +311,7 @@ class Processor
      */
     private function isValidComponent($componentName)
     {
-        if ($this->log->getLogLevel() > \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_NORMAL) {
+        if ($this->log->getLogLevel() > OutputInterface::VERBOSITY_NORMAL) {
             $this->log->logQuestion(sprintf("Does the %s component exist?", $componentName));
         }
         $component = $this->componentList->getComponent($componentName);
@@ -425,31 +426,31 @@ class Processor
      */
     public function isSourceRemote($source)
     {
-        return (filter_var($source, FILTER_VALIDATE_URL) !== false) ? true : false;
+        return filter_var($source, FILTER_VALIDATE_URL) !== false;
     }
 
     /**
      * @param $source
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     private function getExtension($source)
     {
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $extension = pathinfo((string) $source, PATHINFO_EXTENSION);
+        $extension = pathinfo((string)$source, PATHINFO_EXTENSION);
 
         // For remote files, use the mime type to determine the extension
         if ($this->isSourceRemote($source)) {
             $extension = $this->getRemoteContentExtension($source);
         }
 
-        if (strtolower((string) $extension) === 'yaml') {
+        if (strtolower((string)$extension) === 'yaml') {
             return self::SOURCE_YAML;
         }
-        if (strtolower((string) $extension) === 'csv') {
+        if (strtolower((string)$extension) === 'csv') {
             return self::SOURCE_CSV;
         }
-        if (strtolower((string) $extension) === 'json') {
+        if (strtolower((string)$extension) === 'json') {
             return self::SOURCE_JSON;
         }
         throw new ComponentException(sprintf('Source "%s" does not have a valid file extension.', $source));
@@ -458,7 +459,7 @@ class Processor
     /**
      * @param $source
      * @return array|bool|false|float|int|mixed|string|null
-     * @throws \Exception
+     * @throws Exception
      */
     private function getData($source)
     {
@@ -470,14 +471,14 @@ class Processor
     /**
      * @param $source
      * @return array|bool|false|float|int|mixed|string|null
-     * @throws \Exception
+     * @throws Exception
      */
     private function getRemoteContentExtension($source)
     {
         try {
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return '';
         }
 
@@ -487,21 +488,21 @@ class Processor
 
         // Parse the 'extension' from the content type
         $matches = [];
-        preg_match('%^text/([a-z]+)%', (string) $contentType, $matches);
+        preg_match('%^text/([a-z]+)%', (string)$contentType, $matches);
         return (count($matches) == 2) ? $matches[1] : null;
     }
 
     /**
      * @param $source
      * @return array|bool|float|int|mixed|string|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function getRemoteData($source)
     {
         try {
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return '';
         }
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
@@ -549,7 +550,7 @@ class Processor
     /**
      * @param $source
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     private function parseCsvData($source)
     {
@@ -583,6 +584,6 @@ class Processor
      */
     private function parseJsonData($source)
     {
-        return json_decode((string) $source);
+        return json_decode((string)$source);
     }
 }

@@ -2,13 +2,15 @@
 
 namespace CtiDigital\Configurator\Component;
 
+use BadMethodCallException;
 use CtiDigital\Configurator\Api\ComponentInterface;
-use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
+use TypeError;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -232,12 +234,12 @@ class Attributes implements ComponentInterface
                 'Attribute %s doesn\'t exist',
                 $attributeCode
             ));
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
             $this->log->logError(sprintf(
                 'Couldn\'t retrieve options for attribute %s.',
                 $attributeCode
             ));
-        } catch (\BadMethodCallException $e) {
+        } catch (BadMethodCallException $e) {
             // @todo This should not happen. Rerunning customer attribute option appear to cause this exception.
             $this->log->logError(sprintf(
                 'Couldn\'t retrieve options for attribute %s: %s',

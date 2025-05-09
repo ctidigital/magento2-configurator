@@ -12,6 +12,7 @@ use Magento\CatalogRule\Model\ResourceModel\Rule\Collection;
 use Magento\CatalogRule\Model\RuleFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
@@ -19,7 +20,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @codingStandardsIgnoreStart
  * @SuppressWarnings(PHPMD)
  */
-class CatalogPriceRulesTest extends \PHPUnit\Framework\TestCase
+class CatalogPriceRulesTest extends TestCase
 {
     /**
      * @var RuleFactory
@@ -46,7 +47,7 @@ class CatalogPriceRulesTest extends \PHPUnit\Framework\TestCase
      */
     private $objectManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->collection = $this->objectManager->create(Collection::class);

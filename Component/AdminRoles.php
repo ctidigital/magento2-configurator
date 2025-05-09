@@ -1,13 +1,14 @@
 <?php
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
-use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 use Magento\Authorization\Model\RoleFactory;
 use Magento\Authorization\Model\RulesFactory;
 use Magento\Authorization\Model\UserContextInterface;
-use Magento\Authorization\Model\Acl\Role\Group as RoleGroup;
 
 /**
  * @SuppressWarnings(PHPMD.ShortVariable)
@@ -114,7 +115,7 @@ class AdminRoles implements ComponentInterface
      * @param role
      * @param array|null $resources
      */
-    private function setResourceIds($role, array $resources = null)
+    private function setResourceIds($role, ?array $resources)
     {
         $roleName = $role->getRoleName();
 

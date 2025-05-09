@@ -3,10 +3,15 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
-use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
+use Magento\Cms\Model\Block;
+use Magento\Cms\Model\ResourceModel\Block\Collection;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\DataObject;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\Store\Interceptor;
 
 class Blocks implements ComponentInterface
 {
@@ -21,12 +26,12 @@ class Blocks implements ComponentInterface
     protected $blockFactory;
 
     /**
-     * @var \Magento\Store\Model\Store\Interceptor
+     * @var Interceptor
      */
     protected $storeManager;
 
     /**
-     * @var \Magento\Framework\Api\SearchCriteriaBuilder
+     * @var SearchCriteriaBuilder
      */
     protected $searchBuilder;
 
@@ -173,13 +178,13 @@ class Blocks implements ComponentInterface
      * Find the block to process given the identifier, block collection and optionally stores
      *
      * @param String $identifier
-     * @param \Magento\Cms\Model\ResourceModel\Block\Collection $blocks
+     * @param Collection $blocks
      * @param array $stores
-     * @return \Magento\Cms\Model\Block|null
+     * @return Block|DataObject|null
      */
     private function getBlockToProcess(
         $identifier,
-        \Magento\Cms\Model\ResourceModel\Block\Collection $blocks,
+        Collection $blocks,
         $stores = []
     ) {
         // If there is only 1 block and stores hasn't been specified
@@ -209,7 +214,7 @@ class Blocks implements ComponentInterface
 
     /**
      * @param String $code
-     * @return \Magento\Store\Model\Store
+     * @return Store
      */
     private function getStoreByCode($code)
     {

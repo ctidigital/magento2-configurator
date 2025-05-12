@@ -2,14 +2,14 @@
 
 namespace CtiDigital\Configurator\Model\Component;
 
-use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Framework\File\Csv;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\UrlRewrite\Model\UrlRewriteFactory;
+use Magento\TestFramework\Helper\Bootstrap;
 use Magento\UrlRewrite\Model\UrlRewrite;
-use CtiDigital\Configurator\Model\Component\Rewrite;
+use Magento\UrlRewrite\Model\UrlRewriteFactory;
+use PHPUnit\Framework\TestCase;
 
-class RewritesTest extends \PHPUnit\Framework\TestCase
+class RewritesTest extends TestCase
 {
     private $rewritesCsvPath;
 
@@ -29,7 +29,7 @@ class RewritesTest extends \PHPUnit\Framework\TestCase
      */
     private $urlRewriteModel;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->expectedRewrites = $this->getExpectedRewrites();
 

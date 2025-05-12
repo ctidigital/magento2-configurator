@@ -5,7 +5,12 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
+use Magento\Cms\Api\Data\BlockInterfaceFactory;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
@@ -18,26 +23,6 @@ class Categories implements ComponentInterface
     protected $name = 'Categories';
     protected $description = 'Component to import categories.';
 
-    /**
-     * @var GroupFactory
-     */
-    private $groupFactory;
-
-    /**
-     * @var DirectoryList
-     */
-    private $dirList;
-
-    /**
-     * @var CategoryFactory
-     */
-    private $category;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
-
     private $mainAttributes = [
         'name',
         'is_active',
@@ -48,20 +33,26 @@ class Categories implements ComponentInterface
 
     /**
      * Categories constructor.
+     * @param LoggerInterface $log
+     * @param ObjectManagerInterface $objectManager
      * @param CategoryFactory $category
      * @param GroupFactory $groupFactory
      * @param DirectoryList $dirList
-     * @param LoggerInterface $log
+     * @param BlockInterfaceFactory $blockFactory
      */
     public function __construct(
-        CategoryFactory $category,
-        GroupFactory $groupFactory,
-        DirectoryList $dirList,
-        LoggerInterface $log
+        protected LoggerInterface $log,
+        protected ObjectManagerInterface $objectManager,
+        protected CategoryFactory $category,
+        protected GroupFactory $groupFactory,
+        protected DirectoryList $dirList,
+        protected BlockInterfaceFactory $blockFactory
     ) {
+        parent::__construct($log, $objectManager);
         $this->category = $category;
         $this->groupFactory = $groupFactory;
         $this->dirList = $dirList;
+        $this->blockFactory = $blockFactory;
         $this->log = $log;
     }
 
@@ -93,16 +84,13 @@ class Categories implements ComponentInterface
      * Gets the default category for the store group
      *
      * @param null $store
-     * @return \Magento\Catalog\Model\Category|bool
+     * @return Category|bool
      */
     public function getDefaultCategory($store = null)
     {
         $groupCollection = $this->groupFactory->create()->getCollection()
             ->addFieldToFilter('name', $store);
         if ($groupCollection->getSize() === 1) {
-            /**
-             * @var $group \Magento\Store\Model\Group
-             */
             $group = $groupCollection->getFirstItem();
             $category = $this->category->create()->load($group->getRootCategoryId());
             return $category;
@@ -124,18 +112,18 @@ class Categories implements ComponentInterface
      * Creates/updates categories with the values in the YAML
      *
      * @param array $categories
-     * @param \Magento\Catalog\Model\Category $parentCategory
+     * @param Category $parentCategory
      * @SuppressWarnings(PHPMD)
-     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws FileSystemException
      */
     public function createOrUpdateCategory(
-        \Magento\Catalog\Model\Category $parentCategory,
+        Category $parentCategory,
         $categories = []
     ) {
         foreach ($categories as $categoryValues) {
             // Load the category using its name and parent category
             /**
-             * @var $category \Magento\Catalog\Model\Category
+             * @var $category Category
              */
             $category = $this->category->create()->getCollection()
                 ->addFieldToFilter('name', $categoryValues['name'])
@@ -168,6 +156,25 @@ class Categories implements ComponentInterface
                         }
 
                         $category->setImage($img);
+                        break;
+                    // Attaching cms block
+                    case 'cms_block':
+                        // getting block by name
+                        $block = $this->blockFactory->create()->getCollection()
+                            ->addFieldToFilter('title', $value)
+                            ->setPageSize(1)
+                            ->getFirstItem();
+
+                        // check if block exist
+                        if (!$block) {
+                            $this->log->logError("Can't find cms block with name '%s'", $value);
+                        }
+
+                        // Attach cms block by id
+                        $category->setData('landing_page', $block->getId());
+                        // set category display mode to Satic block and products
+                        $category->setData('display_mode', 'PRODUCTS_AND_PAGE');
+
                         break;
                     default:
                         $category->setCustomAttribute($attribute, $value);

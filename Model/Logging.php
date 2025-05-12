@@ -35,6 +35,9 @@ class Logging implements LoggerInterface
         for ($i = 0; $i < $nest; $i++) {
             $prepend .= "| ";
         }
+        if (is_array($message)) {
+            $message = 'Log array: ' . print_r($message, 1);
+        }
         $this->output->writeln($prepend . '<' . $level . '>' . $message . '</' . $level . '>');
     }
 
@@ -57,6 +60,8 @@ class Logging implements LoggerInterface
 
     public function logInfo($message, $nest = 0)
     {
-        $this->log($message, $this::LEVEL_INFO, $nest);
+        if ($this->level > OutputInterface::VERBOSITY_QUIET) {
+            $this->log($message, $this::LEVEL_INFO, $nest);
+        }
     }
 }

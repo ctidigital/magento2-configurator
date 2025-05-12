@@ -181,6 +181,7 @@ class Processor
 
             // Loop through components and run them individually in the master.yaml order
             foreach ($master as $componentAlias => $componentConfig) {
+                if ($componentConfig['enabled'] === 0) continue;
                 // Run the component in question
                 $this->state->emulateAreaCode(
                     Area::AREA_ADMINHTML,

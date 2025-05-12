@@ -178,3 +178,8 @@ shippingtablerates:
   method: code
   sources:
     - ../configurator/ShippingTableRates/shippingtablerates.yaml
+order_statuses:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/OrderStatuses/orderstatuses.yaml

@@ -9,6 +9,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -39,6 +40,16 @@ class Attributes implements ComponentInterface
      * @var LoggerInterface
      */
     private $log;
+
+    /**
+     * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory
+     */
+    protected $attrOptionCollectionFactory;
+
+    /**
+     * @var \Magento\Eav\Model\Config
+     */
+    protected $eavConfig;
 
     /**
      * @var array
@@ -89,19 +100,30 @@ class Attributes implements ComponentInterface
     protected $attributeExists = false;
 
     /**
+     * @var array
+     */
+    protected $swatchMap = [];
+
+    /**
      * Attributes constructor.
      * @param EavSetup $eavSetup
      * @param AttributeRepositoryInterface $attributeRepository
      * @param LoggerInterface $log
+     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory
+     * @param \Magento\Eav\Model\Config $eavConfig
      */
     public function __construct(
         EavSetup $eavSetup,
         AttributeRepositoryInterface $attributeRepository,
-        LoggerInterface $log
+        LoggerInterface $log,
+        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
+        \Magento\Eav\Model\Config $eavConfig
     ) {
         $this->eavSetup = $eavSetup;
         $this->attributeRepository = $attributeRepository;
         $this->log = $log;
+        $this->attrOptionCollectionFactory = $attrOptionCollectionFactory;
+        $this->eavConfig = $eavConfig;
     }
 
     /**
@@ -149,7 +171,14 @@ class Attributes implements ComponentInterface
             if (isset($attributeConfig['product_types'])) {
                 $attributeConfig['apply_to'] = implode(',', $attributeConfig['product_types']);
             }
-
+            //swatch functionality
+            $swatch = false;
+            if (in_array($attributeConfig['input'], ['swatch_text', 'swatch_visual'])){
+                $swatch = $attributeConfig['input'];
+                $attributeConfig['input'] = 'select';
+                $this->swatchMap =  $attributeConfig['swatch'] ?? [];
+            }
+            //swatch functionality
             $this->eavSetup->addAttribute(
                 $this->entityTypeId,
                 $attributeCode,
@@ -160,6 +189,16 @@ class Attributes implements ComponentInterface
                 $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
                 return;
             }
+            //swatch functionality
+            if ($swatch) {
+                if ($swatch === 'swatch_text'){
+                    $this->convertToTextSwatch($attributeCode, $attributeConfig);
+                } else {
+                    $this->convertToVisualSwatch($attributeCode, $attributeConfig);
+
+                }
+            }
+            //swatch functionality
 
             $this->log->logInfo(sprintf('Attribute %s created.', $attributeCode));
         }
@@ -274,5 +313,133 @@ class Attributes implements ComponentInterface
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @param string $attributeName
+     * @param array $attributeConfig
+     * @return void
+     */
+    public function convertToVisualSwatch(string $attributeName, array $attributeConfig)
+    {
+        $attribute = $this->eavConfig->getAttribute('catalog_product', $attributeName);
+        if (!$attribute) {
+            return;
+        }
+        $attributeData['option'] = $this->addExistingOptions($attribute);
+        $attributeData['frontend_input'] = 'select';
+        $attributeData['swatch_input_type'] = 'visual';
+        $attributeData['update_product_preview_image'] = 1;
+        $attributeData['use_product_image_for_swatch'] = 0;
+        $attributeData['optionvisual'] = $this->getOptionSwatch($attributeData, $attributeConfig['option']['values']);
+        $attributeData['swatchvisual'] = $this->getOptionSwatchVisual($attributeData);
+        $attribute->addData($attributeData);
+        $attribute->save();
+    }
+
+    /**
+     * @param string $attributeName
+     * @param array $attributeConfig
+     * @return void
+     */
+    public function convertToTextSwatch(string $attributeName, array $attributeConfig)
+    {
+        $attribute = $this->eavConfig->getAttribute('catalog_product', $attributeName);
+        if (!$attribute) {
+            return;
+        }
+        $attributeData['option'] = $this->addExistingOptions($attribute);
+        $attributeData['frontend_input'] = 'select';
+        $attributeData['swatch_input_type'] = 'text';
+        $attributeData['update_product_preview_image'] = 1;
+        $attributeData['use_product_image_for_swatch'] = 0;
+        $attributeData['optiontext'] = $this->getOptionSwatch($attributeData, $attributeConfig['option']['values']);
+        $attributeData['swatchtext'] = $this->getOptionSwatchText($attributeData);
+        $attribute->addData($attributeData);
+        $attribute->save();
+    }
+
+
+    /**
+     * @param array $attributeData
+     * @return array
+     */
+    private function getOptionSwatchVisual(array $attributeData): array
+    {
+        $optionSwatch = ['value' => []];
+        foreach ($attributeData['option'] as $optionKey => $optionValue) {
+            if (substr($optionValue, 0, 1) == '#' && strlen($optionValue) == 7) {
+                $optionSwatch['value'][$optionKey] = $optionValue;
+            } else if (!empty($this->swatchMap[$optionKey])) {
+                $optionSwatch['value'][$optionKey] = $this->swatchMap[$optionKey];
+            } else {
+                $optionSwatch['value'][$optionKey] = null;
+            }
+        }
+        return $optionSwatch;
+    }
+
+    /**
+     * @param array $attributeData
+     * @param array $attributeOptions
+     * @return array
+     */
+    protected function getOptionSwatch(array $attributeData, array $attributeOptions): array
+    {
+        $optionSwatch = ['order' => [], 'value' => [], 'delete' => []];
+        $i = 0;
+        foreach ($attributeData['option'] as $optionKey => $optionValue) {
+            $label = array_search($optionValue, $attributeOptions) ?? $optionValue;
+            $optionSwatch['delete'][$optionKey] = '';
+            $optionSwatch['order'][$optionKey] = (string)$i++;
+            $optionSwatch['value'][$optionKey] = [$label, ''];
+        }
+        return $optionSwatch;
+    }
+
+    /**
+     * @param array $attributeData
+     * @return array
+     */
+    private function getOptionSwatchText(array $attributeData): array
+    {
+        $optionSwatch = ['value' => []];
+        foreach ($attributeData['option'] as $optionKey => $optionValue) {
+            $optionSwatch['value'][$optionKey] = [$optionValue, ''];
+        }
+        return $optionSwatch;
+    }
+
+    /**
+     * @param $attributeId
+     * @return void
+     */
+    private function loadOptionCollection($attributeId)
+    {
+        if (empty($this->optionCollection[$attributeId])) {
+            $this->optionCollection[$attributeId] = $this->attrOptionCollectionFactory->create()
+                ->setAttributeFilter($attributeId)
+                ->setPositionOrder('asc', true)
+                ->load();
+        }
+    }
+
+    /**
+     * @param Attribute $attribute
+     * @return array
+     */
+    private function addExistingOptions(Attribute $attribute): array
+    {
+        $options = [];
+        $attributeId = $attribute->getId();
+        if ($attributeId) {
+            $this->loadOptionCollection($attributeId);
+            /** @var \Magento\Eav\Model\Entity\Attribute\Option $option */
+            foreach ($this->optionCollection[$attributeId] as $option) {
+                $options[$option->getId()] = $option->getValue();
+            }
+        }
+
+        return $options;
     }
 }

@@ -60,6 +60,8 @@ class Logging implements LoggerInterface
 
     public function logInfo($message, $nest = 0)
     {
-        $this->log($message, $this::LEVEL_INFO, $nest);
+        if ($this->level > OutputInterface::VERBOSITY_QUIET) {
+            $this->log($message, $this::LEVEL_INFO, $nest);
+        }
     }
 }

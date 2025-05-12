@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Console\Command;
 
@@ -11,22 +12,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ListCommand extends Command
 {
     /**
-     * @var ComponentListInterface
-     */
-    private $componentList;
-
-    /**
-     * ListCommand constructor.
      * @param ComponentListInterface $componentList
      */
     public function __construct(
-        ComponentListInterface $componentList
+        private readonly ComponentListInterface $componentList
     ) {
         parent::__construct();
-        $this->componentList = $componentList;
     }
 
-    protected function configure()
+    /**
+     * @return void
+     */
+    protected function configure(): void
     {
         $this->setName('configurator:list');
         $this->setDescription('List configurator components');
@@ -38,22 +35,25 @@ class ListCommand extends Command
      * @return int
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $count = 1;
             foreach ($this->componentList->getAllComponents() as $component) {
-                $comment =
-                    str_pad($count.') ', 4)
+                $comment = str_pad($count.') ', 4)
                     . str_pad($component->getAlias(), 20)
-                    . ' - ' . $component->getDescription();
+                    . ' - '
+                    . $component->getDescription();
+
                 $output->writeln('<comment>' . $comment . '</comment>');
                 $count++;
             }
+
+            return self::SUCCESS;
         } catch (ConfiguratorAdapterException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-            return 1;
+
+            return self::FAILURE;
         }
-        return 0;
     }
 }

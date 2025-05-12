@@ -6,6 +6,7 @@ categories:
         name: Category 1
         description: "A description"
         url_key: "category-1"
+        cms_block: "All stores" # cms block title
         categories:
           -
             name: "Sub Category 1"

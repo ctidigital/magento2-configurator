@@ -2,13 +2,16 @@
 
 namespace CtiDigital\Configurator\Model;
 
-use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Api\ComponentListInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\Config\ScopeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
-class ProcessorTest extends \PHPUnit\Framework\TestCase
+class ProcessorTest extends TestCase
 {
     /**
      * @var Processor
@@ -16,21 +19,21 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     private $processor;
 
     /**
-     * @var ComponentListInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ComponentListInterface|MockObject
      */
     private $componentList;
 
     /**
-     * @var State|\PHPUnit\Framework\MockObject\MockObject
+     * @var State|MockObject
      */
     private $state;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $loggerInterface;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $consoleOutput = $this->getMockBuilder(ConsoleOutputInterface::class)
             ->disableOriginalConstructor()

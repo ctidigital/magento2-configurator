@@ -1,17 +1,19 @@
 <?php
+
 namespace CtiDigital\Configurator\Component;
 
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate;
 use Magento\Store\Model\Website;
 use Magento\TestFramework\Helper\Bootstrap;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Parser;
-use Magento\OfflineShipping\Model\ResourceModel\Carrier\Tablerate;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 
 /**
  * Class ShippingTablesRatesTest - Test to run against Shipping Table Rates
  * @SuppressWarnings(PHPMD.LongVariable)
  */
-class ShippingTablesRatesTest extends \PHPUnit\Framework\TestCase
+class ShippingTablesRatesTest extends TestCase
 {
     private $shippingTableRatesYamlPath;
     const BASE_WEBSITE_ID = 1;
@@ -49,7 +51,7 @@ class ShippingTablesRatesTest extends \PHPUnit\Framework\TestCase
      */
     private $tableRateModel;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->shippingTableRatesYamlPath = sprintf(
             "%s/../../Samples/Components/ShippingTableRates/shippingtablerates.yaml",
@@ -150,9 +152,7 @@ class ShippingTablesRatesTest extends \PHPUnit\Framework\TestCase
 
         return (
             $actualWebsiteShippingTableRate['dest_country_id'] == $expectedShippingRate['dest_country_id']
-            && $actualWebsiteShippingTableRate['dest_region_id'] == $this->regionIdMap[
-                $expectedShippingRate['dest_region_code']
-            ]
+            && $actualWebsiteShippingTableRate['dest_region_id'] == $this->regionIdMap[$expectedShippingRate['dest_region_code']]
 
             && $actualWebsiteShippingTableRate['dest_zip'] == $expectedShippingRate['dest_zip']
             && $actualWebsiteShippingTableRate['condition_name'] == $expectedShippingRate['condition_name']

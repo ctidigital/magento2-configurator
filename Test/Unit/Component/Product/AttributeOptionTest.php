@@ -1,13 +1,14 @@
 <?php
+
 namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
-use Magento\Eav\Api\AttributeOptionManagementInterface;
-use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
-use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
-use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Eav\Api\AttributeOptionManagementInterface;
+use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
+use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 use Magento\Eav\Model\Entity\Attribute\Option;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +46,7 @@ class AttributeOptionTest extends TestCase
      */
     private $attributeOption;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attrRepository = $this->getMockBuilder(ProductAttributeRepositoryInterface::class)
             ->disableOriginalConstructor()

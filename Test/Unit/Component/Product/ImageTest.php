@@ -1,14 +1,18 @@
 <?php
+
 namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
+use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\Image;
-use Magento\Framework\Filesystem;
 use FireGento\FastSimpleImport\Model\Config;
+use Magento\Framework\Filesystem;
 use Magento\Framework\HTTP\ZendClient;
 use Magento\Framework\HTTP\ZendClientFactory;
-use CtiDigital\Configurator\Api\LoggerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 
-class ImageTest extends \PHPUnit\Framework\TestCase
+class ImageTest extends TestCase
 {
     /**
      * @var Image
@@ -16,31 +20,31 @@ class ImageTest extends \PHPUnit\Framework\TestCase
     private $image;
 
     /**
-     * @var Filesystem|\PHPUnit\Framework\MockObject\MockObject
+     * @var Filesystem|MockObject
      */
     private $fileSystem;
 
     /**
-     * @var Config|\PHPUnit\Framework\MockObject\MockObject
+     * @var Config|MockObject
      */
     private $config;
 
     /**
-     * @var ZendClientFactory | \PHPUnit_Framework_MockObject_MockObject
+     * @var ZendClientFactory | PHPUnit_Framework_MockObject_MockObject
      */
     private $httpFactoryMock;
 
     /**
-     * @var ZendClient | \PHPUnit_Framework_MockObject_MockObject
+     * @var ZendClient | PHPUnit_Framework_MockObject_MockObject
      */
     private $httpMock;
 
     /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var LoggerInterface|MockObject
      */
     private $log;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fileSystem = $this->getMockBuilder(Filesystem::class)
             ->disableOriginalConstructor()

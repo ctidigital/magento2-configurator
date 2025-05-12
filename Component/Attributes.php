@@ -3,13 +3,13 @@
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
-use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -425,7 +425,7 @@ class Attributes implements ComponentInterface
     }
 
     /**
-     * @param Attribute $attribute
+     * @param \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute
      * @return array
      */
     private function addExistingOptions(Attribute $attribute): array

@@ -10,7 +10,8 @@
     ],
     "require": {
         "symfony/yaml": ">=4.0",
-        "firegento/fastsimpleimport": "2.0.1"
+        "firegento/fastsimpleimport": "2.0.1",
+        "ext-exif": "*"
     },
     "require-dev": {
         "phpmd/phpmd": "^2.12.0",

@@ -10,32 +10,34 @@ namespace CtiDigital\Configurator\Test\Unit\Processor;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
 use CtiDigital\Configurator\Model\Logging;
+use Exception;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Exception;
+use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class SqlSplitProcessorTest
  * @codingStandardsIgnoreStart
  */
-class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
+class SqlSplitProcessorTest extends TestCase
 {
     const TEST_SQL_PATH = '/Unit/_files/sql/test.sql';
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockLogger;
 
     /**
-     * @var ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResourceConnection|PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockResource;
 
     /**
-     * @var AdapterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AdapterInterface|PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockConnection;
 
@@ -49,7 +51,7 @@ class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $objectManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
         $this->mockLogger = $this->getMockBuilder(Logging::class)
@@ -71,7 +73,7 @@ class SqlSplitProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->mockConnection);
 
         $this->processor = $this->objectManager->getObject(SqlSplitProcessor::class, [
-            'log'      => $this->mockLogger,
+            'log' => $this->mockLogger,
             'resource' => $this->mockResource,
         ]);
     }

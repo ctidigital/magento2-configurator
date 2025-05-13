@@ -41,20 +41,13 @@ class Categories implements ComponentInterface
      * @param BlockInterfaceFactory $blockFactory
      */
     public function __construct(
-        protected LoggerInterface $log,
-        protected ObjectManagerInterface $objectManager,
-        protected CategoryFactory $category,
-        protected GroupFactory $groupFactory,
-        protected DirectoryList $dirList,
-        protected BlockInterfaceFactory $blockFactory
-    ) {
-        parent::__construct($log, $objectManager);
-        $this->category = $category;
-        $this->groupFactory = $groupFactory;
-        $this->dirList = $dirList;
-        $this->blockFactory = $blockFactory;
-        $this->log = $log;
-    }
+        protected readonly LoggerInterface $log,
+        protected readonly ObjectManagerInterface $objectManager,
+        protected readonly CategoryFactory $category,
+        protected readonly GroupFactory $groupFactory,
+        protected readonly DirectoryList $dirList,
+        protected readonly BlockInterfaceFactory $blockFactory
+    ) {}
 
     public function execute($data = null)
     {

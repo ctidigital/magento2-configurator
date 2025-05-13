@@ -1,13 +1,15 @@
 <?php
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
+use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Integration\Api\IntegrationServiceInterface;
+use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
-use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Integration\Model\AuthorizationService;
-use Magento\Integration\Api\IntegrationServiceInterface;
-use CtiDigital\Configurator\Exception\ComponentException;
 
 /**
  * @SuppressWarnings(PHPMD.ShortVariable)
@@ -151,9 +153,10 @@ class ApiIntegrations implements ComponentInterface
      * Set permissions for API Integration
      *
      * @param $integrationId
-     * @param array $resources
+     * @param array|null $resources
+     * @throws LocalizedException
      */
-    private function setPermissions($integrationId, array $resources = null)
+    private function setPermissions($integrationId, ?array $resources): void
     {
         $authorizationService = $this->authorizationService;
         $authorizationService->grantPermissions($integrationId, $resources);

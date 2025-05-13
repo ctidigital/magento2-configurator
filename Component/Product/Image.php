@@ -5,8 +5,10 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use FireGento\FastSimpleImport\Model\Config;
-use Magento\Framework\HTTP\ZendClient;
-use Magento\Framework\HTTP\ZendClientFactory;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientFactory;
+use GuzzleHttp\Exception\GuzzleException;
+use Magento\Framework\Webapi\Rest\Request;
 
 class Image
 {
@@ -14,11 +16,6 @@ class Image
      * @var LoggerInterface
      */
     protected $log;
-
-    /**
-     * @var ZendClientFactory
-     */
-    protected $httpClientFactory;
 
     /**
      * @var Filesystem
@@ -36,21 +33,25 @@ class Image
     private $separator = ';';
 
     /**
-     * Image constructor.
+     * @var ClientFactory
+     */
+    private ClientFactory $clientFactory;
+
+    /**
      * @param Filesystem $filesystem
      * @param Config $importerConfig
-     * @param ZendClientFactory $httpClientFactory
+     * @param ClientFactory $clientFactory
      * @param LoggerInterface $log
      */
     public function __construct(
         Filesystem $filesystem,
         Config $importerConfig,
-        ZendClientFactory $httpClientFactory,
+        ClientFactory $clientFactory,
         LoggerInterface $log
     ) {
         $this->filesystem = $filesystem;
         $this->importerConfig = $importerConfig;
-        $this->httpClientFactory = $httpClientFactory;
+        $this->clientFactory = $clientFactory;
         $this->log = $log;
     }
 
@@ -90,19 +91,17 @@ class Image
     public function downloadFile($value)
     {
         /**
-         * @var ZendClient $client
+         * @var Client $client
          */
-        $client = $this->httpClientFactory->create();
-        $response = '';
+        $client = $this->clientFactory->create();
 
         try {
-            $response = $client
-                ->setUri($value)
-                ->request('GET')
-                ->getBody();
-        } catch (\Exception $e) {
+            $response = $client->request(Request::HTTP_METHOD_GET, $value)->getBody();
+        } catch (GuzzleException $e) {
+            $response = '';
             $this->log->logError($e->getMessage());
         }
+
         return $response;
     }
 
@@ -114,12 +113,17 @@ class Image
      */
     public function getFileName($url)
     {
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $imageName = basename((string) $url);
-        // Remove any URL entities
-        $imageName = urldecode($imageName);
-        // Replace spaces with -
-        $imageName = preg_replace('/\s+/', '-', $imageName);
+        if (preg_match('/http:\/\/placehold\.it\/(.*)\/jpg$/', $url, $match)) {
+            $imageName = sprintf('%s.jpg', $match[1]);
+        } else {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            $imageName = basename((string) $url);
+            // Remove any URL entities
+            $imageName = urldecode($imageName);
+            // Replace spaces with -
+            $imageName = preg_replace('/\s+/', '-', $imageName);
+        }
+
         return $imageName;
     }
 

@@ -5,70 +5,50 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Tax\Model\Calculation\RuleFactory;
-use Magento\Tax\Model\Calculation\RateFactory;
 use Magento\Tax\Model\ClassModelFactory;
+use Magento\Tax\Model\ResourceModel\Calculation\Rate\CollectionFactory;
+use Magento\Tax\Model\ResourceModel\Calculation\Rule;
 
 /**
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class TaxRules implements ComponentInterface
 {
-    protected $alias = 'taxrules';
-    protected $name = 'Tax Rules';
-    protected $description = 'Component to create Tax Rules';
+    protected string $alias = 'taxrules';
+    protected string $name = 'Tax Rules';
+    protected string $description = 'Component to create Tax Rules';
 
     /**
      * Defines Customer Tax Class string
      */
-    const TAX_CLASS_TYPE_CUSTOMER = 'CUSTOMER';
+    const string TAX_CLASS_TYPE_CUSTOMER = 'CUSTOMER';
 
     /**
      * Defines Product Tax Class string
      */
-    const TAX_CLASS_TYPE_PRODUCT = 'PRODUCT';
-
-    /**
-     * @var RateFactory
-     */
-    protected $rateFactory;
-
-    /**
-     * @var RuleFactory
-     */
-    protected $ruleFactory;
-
-    /**
-     * @var ClassModelFactory
-     */
-    protected $classModelFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    const string TAX_CLASS_TYPE_PRODUCT = 'PRODUCT';
 
     /**
      * TaxRules constructor.
-     * @param RateFactory $rateFactory
+     * @param CollectionFactory $rateCollectionFactory
      * @param ClassModelFactory $classModelFactory
      * @param RuleFactory $ruleFactory
+     * @param Rule $ruleResource
      * @param LoggerInterface $log
      */
     public function __construct(
-        RateFactory $rateFactory,
-        ClassModelFactory $classModelFactory,
-        RuleFactory $ruleFactory,
-        LoggerInterface $log
-    ) {
-        $this->rateFactory = $rateFactory;
-        $this->classModelFactory = $classModelFactory;
-        $this->ruleFactory = $ruleFactory;
-        $this->log = $log;
-    }
+        protected readonly CollectionFactory $rateCollectionFactory,
+        protected readonly ClassModelFactory $classModelFactory,
+        protected readonly RuleFactory $ruleFactory,
+        protected readonly Rule $ruleResource,
+        protected readonly LoggerInterface $log
+    ) {}
 
     /**
-     * @param array|null $data
+     * @param null $data
+     * @throws LocalizedException
      */
     public function execute($data = null)
     {
@@ -164,6 +144,7 @@ class TaxRules implements ComponentInterface
      *
      * @param null $rateNames
      * @return array
+     * @throws LocalizedException
      */
     private function getRateIdsFromCode($rateNames = null)
     {
@@ -171,8 +152,9 @@ class TaxRules implements ComponentInterface
         $rateNamesArray = explode(',', $rateNames);
 
         foreach ($rateNamesArray as $name) {
-            $rateFactory = $this->rateFactory->create()->getCollection();
-            $rate = $rateFactory->addFieldToFilter('code', $name)->load()->getFirstItem();
+            $rateCollection = $this->rateCollectionFactory->create()
+                ->addFieldToSelect('tax_calculation_rate_id');
+            $rate = $rateCollection->addFieldToFilter('code', $name)->getFirstItem();
             $rateIds[] = $rate->getId();
         }
 
@@ -185,6 +167,7 @@ class TaxRules implements ComponentInterface
      * @param $type
      * @param null $names
      * @return array
+     * @throws LocalizedException
      */
     private function taxClassIdsFromName($type, $names = null)
     {
@@ -214,6 +197,7 @@ class TaxRules implements ComponentInterface
      * Create TaxRule
      *
      * @param array $ruleData
+     * @throws LocalizedException
      */
     private function createTaxRule(array $ruleData)
     {
@@ -228,14 +212,9 @@ class TaxRules implements ComponentInterface
             return;
         }
 
-        $rule->setCode($ruleData['code'])
-            ->setTaxRateIds($ruleData['tax_rate_ids'])
-            ->setCustomerTaxClassIds($ruleData['customer_tax_class_ids'])
-            ->setProductTaxClassIds($ruleData['product_tax_class_ids'])
-            ->setPriority($ruleData['priority'])
-            ->setCalculateSubtotal($ruleData['calculate_subtotal'])
-            ->setPosition($ruleData['position'])
-            ->save();
+        $rule->setData($ruleData);
+
+        $this->ruleResource->save($rule);
 
         $this->log->logInfo(
             sprintf('Tax Rule "%s" created.', $ruleData['code'])

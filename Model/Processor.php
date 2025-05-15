@@ -393,6 +393,9 @@ class Processor
             }
             if ($ext === self::SOURCE_CSV) {
                 // Data is read directly from the source by parseCsvData()
+                $this->log->logInfo(
+                    sprintf('"%s" is being imported', $source)
+                );
                 return $this->parseCsvData($source);
             }
             if ($ext === self::SOURCE_JSON) {
@@ -559,12 +562,12 @@ class Processor
 
         // Read the header row
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $headerRow = fgetcsv($handle);
+        $headerRow = fgetcsv($handle, escape: '');
         $csvData = [$headerRow];
 
         // Read all other rows and build up an array, with row headers as keys
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        while (($csvLine = fgetcsv($handle)) !== false) {
+        while (($csvLine = fgetcsv($handle, escape: '')) !== false) {
             $csvRow = [];
 
             foreach (array_keys($headerRow) as $key) {

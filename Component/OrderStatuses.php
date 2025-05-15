@@ -1,10 +1,12 @@
 <?php
+
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Status;
 use Magento\Sales\Model\Order\StatusFactory;
 use Magento\Sales\Model\ResourceModel\Order\Status as StatusResource;
@@ -14,7 +16,7 @@ use Magento\Sales\Model\ResourceModel\Order\StatusFactory as StatusResourceFacto
  * Class OrderStatuses
  * @package CtiDigital\Configurator\Component
  */
-class OrderStatuses extends YamlComponentAbstract
+class OrderStatuses implements ComponentInterface
 {
 
     /**
@@ -22,7 +24,7 @@ class OrderStatuses extends YamlComponentAbstract
      *
      * @var string
      */
-    protected $alias = 'order_statuses';
+    public $alias = 'order_statuses';
 
     /**
      * Component name
@@ -36,21 +38,7 @@ class OrderStatuses extends YamlComponentAbstract
      *
      * @var string
      */
-    protected $description = 'Component to create custom order statuses';
-
-    /**
-     * Status Factory
-     *
-     * @var StatusFactory
-     */
-    protected $statusFactory;
-
-    /**
-     * Status Resource Factory
-     *
-     * @var StatusResourceFactory
-     */
-    protected $statusResource;
+    public $description = 'Component to create custom order statuses';
 
     /**
      * OrderStatuses constructor.
@@ -60,21 +48,17 @@ class OrderStatuses extends YamlComponentAbstract
      * @param StatusResourceFactory $statusResource
      */
     public function __construct(
-        LoggerInterface $log,
-        ObjectManagerInterface $objectManager,
-        StatusFactory $statusFactory,
-        StatusResourceFactory $statusResource
-    ) {
-        $this->statusFactory = $statusFactory;
-        $this->statusResource = $statusResource;
-        parent::__construct($log, $objectManager);
-    }
+        protected readonly LoggerInterface $log,
+        protected readonly ObjectManagerInterface $objectManager,
+        protected readonly StatusFactory $statusFactory,
+        protected readonly StatusResourceFactory $statusResource
+    ) {}
 
     /**
      * @param null $data
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     * @throws AlreadyExistsException
      */
-    public function processData($data = null)
+    public function execute($data = null)
     {
         if (isset($data['order_statuses'])) {
             foreach ($data['order_statuses'] as $statusSet) {
@@ -89,7 +73,7 @@ class OrderStatuses extends YamlComponentAbstract
 
     /**
      * @param $statusSet
-     * @throws \Magento\Framework\Exception\AlreadyExistsException
+     * @throws AlreadyExistsException
      */
     public function createOrderStatuses($statusSet)
     {
@@ -116,4 +100,15 @@ class OrderStatuses extends YamlComponentAbstract
             );
         }
     }
+
+    public function getAlias(): string
+    {
+        return $this->alias;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
 }

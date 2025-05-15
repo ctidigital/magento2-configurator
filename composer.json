@@ -20,7 +20,7 @@
         "phpunit/phpunit": "~9.5.20",
         "magento/magento-coding-standard": "*"
     },
-    "version": "4.0.0",
+    "version": "4.0.1",
     "autoload": {
         "files": [
             "registration.php"

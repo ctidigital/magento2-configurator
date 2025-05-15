@@ -1,20 +1,23 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <preference for="CtiDigital\Configurator\Api\ConfiguratorAdapterInterface"
                 type="CtiDigital\Configurator\Api\ConfiguratorAdapterInterface\Proxy"/>
-    <preference for="CtiDigital\Configurator\Api\ConfigInterface"
-                type="CtiDigital\Configurator\Model\Configurator\Config" />
+    <!--    <preference for="CtiDigital\Configurator\Api\ConfigInterface"-->
+    <!--                type="CtiDigital\Configurator\Model\Configurator\Config" />-->
     <preference for="CtiDigital\Configurator\Api\LoggerInterface"
-                type="CtiDigital\Configurator\Model\Logging" />
+                type="CtiDigital\Configurator\Model\Logging"/>
     <preference for="CtiDigital\Configurator\Api\ComponentListInterface"
-                type="CtiDigital\Configurator\Component\ComponentList" />
+                type="CtiDigital\Configurator\Component\ComponentList"/>
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="configurator:list" xsi:type="object">CtiDigital\Configurator\Console\Command\ListCommand</item>
-                <item name="configurator:run" xsi:type="object">CtiDigital\Configurator\Console\Command\RunCommand</item>
+                <item name="configurator:list" xsi:type="object">CtiDigital\Configurator\Console\Command\ListCommand
+                </item>
+                <item name="configurator:run" xsi:type="object">CtiDigital\Configurator\Console\Command\RunCommand
+                </item>
             </argument>
         </arguments>
     </type>
@@ -43,10 +46,15 @@
                 <item name="review_rating" xsi:type="object">CtiDigital\Configurator\Component\ReviewRating</item>
                 <item name="product_links" xsi:type="object">CtiDigital\Configurator\Component\ProductLinks</item>
                 <item name="customers" xsi:type="object">CtiDigital\Configurator\Component\Customers</item>
-                <item name="catalog_price_rules" xsi:type="object">CtiDigital\Configurator\Component\CatalogPriceRules\Proxy</item>
+                <item name="catalog_price_rules" xsi:type="object">
+                    CtiDigital\Configurator\Component\CatalogPriceRules\Proxy
+                </item>
                 <item name="sql" xsi:type="object">CtiDigital\Configurator\Component\Sql</item>
-                <item name="shippingtablerates" xsi:type="object">CtiDigital\Configurator\Component\ShippingTableRates</item>
-                <item name="customer_attributes" xsi:type="object">CtiDigital\Configurator\Component\CustomerAttributes</item>
+                <item name="shippingtablerates" xsi:type="object">CtiDigital\Configurator\Component\ShippingTableRates
+                </item>
+                <item name="customer_attributes" xsi:type="object">
+                    CtiDigital\Configurator\Component\CustomerAttributes
+                </item>
                 <item name="tiered_prices" xsi:type="object">CtiDigital\Configurator\Component\TieredPrices</item>
             </argument>
         </arguments>
@@ -66,7 +74,9 @@
 
     <type name="CtiDigital\Configurator\Component\CatalogPriceRules">
         <arguments>
-            <argument name="processor" xsi:type="object">CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor</argument>
+            <argument name="processor" xsi:type="object">
+                CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor
+            </argument>
         </arguments>
     </type>
 

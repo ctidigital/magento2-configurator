@@ -11,7 +11,8 @@
     "require": {
         "symfony/yaml": ">=4.0",
         "firegento/fastsimpleimport": "2.0.1",
-        "ext-exif": "*"
+        "ext-exif": "*",
+        "php": ">=8.3"
     },
     "require-dev": {
         "phpmd/phpmd": "^2.12.0",
@@ -20,7 +21,7 @@
         "phpunit/phpunit": "~9.5.20",
         "magento/magento-coding-standard": "*"
     },
-    "version": "4.0.0",
+    "version": "4.0.1",
     "autoload": {
         "files": [
             "registration.php"

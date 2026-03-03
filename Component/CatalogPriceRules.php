@@ -62,8 +62,8 @@ class CatalogPriceRules implements ComponentInterface
      */
     public function execute($data = null)
     {
-        $rules = $data['rules'] ?: [];
-        $config = $data['config'] ?: [];
+        $rules = $data['rules'] ?? [];
+        $config = $data['config'] ?? [];
 
         $this->processor->setData($rules)
             ->setConfig($config)

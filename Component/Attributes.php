@@ -13,6 +13,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Attributes implements ComponentInterface
 {
@@ -143,6 +144,8 @@ class Attributes implements ComponentInterface
     /**
      * @param $attributeCode
      * @param $attributeConfig
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function processAttribute($attributeCode, array $attributeConfig)
     {
@@ -150,58 +153,89 @@ class Attributes implements ComponentInterface
         $this->attributeExists = false;
         $attributeArray = $this->eavSetup->getAttribute($this->entityTypeId, $attributeCode);
         if ($attributeArray && $attributeArray['attribute_id']) {
-            $this->attributeExists = true;
-            $this->log->logComment(sprintf('Attribute %s exists. Checking for updates.', $attributeCode));
-            $this->updateAttribute = $this->checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig);
-
-            if (isset($attributeConfig['option'])) {
-                $newAttributeOptions = $this->manageAttributeOptions($attributeCode, $attributeConfig['option']);
-                if (!empty($newAttributeOptions)) {
-                    $this->updateAttribute = true;
-                }
-                $attributeConfig['option']['values'] = $newAttributeOptions;
-            }
+            $this->handleExistingAttribute($attributeCode, $attributeArray, $attributeConfig);
         }
 
-        if ($this->updateAttribute) {
-            if (!array_key_exists('user_defined', $attributeConfig)) {
-                $attributeConfig['user_defined'] = 1;
-            }
-
-            if (isset($attributeConfig['product_types'])) {
-                $attributeConfig['apply_to'] = implode(',', $attributeConfig['product_types']);
-            }
-            //swatch functionality
-            $swatch = false;
-            if (in_array($attributeConfig['input'], ['swatch_text', 'swatch_visual'])){
-                $swatch = $attributeConfig['input'];
-                $attributeConfig['input'] = 'select';
-                $this->swatchMap =  $attributeConfig['swatch'] ?? [];
-            }
-            //swatch functionality
-            $this->eavSetup->addAttribute(
-                $this->entityTypeId,
-                $attributeCode,
-                $attributeConfig
-            );
-
-            if ($this->attributeExists) {
-                $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
-                return;
-            }
-            //swatch functionality
-            if ($swatch) {
-                if ($swatch === 'swatch_text'){
-                    $this->convertToTextSwatch($attributeCode, $attributeConfig);
-                } else {
-                    $this->convertToVisualSwatch($attributeCode, $attributeConfig);
-
-                }
-            }
-            //swatch functionality
-
-            $this->log->logInfo(sprintf('Attribute %s created.', $attributeCode));
+        if (!$this->updateAttribute) {
+            return;
         }
+
+        if (!array_key_exists('user_defined', $attributeConfig)) {
+            $attributeConfig['user_defined'] = 1;
+        }
+
+        if (isset($attributeConfig['product_types'])) {
+            $attributeConfig['apply_to'] = implode(',', $attributeConfig['product_types']);
+        }
+
+        $swatch = $this->extractSwatchType($attributeConfig);
+
+        $this->eavSetup->addAttribute($this->entityTypeId, $attributeCode, $attributeConfig);
+
+        if ($this->attributeExists) {
+            $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
+            return;
+        }
+
+        $this->applySwatchConversion($attributeCode, $attributeConfig, $swatch);
+        $this->log->logInfo(sprintf('Attribute %s created.', $attributeCode));
+    }
+
+    /**
+     * @param $attributeCode
+     * @param array $attributeArray
+     * @param array $attributeConfig
+     */
+    private function handleExistingAttribute($attributeCode, array $attributeArray, array &$attributeConfig)
+    {
+        $this->attributeExists = true;
+        $this->log->logComment(sprintf('Attribute %s exists. Checking for updates.', $attributeCode));
+        $this->updateAttribute = $this->checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig);
+
+        if (!isset($attributeConfig['option'])) {
+            return;
+        }
+
+        $newAttributeOptions = $this->manageAttributeOptions($attributeCode, $attributeConfig['option']);
+        if (!empty($newAttributeOptions)) {
+            $this->updateAttribute = true;
+        }
+        $attributeConfig['option']['values'] = $newAttributeOptions;
+    }
+
+    /**
+     * @param array $attributeConfig
+     * @return string|false
+     */
+    private function extractSwatchType(array &$attributeConfig)
+    {
+        if (!in_array($attributeConfig['input'], ['swatch_text', 'swatch_visual'])) {
+            return false;
+        }
+
+        $swatch = $attributeConfig['input'];
+        $attributeConfig['input'] = 'select';
+        $this->swatchMap = $attributeConfig['swatch'] ?? [];
+        return $swatch;
+    }
+
+    /**
+     * @param string $attributeCode
+     * @param array $attributeConfig
+     * @param string|false $swatch
+     */
+    private function applySwatchConversion($attributeCode, array $attributeConfig, $swatch)
+    {
+        if (!$swatch) {
+            return;
+        }
+
+        if ($swatch === 'swatch_text') {
+            $this->convertToTextSwatch($attributeCode, $attributeConfig);
+            return;
+        }
+
+        $this->convertToVisualSwatch($attributeCode, $attributeConfig);
     }
 
     protected function checkForAttributeUpdates($attributeCode, $attributeArray, $attributeConfig)
@@ -326,6 +360,7 @@ class Attributes implements ComponentInterface
         if (!$attribute) {
             return;
         }
+        $attributeData = [];
         $attributeData['option'] = $this->addExistingOptions($attribute);
         $attributeData['frontend_input'] = 'select';
         $attributeData['swatch_input_type'] = 'visual';
@@ -348,6 +383,7 @@ class Attributes implements ComponentInterface
         if (!$attribute) {
             return;
         }
+        $attributeData = [];
         $attributeData['option'] = $this->addExistingOptions($attribute);
         $attributeData['frontend_input'] = 'select';
         $attributeData['swatch_input_type'] = 'text';
@@ -368,13 +404,15 @@ class Attributes implements ComponentInterface
     {
         $optionSwatch = ['value' => []];
         foreach ($attributeData['option'] as $optionKey => $optionValue) {
-            if (substr($optionValue, 0, 1) == '#' && strlen($optionValue) == 7) {
+            if (substr($optionValue, 0, 1) === '#' && strlen($optionValue) === 7) {
                 $optionSwatch['value'][$optionKey] = $optionValue;
-            } else if (!empty($this->swatchMap[$optionKey])) {
-                $optionSwatch['value'][$optionKey] = $this->swatchMap[$optionKey];
-            } else {
-                $optionSwatch['value'][$optionKey] = null;
+                continue;
             }
+            if (!empty($this->swatchMap[$optionKey])) {
+                $optionSwatch['value'][$optionKey] = $this->swatchMap[$optionKey];
+                continue;
+            }
+            $optionSwatch['value'][$optionKey] = null;
         }
         return $optionSwatch;
     }
@@ -387,11 +425,11 @@ class Attributes implements ComponentInterface
     protected function getOptionSwatch(array $attributeData, array $attributeOptions): array
     {
         $optionSwatch = ['order' => [], 'value' => [], 'delete' => []];
-        $i = 0;
+        $order = 0;
         foreach ($attributeData['option'] as $optionKey => $optionValue) {
             $label = array_search($optionValue, $attributeOptions) ?? $optionValue;
             $optionSwatch['delete'][$optionKey] = '';
-            $optionSwatch['order'][$optionKey] = (string)$i++;
+            $optionSwatch['order'][$optionKey] = (string)$order++;
             $optionSwatch['value'][$optionKey] = [$label, ''];
         }
         return $optionSwatch;

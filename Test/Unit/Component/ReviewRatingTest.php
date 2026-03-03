@@ -44,7 +44,7 @@ class ReviewRatingTest extends \PHPUnit\Framework\TestCase
     {
         $this->ratingFactory = $this->getMockBuilder(RatingFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $this->storeRepository = $this->getMockBuilder(StoreRepositoryInterface::class)
             ->disableOriginalConstructor()
@@ -96,7 +96,7 @@ class ReviewRatingTest extends \PHPUnit\Framework\TestCase
     {
         $mockRating = $this->getMockBuilder(\Magento\Review\Model\Rating::class)
             ->disableOriginalConstructor()
-            ->setMethods(['load', 'getId'])
+            ->onlyMethods(['load', 'getId'])
             ->getMock();
 
         $mockRating->expects($this->once())
@@ -121,7 +121,7 @@ class ReviewRatingTest extends \PHPUnit\Framework\TestCase
     {
         $mockRating = $this->getMockBuilder(\Magento\Review\Model\Rating::class)
             ->disableOriginalConstructor()
-            ->setMethods(['load', 'getId'])
+            ->onlyMethods(['load', 'getId'])
             ->getMock();
 
         $mockRating->expects($this->once())

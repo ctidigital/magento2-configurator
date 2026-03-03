@@ -32,14 +32,14 @@ class TaxRules implements ComponentInterface
 
     /**
      * TaxRules constructor.
-     * @param CollectionFactory $rateCollectionFactory
+     * @param CollectionFactory $taxRateFactory
      * @param ClassModelFactory $classModelFactory
      * @param RuleFactory $ruleFactory
      * @param Rule $ruleResource
      * @param LoggerInterface $log
      */
     public function __construct(
-        protected readonly CollectionFactory $rateCollectionFactory,
+        protected readonly CollectionFactory $taxRateFactory,
         protected readonly ClassModelFactory $classModelFactory,
         protected readonly RuleFactory $ruleFactory,
         protected readonly Rule $ruleResource,
@@ -152,7 +152,7 @@ class TaxRules implements ComponentInterface
         $rateNamesArray = explode(',', $rateNames);
 
         foreach ($rateNamesArray as $name) {
-            $rateCollection = $this->rateCollectionFactory->create()
+            $rateCollection = $this->taxRateFactory->create()
                 ->addFieldToSelect('tax_calculation_rate_id');
             $rate = $rateCollection->addFieldToFilter('code', $name)->getFirstItem();
             $rateIds[] = $rate->getId();

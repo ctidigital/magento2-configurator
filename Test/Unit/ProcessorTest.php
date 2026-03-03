@@ -8,7 +8,6 @@ use Magento\Framework\App\State;
 use Magento\Framework\Config\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 class ProcessorTest extends TestCase

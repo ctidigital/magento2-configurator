@@ -55,7 +55,7 @@ class ProductsTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->productFactory = $this->getMockBuilder(ProductFactory::class)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -217,13 +217,9 @@ class ProductsTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->productFactory->expects($this->at(0))
+        $this->productFactory->expects($this->exactly(2))
             ->method('create')
-            ->willReturn($simpleMockA);
-
-        $this->productFactory->expects($this->at(1))
-            ->method('create')
-            ->willReturn($simpleMockB);
+            ->willReturnOnConsecutiveCalls($simpleMockA, $simpleMockB);
 
         $this->assertEquals($expected, $this->products->constructConfigurableVariations($configurableData));
     }
@@ -282,7 +278,8 @@ class ProductsTest extends \PHPUnit\Framework\TestCase
     {
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
-            ->setMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource', 'getAttribute'])
+            ->onlyMethods(['hasData', 'getSku', 'getIdBySku', 'load', 'getId', 'getResource'])
+            ->addMethods(['getAttribute'])
             ->getMock();
         $productMock->expects($this->any())
             ->method('getId')
@@ -303,7 +300,8 @@ class ProductsTest extends \PHPUnit\Framework\TestCase
     {
         $attr = $this->getMockBuilder(Attribute::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getFrontend', 'getValue', 'getAttributeCode'])
+            ->onlyMethods(['getFrontend', 'getAttributeCode'])
+            ->addMethods(['getValue'])
             ->getMock();
         $attr->expects($this->once())
             ->method('getFrontend')

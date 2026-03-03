@@ -12,7 +12,6 @@ use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 use Magento\Eav\Model\Entity\Attribute\Option;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 
 class AttributeOptionTest extends TestCase
 {
@@ -50,7 +49,7 @@ class AttributeOptionTest extends TestCase
     {
         $this->attrRepository = $this->getMockBuilder(ProductAttributeRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getList', 'get', 'save', 'delete', 'deleteById', 'getCustomAttributesMetadata'])
+            ->onlyMethods(['getList', 'get', 'save', 'delete', 'deleteById', 'getCustomAttributesMetadata'])
             ->getMock();
 
         $this->attrOptionManagement = $this->getMockBuilder(AttributeOptionManagementInterface::class)
@@ -211,7 +210,7 @@ class AttributeOptionTest extends TestCase
          */
         $attributeMock = $this->getMockBuilder(Attribute::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAttributeCode', 'getFrontendInput', 'getOptions', 'getBackendModel', 'getIsUserDefined'])
+            ->onlyMethods(['getAttributeCode', 'getFrontendInput', 'getOptions', 'getBackendModel', 'getIsUserDefined'])
             ->getMock();
         $attributeMock->expects($this->any())
             ->method('getAttributeCode')
@@ -224,7 +223,7 @@ class AttributeOptionTest extends TestCase
             foreach ($values as $attributeValue) {
                 $option = $this->getMockBuilder(Option::class)
                     ->disableOriginalConstructor()
-                    ->setMethods(['getLabel'])
+                    ->onlyMethods(['getLabel'])
                     ->getMock();
                 $option->expects($this->any())
                     ->method('getLabel')

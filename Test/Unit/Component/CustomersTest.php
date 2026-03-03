@@ -63,17 +63,17 @@ class CustomersTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->importerFactory = $this->getMockBuilder(ImporterFactory::class)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->searchResults = $this->getMockBuilder(SearchResults::class)
-            ->setMethods(['getItems'])
+            ->onlyMethods(['getItems'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->groupRepository = $this->getMockBuilder(GroupRepositoryInterface::class)
-            ->setMethods(['save', 'getById', 'delete', 'deleteById', 'getList'])
+            ->onlyMethods(['save', 'getById', 'delete', 'deleteById', 'getList'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -84,7 +84,7 @@ class CustomersTest extends \PHPUnit\Framework\TestCase
         $groupDefault = $this->createCustomerGroup(1);
 
         $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->setMethods(
+            ->onlyMethods(
                 ['isReadOnly', 'getNotLoggedInGroup', 'getLoggedInGroups', 'getAllCustomersGroup', 'getDefaultGroup']
             )
             ->disableOriginalConstructor()
@@ -99,7 +99,7 @@ class CustomersTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->searchBuilder = $this->getMockBuilder(SearchCriteriaBuilder::class)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->searchBuilder->expects($this->any())
@@ -107,7 +107,7 @@ class CustomersTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->searchCriteria);
 
         $this->indexerFactory = $this->getMockBuilder(IndexerFactory::class)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -180,7 +180,7 @@ class CustomersTest extends \PHPUnit\Framework\TestCase
     private function createCustomerGroup($groupId)
     {
         $group = $this->getMockBuilder(Group::class)
-            ->setMethods(['getId'])
+            ->onlyMethods(['getId'])
             ->disableOriginalConstructor()
             ->getMock();
         $group->expects($this->any())

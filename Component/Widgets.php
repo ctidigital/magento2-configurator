@@ -10,6 +10,7 @@ use Magento\Widget\Model\Widget\Instance;
 use Magento\Widget\Model\Widget\InstanceFactory as WidgetInstanceFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use Magento\Store\Model\StoreFactory;
+use Magento\Framework\DB\Select;
 use Magento\Framework\Serialize\SerializerInterface;
 
 class Widgets implements ComponentInterface
@@ -147,7 +148,7 @@ class Widgets implements ComponentInterface
     {
 
         // Clear any existing filters applied to the widget collection
-        $this->widgetCollection->getSelect()->reset(\Zend_Db_Select::WHERE);
+        $this->widgetCollection->getSelect()->reset(Select::WHERE);
         $this->widgetCollection->removeAllItems();
 
         // Filter widget collection

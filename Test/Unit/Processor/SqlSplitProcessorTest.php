@@ -16,7 +16,6 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * Class SqlSplitProcessorTest
@@ -56,16 +55,16 @@ class SqlSplitProcessorTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->mockLogger = $this->getMockBuilder(Logging::class)
             ->disableOriginalConstructor()
-            ->setMethods(['logInfo', 'logError'])
+            ->onlyMethods(['logInfo', 'logError'])
             ->getMock();
         $this->mockResource = $this->getMockBuilder(ResourceConnection::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getConnection'])
+            ->onlyMethods(['getConnection'])
             ->getMock();
 
         $this->mockConnection = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
-            ->setMethods(['beginTransaction', 'query', 'rollBack', 'commit'])
+            ->onlyMethods(['beginTransaction', 'query', 'rollBack', 'commit'])
             ->getMock();
 
         $this->mockResource->expects($this->once())

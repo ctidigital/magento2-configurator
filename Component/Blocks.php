@@ -11,7 +11,6 @@ use Magento\Cms\Model\ResourceModel\Block\Collection;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\DataObject;
 use Magento\Store\Model\Store;
-use Magento\Store\Model\Store\Interceptor;
 
 class Blocks implements ComponentInterface
 {
@@ -26,7 +25,7 @@ class Blocks implements ComponentInterface
     protected $blockFactory;
 
     /**
-     * @var Interceptor
+     * @var Store
      */
     protected $storeManager;
 
@@ -42,9 +41,9 @@ class Blocks implements ComponentInterface
 
     /**
      * Blocks constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
      * @param BlockInterfaceFactory $blockFactory
+     * @param Store $store
+     * @param LoggerInterface $log
      */
     public function __construct(
         BlockInterfaceFactory $blockFactory,

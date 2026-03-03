@@ -80,7 +80,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->collectionFactory = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $this->collectionFactory->expects($this->any())->method('create')->willReturn($this->collection);
         $this->encryptorInterface = $this->getMockBuilder(EncryptorInterface::class)
@@ -138,7 +138,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $mockThemeModel = $this->getMockBuilder('Magento\Theme\Model\Theme')
             ->disableOriginalConstructor()
-            ->setMethods(['getThemeId'])
+            ->addMethods(['getThemeId'])
             ->getMock();
 
         $mockThemeModel->expects($this->once())

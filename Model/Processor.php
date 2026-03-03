@@ -479,15 +479,11 @@ class Processor
      */
     private function getRemoteContentExtension($source)
     {
-        try {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-        } catch (Exception $e) {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $headers = get_headers($source, 1);
+        if ($headers === false) {
             return '';
         }
-
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $headers = get_headers($source, 1, $streamContext);
         $contentType = array_key_exists('Content-Type', $headers) ? $headers['Content-Type'] : '';
 
         // Parse the 'extension' from the content type
@@ -503,15 +499,8 @@ class Processor
      */
     public function getRemoteData($source)
     {
-        try {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $streamContext = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-        } catch (Exception $e) {
-            return '';
-        }
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $remoteFile = file_get_contents($source, false, $streamContext);
-        return $remoteFile;
+        return file_get_contents($source);
     }
 
     /**
@@ -531,20 +520,12 @@ class Processor
     {
         // Get a handle to the source data, whether it's remote or local
         if ($this->isSourceRemote($source)) {
-            try {
-                // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                $streamContext = stream_context_create(['ssl' =>
-                    [
-                        'verify_peer' => false,
-                        'verify_peer_name' => false
-                    ]
-                ]);
-
-                // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                return fopen($source, 'r', false, $streamContext);
-            } catch (Exception $ex) {
-                throw new ComponentException("Can't open CSV source for reading: {$ex->getMessage()}");
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            $handle = fopen($source, 'r');
+            if ($handle === false) {
+                throw new ComponentException("Can't open CSV source for reading: {$source}");
             }
+            return $handle;
         }
 
         // phpcs:ignore Magento2.Functions.DiscouragedFunction

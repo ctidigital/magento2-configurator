@@ -114,17 +114,15 @@ class Image
     public function getFileName($url)
     {
         if (preg_match('/http:\/\/placehold\.it\/(.*)\/jpg$/', $url, $match)) {
-            $imageName = sprintf('%s.jpg', $match[1]);
-        } else {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $imageName = basename((string) $url);
-            // Remove any URL entities
-            $imageName = urldecode($imageName);
-            // Replace spaces with -
-            $imageName = preg_replace('/\s+/', '-', $imageName);
+            return sprintf('%s.jpg', $match[1]);
         }
 
-        return $imageName;
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $imageName = basename((string) $url);
+        // Remove any URL entities
+        $imageName = urldecode($imageName);
+        // Replace spaces with -
+        return preg_replace('/\s+/', '-', $imageName);
     }
 
     /**

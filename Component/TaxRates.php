@@ -6,6 +6,7 @@ use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 
 class TaxRates implements FileComponentInterface
@@ -25,16 +26,24 @@ class TaxRates implements FileComponentInterface
     private $log;
 
     /**
+     * @var DriverInterface
+     */
+    private $driver;
+
+    /**
      * TaxRates constructor.
      * @param CsvImportHandler $csvImportHandler
      * @param LoggerInterface $log
+     * @param DriverInterface $driver
      */
     public function __construct(
         CsvImportHandler $csvImportHandler,
-        LoggerInterface $log
+        LoggerInterface $log,
+        DriverInterface $driver
     ) {
         $this->csvImportHandler = $csvImportHandler;
         $this->log = $log;
+        $this->driver = $driver;
     }
 
     /**
@@ -54,7 +63,7 @@ class TaxRates implements FileComponentInterface
             $this->csvImportHandler->importFromCsvFile(['tmp_name' => $tmpFile]);
 
             // Remove the temporary file
-            unlink($tmpFile);
+            $this->driver->deleteFile($tmpFile);
 
             // We don't know how many were successfully imported
             // so we can't log the number of records imported, but we can log that the import was successful
@@ -126,14 +135,34 @@ class TaxRates implements FileComponentInterface
         $tmpFile = sys_get_temp_dir() . '/tax_rates_' . uniqid() . '.csv';
 
         // Write the CSV data to the temporary file
-        $fileHandle = fopen($tmpFile, 'w');
+        $fileHandle = $this->driver->fileOpen($tmpFile, 'w');
         foreach ($sortedData as $line) {
-            fputcsv($fileHandle, $line, escape: '');
+            $this->driver->fileWrite($fileHandle, $this->formatCsvLine($line));
         }
         // close stream
-        fclose($fileHandle);
+        $this->driver->fileClose($fileHandle);
 
         // Return the path to the temporary file
         return $tmpFile;
+    }
+
+    /**
+     * Format an array of fields as an RFC 4180 CSV line.
+     * Replicates fputcsv() with escape: '' (no legacy escape character).
+     *
+     * @param array $fields
+     * @return string
+     */
+    private function formatCsvLine(array $fields): string
+    {
+        $csvFields = array_map(static function (mixed $field): string {
+            $field = (string) $field;
+            if (str_contains($field, ',') || str_contains($field, '"') || str_contains($field, "\n")) {
+                return '"' . str_replace('"', '""', $field) . '"';
+            }
+            return $field;
+        }, $fields);
+
+        return implode(',', $csvFields) . "\n";
     }
 }

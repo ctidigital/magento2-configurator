@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Console\Command;
 
-use CtiDigital\Configurator\Exception\ConfiguratorAdapterException;
 use CtiDigital\Configurator\Model\Processor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -86,7 +85,8 @@ class RunCommand extends Command
             $verbose = $input->getOption('verbose');
 
             if ($environment == null) {
-                throw new ConfiguratorAdapterException('Please specify an environment using --env="<environment>"');
+                $output->writeln('<error>Please specify an environment using --env="<environment>"</error>');
+                return self::INVALID;
             }
 
             if ($verbose) {
@@ -108,10 +108,6 @@ class RunCommand extends Command
 
             return self::SUCCESS;
 
-        } catch (ConfiguratorAdapterException $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
-
-            return self::INVALID;
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
 

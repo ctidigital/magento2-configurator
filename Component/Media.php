@@ -9,7 +9,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 
 class Media implements ComponentInterface
 {
-    const FULL_ACCESS = 0777;
+    private const FULL_ACCESS = 0777;
 
     protected $alias = 'media';
     protected $name = 'Media';

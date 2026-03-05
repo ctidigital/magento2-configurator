@@ -13,8 +13,8 @@ use Magento\Indexer\Model\IndexerFactory;
 
 class Customers implements ComponentInterface
 {
-    const CUSTOMER_EMAIL_HEADER = 'email';
-    const CUSTOMER_GROUP_HEADER = 'group_id';
+    private const CUSTOMER_EMAIL_HEADER = 'email';
+    private const CUSTOMER_GROUP_HEADER = 'group_id';
 
     protected $alias = 'customers';
     protected $name = 'Customers';

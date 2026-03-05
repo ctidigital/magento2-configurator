@@ -16,17 +16,17 @@ use Symfony\Component\Yaml\Parser;
 class ShippingTablesRatesTest extends TestCase
 {
     private $shippingTableRatesYamlPath;
-    const BASE_WEBSITE_ID = 1;
-    const WEBSITE_ID_COLUMN = "website_id";
-    const ACCEPTED_PRECISION_DELTA = 0.00001;
+    private constBASE_WEBSITE_ID = 1;
+    private constWEBSITE_ID_COLUMN = "website_id";
+    private constACCEPTED_PRECISION_DELTA = 0.00001;
     /**
      * See websites.yaml file.
      */
-    const A_TEST_WEBSITE_CODE = "base";
-    const EXPECTED_SHIPPING_RATE_COUNT_DIFFERENT_ERROR_MESSAGE = "Expected number shipping rates %s."
+    private constA_TEST_WEBSITE_CODE = "base";
+    private constEXPECTED_SHIPPING_RATE_COUNT_DIFFERENT_ERROR_MESSAGE = "Expected number shipping rates %s."
     . "Actual number of shipping table rates %s";
 
-    const NOT_ALL_EXPECTED_SHIPPING_RATES_FOUND_ERROR_MESSAGE = "Not all expected shipping rates were "
+    private constNOT_ALL_EXPECTED_SHIPPING_RATES_FOUND_ERROR_MESSAGE = "Not all expected shipping rates were "
     . "found in the database. NB. dest_region_code changes to dest_region_id at runtime."
     . "Also check \$regionIdMap is correct. Expected %s. Actual %s.";
 

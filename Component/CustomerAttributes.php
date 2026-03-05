@@ -17,8 +17,8 @@ use Magento\Customer\Model\ResourceModel\Attribute;
  */
 class CustomerAttributes extends Attributes
 {
-    const DEFAULT_ATTRIBUTE_SET_ID = 1;
-    const DEFAULT_ATTRIBUTE_GROUP_ID = 1;
+    private const DEFAULT_ATTRIBUTE_SET_ID = 1;
+    private const DEFAULT_ATTRIBUTE_GROUP_ID = 1;
 
     protected $alias = 'customer_attributes';
     protected $name = 'Customer Attributes';

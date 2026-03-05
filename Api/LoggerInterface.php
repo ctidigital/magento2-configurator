@@ -4,10 +4,10 @@ namespace CtiDigital\Configurator\Api;
 interface LoggerInterface
 {
 
-    const LEVEL_INFO = 'info';
-    const LEVEL_COMMENT = 'comment';
-    const LEVEL_QUESTION = 'question';
-    const LEVEL_ERROR = 'error';
+    public const LEVEL_INFO = 'info';
+    public const LEVEL_COMMENT = 'comment';
+    public const LEVEL_QUESTION = 'question';
+    public const LEVEL_ERROR = 'error';
 
     public function log($message, $level, $nest = 0);
 

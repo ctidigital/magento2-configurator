@@ -22,9 +22,9 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Processor
 {
-    const SOURCE_YAML = 'yaml';
-    const SOURCE_CSV = 'csv';
-    const SOURCE_JSON = 'json';
+    private const SOURCE_YAML = 'yaml';
+    private const SOURCE_CSV = 'csv';
+    private const SOURCE_JSON = 'json';
 
     /**
      * @var string

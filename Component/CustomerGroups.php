@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
@@ -12,31 +14,27 @@ use CtiDigital\Configurator\Api\LoggerInterface;
  */
 class CustomerGroups implements ComponentInterface
 {
-    protected $alias = 'customergroups';
-    protected $name = 'Customer Groups';
-    protected $description = 'Component to create Customer Groups';
+    protected string $alias = 'customergroups';
+    protected string $name = 'Customer Groups';
+    protected string $description = 'Component to create Customer Groups';
 
     /**
      * @var GroupFactory
      */
-    private $groupFactory;
+    private GroupFactory $groupFactory;
 
     /**
      * @var ClassModelFactory
      */
-    protected $classModelFactory;
+    protected ClassModelFactory $classModelFactory;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
-     * AdminRoles constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
-     * @param GroupFactory $groupFactory
-     * @param ClassModelFactory $classModelFactory
+     * CustomerGroups constructor.
      */
     public function __construct(
         GroupFactory $groupFactory,
@@ -48,10 +46,7 @@ class CustomerGroups implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param $data
-     */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         foreach ($data['customergroups'] as $taxClass) {
             $taxClassName = $taxClass['taxclass'];
@@ -71,12 +66,9 @@ class CustomerGroups implements ComponentInterface
     }
 
     /**
-     * Create Customer Groups from YAML file
-     *
-     * @param string $groupName
-     * @param int $taxClassId
+     * Create Customer Groups from YAML file.
      */
-    private function createCustomerGroup($groupName, $taxClassId)
+    private function createCustomerGroup(string $groupName, mixed $taxClassId): void
     {
         $customerGroup = $this->groupFactory->create();
         $groupCount = $customerGroup->getCollection()->addFieldToFilter('customer_group_code', $groupName)->getSize();
@@ -100,13 +92,11 @@ class CustomerGroups implements ComponentInterface
     }
 
     /**
-     * perform customer group name validation
+     * Perform customer group name validation.
      *
-     * @param array $group
-     * @return null
-     * @throw ComponentException
+     * @throws ComponentException
      */
-    private function validateGroupName(array $group)
+    private function validateGroupName(array $group): void
     {
         if (!isset($group['name'])) {
             throw new ComponentException(__('The customer group name is mandatory'));
@@ -120,12 +110,9 @@ class CustomerGroups implements ComponentInterface
     }
 
     /**
-     * Return tax class id when given name
-     *
-     * @param string $taxClassName
-     * @return int|null
+     * Return tax class id when given name.
      */
-    private function getTaxClassIdFromName($taxClassName)
+    private function getTaxClassIdFromName(string $taxClassName): mixed
     {
         $taxClassModel = $this->classModelFactory->create();
         $taxClass = $taxClassModel->getCollection()->addFieldToFilter('class_name', $taxClassName)->getFirstItem();
@@ -142,18 +129,12 @@ class CustomerGroups implements ComponentInterface
         return $taxclassId;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

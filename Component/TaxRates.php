@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -11,24 +12,18 @@ use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
 
 class TaxRates implements FileComponentInterface
 {
-    protected $alias = 'taxrates';
-    protected $name = 'Tax Rates';
-    protected $description = 'Component to create Tax Rates';
+    protected string $alias = 'taxrates';
+    protected string $name = 'Tax Rates';
+    protected string $description = 'Component to create Tax Rates';
 
     /**
      * @var CsvImportHandler
      */
-    protected $csvImportHandler;
+    protected CsvImportHandler $csvImportHandler;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
-    /**
-     * @var DriverInterface
-     */
-    private $driver;
+    private DriverInterface $driver;
 
     /**
      * TaxRates constructor.
@@ -47,10 +42,9 @@ class TaxRates implements FileComponentInterface
     }
 
     /**
-     * @param null $data
      * @throws LocalizedException
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         try {
             // Sort data into order importExport requires
@@ -76,26 +70,16 @@ class TaxRates implements FileComponentInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
     protected function getSortedData(array $data): array
     {
         $sortedData = [];
@@ -125,10 +109,6 @@ class TaxRates implements FileComponentInterface
         return $sortedData;
     }
 
-    /**
-     * @param array $sortedData
-     * @return string
-     */
     protected function getTmpFile(array $sortedData): string
     {
         // Define a temporary file name
@@ -149,9 +129,6 @@ class TaxRates implements FileComponentInterface
     /**
      * Format an array of fields as an RFC 4180 CSV line.
      * Replicates fputcsv() with escape: '' (no legacy escape character).
-     *
-     * @param array $fields
-     * @return string
      */
     private function formatCsvLine(array $fields): string
     {

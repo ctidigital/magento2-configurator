@@ -1,26 +1,26 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
 class Rewrite
 {
-    private $requestPath;
-    private $targetPath;
-    private $redirectType;
-    private $storeId;
-    private $description;
+    private string $requestPath;
+    private string $targetPath;
+    private string $redirectType;
+    private string $storeId;
+    private string $description;
 
     /**
      * ExpectedRewrite constructor.
-     *
-     * @param string $requestPath
-     * @param string $targetPath
-     * @param string $redirectType
-     * @param string $storeId
-     * @param string $description
      */
-    public function __construct($requestPath, $targetPath, $redirectType, $storeId, $description)
-    {
+    public function __construct(
+        string $requestPath,
+        string $targetPath,
+        string $redirectType,
+        string $storeId,
+        string $description
+    ) {
         $this->requestPath = $requestPath;
         $this->targetPath = $targetPath;
         $this->redirectType = $redirectType;
@@ -28,82 +28,52 @@ class Rewrite
         $this->description = $description;
     }
 
-    /**
-     * @return string
-     */
-    public function getRequestPath()
+    public function getRequestPath(): string
     {
         return $this->requestPath;
     }
 
-    /**
-     * @param string $requestPath
-     */
-    public function setRequestPath($requestPath)
+    public function setRequestPath(string $requestPath): void
     {
         $this->requestPath = $requestPath;
     }
 
-    /**
-     * @return string
-     */
-    public function getTargetPath()
+    public function getTargetPath(): string
     {
         return $this->targetPath;
     }
 
-    /**
-     * @param string $targetPath
-     */
-    public function setTargetPath($targetPath)
+    public function setTargetPath(string $targetPath): void
     {
         $this->targetPath = $targetPath;
     }
 
-    /**
-     * @return string
-     */
-    public function getRedirectType()
+    public function getRedirectType(): string
     {
         return $this->redirectType;
     }
 
-    /**
-     * @param string $redirectType
-     */
-    public function setRedirectType($redirectType)
+    public function setRedirectType(string $redirectType): void
     {
         $this->redirectType = $redirectType;
     }
 
-    /**
-     * @return string
-     */
-    public function getStoreId()
+    public function getStoreId(): string
     {
         return $this->storeId;
     }
 
-    /**
-     * @param string $storeId
-     */
-    public function setStoreId($storeId)
+    public function setStoreId(string $storeId): void
     {
         $this->storeId = $storeId;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }

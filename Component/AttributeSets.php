@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -16,31 +17,27 @@ use Magento\Eav\Model\AttributeSetRepository;
  */
 class AttributeSets implements ComponentInterface
 {
-    protected $alias = 'attribute_sets';
-    protected $name = 'Attribute Sets';
-    protected $description = 'Component to create/maintain attribute sets.';
+    protected string $alias = 'attribute_sets';
+    protected string $name = 'Attribute Sets';
+    protected string $description = 'Component to create/maintain attribute sets.';
 
     /**
      * @var EavSetup
      */
-    protected $eavSetup;
+    protected EavSetup $eavSetup;
 
     /**
      * @var AttributeSetRepository
      */
-    protected $attributeSetRepository;
+    protected AttributeSetRepository $attributeSetRepository;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * AttributeSets constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
-     * @param EavSetup $eavSetup
-     * @param AttributeSetRepositoryInterface $attributeSetRepository
      */
     public function __construct(
         EavSetup $eavSetup,
@@ -52,13 +49,10 @@ class AttributeSets implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param array $attributeConfigurationData
-     */
-    public function execute($attributeConfigurationData = null)
+    public function execute(mixed $data = null): void
     {
         try {
-            foreach ($attributeConfigurationData['attribute_sets'] as $attributeSetConfiguration) {
+            foreach ($data['attribute_sets'] as $attributeSetConfiguration) {
                 $this->processAttributeSet($attributeSetConfiguration);
             }
         } catch (ComponentException $e) {
@@ -66,10 +60,7 @@ class AttributeSets implements ComponentInterface
         }
     }
 
-    /**
-     * @param array $attributeSetConfig
-     */
-    protected function processAttributeSet(array $attributeSetConfig)
+    protected function processAttributeSet(array $attributeSetConfig): void
     {
         $this->eavSetup->addAttributeSet(Product::ENTITY, $attributeSetConfig['name']);
 
@@ -87,11 +78,7 @@ class AttributeSets implements ComponentInterface
         }
     }
 
-    /**
-     * @param AttributeSetInterface $attributeSetEntity
-     * @param array $attributeGroupData
-     */
-    protected function addAttributeGroups(AttributeSetInterface $attributeSetEntity, array $attributeGroupData)
+    protected function addAttributeGroups(AttributeSetInterface $attributeSetEntity, array $attributeGroupData): void
     {
         $attributeSetName = $attributeSetEntity->getAttributeSetName();
 
@@ -138,14 +125,10 @@ class AttributeSets implements ComponentInterface
         }
     }
 
-    /**
-     * @param AttributeSetInterface $attributeSetEntity
-     * @param array $group
-     */
     protected function addAttributeGroupAssociations(
         AttributeSetInterface $attributeSetEntity,
         array $group
-    ) {
+    ): void {
         foreach ($group['attributes'] as $attributeCode) {
             $attributeData = $this->eavSetup->getAttribute(Product::ENTITY, $attributeCode);
 
@@ -164,11 +147,7 @@ class AttributeSets implements ComponentInterface
         }
     }
 
-    /**
-     * @param $attributeSetName
-     * @return string
-     */
-    protected function getAttributeSetId($attributeSetName)
+    protected function getAttributeSetId(mixed $attributeSetName): mixed
     {
         $attributeSetData = $this->eavSetup->getAttributeSet(Product::ENTITY, $attributeSetName);
         if (array_key_exists('attribute_set_id', $attributeSetData)) {
@@ -178,18 +157,12 @@ class AttributeSets implements ComponentInterface
         throw new ComponentException('Could not find attribute set name.');
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

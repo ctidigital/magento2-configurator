@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -10,34 +11,19 @@ use CtiDigital\Configurator\Exception\ComponentException;
 
 class ProductLinks implements ComponentInterface
 {
-    protected $alias = 'product_links';
-    protected $name = 'Product Links';
-    protected $description = 'Component to create and maintain product links (related/up-sells/cross-sells)';
+    protected string $alias = 'product_links';
+    protected string $name = 'Product Links';
+    protected string $description = 'Component to create and maintain product links (related/up-sells/cross-sells)';
 
-    /**
-     * @var ProductLinkInterfaceFactory
-     */
-    protected $productLinkFactory;
+    protected ProductLinkInterfaceFactory $productLinkFactory;
 
-    /**
-     * @var ProductRepositoryInterface
-     */
-    protected $productRepository;
+    protected ProductRepositoryInterface $productRepository;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
-    protected $allowedLinks = ['relation', 'up_sell', 'cross_sell'];
-    protected $linkTypeMap = ['relation' => 'related', 'up_sell' => 'upsell', 'cross_sell' => 'crosssell'];
+    protected array $allowedLinks = ['relation', 'up_sell', 'cross_sell'];
+    protected array $linkTypeMap = ['relation' => 'related', 'up_sell' => 'upsell', 'cross_sell' => 'crosssell'];
 
-    /**
-     * ProductLinks constructor.
-     * @param ProductRepositoryInterface $productRepository
-     * @param ProductLinkInterfaceFactory $productLinkFactory
-     * @param LoggerInterface $log
-     */
     public function __construct(
         ProductRepositoryInterface $productRepository,
         ProductLinkInterfaceFactory $productLinkFactory,
@@ -50,10 +36,8 @@ class ProductLinks implements ComponentInterface
 
     /**
      * Process the data by splitting up the different link types.
-     *
-     * @param $data
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         try {
             // Loop through all the product link types - if there are multiple link types in the yaml file
@@ -75,11 +59,8 @@ class ProductLinks implements ComponentInterface
 
     /**
      * Process an array of products that require products linking to them
-     *
-     * @param array $data
-     * @param $linkType
      */
-    private function processSkus(array $data, $linkType)
+    private function processSkus(array $data, mixed $linkType): void
     {
         try {
             // Loop through the SKUs in the link type
@@ -102,12 +83,8 @@ class ProductLinks implements ComponentInterface
 
     /**
      * Process all the SKUs that need to be linked to a particular product (SKU)
-     *
-     * @param $sku
-     * @param $linkSkus
-     * @param $linkType
      */
-    private function processLinks($sku, $linkSkus, $linkType)
+    private function processLinks(mixed $sku, mixed $linkSkus, mixed $linkType): void
     {
         try {
             $productLinks = [];
@@ -140,11 +117,9 @@ class ProductLinks implements ComponentInterface
     /**
      * Check if the product exists function
      *
-     * @param string $sku
-     * @return bool
      * @todo find an efficient way to check if the product exists.
      */
-    private function doesProductExist($sku)
+    private function doesProductExist(mixed $sku): bool
     {
         if ($this->productRepository->get($sku)->getId()) {
             return true;
@@ -152,18 +127,12 @@ class ProductLinks implements ComponentInterface
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

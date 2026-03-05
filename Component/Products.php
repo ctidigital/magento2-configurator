@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
@@ -23,11 +25,11 @@ class Products implements ComponentInterface
     const IS_IN_STOCK_COLUMN_HEADING = 'is_in_stock';
     const SEPARATOR = ';';
 
-    protected $alias = 'products';
-    protected $name = 'Products';
-    protected $description = 'Component to import products using a CSV file.';
+    protected string $alias = 'products';
+    protected string $name = 'Products';
+    protected string $description = 'Component to import products using a CSV file.';
 
-    protected $imageAttributes = [
+    protected array $imageAttributes = [
         'image',
         'small_image',
         'thumbnail',
@@ -37,10 +39,8 @@ class Products implements ComponentInterface
 
     /**
      * The attributes that may use ',' as the separator and need replacing
-     *
-     * @var array
      */
-    protected $attrSeparator = [
+    protected array $attrSeparator = [
         'product_websites',
         'store_view_code'
     ];
@@ -48,10 +48,8 @@ class Products implements ComponentInterface
     /**
      * Attributes that may have newlines defined. These will be split into
      * paragraphs so text looks the same on frontend.
-     *
-     * @var array
      */
-    protected $attrDescription = [
+    protected array $attrDescription = [
         'description',
         'short_description'
     ];
@@ -59,47 +57,35 @@ class Products implements ComponentInterface
     /**
      * @var ImporterFactory
      */
-    protected $importerFactory;
+    protected ImporterFactory $importerFactory;
 
     /**
      * @var ProductFactory
      */
-    protected $productFactory;
+    protected ProductFactory $productFactory;
 
     /**
      * @var Image
      */
-    protected $image;
+    protected Image $image;
 
     /**
      * @var ValidatorFactory
      */
-    protected $validatorFactory;
+    protected ValidatorFactory $validatorFactory;
 
     /**
      * @var AttributeOption
      */
-    protected $attributeOption;
+    protected AttributeOption $attributeOption;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
-    /**
-     * @var []
-     */
-    private $successProducts = [];
+    private array $successProducts = [];
 
-    /**
-     * @var []
-     */
-    private $skippedProducts = [];
+    private array $skippedProducts = [];
 
-    /**
-     * @var int
-     */
-    private $skuColumn;
+    private int|false $skuColumn;
 
     /**
      * Products constructor.
@@ -127,12 +113,10 @@ class Products implements ComponentInterface
     }
 
     /**
-     * @param null $data
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         // Get the first row of the CSV file for the attribute columns.
         if (!isset($data[0])) {
@@ -215,7 +199,7 @@ class Products implements ComponentInterface
      * @param null $source
      * @return mixed
      */
-    public function getFileType($source = null)
+    public function getFileType($source = null): mixed
     {
         // Get the file extension so we know how to load the file
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
@@ -233,9 +217,8 @@ class Products implements ComponentInterface
      * Gets the first row of the CSV file as these should be the attribute keys
      *
      * @param null $data
-     * @return array
      */
-    public function getAttributesFromCsv($data = null)
+    public function getAttributesFromCsv($data = null): array
     {
         $attributes = [];
         foreach ($data[0] as $attributeCode) {
@@ -246,11 +229,8 @@ class Products implements ComponentInterface
 
     /**
      * Test if a product is a configurable
-     *
-     * @param array $data
-     * @return bool
      */
-    public function isConfigurable($data = [])
+    public function isConfigurable(array $data = []): bool
     {
         if (isset($data['product_type']) && $data['product_type'] === 'configurable') {
             return true;
@@ -263,9 +243,8 @@ class Products implements ComponentInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param $data
-     * @return string
      */
-    public function constructConfigurableVariations($data)
+    public function constructConfigurableVariations($data): string
     {
         $variations = '';
         if (isset($data['associated_products']) && isset($data['configurable_attributes'])) {
@@ -298,12 +277,8 @@ class Products implements ComponentInterface
 
     /**
      * Get the attributes and the values as a string
-     *
-     * @param array $attributes
-     * @param \Magento\Catalog\Model\Product $productModel
-     * @return string
      */
-    public function constructAttributeData(array $attributes, \Magento\Catalog\Model\Product $productModel)
+    public function constructAttributeData(array $attributes, \Magento\Catalog\Model\Product $productModel): string
     {
         $skuAttributes = '';
         $attrCounter = 0;
@@ -336,12 +311,8 @@ class Products implements ComponentInterface
 
     /**
      * Tests to see if the stock values have been set
-     *
-     * @param array $productData
-     *
-     * @return bool
      */
-    public function isStockSpecified(array $productData)
+    public function isStockSpecified(array $productData): bool
     {
         if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) && isset($productData[self::QTY_COLUMN_HEADING])) {
             return true;
@@ -351,12 +322,8 @@ class Products implements ComponentInterface
 
     /**
      * Set the stock values
-     *
-     * @param array $productData
-     *
-     * @return array
      */
-    public function setStock(array $productData)
+    public function setStock(array $productData): array
     {
         $newProductData = $productData;
         if (isset($productData[self::IS_IN_STOCK_COLUMN_HEADING]) &&
@@ -369,13 +336,8 @@ class Products implements ComponentInterface
 
     /**
      * Replace the separator ','
-     *
-     * @param $data
-     * @param $column
-     *
-     * @return mixed
      */
-    private function replaceSeparator($data, $column)
+    private function replaceSeparator(mixed $data, string $column): mixed
     {
         if (in_array($column, $this->attrSeparator)) {
             return str_replace(',', self::SEPARATOR, (string) $data);
@@ -386,13 +348,8 @@ class Products implements ComponentInterface
     /**
      * Format description attribute values where newlines indicate
      * the position of paragraphs.
-     *
-     * @param $data
-     * @param $column
-     *
-     * @return mixed|string
      */
-    private function insertParagraphs($data, $column)
+    private function insertParagraphs(mixed $data, string $column): mixed
     {
         if (in_array($column, $this->attrDescription) && !$this->spotHtmlTags($data, "p")) {
             $data = str_replace(PHP_EOL, "</p>".PHP_EOL."<p>", (string) $data);
@@ -404,13 +361,8 @@ class Products implements ComponentInterface
 
     /**
      * Find html tags in the given string
-     *
-     * @param $string
-     * @param $tagname
-     *
-     * @return int
      */
-    private function spotHtmlTags($string, $tagname)
+    private function spotHtmlTags(mixed $string, string $tagname): int
     {
         $matches = [];
         $pattern = "/<$tagname?.*>(.*)<\/$tagname>/";
@@ -420,13 +372,8 @@ class Products implements ComponentInterface
 
     /**
      * Tidy up the value
-     *
-     * @param $value
-     * @param $column
-     *
-     * @return string
      */
-    private function clean($value, $column)
+    private function clean(mixed $value, string $column): string
     {
         $value = $this->replaceSeparator($value, $column);
         $value = $this->insertParagraphs($value, $column);
@@ -435,28 +382,18 @@ class Products implements ComponentInterface
 
     /**
      * Get the column index of the SKU
-     *
-     * @param $headers
-     *
-     * @return mixed
      */
-    public function getSkuColumnIndex($headers)
+    public function getSkuColumnIndex(array $headers): int|false
     {
         return array_search(self::SKU_COLUMN_HEADING, $headers);
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -16,35 +17,30 @@ use Magento\Framework\Event\ManagerInterface;
 
 class Websites implements ComponentInterface
 {
-    protected $alias = 'websites';
-    protected $name = 'Websites';
-    protected $description = 'Component to manage Websites, Stores and Store Views';
-    protected $indexer;
-    protected $reindex = false;
-    /**
-     * @var \Magento\Framework\Event\ManagerInterface
-     */
-    protected $eventManager;
+    protected string $alias = 'websites';
+    protected string $name = 'Websites';
+    protected string $description = 'Component to manage Websites, Stores and Store Views';
+    protected IndexerFactory $indexer;
+    protected bool $reindex = false;
+
+    protected ManagerInterface $eventManager;
 
     /**
      * @var WebsiteFactory
      */
-    protected $websiteFactory;
+    protected WebsiteFactory $websiteFactory;
 
     /**
      * @var StoreFactory
      */
-    protected $storeFactory;
+    protected StoreFactory $storeFactory;
 
     /**
      * @var GroupFactory
      */
-    protected $groupFactory;
+    protected GroupFactory $groupFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * Websites constructor.
@@ -71,7 +67,7 @@ class Websites implements ComponentInterface
         $this->log = $log;
     }
 
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         try {
             if (!isset($data['websites'])) {
@@ -114,10 +110,9 @@ class Websites implements ComponentInterface
     /**
      * @param string $code
      * @param array $websiteData
-     * @return Website
      * @SuppressWarnings(PHPMD)
      */
-    protected function processWebsite($code, $websiteData)
+    protected function processWebsite(string $code, array $websiteData): ?Website
     {
         $logNest = 1;
 
@@ -176,15 +171,14 @@ class Websites implements ComponentInterface
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
         }
+        return null;
     }
 
     /**
      * @param array $storeGroupData
-     * @param Website $website
-     * @return Group
      * @SuppressWarnings(PHPMD)
      */
-    protected function processStoreGroup($storeGroupData, Website $website)
+    protected function processStoreGroup(array $storeGroupData, ?Website $website): ?Group
     {
         $logNest = 2;
 
@@ -261,16 +255,13 @@ class Websites implements ComponentInterface
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
         }
+        return null;
     }
 
     /**
-     * @param $code
-     * @param $storeViewData
-     * @param Group $storeGroup
-     * @return Store
      * @SuppressWarnings(PHPMD)
      */
-    protected function processStoreView($code, $storeViewData, Group $storeGroup)
+    protected function processStoreView(string $code, mixed $storeViewData, ?Group $storeGroup): ?Store
     {
         $logNest = 3;
 
@@ -339,14 +330,13 @@ class Websites implements ComponentInterface
         } catch (ComponentException $e) {
             $this->log->logError($e->getMessage(), $logNest);
         }
+        return null;
     }
 
     /**
-     * @param Group $storeGroup
-     * @param $storeGroupData
      * @SuppressWarnings(PHPMD)
      */
-    protected function setDefaultStore(Group $storeGroup, $storeGroupData)
+    protected function setDefaultStore(?Group $storeGroup, mixed $storeGroupData): void
     {
         $logNest = 2;
 
@@ -398,18 +388,12 @@ class Websites implements ComponentInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -16,39 +17,36 @@ use Magento\Framework\Serialize\SerializerInterface;
 class Widgets implements ComponentInterface
 {
 
-    protected $alias = 'widgets';
-    protected $name = 'Widgets';
-    protected $description = 'Component to manage CMS Widgets';
+    protected string $alias = 'widgets';
+    protected string $name = 'Widgets';
+    protected string $description = 'Component to manage CMS Widgets';
 
     /**
      * @var WidgetCollection
      */
-    private $widgetCollection;
+    private WidgetCollection $widgetCollection;
 
     /**
      * @var WidgetInstanceFactory
      */
-    private $widgetFactory;
+    private WidgetInstanceFactory $widgetFactory;
 
     /**
      * @var ThemeCollection
      */
-    private $themeCollection;
+    private ThemeCollection $themeCollection;
 
     /**
      * @var StoreFactory
      */
-    private $storeFactory;
+    private StoreFactory $storeFactory;
 
     /**
      * @var SerializerInterface
      */
-    private $serializer;
+    private SerializerInterface $serializer;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * Widgets constructor.
@@ -75,7 +73,7 @@ class Widgets implements ComponentInterface
         $this->log = $log;
     }
 
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         try {
             foreach ($data as $widgetData) {
@@ -86,7 +84,7 @@ class Widgets implements ComponentInterface
         }
     }
 
-    public function processWidget($widgetData)
+    public function processWidget(mixed $widgetData): void
     {
         try {
             $widget = $this->findWidgetByInstanceTypeAndTitle($widgetData['instance_type'], $widgetData['title']);
@@ -138,13 +136,10 @@ class Widgets implements ComponentInterface
     }
 
     /**
-     * @param $widgetInstanceType
-     * @param $widgetTitle
-     * @return \Magento\Framework\DataObject|null
      * @throws ComponentException
      * @todo get this one to work instead of findWidgetByInstanceTypeAndTitle()
      */
-    public function getWidgetByInstanceTypeAndTitle($widgetInstanceType, $widgetTitle)
+    public function getWidgetByInstanceTypeAndTitle(string $widgetInstanceType, string $widgetTitle): ?\Magento\Framework\DataObject
     {
 
         // Clear any existing filters applied to the widget collection
@@ -174,12 +169,7 @@ class Widgets implements ComponentInterface
         return $widgets->getFirstItem();
     }
 
-    /**
-     * @param $widgetInstanceType
-     * @param $widgetTitle
-     * @return mixed|null
-     */
-    public function findWidgetByInstanceTypeAndTitle($widgetInstanceType, $widgetTitle)
+    public function findWidgetByInstanceTypeAndTitle(string $widgetInstanceType, string $widgetTitle): mixed
     {
 
         // Loop through the widget collection to find any matches.
@@ -195,7 +185,7 @@ class Widgets implements ComponentInterface
         return null;
     }
 
-    public function getThemeId($themeCode)
+    public function getThemeId(mixed $themeCode): mixed
     {
 
         // Filter Theme Collection
@@ -211,21 +201,15 @@ class Widgets implements ComponentInterface
     }
 
     /**
-     * @param array $parameters
-     * @return string
      * @todo better support with parameters that reference IDs of objects
      */
-    public function populateWidgetParameters(array $parameters)
+    public function populateWidgetParameters(array $parameters): string
     {
         // Default property return
         return $this->serializer->serialize($parameters);
     }
 
-    /**
-     * @param $stores
-     * @return string
-     */
-    public function getCommaSeparatedStoreIds($stores)
+    public function getCommaSeparatedStoreIds(mixed $stores): string
     {
         $storeIds = [];
         foreach ($stores as $code) {
@@ -239,18 +223,12 @@ class Widgets implements ComponentInterface
         return implode(',', $storeIds);
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

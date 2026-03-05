@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
@@ -19,47 +21,24 @@ class ReviewRating implements ComponentInterface
 {
     const MAX_NUM_RATINGS = 5;
 
-    protected $alias = 'review_rating';
+    protected string $alias = 'review_rating';
 
-    protected $name = 'Review Rating';
+    protected string $name = 'Review Rating';
 
-    protected $description = 'Component to create review ratings';
+    protected string $description = 'Component to create review ratings';
 
-    protected $entityId;
+    protected mixed $entityId = null;
 
-    /**
-     * @var RatingFactory
-     */
-    protected $ratingFactory;
+    protected RatingFactory $ratingFactory;
 
-    /**
-     * @var StoreRepository
-     */
-    protected $storeRepository;
+    protected StoreRepositoryInterface $storeRepository;
 
-    /**
-     * @var OptionFactory
-     */
-    protected $optionFactory;
+    protected OptionFactory $optionFactory;
 
-    /**
-     * @var EntityFactory
-     */
-    protected $entityFactory;
+    protected EntityFactory $entityFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
-    /**
-     * ReviewRating constructor.
-     * @param RatingFactory $ratingFactory
-     * @param StoreRepositoryInterface $storeRepository
-     * @param OptionFactory $optionFactory
-     * @param EntityFactory $entityFactory
-     * @param LoggerInterface $log
-     */
     public function __construct(
         RatingFactory $ratingFactory,
         StoreRepositoryInterface $storeRepository,
@@ -74,15 +53,12 @@ class ReviewRating implements ComponentInterface
         $this->log = $log;
     }
 
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         $reviewRatings = $this->getReviewRatings($data);
 
         foreach ($reviewRatings as $code => $reviewRating) {
             try {
-                /**
-                 * @var Rating $ratingModel
-                 */
                 $ratingModel = $this->getReviewRating($code);
                 $ratingModel = $this->updateOrCreateRating($ratingModel, $code, $reviewRating);
                 $ratingModel->save();
@@ -102,12 +78,8 @@ class ReviewRating implements ComponentInterface
 
     /**
      * Get the review criteria
-     *
-     * @param $data
-     *
-     * @return []
      */
-    public function getReviewRatings($data)
+    public function getReviewRatings(mixed $data): array
     {
         if (isset($data['review_rating'])) {
             return $data['review_rating'];
@@ -115,29 +87,14 @@ class ReviewRating implements ComponentInterface
         return [];
     }
 
-    /**
-     * @param $reviewRatingCode
-     *
-     * @return Rating
-     */
-    public function getReviewRating($reviewRatingCode)
+    public function getReviewRating(mixed $reviewRatingCode): Rating
     {
-        /**
-         * @var Rating $rating
-         */
         $rating = $this->ratingFactory->create();
         $rating->load($reviewRatingCode, 'rating_code');
         return $rating;
     }
 
-    /**
-     * @param Rating $rating
-     * @param $ratingCode
-     * @param $ratingData
-     *
-     * @return Rating
-     */
-    public function updateOrCreateRating(Rating $rating, $ratingCode, $ratingData)
+    public function updateOrCreateRating(Rating $rating, mixed $ratingCode, mixed $ratingData): Rating
     {
         $rating->setRatingCode($ratingCode);
         $reviewEntityId = $this->getReviewEntityId();
@@ -164,10 +121,8 @@ class ReviewRating implements ComponentInterface
 
     /**
      * Sets the options on the rating
-     *
-     * @param Rating $rating
      */
-    protected function setOptions(Rating $rating)
+    protected function setOptions(Rating $rating): void
     {
         $ratingOptions = $rating->getOptions();
         if (count($ratingOptions) === self::MAX_NUM_RATINGS) {
@@ -194,12 +149,7 @@ class ReviewRating implements ComponentInterface
         }
     }
 
-    /**
-     * @param $storeCodes
-     *
-     * @return array
-     */
-    public function getStoresByCodes($storeCodes)
+    public function getStoresByCodes(mixed $storeCodes): array
     {
         $storesResponse = [];
 
@@ -217,10 +167,8 @@ class ReviewRating implements ComponentInterface
 
     /**
      * Get the review entity ID
-     *
-     * @return int
      */
-    private function getReviewEntityId()
+    private function getReviewEntityId(): mixed
     {
         if ($this->entityId === null) {
             /**
@@ -232,18 +180,12 @@ class ReviewRating implements ComponentInterface
         return $this->entityId;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

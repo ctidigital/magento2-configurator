@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @package  CtiDigital\Configurator
  * @author Bartosz Herba <bartoszherba@gmail.com>
@@ -16,30 +18,15 @@ use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
  */
 class Sql implements ComponentInterface
 {
-    /**
-     * @var string
-     */
-    protected $alias = 'sql';
+    protected string $alias = 'sql';
 
-    /**
-     * @var string
-     */
-    protected $name = 'Custom Sql';
+    protected string $name = 'Custom Sql';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Component for an execution of custom queries';
+    protected string $description = 'Component for an execution of custom queries';
 
-    /**
-     * @var SqlSplitProcessor
-     */
-    private $processor;
+    private SqlSplitProcessor $processor;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * Sql constructor.
@@ -56,12 +43,8 @@ class Sql implements ComponentInterface
 
     /**
      * This method should be used to process the data and populate the Magento Database.
-     *
-     * @param mixed $data
-     *
-     * @return void
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         if (!isset($data['sql'])) {
             return;
@@ -79,18 +62,12 @@ class Sql implements ComponentInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

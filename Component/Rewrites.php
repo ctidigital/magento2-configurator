@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -13,9 +14,9 @@ use Magento\UrlRewrite\Model\UrlPersistInterface;
  */
 class Rewrites implements ComponentInterface
 {
-    protected $alias = "rewrites";
-    protected $name = "rewrites";
-    protected $description = "Component to create URL Store Rewrites";
+    protected string $alias = "rewrites";
+    protected string $name = "rewrites";
+    protected string $description = "Component to create URL Store Rewrites";
     const THE_ROW_DATA_IS_NOT_VALID_MESSAGE = "The row data is not valid.";
     const URL_REWRITES_COMPLETE_MESSAGE = 'URL Rewrites Complete';
     const URL_REWRITE_REQUIRES_A_REQUEST_PATH_TO_BE_SET_MESSAGE = 'URL Rewrite requires a request path to be set';
@@ -26,27 +27,12 @@ class Rewrites implements ComponentInterface
     const REDIRECT_TYPE_CSV_KEY = 'redirectType';
     const DESCRIPTION_CSV_KEY = 'description';
 
-    /**
-     * @var UrlPersistInterface
-     */
-    protected $urlPersist;
+    protected UrlPersistInterface $urlPersist;
 
-    /**
-     * @var UrlRewriteFactory
-     */
-    protected $urlRewriteFactory;
+    protected UrlRewriteFactory $urlRewriteFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
-    /**
-     * Rewrites constructor.
-     * @param UrlPersistInterface $urlPersist
-     * @param UrlRewriteFactory $urlRewriteFactory
-     * @param LoggerInterface $log
-     */
     public function __construct(
         UrlPersistInterface $urlPersist,
         UrlRewriteFactory $urlRewriteFactory,
@@ -57,10 +43,7 @@ class Rewrites implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param array|null $data
-     */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         $headerRowAttributes = $this->getAttributesFromHeaderRow($data);
 
@@ -96,11 +79,8 @@ class Rewrites implements ComponentInterface
 
     /**
      * Gets the first row of the CSV file as these should be the attribute keys
-     *
-     * @param null $data
-     * @return array
      */
-    public function getAttributesFromHeaderRow($data = null)
+    public function getAttributesFromHeaderRow(mixed $data = null): array
     {
         $this->checkHeaderRowExists($data);
         $attributes = [];
@@ -110,11 +90,7 @@ class Rewrites implements ComponentInterface
         return $attributes;
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    public function checkHeaderRowExists(array $data)
+    public function checkHeaderRowExists(array $data): void
     {
         if (!isset($data[0])) {
             throw new ComponentException(
@@ -123,20 +99,15 @@ class Rewrites implements ComponentInterface
         }
     }
 
-    /**
-     * @param array $data
-     */
-    private function removeHeaderRow(array &$data)
+    private function removeHeaderRow(array &$data): void
     {
         unset($data[0]);
     }
 
     /**
      * Creates UrlRedirect from Array
-     *
-     * @param $rewriteArray
      */
-    public function createOrUpdateRewriteRule(array $rewriteArray)
+    public function createOrUpdateRewriteRule(array $rewriteArray): void
     {
         $rewrite = $this->urlRewriteFactory->create();
         $successMessage = 'URL Rewrite: "%s" created';
@@ -165,13 +136,7 @@ class Rewrites implements ComponentInterface
         );
     }
 
-    /**
-     * @param $attributeKeys
-     * @param $rewriteDataCsvRow
-     * @param $rewriteArray
-     * @return mixed
-     */
-    public function extractCsvDataIntoArray($attributeKeys, $rewriteDataCsvRow, $rewriteArray)
+    public function extractCsvDataIntoArray(mixed $attributeKeys, mixed $rewriteDataCsvRow, array $rewriteArray): array
     {
         foreach ($attributeKeys as $column => $code) {
             $rewriteArray[$code] = $rewriteDataCsvRow[$column];
@@ -179,18 +144,12 @@ class Rewrites implements ComponentInterface
         return $rewriteArray;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

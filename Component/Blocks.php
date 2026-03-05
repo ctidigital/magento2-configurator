@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -14,33 +15,33 @@ use Magento\Store\Model\Store;
 
 class Blocks implements ComponentInterface
 {
-
-    protected $alias = 'blocks';
-    protected $name = 'Blocks';
-    protected $description = 'Component to create/maintain blocks.';
+    protected string $alias = 'blocks';
+    protected string $name = 'Blocks';
+    protected string $description = 'Component to create/maintain blocks.';
 
     /**
      * @var BlockInterfaceFactory
      */
-    protected $blockFactory;
+    protected BlockInterfaceFactory $blockFactory;
 
     /**
      * @var Store
      */
-    protected $storeManager;
+    protected Store $storeManager;
 
     /**
      * @var SearchCriteriaBuilder
      */
-    protected $searchBuilder;
+    protected SearchCriteriaBuilder $searchBuilder;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * Blocks constructor.
+     *
      * @param BlockInterfaceFactory $blockFactory
      * @param Store $store
      * @param LoggerInterface $log
@@ -55,10 +56,7 @@ class Blocks implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param $data
-     */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         try {
             foreach ($data as $identifier => $data) {
@@ -70,11 +68,9 @@ class Blocks implements ComponentInterface
     }
 
     /**
-     * @param $identifier
-     * @param $blockData
      * @SuppressWarnings(PHPMD)
      */
-    private function processBlock($identifier, $blockData)
+    private function processBlock(mixed $identifier, mixed $blockData): void
     {
         try {
             // Loop through the block data
@@ -174,18 +170,18 @@ class Blocks implements ComponentInterface
     }
 
     /**
-     * Find the block to process given the identifier, block collection and optionally stores
+     * Find the block to process given the identifier, block collection and optionally stores.
      *
-     * @param String $identifier
+     * @param string $identifier
      * @param Collection $blocks
      * @param array $stores
      * @return Block|DataObject|null
      */
     private function getBlockToProcess(
-        $identifier,
+        string $identifier,
         Collection $blocks,
-        $stores = []
-    ) {
+        array $stores = []
+    ): Block|DataObject|null {
         // If there is only 1 block and stores hasn't been specified
         if ($blocks->count() == 1 && count($stores) == 0) {
             // Return that one block
@@ -211,11 +207,7 @@ class Blocks implements ComponentInterface
         return null;
     }
 
-    /**
-     * @param String $code
-     * @return Store
-     */
-    private function getStoreByCode($code)
+    private function getStoreByCode(string $code): Store
     {
         // Load the store object
         $store = $this->storeManager->load($code, 'code');
@@ -229,18 +221,12 @@ class Blocks implements ComponentInterface
         return $store;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

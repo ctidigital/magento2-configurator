@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -19,60 +20,52 @@ class Config implements ComponentInterface
     const PATH_THEME_ID = 'design/theme/theme_id';
     const ENCRYPTED_MODEL = \Magento\Config\Model\Config\Backend\Encrypted::class;
 
-    protected $alias = 'config';
-    protected $name = 'Configuration';
-    protected $description = 'Component to set the store/system configuration values';
+    protected string $alias = 'config';
+    protected string $name = 'Configuration';
+    protected string $description = 'Component to set the store/system configuration values';
 
     /**
      * @var ConfigResource
      */
-    protected $configResource;
+    protected ConfigResource $configResource;
 
     /**
      * @var ScopeConfig
      */
-    protected $scopeConfig;
+    protected ScopeConfig $scopeConfig;
 
     /**
      * @var CollectionFactory
      */
-    protected $collectionFactory;
+    protected CollectionFactory $collectionFactory;
 
     /**
      * @var EncryptorInterface
      */
-    protected $encryptor;
+    protected EncryptorInterface $encryptor;
 
     /**
      * @var WebsiteFactory
      */
-    protected $websiteFactory;
+    protected WebsiteFactory $websiteFactory;
 
     /**
      * @var StoreFactory
      */
-    protected $storeFactory;
+    protected StoreFactory $storeFactory;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * @var ScopeConfig\Initial
      */
-    private $initialConfig;
+    private ScopeConfig\Initial $initialConfig;
 
     /**
      * Config constructor.
-     * @param ConfigResource $configResource
-     * @param ScopeConfig $scopeConfig
-     * @param ScopeConfig\Initial $initialConfig
-     * @param CollectionFactory $collectionFactory
-     * @param EncryptorInterface $encryptor
-     * @param WebsiteFactory $websiteFactory
-     * @param StoreFactory $storeFactory
-     * @param LoggerInterface $log
      */
     public function __construct(
         ConfigResource $configResource,
@@ -95,10 +88,9 @@ class Config implements ComponentInterface
     }
 
     /**
-     * @param $data
      * @SuppressWarnings(PHPMD)
      */
-    public function execute($data = null) //phpcs:ignore Generic.Metrics.NestingLevel
+    public function execute(mixed $data = null): void //phpcs:ignore Generic.Metrics.NestingLevel
     {
         try {
             $validScopes = ['global', 'websites', 'stores'];
@@ -175,7 +167,7 @@ class Config implements ComponentInterface
         }
     }
 
-    private function determineEncryption(array $configuration, $encryption)
+    private function determineEncryption(array $configuration, mixed $encryption): mixed
     {
         $metaData = $this->initialConfig->getMetadata();
 
@@ -190,7 +182,7 @@ class Config implements ComponentInterface
         return $encryption;
     }
 
-    private function setGlobalConfig($path, $value, $encrypted = 0)
+    private function setGlobalConfig(mixed $path, mixed $value, mixed $encrypted = 0): void
     {
         try {
             // Check existing value, skip if the same
@@ -213,7 +205,7 @@ class Config implements ComponentInterface
         }
     }
 
-    private function setWebsiteConfig($path, $value, $code, $encrypted = 0)
+    private function setWebsiteConfig(mixed $path, mixed $value, mixed $code, mixed $encrypted = 0): void
     {
         try {
             $logNest = 1;
@@ -246,13 +238,9 @@ class Config implements ComponentInterface
     }
 
     /**
-     * Convert paths or values before they're processed
-     *
-     * @param array $configuration
-     *
-     * @return array
+     * Convert paths or values before they're processed.
      */
-    protected function convert(array $configuration)
+    protected function convert(array $configuration): array
     {
         $convertedConfig = $configuration;
         if (isset($convertedConfig['path']) && isset($convertedConfig['value'])) {
@@ -263,7 +251,7 @@ class Config implements ComponentInterface
         return $convertedConfig;
     }
 
-    private function setStoreConfig($path, $value, $code, $encrypted = 0)
+    private function setStoreConfig(mixed $path, mixed $value, mixed $code, mixed $encrypted = 0): void
     {
         try {
             $logNest = 2;
@@ -294,14 +282,9 @@ class Config implements ComponentInterface
     }
 
     /**
-     * Checks if the config path is setting the theme by its path so we can get the ID
-     *
-     * @param $path
-     * @param $value
-     *
-     * @return bool
+     * Checks if the config path is setting the theme by its path so we can get the ID.
      */
-    public function isConfigTheme($path, $value)
+    public function isConfigTheme(mixed $path, mixed $value): bool
     {
         if ($path === self::PATH_THEME_ID && is_int($value) === false) {
             return true;
@@ -310,13 +293,9 @@ class Config implements ComponentInterface
     }
 
     /**
-     * Get the theme ID by the path
-     *
-     * @param $themePath
-     *
-     * @return int
+     * Get the theme ID by the path.
      */
-    public function getThemeIdByPath($themePath)
+    public function getThemeIdByPath(mixed $themePath): mixed
     {
         /**
          * @var Collection $themeCollection
@@ -326,23 +305,17 @@ class Config implements ComponentInterface
         return $theme->getThemeId();
     }
 
-    private function encrypt($value)
+    private function encrypt(mixed $value): mixed
     {
         return $this->encryptor->encrypt($value);
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

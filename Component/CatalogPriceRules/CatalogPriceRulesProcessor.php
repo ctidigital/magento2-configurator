@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @package  CtiDigital\Configurator
  * @author Bartosz Herba <b.herba@ctidigital.com>
@@ -19,35 +21,29 @@ use Magento\CatalogRule\Model\Rule\Job;
  */
 class CatalogPriceRulesProcessor implements ComponentProcessorInterface
 {
-    /**
-     * @var array
-     */
-    private $rules = [];
+    private array $rules = [];
 
-    /**
-     * @var array
-     */
-    private $config = [];
+    private array $config = [];
 
     /**
      * @var RuleInterfaceFactory
      */
-    private $ruleFactory;
+    private RuleInterfaceFactory $ruleFactory;
 
     /**
      * @var CatalogRuleRepositoryInterface
      */
-    private $catalogRuleRepo;
+    private CatalogRuleRepositoryInterface $catalogRuleRepo;
 
     /**
      * @var Job
      */
-    private $ruleJob;
+    private Job $ruleJob;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * CatalogPriceRules constructor.
@@ -70,11 +66,11 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     }
 
     /**
-     * @param array $data
+     * Set the data to process.
      *
      * @return $this
      */
-    public function setData(array $data)
+    public function setData(array $data): static
     {
         $this->rules = $data;
 
@@ -82,11 +78,11 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     }
 
     /**
-     * @param array $config
+     * Set the component configuration.
      *
      * @return $this
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): static
     {
         $this->config = $config;
 
@@ -94,11 +90,9 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     }
 
     /**
-     * Configure rules
-     *
-     * @return void
+     * Configure rules.
      */
-    public function process()
+    public function process(): void
     {
         $rulesCount = count($this->rules);
         $ite = 1;
@@ -152,13 +146,7 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
         $this->logger->logInfo('Catalog price rules configuration completed.');
     }
 
-    /**
-     * @param Rule $rule
-     * @param array $ruleData
-     *
-     * @return void
-     */
-    private function fillRuleWithData(Rule $rule, array $ruleData)
+    private function fillRuleWithData(Rule $rule, array $ruleData): void
     {
         // Loop through each key value
         foreach ($ruleData as $key => $value) {
@@ -185,11 +173,9 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     }
 
     /**
-     * Checks if should apply all rules
-     *
-     * @return bool
+     * Checks if should apply all rules.
      */
-    private function isApplyAll()
+    private function isApplyAll(): bool
     {
         return isset($this->config['apply_all']) && true === $this->config['apply_all'];
     }

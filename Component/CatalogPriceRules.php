@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @package  CtiDigital\Configurator
  * @author Bartosz Herba <b.herba@ctidigital.com>
@@ -10,40 +12,30 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor;
-use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 
 class CatalogPriceRules implements ComponentInterface
 {
-    /**
-     * @var string
-     */
-    protected $alias = 'catalog_price_rules';
+    protected string $alias = 'catalog_price_rules';
 
-    /**
-     * @var string
-     */
-    protected $name = 'Catalog Price Rules';
+    protected string $name = 'Catalog Price Rules';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Component to manage Catalog Price Rules';
+    protected string $description = 'Component to manage Catalog Price Rules';
 
     /**
      * @var CatalogPriceRulesProcessor
      */
-    private $processor;
+    private CatalogPriceRulesProcessor $processor;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * CatalogPriceRules constructor.
      *
-     * @param LoggerInterface $log
      * @param CatalogPriceRulesProcessor $processor
+     * @param LoggerInterface $log
      */
     public function __construct(
         CatalogPriceRulesProcessor $processor,
@@ -54,13 +46,9 @@ class CatalogPriceRules implements ComponentInterface
     }
 
     /**
-     * This method should be used to process the data and populate the Magento Database.
-     *
-     * @param $data
-     *
-     * @return void
+     * Process the data and populate the Magento Database.
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         $rules = $data['rules'] ?? [];
         $config = $data['config'] ?? [];
@@ -70,18 +58,12 @@ class CatalogPriceRules implements ComponentInterface
             ->process();
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

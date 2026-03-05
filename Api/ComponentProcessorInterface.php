@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @package  CtiDigital\Configurator
  * @author Bartosz Herba <b.herba@ctidigital.com>
@@ -13,23 +15,21 @@ namespace CtiDigital\Configurator\Api;
 interface ComponentProcessorInterface
 {
     /**
-     * @param array $data
+     * Set the data to process.
      *
      * @return $this
      */
-    public function setData(array $data);
+    public function setData(array $data): static;
 
     /**
-     * @param array $config
+     * Set the component configuration.
      *
      * @return $this
      */
-    public function setConfig(array $config);
+    public function setConfig(array $config): static;
 
     /**
-     * Configure rules
-     *
-     * @return void
+     * Configure rules.
      */
-    public function process();
+    public function process(): void;
 }

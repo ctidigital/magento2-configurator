@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -19,11 +20,11 @@ use Magento\Framework\App\Filesystem\DirectoryList;
  */
 class Categories implements ComponentInterface
 {
-    protected $alias = 'categories';
-    protected $name = 'Categories';
-    protected $description = 'Component to import categories.';
+    protected string $alias = 'categories';
+    protected string $name = 'Categories';
+    protected string $description = 'Component to import categories.';
 
-    private $mainAttributes = [
+    private array $mainAttributes = [
         'name',
         'is_active',
         'position',
@@ -33,12 +34,6 @@ class Categories implements ComponentInterface
 
     /**
      * Categories constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
-     * @param CategoryFactory $category
-     * @param GroupFactory $groupFactory
-     * @param DirectoryList $dirList
-     * @param BlockInterfaceFactory $blockFactory
      */
     public function __construct(
         protected readonly LoggerInterface $log,
@@ -49,7 +44,7 @@ class Categories implements ComponentInterface
         protected readonly BlockInterfaceFactory $blockFactory
     ) {}
 
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         if (isset($data['categories'])) {
             foreach ($data['categories'] as $store) {
@@ -74,12 +69,11 @@ class Categories implements ComponentInterface
     }
 
     /**
-     * Gets the default category for the store group
+     * Gets the default category for the store group.
      *
-     * @param null $store
      * @return Category|bool
      */
-    public function getDefaultCategory($store = null)
+    public function getDefaultCategory(mixed $store = null): Category|bool
     {
         $groupCollection = $this->groupFactory->create()->getCollection()
             ->addFieldToFilter('name', $store);
@@ -102,17 +96,17 @@ class Categories implements ComponentInterface
     }
 
     /**
-     * Creates/updates categories with the values in the YAML
+     * Creates/updates categories with the values in the YAML.
      *
-     * @param array $categories
      * @param Category $parentCategory
+     * @param array $categories
      * @SuppressWarnings(PHPMD)
      * @throws FileSystemException
      */
     public function createOrUpdateCategory(
         Category $parentCategory,
-        $categories = []
-    ) {
+        array $categories = []
+    ): void {
         foreach ($categories as $categoryValues) {
             // Load the category using its name and parent category
             /**
@@ -200,11 +194,7 @@ class Categories implements ComponentInterface
         }
     }
 
-    /**
-     * @param $data
-     * @return string
-     */
-    private function getStoreGroup($data)
+    private function getStoreGroup(array $data): string
     {
         if (isset($data['store_group']) === true) {
             return $data['store_group'];
@@ -212,18 +202,12 @@ class Categories implements ComponentInterface
         return 'Main Website Store';
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

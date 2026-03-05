@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
@@ -12,29 +14,26 @@ use Magento\Directory\Model\Region;
 
 class ShippingTableRates implements ComponentInterface
 {
-    protected $alias = "shippingtablerates";
-    protected $name = "Shipping Table Rates";
-    protected $description = "Component to create and maintain Shipping Table Rates";
+    protected string $alias = "shippingtablerates";
+    protected string $name = "Shipping Table Rates";
+    protected string $description = "Component to create and maintain Shipping Table Rates";
 
     /**
      * @var TablerateFactory
      */
-    protected $tablerateFactory;
+    protected TablerateFactory $tablerateFactory;
 
     /**
      * @var WebsiteFactory
      */
-    protected $websiteFactory;
+    protected WebsiteFactory $websiteFactory;
 
     /**
      * @var RegionFactory
      */
-    protected $regionFactory;
+    protected RegionFactory $regionFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * ShippingTableRates constructor.
@@ -57,11 +56,8 @@ class ShippingTableRates implements ComponentInterface
 
     /**
      * This method should be used to process the data and populate the Magento Database.
-     *
-     * @param array $data
-     * @return void
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         /** @var Tablerate $tablerateModel */
         $tablerateModel = $this->tablerateFactory->create();
@@ -92,20 +88,13 @@ class ShippingTableRates implements ComponentInterface
         }
     }
 
-    /**
-     * @param $shippingRate
-     * @param $websiteId
-     * @param $shippingRateCount
-     * @param $website
-     * @param Tablerate $tablerateModel
-     */
     private function createNewShippingTableRate(
-        $shippingRate,
-        $websiteId,
-        $shippingRateCount,
-        $website,
+        mixed $shippingRate,
+        mixed $websiteId,
+        int $shippingRateCount,
+        mixed $website,
         Tablerate $tablerateModel
-    ) {
+    ): void {
         $columns = [
             'website_id',
             'dest_region_id',
@@ -145,27 +134,19 @@ class ShippingTableRates implements ComponentInterface
         $tablerateModel->getConnection()
             ->insertOnDuplicate($tablerateModel->getMainTable(), [$shippingRate], $columns);
     }
-    /**
-     * @param array $shippingRate
-     */
-    private function removeYamlKeysFromDatabaseInsert(array &$shippingRate)
+
+    private function removeYamlKeysFromDatabaseInsert(array &$shippingRate): void
     {
         unset($shippingRate['dest_region_code']);
         unset($shippingRate['website_code']);
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

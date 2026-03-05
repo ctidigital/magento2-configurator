@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component\Product;
 
@@ -9,7 +10,7 @@ use FireGento\FastSimpleImport\Model\Adapters\ImportAdapterFactoryInterface;
 class Validator
 {
     /**
-     * Product import attributes which can be nulled if the data is not in a valid format
+     * Product import attributes which can be nulled if the data is not in a valid format.
      */
     const ATTRIBUTES_NULLIFY_ALLOW_LIST = [
         'image',
@@ -19,30 +20,29 @@ class Validator
     ];
 
     /**
-     * Indicate that the row data should be removed entirely
+     * Indicate that the row data should be removed entirely.
      */
     const IMPORT_DATA_ACTION_REMOVE = 'remove';
 
     /**
-     * Indicate that the attribute that's failing to import should be set to 'null'
+     * Indicate that the attribute that's failing to import should be set to 'null'.
      */
     const IMPORT_DATA_ACTION_NULLIFY = 'nullify';
 
     /**
      * @var ImportAdapterFactoryInterface
      */
-    private $importAdapterFactory;
+    private ImportAdapterFactoryInterface $importAdapterFactory;
 
     /**
      * @var array
      */
-    private $logs = [];
+    private array $logs = [];
 
-    private $removedRows = [];
+    private array $removedRows = [];
 
     /**
      * Validator constructor.
-     * @param ImportAdapterFactoryInterface $importAdapterFactory
      */
     public function __construct(
         ImportAdapterFactoryInterface $importAdapterFactory
@@ -50,30 +50,17 @@ class Validator
         $this->importAdapterFactory = $importAdapterFactory;
     }
 
-    /**
-     * @return array
-     */
-    public function getLogs()
+    public function getLogs(): array
     {
         return $this->logs;
     }
 
-    /**
-     * @return array
-     */
-    public function getRemovedRows()
+    public function getRemovedRows(): array
     {
         return $this->removedRows;
     }
 
-    /**
-     * @param $rowData
-     * @param $row
-     * @param $attributeCode
-     * @param $errorMessage
-     * @param string $type
-     */
-    private function writeLog($rowData, $row, $attributeCode, $errorMessage, $type = self::IMPORT_DATA_ACTION_REMOVE)
+    private function writeLog(array $rowData, mixed $row, mixed $attributeCode, string $errorMessage, string $type = self::IMPORT_DATA_ACTION_REMOVE): void
     {
         $sku = isset($rowData['sku']) ? $rowData['sku'] : null;
         $identifierMessage = ($sku !== null) ? sprintf('SKU: %s', $sku) : sprintf('Row Number : %s', $row);
@@ -100,14 +87,11 @@ class Validator
     }
 
     /**
-     * Runs the import data through the validation steps and returns the modified values
+     * Runs the import data through the validation steps and returns the modified values.
      *
-     * @param Importer $import
-     * @param $importLines
-     * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getValidatedImport(Importer $import, $importLines)
+    public function getValidatedImport(Importer $import, mixed $importLines): array
     {
         $this->logs = [];
         $failedImportRows = $this->getImportRowFailures($import, $importLines);
@@ -116,12 +100,9 @@ class Validator
     }
 
     /**
-     * @param Importer $import
-     * @param $importLines
-     * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getImportRowFailures(Importer $import, $importLines)
+    public function getImportRowFailures(Importer $import, mixed $importLines): array
     {
         $failedRows = [];
         // Creates a validation model and runs the import data through so we can find which rows would fail
@@ -142,13 +123,9 @@ class Validator
     }
 
     /**
-     * Either removes a row entirely or nulls specific attributes that we know are okay to ignore
-     *
-     * @param array $importLines
-     * @param array $failedRows
-     * @return array
+     * Either removes a row entirely or nulls specific attributes that we know are okay to ignore.
      */
-    public function omitItemsFromImport(array $importLines, array $failedRows)
+    public function omitItemsFromImport(array $importLines, array $failedRows): array
     {
         foreach ($failedRows as $failedRow) {
             $attributeCode = $failedRow['attribute_code'];
@@ -185,12 +162,9 @@ class Validator
     }
 
     /**
-     * Gets the attribute code from the error returned by the validator
-     *
-     * @param $error
-     * @return string|null
+     * Gets the attribute code from the error returned by the validator.
      */
-    public function getAttributeCodeFromError($error)
+    public function getAttributeCodeFromError(mixed $error): ?string
     {
         $matches = [];
         $attributeCode = null;
@@ -202,13 +176,9 @@ class Validator
     }
 
     /**
-     * Processes the error into a set format
-     *
-     * @param $error
-     * @param $rows
-     * @return array
+     * Processes the error into a set format.
      */
-    private function formatRowRemoveData($error, $rows)
+    private function formatRowRemoveData(mixed $error, array $rows): array
     {
         // Magento increases the row number by 1 as it assumes you've uploaded a CSV file with a header
         $rowsProcessed = array_map(function ($row) {

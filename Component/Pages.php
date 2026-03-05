@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -13,37 +14,41 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class Pages implements ComponentInterface
 {
-    protected $alias = 'pages';
-    protected $name = 'Pages';
-    protected $description = 'Component to create/maintain pages.';
-    protected $requiredFields = ['title'];
-    protected $defaultValues = ['page_layout' => 'empty', 'is_active' => '1'];
+    protected string $alias = 'pages';
+    protected string $name = 'Pages';
+    protected string $description = 'Component to create/maintain pages.';
+
+    /**
+     * @var array
+     */
+    protected array $requiredFields = ['title'];
+
+    /**
+     * @var array
+     */
+    protected array $defaultValues = ['page_layout' => 'empty', 'is_active' => '1'];
 
     /** @var PageRepositoryInterface */
-    protected $pageRepository;
+    protected PageRepositoryInterface $pageRepository;
 
     /** @var PageInterfaceFactory */
-    protected $pageFactory;
+    protected PageInterfaceFactory $pageFactory;
 
     /** @var StoreManagerInterface */
-    protected $storeManager;
+    protected StoreManagerInterface $storeManager;
 
     /**
      * @var StoreRepositoryInterface
      */
-    private $storeRepository;
+    private StoreRepositoryInterface $storeRepository;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * Pages constructor.
-     * @param PageRepositoryInterface $pageRepository
-     * @param PageInterfaceFactory $pageFactory
-     * @param StoreRepositoryInterface $storeRepository
-     * @param LoggerInterface $log
      */
     public function __construct(
         PageRepositoryInterface $pageRepository,
@@ -58,12 +63,9 @@ class Pages implements ComponentInterface
     }
 
     /**
-     * Loop through the data array and process page data
-     *
-     * @param $data
-     * @return void
+     * Loop through the data array and process page data.
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         try {
             foreach ($data as $identifier => $data) {
@@ -75,13 +77,11 @@ class Pages implements ComponentInterface
     }
 
     /**
-     * Create or update page data
+     * Create or update page data.
      *
-     * @param $identifier
-     * @param $data
      * @SuppressWarnings(PHPMD)
      */
-    protected function processPage($identifier, $data)
+    protected function processPage(mixed $identifier, mixed $data): void
     {
 
         try {
@@ -170,11 +170,11 @@ class Pages implements ComponentInterface
     }
 
     /**
-     * Check the required fields are set
-     * @param $pageData
+     * Check the required fields are set.
+     *
      * @throws ComponentException
      */
-    protected function checkRequiredFields($pageData)
+    protected function checkRequiredFields(array $pageData): void
     {
         foreach ($this->requiredFields as $key) {
             if (!array_key_exists($key, $pageData)) {
@@ -184,10 +184,9 @@ class Pages implements ComponentInterface
     }
 
     /**
-     * Add default page data if fields not set
-     * @param $pageData
+     * Add default page data if fields not set.
      */
-    protected function setDefaultFields(&$pageData)
+    protected function setDefaultFields(array &$pageData): void
     {
         foreach ($this->defaultValues as $key => $value) {
             if (!array_key_exists($key, $pageData)) {
@@ -196,18 +195,12 @@ class Pages implements ComponentInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

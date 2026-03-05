@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -16,39 +17,27 @@ class TieredPrices implements ComponentInterface
     const SKU_COLUMN_HEADING = 'sku';
     const SEPARATOR = ';';
 
-    protected $alias = 'tiered_prices';
-    protected $name = 'Tiered Prices';
-    protected $description = 'Component to import tiered prices using a CSV file.';
+    protected string $alias = 'tiered_prices';
+    protected string $name = 'Tiered Prices';
+    protected string $description = 'Component to import tiered prices using a CSV file.';
 
     /**
      * @var ImporterFactory
      */
-    protected $importerFactory;
+    protected ImporterFactory $importerFactory;
 
     /**
      * @var AttributeOption
      */
-    protected $attributeOption;
+    protected AttributeOption $attributeOption;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $log;
+    private LoggerInterface $log;
 
-    /**
-     * @var []
-     */
-    private $successPrices;
+    private array $successPrices = [];
 
-    /**
-     * @var []
-     */
-    private $skippedPrices;
+    private array $skippedPrices = [];
 
-    /**
-     * @var int
-     */
-    private $skuColumn;
+    private int|false $skuColumn;
 
     /**
      * TieredPrices constructor.
@@ -67,12 +56,10 @@ class TieredPrices implements ComponentInterface
     }
 
     /**
-     * @param null $data
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         // Get the first row of the CSV file for the attribute columns.
         if (!isset($data[0])) {
@@ -128,9 +115,8 @@ class TieredPrices implements ComponentInterface
      * Gets the first row of the CSV file as these should be the attribute keys
      *
      * @param null $data
-     * @return array
      */
-    public function getAttributesFromCsv($data = null)
+    public function getAttributesFromCsv($data = null): array
     {
         $attributes = [];
         foreach ($data[0] as $attributeCode) {
@@ -141,28 +127,18 @@ class TieredPrices implements ComponentInterface
 
     /**
      * Get the column index of the SKU
-     *
-     * @param $headers
-     *
-     * @return mixed
      */
-    public function getSkuColumnIndex($headers)
+    public function getSkuColumnIndex(array $headers): int|false
     {
         return array_search(self::SKU_COLUMN_HEADING, $headers);
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

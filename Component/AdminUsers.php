@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
@@ -12,34 +14,29 @@ use CtiDigital\Configurator\Exception\ComponentException;
  */
 class AdminUsers implements ComponentInterface
 {
-    protected $alias = 'adminusers';
-    protected $name = 'Admin Users';
-    protected $description = 'Component to create Admin Users';
+    protected string $alias = 'adminusers';
+    protected string $name = 'Admin Users';
+    protected string $description = 'Component to create Admin Users';
 
     /**
-     * Factory class for user model
+     * Factory class for user model.
      *
      * @var UserFactory
      */
-    protected $userFactory;
+    protected UserFactory $userFactory;
 
     /**
-     * RoleFactory
-     *
-     * @var roleFactory
+     * @var RoleFactory
      */
-    protected $roleFactory;
+    protected RoleFactory $roleFactory;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * AdminUsers constructor.
-     * @param UserFactory $userFactory
-     * @param RoleFactory $roleFactory
-     * @param LoggerInterface $log
      */
     public function __construct(
         UserFactory $userFactory,
@@ -51,10 +48,7 @@ class AdminUsers implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param data
-     */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         //Get Each Role
         foreach ($data['adminusers'] as $roleSet) {
@@ -88,12 +82,9 @@ class AdminUsers implements ComponentInterface
     }
 
     /**
-     * Create new Admin User
-     *
-     * @param $userData
-     * @param $roleId
+     * Create new Admin User.
      */
-    private function createAdminUser($userData, $roleId)
+    private function createAdminUser(array $userData, mixed $roleId): void
     {
         $user = $this->userFactory->create();
         $userCount = $user->getCollection()->addFieldToFilter('email', $userData['email'])->getSize();
@@ -140,12 +131,9 @@ class AdminUsers implements ComponentInterface
     }
 
     /**
-     * Get ID of Role by Name
-     *
-     * @param $roleName
-     * @return int|null
+     * Get ID of Role by Name.
      */
-    private function getUserRoleFromName($roleName)
+    private function getUserRoleFromName(string $roleName): mixed
     {
         $role = $this->roleFactory->create();
         $role = $role->getCollection()->addFieldToFilter('role_name', $roleName)->getFirstItem();
@@ -154,12 +142,9 @@ class AdminUsers implements ComponentInterface
     }
 
     /**
-     *  Validate that required data is not empty
-     *
-     * @param $userData
-     * @return bool
+     * Validate that required data is not empty.
      */
-    private function dataValidator($userData)
+    private function dataValidator(array $userData): bool
     {
         $params = ['username', 'firstname', 'secondname', 'email', 'password'];
         $invalidParams = [];
@@ -180,18 +165,12 @@ class AdminUsers implements ComponentInterface
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

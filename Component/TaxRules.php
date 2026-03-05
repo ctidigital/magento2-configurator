@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -47,10 +48,9 @@ class TaxRules implements ComponentInterface
     ) {}
 
     /**
-     * @param null $data
      * @throws LocalizedException
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         //Check Row Data exists
         if (!isset($data[0])) {
@@ -89,9 +89,8 @@ class TaxRules implements ComponentInterface
      * Gets the first row of the CSV file as these should be the attribute keys
      *
      * @param null $data
-     * @return array
      */
-    public function getAttributesFromCsv($data = null)
+    public function getAttributesFromCsv($data = null): array
     {
         $attributes = [];
         foreach ($data as $attributeCode) {
@@ -102,12 +101,8 @@ class TaxRules implements ComponentInterface
 
     /**
      * Assign array values to useable keys names for rule creation
-     *
-     * @param array $taxRuleAttributes
-     * @param array $rule
-     * @return array
      */
-    private function formatArray(array $taxRuleAttributes, array $rule)
+    private function formatArray(array $taxRuleAttributes, array $rule): array
     {
         $ruleData = [];
 
@@ -143,10 +138,9 @@ class TaxRules implements ComponentInterface
      * Use Rate code to get Rate ID
      *
      * @param null $rateNames
-     * @return array
      * @throws LocalizedException
      */
-    private function getRateIdsFromCode($rateNames = null)
+    private function getRateIdsFromCode($rateNames = null): array
     {
         $rateIds = [];
         $rateNamesArray = explode(',', $rateNames);
@@ -164,12 +158,10 @@ class TaxRules implements ComponentInterface
     /**
      * Use TaxClass name to get TaxClass Id
      *
-     * @param $type
      * @param null $names
-     * @return array
      * @throws LocalizedException
      */
-    private function taxClassIdsFromName($type, $names = null)
+    private function taxClassIdsFromName(string $type, $names = null): array
     {
         $taxClassIds = [];
         $taxClassNamesArray = explode(',', $names);
@@ -196,10 +188,9 @@ class TaxRules implements ComponentInterface
     /**
      * Create TaxRule
      *
-     * @param array $ruleData
      * @throws LocalizedException
      */
-    private function createTaxRule(array $ruleData)
+    private function createTaxRule(array $ruleData): void
     {
         $rule = $this->ruleFactory->create();
         $ruleCount = $rule->getCollection()->addFieldToFilter('code', $ruleData['code'])->getSize();
@@ -221,18 +212,12 @@ class TaxRules implements ComponentInterface
         );
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

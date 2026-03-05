@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -14,38 +15,26 @@ use Magento\Sales\Model\ResourceModel\Order\StatusFactory as StatusResourceFacto
 
 /**
  * Class OrderStatuses
- * @package CtiDigital\Configurator\Component
  */
 class OrderStatuses implements ComponentInterface
 {
-
     /**
      * Component alias
-     *
-     * @var string
      */
-    public $alias = 'order_statuses';
+    public string $alias = 'order_statuses';
 
     /**
      * Component name
-     *
-     * @var string
      */
-    protected $name = 'Order Statuses';
+    protected string $name = 'Order Statuses';
 
     /**
      * Component description
-     *
-     * @var string
      */
-    public $description = 'Component to create custom order statuses';
+    public string $description = 'Component to create custom order statuses';
 
     /**
      * OrderStatuses constructor.
-     * @param LoggerInterface $log
-     * @param ObjectManagerInterface $objectManager
-     * @param StatusFactory $statusFactory
-     * @param StatusResourceFactory $statusResource
      */
     public function __construct(
         protected readonly LoggerInterface $log,
@@ -55,10 +44,9 @@ class OrderStatuses implements ComponentInterface
     ) {}
 
     /**
-     * @param null $data
      * @throws AlreadyExistsException
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         if (isset($data['order_statuses'])) {
             foreach ($data['order_statuses'] as $statusSet) {
@@ -72,10 +60,9 @@ class OrderStatuses implements ComponentInterface
     }
 
     /**
-     * @param $statusSet
      * @throws AlreadyExistsException
      */
-    public function createOrderStatuses($statusSet)
+    public function createOrderStatuses(mixed $statusSet): void
     {
         foreach ($statusSet['statuses'] as $statusData) {
             /** @var StatusResource $statusResource */
@@ -110,5 +97,4 @@ class OrderStatuses implements ComponentInterface
     {
         return $this->description;
     }
-
 }

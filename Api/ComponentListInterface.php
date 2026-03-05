@@ -1,17 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Api;
 
 interface ComponentListInterface
 {
     /**
-     * @param $componentAlias
+     * Get a component by alias, or false if not found.
+     *
+     * @param string $componentAlias
      * @return ComponentInterface|bool
      */
-    public function getComponent($componentAlias);
+    public function getComponent(string $componentAlias): ComponentInterface|bool;
 
     /**
+     * Return all registered components.
+     *
      * @return ComponentInterface[]
      */
-    public function getAllComponents();
+    public function getAllComponents(): array;
 }

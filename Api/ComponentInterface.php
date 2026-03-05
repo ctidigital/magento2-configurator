@@ -1,22 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Api;
 
 interface ComponentInterface
 {
     /**
-     * @param array $data
-     * @return void
+     * Execute the component with the given data.
      */
-    public function execute($data);
+    public function execute(mixed $data = null): void;
 
     /**
-     * @return string
+     * Return the component alias.
      */
-    public function getAlias();
+    public function getAlias(): string;
 
     /**
-     * @return string
+     * Return the component description.
      */
-    public function getDescription();
+    public function getDescription(): string;
 }

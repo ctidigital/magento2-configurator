@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
@@ -16,11 +18,14 @@ class Customers implements ComponentInterface
     private const CUSTOMER_EMAIL_HEADER = 'email';
     private const CUSTOMER_GROUP_HEADER = 'group_id';
 
-    protected $alias = 'customers';
-    protected $name = 'Customers';
-    protected $description = 'Import customers and addresses';
+    protected string $alias = 'customers';
+    protected string $name = 'Customers';
+    protected string $description = 'Import customers and addresses';
 
-    protected $requiredColumns = [
+    /**
+     * @var array
+     */
+    protected array $requiredColumns = [
         'email',
         '_website',
         '_store',
@@ -29,47 +34,44 @@ class Customers implements ComponentInterface
     /**
      * @var ImporterFactory
      */
-    protected $importerFactory;
+    protected ImporterFactory $importerFactory;
 
     /**
      * @var GroupRepositoryInterface
      */
-    protected $groupRepository;
+    protected GroupRepositoryInterface $groupRepository;
 
     /**
      * @var GroupManagementInterface
      */
-    protected $groupManagement;
+    protected GroupManagementInterface $groupManagement;
 
     /**
      * @var SearchCriteriaBuilder
      */
-    protected $criteriaBuilder;
+    protected SearchCriteriaBuilder $criteriaBuilder;
 
     /**
      * @var IndexerFactory
      */
-    protected $indexerFactory;
+    protected IndexerFactory $indexerFactory;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
+
+    /**
+     * @var array|null
+     */
+    protected ?array $customerGroups = null;
+
+    protected mixed $groupDefault = null;
 
     /**
      * @var array
      */
-    protected $customerGroups;
-
-    /**
-     * @var int
-     */
-    protected $groupDefault;
-
-    /**
-     * @var array
-     */
-    protected $columnHeaders = [];
+    protected array $columnHeaders = [];
 
     public function __construct(
         ImporterFactory $importerFactory,
@@ -88,11 +90,9 @@ class Customers implements ComponentInterface
     }
 
     /**
-     * @param null $data
-     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         $this->getColumnHeaders($data);
         unset($data[0]);
@@ -157,13 +157,9 @@ class Customers implements ComponentInterface
     }
 
     /**
-     * Check the headers have been set correctly
-     *
-     * @param $data
-     *
-     * @return void
+     * Check the headers have been set correctly.
      */
-    public function getColumnHeaders($data)
+    public function getColumnHeaders(mixed $data): void
     {
         if (!isset($data[0])) {
             throw new ComponentException('No data has been found in the import file');
@@ -178,22 +174,15 @@ class Customers implements ComponentInterface
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->columnHeaders;
     }
 
     /**
-     * Check if the group is valid
-     *
-     * @param $group
-     *
-     * @return bool
+     * Check if the group is valid.
      */
-    public function isValidGroup($group)
+    public function isValidGroup(mixed $group): bool
     {
         if (strlen((string) $group) === 0) {
             return false;
@@ -210,7 +199,7 @@ class Customers implements ComponentInterface
         return false;
     }
 
-    public function getDefaultGroupId()
+    public function getDefaultGroupId(): mixed
     {
         if ($this->groupDefault === null) {
             $this->groupDefault = $this->groupManagement->getDefaultGroup()->getId();
@@ -218,7 +207,7 @@ class Customers implements ComponentInterface
         return $this->groupDefault;
     }
 
-    private function reindex()
+    private function reindex(): void
     {
         $this->log->logInfo('Reindexing the customer grid');
         $customerGrid = $this->indexerFactory->create();
@@ -226,18 +215,12 @@ class Customers implements ComponentInterface
         $customerGrid->reindexAll();
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

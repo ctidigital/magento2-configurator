@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -11,19 +12,19 @@ class Media implements ComponentInterface
 {
     private const FULL_ACCESS = 0777;
 
-    protected $alias = 'media';
-    protected $name = 'Media';
-    protected $description = 'Component to download/maintain media.';
+    protected string $alias = 'media';
+    protected string $name = 'Media';
+    protected string $description = 'Component to download/maintain media.';
 
     /**
      * @var DirectoryList
      */
-    protected $directoryList;
+    protected DirectoryList $directoryList;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     public function __construct(
         DirectoryList $directoryList,
@@ -33,10 +34,7 @@ class Media implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param $data
-     */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         try {
             // Load root media path
@@ -52,7 +50,7 @@ class Media implements ComponentInterface
         }
     }
 
-    private function createChildFolderFileItem($currentPath, $name, $node, $nest = 0)
+    private function createChildFolderFileItem(mixed $currentPath, mixed $name, mixed $node, int $nest = 0): void
     {
         try {
             // Update the current path to the new path
@@ -97,12 +95,7 @@ class Media implements ComponentInterface
         }
     }
 
-    /**
-     * @param $newPath
-     * @param $name
-     * @param $nest
-     */
-    private function checkAndCreateFolder($newPath, $name, $nest)
+    private function checkAndCreateFolder(mixed $newPath, mixed $name, int $nest): void
     {
         // Check if the file/folder exists
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
@@ -124,12 +117,7 @@ class Media implements ComponentInterface
         }
     }
 
-    /**
-     * @param $path
-     * @param $node
-     * @param $nest
-     */
-    private function downloadAndSetFile($path, $node, $nest)
+    private function downloadAndSetFile(mixed $path, mixed $node, int $nest): void
     {
         $this->log->logInfo(sprintf('Downloading contents of file from %s', $node['location']), $nest);
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
@@ -139,18 +127,12 @@ class Media implements ComponentInterface
         $this->log->logInfo(sprintf('Created new file: %s', $path), $nest);
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

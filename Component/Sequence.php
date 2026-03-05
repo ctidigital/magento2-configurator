@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -15,27 +16,27 @@ class Sequence implements ComponentInterface
     /**
      * @var Builder
      */
-    protected $sequenceBuilder;
+    protected Builder $sequenceBuilder;
 
     /**
      * @var EntityPool
      */
-    protected $entityPool;
+    protected EntityPool $entityPool;
 
     /**
      * @var Config
      */
-    protected $sequenceConfig;
+    protected Config $sequenceConfig;
 
     /**
      * @var StoreRepositoryInterface
      */
-    protected $storeRepository;
+    protected StoreRepositoryInterface $storeRepository;
 
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    protected $alias = 'sequence';
-    protected $description = 'Component to allow manual configuring of the sequence tables.';
+    protected string $alias = 'sequence';
+    protected string $description = 'Component to allow manual configuring of the sequence tables.';
 
     public function __construct(
         Builder $sequenceBuilder,
@@ -51,7 +52,7 @@ class Sequence implements ComponentInterface
         $this->logger = $logger;
     }
 
-    public function execute($data)
+    public function execute(mixed $data = null): void
     {
         if (!isset($data['stores'])) {
             throw new ComponentException("No stores found.");
@@ -70,17 +71,17 @@ class Sequence implements ComponentInterface
         }
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    protected function newSequenceTable($store, $overrides)
+    protected function newSequenceTable(mixed $store, mixed $overrides): void
     {
         $configKeys = ['suffix', 'startValue', 'step', 'warningValue', 'maxValue'];
         $configValues = [];

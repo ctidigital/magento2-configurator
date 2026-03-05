@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component\Product;
 
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
@@ -18,64 +20,46 @@ class AttributeOption
     /**
      * @var ProductAttributeRepositoryInterface
      */
-    protected $attributeRepository;
+    protected ProductAttributeRepositoryInterface $attributeRepository;
 
     /**
      * @var AttributeOptionManagementInterface
      */
-    protected $attrOptionManagement;
+    protected AttributeOptionManagementInterface $attrOptionManagement;
 
     /**
      * @var AttributeOptionLabelInterfaceFactory
      */
-    protected $labelFactory;
+    protected AttributeOptionLabelInterfaceFactory $labelFactory;
 
     /**
      * @var AttributeOptionInterfaceFactory
      */
-    protected $optionFactory;
+    protected AttributeOptionInterfaceFactory $optionFactory;
 
     /**
      * @var LoggerInterface
      */
-    protected $log;
+    protected LoggerInterface $log;
 
-    /**
-     * @var []
-     */
-    private $attributes = [];
+    private array $attributes = [];
 
-    /**
-     * @var []
-     */
-    private $attributeValues = [];
+    private array $attributeValues = [];
 
-    /**
-     * @var []
-     */
-    private $allowedInputs = ['select', 'multiselect'];
+    private array $allowedInputs = ['select', 'multiselect'];
 
     /**
      * @var array
      */
-    private $ignoreAttributes = [
+    private array $ignoreAttributes = [
         'visibility',
         'tax_class_id'
     ];
 
-    /**
-     * @var []
-     */
-    private $newValues = [];
+    private array $newValues = [];
 
     /**
      * AttributeOption constructor.
-     *
-     * @param ProductAttributeRepositoryInterface $attributeRepository
-     * @param AttributeOptionManagementInterface $attrOptionManagement
-     * @param AttributeOptionLabelInterfaceFactory $labelFactory
-     * @param AttributeOptionInterfaceFactory $optionFactory
-     * @param LoggerInterface $log
      */
     public function __construct(
         ProductAttributeRepositoryInterface $attributeRepository,
@@ -91,11 +75,7 @@ class AttributeOption
         $this->log = $log;
     }
 
-    /**
-     * @param $code
-     * @param $value
-     */
-    public function processAttributeValues($code, $value)
+    public function processAttributeValues(mixed $code, mixed $value): void
     {
         try {
             if ($this->isOptionAttribute($code) === false) {
@@ -113,12 +93,7 @@ class AttributeOption
         }
     }
 
-    /**
-     * @param $value
-     *
-     * @return bool
-     */
-    public function isValidValue($value)
+    public function isValidValue(mixed $value): bool
     {
         if (strlen((string) $value) > 0) {
             return true;
@@ -127,9 +102,9 @@ class AttributeOption
     }
 
     /**
-     * Saves the options
+     * Saves the options.
      */
-    public function saveOptions()
+    public function saveOptions(): void
     {
         $newValues = $this->getNewOptions();
         if (is_array($newValues) === false || count($newValues) === 0) {
@@ -171,12 +146,7 @@ class AttributeOption
         $this->reset();
     }
 
-    /**
-     * @param $code
-     *
-     * @return bool
-     */
-    public function isOptionAttribute($code)
+    public function isOptionAttribute(mixed $code): bool
     {
         if (in_array($code, $this->ignoreAttributes) === true) {
             return false;
@@ -190,13 +160,7 @@ class AttributeOption
         return false;
     }
 
-    /**
-     * @param $code
-     * @param $value
-     *
-     * @return bool
-     */
-    public function isOptionValueExists($code, $value)
+    public function isOptionValueExists(mixed $code, mixed $value): bool
     {
         if (isset($this->attributeValues[$code]) === false) {
             $attribute = $this->getAttribute($code);
@@ -213,39 +177,27 @@ class AttributeOption
         return false;
     }
 
-    /**
-     * @param $code
-     * @param $value
-     */
-    public function addOption($code, $value)
+    public function addOption(mixed $code, mixed $value): void
     {
         $this->newValues[$code][] = $value;
     }
 
     /**
-     * Clears the values that have been saved
+     * Clears the values that have been saved.
      */
-    private function reset()
+    private function reset(): void
     {
         $this->newValues = [];
         $this->attributes = [];
         $this->attributeValues = [];
     }
 
-    /**
-     * @return mixed
-     */
-    public function getNewOptions()
+    public function getNewOptions(): array
     {
         return $this->newValues;
     }
 
-    /**
-     * @param $code
-     *
-     * @return \Magento\Catalog\Api\Data\ProductAttributeInterface
-     */
-    private function getAttribute($code)
+    private function getAttribute(mixed $code): \Magento\Catalog\Api\Data\ProductAttributeInterface
     {
         if (!isset($this->attributes[$code])) {
             $attribute = $this->attributeRepository->get($code);

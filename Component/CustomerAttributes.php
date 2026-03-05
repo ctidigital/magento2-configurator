@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -20,16 +21,16 @@ class CustomerAttributes extends Attributes
     private const DEFAULT_ATTRIBUTE_SET_ID = 1;
     private const DEFAULT_ATTRIBUTE_GROUP_ID = 1;
 
-    protected $alias = 'customer_attributes';
-    protected $name = 'Customer Attributes';
-    protected $description = 'Component to create/maintain customer attributes.';
+    protected string $alias = 'customer_attributes';
+    protected string $name = 'Customer Attributes';
+    protected string $description = 'Component to create/maintain customer attributes.';
+
+    protected string $entityTypeId = Customer::ENTITY;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $entityTypeId = Customer::ENTITY;
-
-    protected $customerConfigMap = [
+    protected array $customerConfigMap = [
         'visible' => 'is_visible',
         'position' => 'sort_order',
         'system' => 'is_system'
@@ -38,22 +39,22 @@ class CustomerAttributes extends Attributes
     /**
      * @var CustomerSetupFactory
      */
-    protected $customerSetup;
+    protected CustomerSetupFactory $customerSetup;
 
     /**
      * @var Attribute
      */
-    protected $attributeResource;
+    protected Attribute $attributeResource;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * @var array
      */
-    protected $defaultForms = [
+    protected array $defaultForms = [
         'values' => [
             'customer_account_create',
             'customer_account_edit',
@@ -64,11 +65,6 @@ class CustomerAttributes extends Attributes
 
     /**
      * CustomerAttributes constructor.
-     * @param EavSetup $eavSetup
-     * @param AttributeRepository $attributeRepository
-     * @param CustomerSetupFactory $customerSetupFactory
-     * @param Attribute $attributeResource
-     * @param LoggerInterface $log
      */
     public function __construct(
         EavSetup $eavSetup,
@@ -86,13 +82,10 @@ class CustomerAttributes extends Attributes
         $this->log = $log;
     }
 
-    /**
-     * @param array $attributeConfigurationData
-     */
-    public function execute($attributeConfigurationData = null)
+    public function execute(mixed $data = null): void
     {
         try {
-            foreach ($attributeConfigurationData['customer_attributes'] as $attributeCode => $attributeConfiguration) {
+            foreach ($data['customer_attributes'] as $attributeCode => $attributeConfiguration) {
                 $this->processAttribute($attributeCode, $attributeConfiguration);
                 $this->addAdditionalValues($attributeCode, $attributeConfiguration);
             }
@@ -104,11 +97,8 @@ class CustomerAttributes extends Attributes
     /**
      * Adds necessary additional values to the attribute. Without these, values can't be saved
      * to the attribute and it won't appear in any forms.
-     *
-     * @param $attributeCode
-     * @param $attributeConfiguration
      */
-    protected function addAdditionalValues($attributeCode, $attributeConfiguration)
+    protected function addAdditionalValues(mixed $attributeCode, array $attributeConfiguration): void
     {
         if ($this->attributeExists) {
             return;
@@ -144,18 +134,12 @@ class CustomerAttributes extends Attributes
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

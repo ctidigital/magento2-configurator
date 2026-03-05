@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -16,42 +17,37 @@ use Magento\Integration\Model\Oauth\TokenFactory;
  */
 class ApiIntegrations implements ComponentInterface
 {
-    protected $alias = 'apiintegrations';
-    protected $name = 'Api Integrations';
-    protected $description = 'Component to create Api Integrations';
+    protected string $alias = 'apiintegrations';
+    protected string $name = 'Api Integrations';
+    protected string $description = 'Component to create Api Integrations';
 
     /**
-     * @var  IntegrationServiceInterface
+     * @var IntegrationServiceInterface
      */
-    protected $integrationService;
+    protected IntegrationServiceInterface $integrationService;
 
     /**
      * @var IntegrationFactory
      */
-    protected $integrationFactory;
+    protected IntegrationFactory $integrationFactory;
 
     /**
      * @var AuthorizationService
      */
-    protected $authorizationService;
+    protected AuthorizationService $authorizationService;
 
     /**
      * @var TokenFactory
      */
-    protected $tokenFactory;
+    protected TokenFactory $tokenFactory;
 
     /**
      * @var LoggerInterface
      */
-    protected $log;
+    protected LoggerInterface $log;
 
     /**
      * ApiIntegrations constructor.
-     * @param IntegrationFactory $integrationFactory
-     * @param IntegrationServiceInterface $integrationService
-     * @param AuthorizationService $authorizationService
-     * @param TokenFactory $tokenFactory
-     * @param LoggerInterface $log
      */
     public function __construct(
         IntegrationFactory $integrationFactory,
@@ -67,10 +63,7 @@ class ApiIntegrations implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param array $data
-     */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         if (isset($data['apiintegrations'])) {
             foreach ($data['apiintegrations'] as $integrationData) {
@@ -90,10 +83,7 @@ class ApiIntegrations implements ComponentInterface
         }
     }
 
-    /**
-     * @param array $integrationData
-     */
-    private function createApiIntegration(array $integrationData)
+    private function createApiIntegration(array $integrationData): void
     {
         $integration = $this->integrationFactory->create();
         $integrationCount = $integration->getCollection()
@@ -130,12 +120,9 @@ class ApiIntegrations implements ComponentInterface
     }
 
     /**
-     * Prepare data for integrationFactory creation
-     *
-     * @param array $integrationData
-     * @return array
+     * Prepare data for integrationFactory creation.
      */
-    private function convertToUseableData(array $integrationData)
+    private function convertToUseableData(array $integrationData): array
     {
         $data = [
             'name' => $integrationData['name'],
@@ -150,24 +137,20 @@ class ApiIntegrations implements ComponentInterface
     }
 
     /**
-     * Set permissions for API Integration
+     * Set permissions for API Integration.
      *
-     * @param $integrationId
-     * @param array|null $resources
      * @throws LocalizedException
      */
-    private function setPermissions($integrationId, ?array $resources): void
+    private function setPermissions(mixed $integrationId, ?array $resources): void
     {
         $authorizationService = $this->authorizationService;
         $authorizationService->grantPermissions($integrationId, $resources);
     }
 
     /**
-     * Activate and Authorize the Integration
-     *
-     * @param $consumerId
+     * Activate and Authorize the Integration.
      */
-    private function activateAndAuthorize($consumerId)
+    private function activateAndAuthorize(mixed $consumerId): void
     {
         $token = $this->tokenFactory->create();
         $token->createVerifierToken($consumerId);
@@ -175,18 +158,12 @@ class ApiIntegrations implements ComponentInterface
         $token->save();
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

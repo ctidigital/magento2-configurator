@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace CtiDigital\Configurator\Component\Product;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
@@ -15,26 +17,20 @@ class Image
     /**
      * @var LoggerInterface
      */
-    protected $log;
+    protected LoggerInterface $log;
 
     /**
      * @var Filesystem
      */
-    protected $filesystem;
+    protected Filesystem $filesystem;
 
     /**
      * @var Config
      */
-    protected $importerConfig;
+    protected Config $importerConfig;
 
-    /**
-     * @var string
-     */
-    private $separator = ';';
+    private string $separator = ';';
 
-    /**
-     * @var ClientFactory
-     */
     private ClientFactory $clientFactory;
 
     /**
@@ -55,40 +51,28 @@ class Image
         $this->log = $log;
     }
 
-    /**
-     * @param $separator
-     */
-    public function setSeparator($separator)
+    public function setSeparator(string $separator): void
     {
         $this->separator = $separator;
     }
 
-    /**
-     * @return string
-     */
-    public function getSeparator()
+    public function getSeparator(): string
     {
         return $this->separator;
     }
 
     /**
-     * Checks if a value is a URL
-     *
-     * @param $url
-     * @return bool|string
+     * Checks if a value is a URL.
      */
-    public function isValueURL($url)
+    public function isValueURL(mixed $url): bool|string
     {
         return filter_var($url, FILTER_VALIDATE_URL);
     }
 
     /**
-     * Download a file and return the response
-     *
-     * @param $value
-     * @return string
+     * Download a file and return the response.
      */
-    public function downloadFile($value)
+    public function downloadFile(mixed $value): mixed
     {
         /**
          * @var Client $client
@@ -106,12 +90,9 @@ class Image
     }
 
     /**
-     * Get the file name from the URL
-     *
-     * @param $url
-     * @return string
+     * Get the file name from the URL.
      */
-    public function getFileName($url)
+    public function getFileName(mixed $url): string
     {
         if (preg_match('/http:\/\/placehold\.it\/(.*)\/jpg$/', $url, $match)) {
             return sprintf('%s.jpg', $match[1]);
@@ -126,13 +107,11 @@ class Image
     }
 
     /**
-     * Saves the file. If the file exists, a number will be appended to the end of the file name
+     * Saves the file. If the file exists, a number will be appended to the end of the file name.
      *
-     * @param $fileName
-     * @param $value
      * @return Filesystem|string
      */
-    public function saveFile($fileName, $value)
+    public function saveFile(mixed $fileName, mixed $value): mixed
     {
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $name = pathinfo((string) $fileName, PATHINFO_FILENAME);
@@ -164,18 +143,17 @@ class Image
         return $file;
     }
 
-    private function isValidImage($file)
+    private function isValidImage(mixed $file): mixed
     {
         return exif_imagetype($file);
     }
 
     /**
-     * Downloads the image, saves, and returns the file name
+     * Downloads the image, saves, and returns the file name.
      *
-     * @param $value
      * @return Filesystem|string
      */
-    public function getImage($value)
+    public function getImage(mixed $value): mixed
     {
         $validImages = [];
         $images = explode(',', (string) $value);
@@ -202,12 +180,9 @@ class Image
     }
 
     /**
-     * Get the file directory from the configuration if set
-     *
-     * @param Filesystem\Directory\WriteInterface $file
-     * @return string
+     * Get the file directory from the configuration if set.
      */
-    public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file)
+    public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file): string
     {
         try {
             $configurationValue = $this->importerConfig->getImportFileDir();
@@ -218,13 +193,9 @@ class Image
     }
 
     /**
-     * Tests if the file exists locally
-     *
-     * @param $value
-     *
-     * @return bool
+     * Tests if the file exists locally.
      */
-    public function localFileExists($value)
+    public function localFileExists(mixed $value): bool
     {
         $writeDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
         $importDirectory = $this->getFileDirectory($writeDirectory);

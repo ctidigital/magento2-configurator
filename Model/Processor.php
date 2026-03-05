@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Model;
 
@@ -26,41 +27,20 @@ class Processor
     private const SOURCE_CSV = 'csv';
     private const SOURCE_JSON = 'json';
 
-    /**
-     * @var string
-     */
-    protected $environment;
+    protected string $environment;
 
-    /**
-     * @var []
-     */
-    protected $components = [];
+    protected array $components = [];
 
-    /**
-     * @var ComponentListInterface
-     */
-    protected $componentList;
+    protected ComponentListInterface $componentList;
 
-    /**
-     * @var State
-     */
-    protected $state;
+    protected State $state;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $log;
+    protected LoggerInterface $log;
 
-    /**
-     * @var bool
-     */
-    protected $ignoreMissingFiles = false;
+    protected bool $ignoreMissingFiles = false;
 
     /**
      * Processor constructor.
-     * @param ComponentListInterface $componentList
-     * @param State $state
-     * @param LoggerInterface $logging
      */
     public function __construct(
         ComponentListInterface $componentList,
@@ -72,68 +52,72 @@ class Processor
         $this->log = $logging;
     }
 
-    public function getLogger()
+    /**
+     * Return the logger instance.
+     */
+    public function getLogger(): LoggerInterface
     {
         return $this->log;
     }
 
     /**
-     * @param bool $setting
-     * @return void
+     * Set whether to ignore missing source files.
      */
-    public function setIgnoreMissingFiles($setting)
+    public function setIgnoreMissingFiles(bool $setting): void
     {
         $this->ignoreMissingFiles = $setting;
     }
 
     /**
-     * @return bool
+     * Return whether missing source files are ignored.
      */
-    public function isIgnoreMissingFiles()
+    public function isIgnoreMissingFiles(): bool
     {
         return $this->ignoreMissingFiles;
     }
 
     /**
-     * @param string $componentName
-     * @return Processor
+     * Add a component alias to the run list.
+     *
+     * @return $this
      */
-    public function addComponent($componentName)
+    public function addComponent(string $componentName): static
     {
         $this->components[$componentName] = $componentName;
         return $this;
     }
 
     /**
-     * @return array
+     * Return the list of component aliases to run.
      */
-    public function getComponents()
+    public function getComponents(): array
     {
         return $this->components;
     }
 
     /**
-     * @param string $environment
-     * @return Processor
+     * Set the environment name.
+     *
+     * @return $this
      */
-    public function setEnvironment($environment)
+    public function setEnvironment(string $environment): static
     {
         $this->environment = $environment;
         return $this;
     }
 
     /**
-     * @return string
+     * Return the environment name.
      */
-    public function getEnvironment()
+    public function getEnvironment(): string
     {
         return $this->environment;
     }
 
     /**
-     * Run the components individually
+     * Run the components individually.
      */
-    public function run()
+    public function run(): void
     {
         // If the components list is empty, then the user would want to run all components in the master.yaml
         if (empty($this->components)) {
@@ -144,7 +128,7 @@ class Processor
         $this->runIndividualComponents();
     }
 
-    private function runIndividualComponents()
+    private function runIndividualComponents(): void
     {
         try {
             // Get the master yaml
@@ -173,7 +157,7 @@ class Processor
         }
     }
 
-    private function runAllComponents()
+    private function runAllComponents(): void
     {
         try {
             // Get the master yaml
@@ -197,13 +181,12 @@ class Processor
     }
 
     /**
-     * @param $componentAlias
-     * @param $componentConfig
+     * Run a single component with its configuration.
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function runComponent($componentAlias, $componentConfig)
+    public function runComponent(string $componentAlias, array $componentConfig): void
     {
         $this->log->logComment("");
         $this->log->logComment(str_pad("----------------------", (22 + strlen((string)$componentAlias)), "-"));
@@ -284,9 +267,9 @@ class Processor
     }
 
     /**
-     * @return array
+     * Read and parse the master YAML file.
      */
-    private function getMasterYaml()
+    private function getMasterYaml(): array
     {
         // Read master yaml
         $masterPath = BP . '/app/etc/master.yaml';
@@ -307,12 +290,9 @@ class Processor
     }
 
     /**
-     * See if the component in master yaml exists
-     *
-     * @param $componentName
-     * @return bool
+     * See if the component in master yaml exists.
      */
-    private function isValidComponent($componentName)
+    private function isValidComponent(string $componentName): bool
     {
         if ($this->log->getLogLevel() > OutputInterface::VERBOSITY_NORMAL) {
             $this->log->logQuestion(sprintf("Does the %s component exist?", $componentName));
@@ -326,12 +306,11 @@ class Processor
     }
 
     /**
-     * Basic validation of master yaml requirements
+     * Basic validation of master yaml requirements.
      *
-     * @param $master
      * @SuppressWarnings(PHPMD)
      */
-    private function validateMasterYaml($master)
+    private function validateMasterYaml(array $master): void
     {
         try {
             foreach ($master as $componentAlias => $componentConfig) {
@@ -384,7 +363,7 @@ class Processor
         }
     }
 
-    private function parseData($source, $sourceType)
+    private function parseData(mixed $source, ?string $sourceType): mixed
     {
         if ($this->canParseAndProcess($source) === true) {
             $ext = ($sourceType !== null) ? $sourceType : $this->getExtension($source);
@@ -405,6 +384,7 @@ class Processor
                 return $this->parseJsonData($sourceData);
             }
         }
+        return null;
     }
 
     /**
@@ -412,10 +392,8 @@ class Processor
      * can be parsed and processed. (e.g. does a YAML file exist for it?)
      *
      * This will determine whether the component is enabled or disabled.
-     *
-     * @return bool
      */
-    private function canParseAndProcess($source)
+    private function canParseAndProcess(mixed $source): bool
     {
         $path = BP . '/' . $source;
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
@@ -428,19 +406,19 @@ class Processor
     }
 
     /**
-     * @return true
+     * Return true if the source URL is remote.
      */
-    public function isSourceRemote($source)
+    public function isSourceRemote(mixed $source): bool
     {
         return filter_var($source, FILTER_VALIDATE_URL) !== false;
     }
 
     /**
-     * @param $source
-     * @return string
+     * Determine the file extension/type for a source path.
+     *
      * @throws Exception
      */
-    private function getExtension($source)
+    private function getExtension(mixed $source): string
     {
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $extension = pathinfo((string)$source, PATHINFO_EXTENSION);
@@ -463,11 +441,11 @@ class Processor
     }
 
     /**
-     * @param $source
-     * @return array|bool|false|float|int|mixed|string|null
+     * Retrieve the raw content for a source (local or remote).
+     *
      * @throws Exception
      */
-    private function getData($source)
+    private function getData(mixed $source): mixed
     {
         return ($this->isSourceRemote($source) === true) ?
             $this->getRemoteData($source) :
@@ -475,11 +453,11 @@ class Processor
     }
 
     /**
-     * @param $source
-     * @return array|bool|false|float|int|mixed|string|null
+     * Resolve the content-type extension for a remote URL.
+     *
      * @throws Exception
      */
-    private function getRemoteContentExtension($source)
+    private function getRemoteContentExtension(mixed $source): mixed
     {
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $headers = get_headers($source, 1);
@@ -495,30 +473,28 @@ class Processor
     }
 
     /**
-     * @param $source
-     * @return array|bool|float|int|mixed|string|null
+     * Fetch the raw content of a remote source.
+     *
      * @throws Exception
      */
-    public function getRemoteData($source)
+    public function getRemoteData(mixed $source): mixed
     {
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
         return file_get_contents($source);
     }
 
     /**
-     * @param $source
-     * @return mixed
+     * Parse a YAML string into a PHP value.
      */
-    private function parseYamlData($source)
+    private function parseYamlData(mixed $source): mixed
     {
         return (new Yaml())->parse($source);
     }
 
     /**
-     * @param $source
-     * @return mixed
+     * Open a file handle for reading (local or remote).
      */
-    private function getFileHandle($source)
+    private function getFileHandle(mixed $source): mixed
     {
         // Get a handle to the source data, whether it's remote or local
         if ($this->isSourceRemote($source)) {
@@ -535,11 +511,11 @@ class Processor
     }
 
     /**
-     * @param $source
-     * @return array
+     * Parse a CSV source into a two-dimensional array.
+     *
      * @throws Exception
      */
-    private function parseCsvData($source)
+    private function parseCsvData(mixed $source): array
     {
         $handle = $this->getFileHandle($source);
 
@@ -566,10 +542,9 @@ class Processor
     }
 
     /**
-     * @param $source
-     * @return array|bool|float|int|mixed|string|null
+     * Decode a JSON string into a PHP value.
      */
-    private function parseJsonData($source)
+    private function parseJsonData(mixed $source): mixed
     {
         return json_decode((string)$source);
     }

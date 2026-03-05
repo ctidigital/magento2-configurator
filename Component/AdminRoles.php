@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
@@ -15,33 +16,27 @@ use Magento\Authorization\Model\UserContextInterface;
  */
 class AdminRoles implements ComponentInterface
 {
-    protected $alias = 'adminroles';
-    protected $name = 'Admin Roles';
-    protected $description = 'Component to create Admin Roles';
+    protected string $alias = 'adminroles';
+    protected string $name = 'Admin Roles';
+    protected string $description = 'Component to create Admin Roles';
 
     /**
-     * RoleFactory
-     *
-     * @var roleFactory
+     * @var RoleFactory
      */
-    protected $roleFactory;
+    protected RoleFactory $roleFactory;
 
     /**
-     * RulesFactory
-     *
-     * @var rulesFactory
+     * @var RulesFactory
      */
-    protected $rulesFactory;
+    protected RulesFactory $rulesFactory;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * AdminRoles constructor.
-     * @param RoleFactory $roleFactory
-     * @param RulesFactory $rulesFactory
      */
     public function __construct(
         RoleFactory $roleFactory,
@@ -53,10 +48,7 @@ class AdminRoles implements ComponentInterface
         $this->log = $log;
     }
 
-    /**
-     * @param $data
-     */
-    public function execute($data = null)
+    public function execute(mixed $data = null): void
     {
         if (isset($data['adminroles'])) {
             foreach ($data['adminroles'] as $role) {
@@ -72,12 +64,9 @@ class AdminRoles implements ComponentInterface
     }
 
     /**
-     * Create Admin user roles, or update them if they exist
-     *
-     * @param string $roleName
-     * @param array $resources
+     * Create Admin user roles, or update them if they exist.
      */
-    private function createAdminRole($roleName, $resources)
+    private function createAdminRole(string $roleName, mixed $resources): void
     {
         $role = $this->roleFactory->create();
         $roleCount = $role->getCollection()->addFieldToFilter('role_name', $roleName)->getSize();
@@ -110,12 +99,9 @@ class AdminRoles implements ComponentInterface
     }
 
     /**
-     * Set ResourceIDs the Admin Role will have access to
-     *
-     * @param role
-     * @param array|null $resources
+     * Set ResourceIDs the Admin Role will have access to.
      */
-    private function setResourceIds($role, ?array $resources)
+    private function setResourceIds(mixed $role, ?array $resources): void
     {
         $roleName = $role->getRoleName();
 
@@ -133,18 +119,12 @@ class AdminRoles implements ComponentInterface
         );
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }

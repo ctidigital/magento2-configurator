@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @package  CtiDigital\Configurator
  * @author Bartosz Herba <bartoszherba@gmail.com>
@@ -16,17 +18,18 @@ class SqlSplitProcessor
     /**
      * @var LoggerInterface
      */
-    private $log;
+    private LoggerInterface $log;
 
     /**
      * @var ResourceConnection
      */
-    private $resource;
+    private ResourceConnection $resource;
 
     /**
      * @var AdapterInterface
      */
-    private $connection;
+    private AdapterInterface $connection;
+
     /**
      * @param LoggerInterface $log
      * @param ResourceConnection $resource
@@ -41,12 +44,9 @@ class SqlSplitProcessor
     }
 
     /**
-     * @param string $name
-     * @param string $filePath
-     *
-     * return void
+     * Process a named SQL file, executing each statement in a transaction.
      */
-    public function process($name, $filePath)
+    public function process(string $name, string $filePath): void
     {
         $this->log->logInfo("- Processing file '$name'");
 
@@ -80,14 +80,9 @@ class SqlSplitProcessor
 
     /**
      * Split file content string into separate queries, allowing for
-     * multi-line queries using preg_match
-     *
-     * @param string $filePath
-     * @param string $delimiter
-     *
-     * @return array
+     * multi-line queries using preg_match.
      */
-    private function extractQueriesFromFile($filePath, $delimiter = ';')
+    private function extractQueriesFromFile(string $filePath, string $delimiter = ';'): array
     {
         $obBaseLevel = ob_get_level();
         $queries = [];

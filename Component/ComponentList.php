@@ -1,15 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\ComponentListInterface;
 
 class ComponentList implements ComponentListInterface
 {
-    /**
-     * @var []
-     */
-    private $components;
+    private array $components;
 
     public function __construct(
         array $components = []
@@ -20,7 +19,7 @@ class ComponentList implements ComponentListInterface
     /**
      * @inheritDoc
      */
-    public function getComponent($componentAlias)
+    public function getComponent(string $componentAlias): ComponentInterface|bool
     {
         if (array_key_exists($componentAlias, $this->components) === true) {
             return $this->components[$componentAlias];
@@ -31,7 +30,7 @@ class ComponentList implements ComponentListInterface
     /**
      * @inheritDoc
      */
-    public function getAllComponents()
+    public function getAllComponents(): array
     {
         return $this->components;
     }

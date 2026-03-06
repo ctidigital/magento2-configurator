@@ -32,9 +32,6 @@ class Categories implements ComponentInterface
         'description'
     ];
 
-    /**
-     * Categories constructor.
-     */
     public function __construct(
         protected readonly LoggerInterface $log,
         protected readonly ObjectManagerInterface $objectManager,
@@ -42,8 +39,12 @@ class Categories implements ComponentInterface
         protected readonly GroupFactory $groupFactory,
         protected readonly DirectoryList $dirList,
         protected readonly BlockInterfaceFactory $blockFactory
-    ) {}
+    ) {
+    }
 
+    /**
+     * Execute the component with the given category data.
+     */
     public function execute(mixed $data = null): void
     {
         if (isset($data['categories'])) {
@@ -70,8 +71,6 @@ class Categories implements ComponentInterface
 
     /**
      * Gets the default category for the store group.
-     *
-     * @return Category|bool
      */
     public function getDefaultCategory(mixed $store = null): Category|bool
     {
@@ -194,6 +193,9 @@ class Categories implements ComponentInterface
         }
     }
 
+    /**
+     * Extract the store group name from the data array.
+     */
     private function getStoreGroup(array $data): string
     {
         if (isset($data['store_group']) === true) {
@@ -202,11 +204,17 @@ class Categories implements ComponentInterface
         return 'Main Website Store';
     }
 
+    /**
+     * Return the component alias.
+     */
     public function getAlias(): string
     {
         return $this->alias;
     }
 
+    /**
+     * Return the component description.
+     */
     public function getDescription(): string
     {
         return $this->description;

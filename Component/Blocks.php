@@ -56,6 +56,9 @@ class Blocks implements ComponentInterface
         $this->log = $log;
     }
 
+    /**
+     * Execute the component with the given block data.
+     */
     public function execute(mixed $data = null): void
     {
         try {
@@ -68,6 +71,8 @@ class Blocks implements ComponentInterface
     }
 
     /**
+     * Process a single CMS block by identifier and block data.
+     *
      * @SuppressWarnings(PHPMD)
      */
     private function processBlock(mixed $identifier, mixed $blockData): void
@@ -207,6 +212,9 @@ class Blocks implements ComponentInterface
         return null;
     }
 
+    /**
+     * Load a store model by its code.
+     */
     private function getStoreByCode(string $code): Store
     {
         // Load the store object
@@ -221,11 +229,17 @@ class Blocks implements ComponentInterface
         return $store;
     }
 
+    /**
+     * Return the component alias.
+     */
     public function getAlias(): string
     {
         return $this->alias;
     }
 
+    /**
+     * Return the component description.
+     */
     public function getDescription(): string
     {
         return $this->description;

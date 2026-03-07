@@ -10,6 +10,7 @@ use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Cms\Model\Block;
 use Magento\Cms\Model\ResourceModel\Block\Collection;
 use Magento\Framework\DataObject;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Store\Model\Store;
 
 class Blocks implements ComponentInterface
@@ -21,7 +22,8 @@ class Blocks implements ComponentInterface
     public function __construct(
         protected readonly BlockInterfaceFactory $blockFactory,
         protected readonly Store $storeManager,
-        private readonly LoggerInterface $log
+        private readonly LoggerInterface $log,
+        private readonly DriverInterface $driver
     ) {
     }
 
@@ -86,8 +88,7 @@ class Blocks implements ComponentInterface
                     if ($key == "source") {
                         $key = 'content';
                         //TODO load this with Magento's code, and also check for file existing
-                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                        $value = file_get_contents(BP . '/' . $value);
+                        $value = $this->driver->fileGetContents(BP . '/' . $value);
                     }
 
                     // Skip stores

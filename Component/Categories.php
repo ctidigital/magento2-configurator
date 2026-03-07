@@ -10,6 +10,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
@@ -35,7 +36,8 @@ class Categories implements ComponentInterface
         protected readonly CategoryFactory $category,
         protected readonly GroupFactory $groupFactory,
         protected readonly DirectoryList $dirList,
-        protected readonly BlockInterfaceFactory $blockFactory
+        protected readonly BlockInterfaceFactory $blockFactory,
+        private readonly DriverInterface $driver
     ) {
     }
 
@@ -133,8 +135,7 @@ class Categories implements ComponentInterface
                             $value = BP . '/' . trim((string) $value, '/');
                         }
 
-                        // phpcs:ignore
-                        if (!@copy($value, $catMediaDir . $img)) {
+                        if (!$this->driver->copy($value, $catMediaDir . $img)) {
                             $this->log->logError('Failed to find image: ' . $value, 1);
                             break;
                         }

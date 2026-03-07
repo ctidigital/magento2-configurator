@@ -14,6 +14,7 @@ use Exception;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
+use Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
@@ -74,6 +75,7 @@ class SqlSplitProcessorTest extends TestCase
         $this->processor = $this->objectManager->getObject(SqlSplitProcessor::class, [
             'log' => $this->mockLogger,
             'resource' => $this->mockResource,
+            'driver' => new FileDriver(),
         ]);
     }
 

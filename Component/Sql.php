@@ -12,6 +12,7 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Processor\SqlSplitProcessor;
+use Magento\Framework\Filesystem\DriverInterface;
 
 /**
  * Class Sql - Runs raw SQL queries - generally a fallback for when a configurator component is not available.
@@ -26,7 +27,8 @@ class Sql implements ComponentInterface
 
     public function __construct(
         private readonly SqlSplitProcessor $processor,
-        private readonly LoggerInterface $log
+        private readonly LoggerInterface $log,
+        private readonly DriverInterface $driver
     ) {}
 
     /**
@@ -41,8 +43,7 @@ class Sql implements ComponentInterface
         $this->log->logInfo('Beginning of custom queries configuration:');
         foreach ($data['sql'] as $name => $sqlFile) {
             $path = BP . '/' . $sqlFile;
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            if (false === file_exists($path)) {
+            if (false === $this->driver->isExists($path)) {
                 $this->log->logError("{$path} does not exist. Skipping.");
                 continue;
             }

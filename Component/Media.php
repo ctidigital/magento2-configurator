@@ -7,6 +7,7 @@ use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Filesystem\DriverInterface;
 
 class Media implements ComponentInterface
 {
@@ -18,7 +19,8 @@ class Media implements ComponentInterface
 
     public function __construct(
         protected readonly DirectoryList $directoryList,
-        private readonly LoggerInterface $log
+        private readonly LoggerInterface $log,
+        private readonly DriverInterface $driver
     ) {
     }
 
@@ -70,8 +72,7 @@ class Media implements ComponentInterface
 
             $newPath = $currentPath . DIRECTORY_SEPARATOR . $node['name'];
 
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            if (file_exists($newPath)) {
+            if ($this->driver->isExists($newPath)) {
                 $this->log->logComment(sprintf('File already exists: %s', $newPath), $nest);
                 return;
             }
@@ -86,13 +87,11 @@ class Media implements ComponentInterface
     private function checkAndCreateFolder(mixed $newPath, mixed $name, int $nest): void
     {
         // Check if the file/folder exists
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        if (!file_exists($newPath)) {
+        if (!$this->driver->isExists($newPath)) {
             // If the node does not have a numeric index
             if (!is_numeric($name)) {
                 // Then it is a directory so create it
-                // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                mkdir($newPath, $this::FULL_ACCESS, true);
+                $this->driver->createDirectory($newPath, $this::FULL_ACCESS);
                 $this->log->logInfo(sprintf('Created new media directory %s', $name), $nest);
             }
 
@@ -108,10 +107,8 @@ class Media implements ComponentInterface
     private function downloadAndSetFile(mixed $path, mixed $node, int $nest): void
     {
         $this->log->logInfo(sprintf('Downloading contents of file from %s', $node['location']), $nest);
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $fileContents = file_get_contents($node['location']);
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        file_put_contents($path, $fileContents);
+        $fileContents = $this->driver->fileGetContents($node['location']);
+        $this->driver->filePutContents($path, $fileContents);
         $this->log->logInfo(sprintf('Created new file: %s', $path), $nest);
     }
 

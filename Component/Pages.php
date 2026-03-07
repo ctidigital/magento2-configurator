@@ -9,6 +9,7 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
 
 class Pages implements ComponentInterface
@@ -25,7 +26,8 @@ class Pages implements ComponentInterface
         protected readonly PageRepositoryInterface $pageRepository,
         protected readonly PageInterfaceFactory $pageFactory,
         private readonly StoreRepositoryInterface $storeRepository,
-        private readonly LoggerInterface $log
+        private readonly LoggerInterface $log,
+        private readonly DriverInterface $driver
     ) {
     }
 
@@ -80,8 +82,7 @@ class Pages implements ComponentInterface
                     // Check if content is from a file source
                     if ($key == "source") {
                         $key = 'content';
-                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                        $value = file_get_contents(BP . '/' . $value);
+                        $value = $this->driver->fileGetContents(BP . '/' . $value);
                     }
 
                     // Skip stores

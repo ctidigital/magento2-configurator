@@ -12,6 +12,7 @@ namespace CtiDigital\Configurator\Component\Processor;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\Filesystem\DriverInterface;
 
 class SqlSplitProcessor
 {
@@ -19,7 +20,8 @@ class SqlSplitProcessor
 
     public function __construct(
         private readonly LoggerInterface $log,
-        private readonly ResourceConnection $resource
+        private readonly ResourceConnection $resource,
+        private readonly DriverInterface $driver
     ) {
         $this->connection = $resource->getConnection();
     }
@@ -67,13 +69,11 @@ class SqlSplitProcessor
     {
         $obBaseLevel = ob_get_level();
         $queries = [];
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        $file = fopen($filePath, 'r');
+        $file = $this->driver->fileOpen($filePath, 'r');
         if (is_resource($file) === true) {
             $query = [];
-            while (feof($file) === false) {
-                // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                $query[] = fgets($file);
+            while ($this->driver->endOfFile($file) === false) {
+                $query[] = $this->driver->fileReadLine($file, 4096);
 
                 if (preg_match('~' . preg_quote($delimiter, '~') . '\s*$~iS', end($query)) === 1) {
                     $query = trim(implode('', $query));
@@ -91,8 +91,7 @@ class SqlSplitProcessor
                 }
             }
         }
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        fclose($file);
+        $this->driver->fileClose($file);
         return $queries;
     }
 }

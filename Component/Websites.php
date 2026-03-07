@@ -74,7 +74,8 @@ class Websites implements ComponentInterface
     /**
      * @param string $code
      * @param array $websiteData
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function processWebsite(string $code, array $websiteData): ?Website
     {
@@ -140,7 +141,9 @@ class Websites implements ComponentInterface
 
     /**
      * @param array $storeGroupData
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function processStoreGroup(array $storeGroupData, ?Website $website): ?Group
     {
@@ -223,7 +226,9 @@ class Websites implements ComponentInterface
     }
 
     /**
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function processStoreView(string $code, mixed $storeViewData, ?Group $storeGroup): ?Store
     {
@@ -298,7 +303,7 @@ class Websites implements ComponentInterface
     }
 
     /**
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function setDefaultStore(?Group $storeGroup, mixed $storeGroupData): void
     {

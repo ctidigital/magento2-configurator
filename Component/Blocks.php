@@ -42,7 +42,9 @@ class Blocks implements ComponentInterface
     /**
      * Process a single CMS block by identifier and block data.
      *
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function processBlock(mixed $identifier, mixed $blockData): void
     {

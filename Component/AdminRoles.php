@@ -11,9 +11,6 @@ use Magento\Authorization\Model\RoleFactory;
 use Magento\Authorization\Model\RulesFactory;
 use Magento\Authorization\Model\UserContextInterface;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class AdminRoles implements ComponentInterface
 {
     protected string $alias = 'adminroles';
@@ -35,8 +32,8 @@ class AdminRoles implements ComponentInterface
                     if (isset($role['name'])) {
                         $this->createAdminRole($role['name'], $role['resources']);
                     }
-                } catch (ComponentException $e) {
-                    $this->log->logError($e->getMessage());
+                } catch (ComponentException $exception) {
+                    $this->log->logError($exception->getMessage());
                 }
             }
         }

@@ -65,7 +65,8 @@ class RunCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

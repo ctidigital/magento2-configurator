@@ -12,9 +12,6 @@ use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
 use Magento\Catalog\Model\Product;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class AttributeOption
 {
     private array $attributes = [];
@@ -51,7 +48,7 @@ class AttributeOption
                 return;
             }
             $this->addOption($code, $value);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             return;
         }
     }
@@ -101,8 +98,8 @@ class AttributeOption
                     $this->log->logInfo(
                         sprintf('Created the option "%s" for the attribute "%s"', $label, $attributeCode)
                     );
-                } catch (\Exception $e) {
-                    $this->log->logError($e->getMessage());
+                } catch (\Exception $exception) {
+                    $this->log->logError($exception->getMessage());
                 }
             }
         }

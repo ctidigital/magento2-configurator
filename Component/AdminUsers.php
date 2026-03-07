@@ -9,9 +9,6 @@ use Magento\Authorization\Model\RoleFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class AdminUsers implements ComponentInterface
 {
     protected string $alias = 'adminusers';
@@ -49,10 +46,10 @@ class AdminUsers implements ComponentInterface
                     }
 
                     $this->createAdminUser($userData, $roleId);
-                } catch (\Magento\Framework\Validator\Exception $e) {
-                    $this->log->logError(sprintf('Magento Framework Validation Exception: %s', $e->getMessage()));
-                } catch (ComponentException $e) {
-                    $this->log->logError($e->getMessage());
+                } catch (\Magento\Framework\Validator\Exception $exception) {
+                    $this->log->logError(sprintf('Magento Framework Validation Exception: %s', $exception->getMessage()));
+                } catch (ComponentException $exception) {
+                    $this->log->logError($exception->getMessage());
                 }
             }
         }

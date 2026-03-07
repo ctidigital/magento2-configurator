@@ -16,9 +16,6 @@ use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
 use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\Rule\Job;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class CatalogPriceRulesProcessor implements ComponentProcessorInterface
 {
     private array $rules = [];
@@ -62,11 +59,11 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
     public function process(): void
     {
         $rulesCount = count($this->rules);
-        $ite = 1;
+        $index = 1;
         $this->logger->logInfo('Initializing configuration of Catalog Price Rules.');
 
         foreach ($this->rules as $ruleId => $ruleData) {
-            $this->logger->logInfo("Processing {$ruleId} [{$ite}/{$rulesCount}]...", 1);
+            $this->logger->logInfo("Processing {$ruleId} [{$index}/{$rulesCount}]...", 1);
 
             // Check the existing rule by the rule name
             /** @var \Magento\CatalogRule\Model\ResourceModel\Rule\Collection $ruleCollection */
@@ -98,11 +95,11 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
             try {
                 // Save the rule
                 $this->catalogRuleRepo->save($rule);
-            } catch (\Exception $ex) {
-                $this->logger->logError($ex->getMessage());
+            } catch (\Exception $exception) {
+                $this->logger->logError($exception->getMessage());
             }
 
-            $ite++;
+            $index++;
         }
 
         if ($this->isApplyAll()) {

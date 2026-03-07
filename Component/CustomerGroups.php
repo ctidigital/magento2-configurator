@@ -9,9 +9,6 @@ use Magento\Tax\Model\ClassModelFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class CustomerGroups implements ComponentInterface
 {
     protected string $alias = 'customergroups';
@@ -36,8 +33,8 @@ class CustomerGroups implements ComponentInterface
                     try {
                         $this->validateGroupName($group);
                         $this->createCustomerGroup($group['name'], $taxClassId);
-                    } catch (ComponentException $e) {
-                        $this->log->logError($e->getMessage());
+                    } catch (ComponentException $exception) {
+                        $this->log->logError($exception->getMessage());
                     }
                 }
             }

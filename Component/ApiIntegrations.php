@@ -12,9 +12,6 @@ use Magento\Integration\Model\AuthorizationService;
 use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class ApiIntegrations implements ComponentInterface
 {
     protected string $alias = 'apiintegrations';
@@ -43,8 +40,8 @@ class ApiIntegrations implements ComponentInterface
                     }
 
                     $this->createApiIntegration($integrationData);
-                } catch (ComponentException $e) {
-                    $this->log->logError($e->getMessage());
+                } catch (ComponentException $exception) {
+                    $this->log->logError($exception->getMessage());
                 }
             }
         }

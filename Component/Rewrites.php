@@ -9,9 +9,6 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\UrlRewrite\Model\UrlRewriteFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class Rewrites implements ComponentInterface
 {
     protected string $alias = "rewrites";
@@ -58,8 +55,8 @@ class Rewrites implements ComponentInterface
                 }
 
                 $this->createOrUpdateRewriteRule($rewriteArray);
-            } catch (ComponentException $e) {
-                $this->log->logError($e->getMessage());
+            } catch (ComponentException $exception) {
+                $this->log->logError($exception->getMessage());
             }
         }
 

@@ -46,7 +46,9 @@ class Pages implements ComponentInterface
     /**
      * Create or update page data.
      *
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function processPage(mixed $identifier, mixed $data): void
     {

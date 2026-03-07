@@ -15,9 +15,6 @@ use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class Categories implements ComponentInterface
 {
     protected string $alias = 'categories';
@@ -62,8 +59,8 @@ class Categories implements ComponentInterface
                         $this->log->logInfo(sprintf('Updating categories for "%s"', $group));
                         $this->createOrUpdateCategory($category, $store['categories']);
                     }
-                } catch (ComponentException $e) {
-                    $this->log->logError($e->getMessage());
+                } catch (ComponentException $exception) {
+                    $this->log->logError($exception->getMessage());
                 }
             }
         }
@@ -99,7 +96,8 @@ class Categories implements ComponentInterface
      *
      * @param Category $parentCategory
      * @param array $categories
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @throws FileSystemException
      */
     public function createOrUpdateCategory(

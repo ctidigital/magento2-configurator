@@ -12,9 +12,6 @@ use Magento\Tax\Model\ClassModelFactory;
 use Magento\Tax\Model\ResourceModel\Calculation\Rate\CollectionFactory;
 use Magento\Tax\Model\ResourceModel\Calculation\Rule;
 
-/**
- * @SuppressWarnings(PHPMD.ShortVariable)
- */
 class TaxRules implements ComponentInterface
 {
     protected string $alias = 'taxrules';
@@ -75,8 +72,8 @@ class TaxRules implements ComponentInterface
 
             try {
                 $this->createTaxRule($ruleData);
-            } catch (ComponentException $e) {
-                $this->log->logError($e->getMessage());
+            } catch (ComponentException $exception) {
+                $this->log->logError($exception->getMessage());
             }
         }
 

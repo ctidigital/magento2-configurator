@@ -37,7 +37,9 @@ class Config implements ComponentInterface
     }
 
     /**
-     * @SuppressWarnings(PHPMD)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function execute(mixed $data = null): void //phpcs:ignore Generic.Metrics.NestingLevel
     {

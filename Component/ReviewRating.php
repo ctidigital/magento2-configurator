@@ -14,8 +14,7 @@ use Magento\Review\Model\Rating\Option;
 use Magento\Review\Model\Rating\OptionFactory;
 
 /**
- * @SuppressWarnings("CouplingBetweenObjects")
- * @SuppressWarnings(PHPMD.ShortVariable)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ReviewRating implements ComponentInterface
 {
@@ -49,12 +48,12 @@ class ReviewRating implements ComponentInterface
                 $ratingModel->save();
                 $this->setOptions($ratingModel);
                 $this->log->logInfo(__('Updated review rating "%1"', $code));
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 $this->log->logError(
                     sprintf(
                         'Failed updating review rating "%s". Error message: %s',
                         $code,
-                        $e->getMessage()
+                        $exception->getMessage()
                     )
                 );
             }

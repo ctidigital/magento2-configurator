@@ -9,7 +9,6 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use Magento\Integration\Model\AuthorizationService;
-use Magento\Integration\Model\IntegrationFactory;
 use Magento\Integration\Model\Oauth\TokenFactory;
 
 class ApiIntegrations implements ComponentInterface
@@ -19,7 +18,6 @@ class ApiIntegrations implements ComponentInterface
     protected string $description = 'Component to create Api Integrations';
 
     public function __construct(
-        protected readonly IntegrationFactory $integrationFactory,
         protected readonly IntegrationServiceInterface $integrationService,
         protected readonly AuthorizationService $authorizationService,
         protected readonly TokenFactory $tokenFactory,
@@ -49,19 +47,11 @@ class ApiIntegrations implements ComponentInterface
 
     private function createApiIntegration(array $integrationData): void
     {
-        $integration = $this->integrationFactory->create();
-        $integrationCount = $integration->getCollection()
-            ->addFieldToFilter('name', $integrationData['name'])
-            ->getSize();
+        $existingIntegration = $this->integrationService->findByName($integrationData['name']);
 
-        if ($integrationCount > 0) {
-            $integration = $integration
-                ->getCollection()
-                ->addFieldToFilter('name', $integrationData['name'])
-                ->getFirstItem();
-
+        if ($existingIntegration->getId()) {
             $this->log->logComment(
-                sprintf('API Integration "%s" already exists: Creation skipped', $integration->getName())
+                sprintf('API Integration "%s" already exists: Creation skipped', $existingIntegration->getName())
             );
 
             return;

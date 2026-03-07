@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\ComponentInterface;
-use Magento\Customer\Model\GroupFactory;
-use Magento\Tax\Model\ClassModelFactory;
-use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
+use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Customer\Api\Data\GroupInterfaceFactory;
+use Magento\Customer\Api\GroupRepositoryInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Tax\Model\ClassModelFactory;
 
 class CustomerGroups implements ComponentInterface
 {
@@ -16,7 +18,9 @@ class CustomerGroups implements ComponentInterface
     protected string $description = 'Component to create Customer Groups';
 
     public function __construct(
-        private readonly GroupFactory $groupFactory,
+        private readonly GroupRepositoryInterface $groupRepository,
+        private readonly GroupInterfaceFactory $groupDataFactory,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
         protected readonly ClassModelFactory $classModelFactory,
         private readonly LoggerInterface $log
     ) {
@@ -46,10 +50,13 @@ class CustomerGroups implements ComponentInterface
      */
     private function createCustomerGroup(string $groupName, mixed $taxClassId): void
     {
-        $customerGroup = $this->groupFactory->create();
-        $groupCount = $customerGroup->getCollection()->addFieldToFilter('customer_group_code', $groupName)->getSize();
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('customer_group_code', $groupName)
+            ->create();
 
-        if ($groupCount > 0) {
+        $groupList = $this->groupRepository->getList($searchCriteria);
+
+        if ($groupList->getTotalCount() > 0) {
             $this->log->logInfo(
                 sprintf('Customer Group "%s" already exists, creation skipped', $groupName)
             );
@@ -57,10 +64,10 @@ class CustomerGroups implements ComponentInterface
             return;
         }
 
-        $customerGroup
-            ->setCustomerGroupCode($groupName)
-            ->setTaxClassId($taxClassId)
-            ->save();
+        $group = $this->groupDataFactory->create();
+        $group->setCode($groupName);
+        $group->setTaxClassId((int) $taxClassId);
+        $this->groupRepository->save($group);
 
         $this->log->logInfo(
             sprintf('Customer Group "%s" created', $groupName)

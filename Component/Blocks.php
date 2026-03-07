@@ -6,6 +6,7 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use Magento\Cms\Api\BlockRepositoryInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Cms\Model\Block;
 use Magento\Cms\Model\ResourceModel\Block\Collection;
@@ -21,6 +22,7 @@ class Blocks implements ComponentInterface
 
     public function __construct(
         protected readonly BlockInterfaceFactory $blockFactory,
+        protected readonly BlockRepositoryInterface $blockRepository,
         protected readonly Store $storeManager,
         private readonly LoggerInterface $log,
         private readonly DriverInterface $driver
@@ -134,7 +136,7 @@ class Blocks implements ComponentInterface
 
                 // If we can save the block
                 if ($canSave) {
-                    $block->save();
+                    $this->blockRepository->save($block);
                     $this->log->logInfo(sprintf(
                         "Save block %s",
                         $identifier . ' (' . $block->getId() . ')'

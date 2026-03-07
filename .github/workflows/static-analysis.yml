@@ -1,0 +1,108 @@
+name: Static Analysis
+
+on:
+  push:
+    branches: [master, develop, "dev/**"]
+  pull_request:
+    branches: [master, develop]
+
+jobs:
+  static-analysis:
+    name: Static Analysis (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Static analysis is version-sensitive for syntax/deprecation checks.
+        php: ["8.3", "8.4"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      # ── Install analysis tools ─────────────────────────────────────────────
+      #
+      # We cannot run `composer install` from the extension root because
+      # `firegento/fastsimpleimport` (a production dependency) is hosted on
+      # repo.magento.com and requires authentication.
+      #
+      # Instead we create a minimal composer.json that covers only the three
+      # analysis tools — all of which are on public Packagist:
+      #   • squizlabs/php_codesniffer        (phpcs binary)
+      #   • magento/magento-coding-standard  (Magento2 phpcs standard)
+      #   • phpmd/phpmd                       (mess detector binary)
+      #
+      # dealerdirect/phpcodesniffer-composer-installer is a plugin that
+      # automatically registers the Magento2 standard's path with phpcs after
+      # `composer install`, so no manual --config-set is required.
+      #
+      # The resulting composer.lock is also used by the `composer audit` step
+      # below to check these tools for known security advisories.
+      - name: Install analysis tools
+        run: |
+          mkdir -p /tmp/ci-tools
+          cat > /tmp/ci-tools/composer.json << 'JSON'
+          {
+            "require-dev": {
+              "squizlabs/php_codesniffer": "^3.13",
+              "magento/magento-coding-standard": "^2.1",
+              "phpmd/phpmd": "^2.15"
+            },
+            "config": {
+              "allow-plugins": {
+                "dealerdirect/phpcodesniffer-composer-installer": true
+              }
+            }
+          }
+          JSON
+          composer install \
+            --working-dir=/tmp/ci-tools \
+            --no-interaction \
+            --no-progress \
+            --prefer-dist
+
+      # ── PHP_CodeSniffer ────────────────────────────────────────────────────
+      #
+      # Runs against phpcs.xml (Magento2 standard, errors only via -n flag).
+      # Current baseline: 0 errors.
+      - name: Run phpcs
+        run: |
+          /tmp/ci-tools/vendor/bin/phpcs \
+            --standard=phpcs.xml \
+            --report=full
+
+      # ── PHP Mess Detector ──────────────────────────────────────────────────
+      #
+      # Scans source directories only (Test/ excluded — tests use
+      # @SuppressWarnings annotations which PHPMD would report as violations).
+      # Ruleset: phpmd.xml (cleancode, codesize, design, naming, unusedcode).
+      # Current baseline: 0 violations.
+      - name: Run phpmd
+        run: |
+          /tmp/ci-tools/vendor/bin/phpmd \
+            Api,Component,Console,Exception,Model \
+            text \
+            phpmd.xml
+
+      # ── Composer Audit ─────────────────────────────────────────────────────
+      #
+      # Checks the installed analysis tools (phpcs, phpmd, magento-coding-
+      # standard and their dependencies) for known security advisories.
+      #
+      # NOTE: Production dependencies (symfony/yaml, firegento/fastsimpleimport)
+      # are NOT audited here because they require repo.magento.com authentication.
+      # To audit production dependencies, run `composer audit` inside a Magento
+      # installation that has the extension installed as a path repository.
+      - name: Run composer audit
+        run: |
+          composer audit \
+            --working-dir=/tmp/ci-tools \
+            --no-interaction

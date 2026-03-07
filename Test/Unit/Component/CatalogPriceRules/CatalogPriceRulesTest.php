@@ -9,12 +9,14 @@ declare(strict_types=1);
 
 /**
  * RuleInterfaceFactory is a Magento DI-generated class that is only available after
- * running setup:di:compile. To allow getMockBuilder() to reflect the class in unit
- * tests, we declare a minimal stub here. The class_exists guard prevents a fatal error
- * if the class happens to be available in a compiled environment.
+ * running setup:di:compile or after the application has booted and generated code on-demand.
+ * The guard below triggers autoloading first (no `false` second arg): if the real generated
+ * class is on the autoloader path it will be loaded and getMockBuilder() will reflect it
+ * directly. The stub is only declared when the class is genuinely unavailable (e.g. a fresh
+ * checkout that has not yet run setup:di:compile).
  */
 namespace Magento\CatalogRule\Api\Data {
-    if (!class_exists(\Magento\CatalogRule\Api\Data\RuleInterfaceFactory::class, false)) {
+    if (!class_exists(\Magento\CatalogRule\Api\Data\RuleInterfaceFactory::class)) {
         class RuleInterfaceFactory
         {
             public function create(array $data = []): \Magento\CatalogRule\Api\Data\RuleInterface

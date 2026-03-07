@@ -2,15 +2,9 @@
     "name": "ctidigital/magento2-configurator",
     "description": "Keep magento persistently configured using files",
     "type": "magento2-module",
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://repo.magento.com/"
-        }
-    ],
     "require": {
         "symfony/yaml": "^7.0",
-        "firegento/fastsimpleimport": "2.0.1",
+        "firegento/fastsimpleimport": "^2.1.0",
         "ext-exif": "*",
         "php": "^8.3"
     },

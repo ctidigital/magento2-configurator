@@ -28,14 +28,20 @@ jobs:
           tools: composer:v2
           coverage: none
 
+      # ── Mage-OS mirror ─────────────────────────────────────────────────────
+      #
+      # Registers the Mage-OS public mirror of repo.magento.com globally so
+      # any magento/* package resolves without credentials. The mirror is
+      # configured globally so it applies to all subsequent composer calls in
+      # this job without touching composer.json.
+      - name: Configure Mage-OS mirror
+        run: |
+          composer config --global repositories.mage-os composer https://mirror.mage-os.org/
+
       # ── Install analysis tools ─────────────────────────────────────────────
       #
-      # We cannot run `composer install` from the extension root because
-      # `firegento/fastsimpleimport` (a production dependency) is hosted on
-      # repo.magento.com and requires authentication.
-      #
-      # Instead we create a minimal composer.json that covers only the three
-      # analysis tools — all of which are on public Packagist:
+      # A minimal composer.json covers only the three analysis tools rather
+      # than the full extension to keep CI fast and dependency-free:
       #   • squizlabs/php_codesniffer        (phpcs binary)
       #   • magento/magento-coding-standard  (Magento2 phpcs standard)
       #   • phpmd/phpmd                       (mess detector binary)
@@ -98,9 +104,9 @@ jobs:
       # standard and their dependencies) for known security advisories.
       #
       # NOTE: Production dependencies (symfony/yaml, firegento/fastsimpleimport)
-      # are NOT audited here because they require repo.magento.com authentication.
-      # To audit production dependencies, run `composer audit` inside a Magento
-      # installation that has the extension installed as a path repository.
+      # are NOT audited here because the ci-tools composer.json is intentionally
+      # minimal. To audit production dependencies, run `composer audit` inside a
+      # Magento installation that has the extension installed as a path repository.
       - name: Run composer audit
         run: |
           composer audit \

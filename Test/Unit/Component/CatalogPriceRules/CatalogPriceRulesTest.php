@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -7,183 +8,162 @@ declare(strict_types=1);
  * @copyright 2017 CtiDigital
  */
 
+namespace CtiDigital\Configurator\Test\Unit\Component\CatalogPriceRules;
+
+use CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor;
+use CtiDigital\Configurator\Model\Logging;
+use Magento\CatalogRule\Api\CatalogRuleRepositoryInterface;
+use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
+use Magento\CatalogRule\Model\Rule;
+use Magento\CatalogRule\Model\ResourceModel\Rule\Collection as RuleCollection;
+use Magento\CatalogRule\Model\Rule\Job;
+use Magento\Framework\Exception\CouldNotSaveException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+
 /**
- * RuleInterfaceFactory is a Magento DI-generated class that is only available after
- * running setup:di:compile or after the application has booted and generated code on-demand.
- * The guard below triggers autoloading first (no `false` second arg): if the real generated
- * class is on the autoloader path it will be loaded and getMockBuilder() will reflect it
- * directly. The stub is only declared when the class is genuinely unavailable (e.g. a fresh
- * checkout that has not yet run setup:di:compile).
+ * @SuppressWarnings(PHPMD)
  */
-namespace Magento\CatalogRule\Api\Data {
-    if (!class_exists(\Magento\CatalogRule\Api\Data\RuleInterfaceFactory::class)) {
-        class RuleInterfaceFactory
-        {
-            public function create(array $data = []): \Magento\CatalogRule\Api\Data\RuleInterface
-            {
-                throw new \RuntimeException('Stub only - this method should be mocked in tests.');
-            }
-        }
+class CatalogPriceRulesTest extends TestCase
+{
+    private CatalogPriceRulesProcessor $processor;
+
+    /** @var Logging&MockObject */
+    private MockObject $mockLogger;
+
+    /** @var RuleInterfaceFactory&MockObject */
+    private MockObject $mockRuleFactory;
+
+    /** @var CatalogRuleRepositoryInterface&MockObject */
+    private MockObject $mockRuleRepository;
+
+    /** @var Job&MockObject */
+    private MockObject $mockJob;
+
+    protected function setUp(): void
+    {
+        $this->mockLogger = $this->getMockBuilder(Logging::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->mockRuleFactory = $this->getMockBuilder(RuleInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+
+        $this->mockRuleRepository = $this->getMockBuilder(CatalogRuleRepositoryInterface::class)
+            ->getMock();
+
+        $this->mockJob = $this->getMockBuilder(Job::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['applyAll'])
+            ->getMock();
+
+        $this->processor = new CatalogPriceRulesProcessor(
+            $this->mockLogger,
+            $this->mockRuleFactory,
+            $this->mockRuleRepository,
+            $this->mockJob
+        );
     }
-}
-
-namespace CtiDigital\Configurator\Test\Unit\Component\CatalogPriceRules {
-
-    use CtiDigital\Configurator\Component\CatalogPriceRules\CatalogPriceRulesProcessor;
-    use CtiDigital\Configurator\Model\Logging;
-    use Magento\CatalogRule\Api\CatalogRuleRepositoryInterface;
-    use Magento\CatalogRule\Api\Data\RuleInterfaceFactory;
-    use Magento\CatalogRule\Model\Rule;
-    use Magento\CatalogRule\Model\ResourceModel\Rule\Collection as RuleCollection;
-    use Magento\CatalogRule\Model\Rule\Job;
-    use Magento\Framework\Exception\CouldNotSaveException;
-    use PHPUnit\Framework\MockObject\MockObject;
-    use PHPUnit\Framework\TestCase;
 
     /**
-     * @SuppressWarnings(PHPMD)
+     * Build a Rule mock that returns the given collection from getCollection().
      */
-    class CatalogPriceRulesTest extends TestCase
+    private function buildRuleWithCollection(MockObject $collection): MockObject
     {
-        private CatalogPriceRulesProcessor $processor;
+        $rule = $this->getMockBuilder(Rule::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $rule->method('getCollection')->willReturn($collection);
+        return $rule;
+    }
 
-        /** @var Logging&MockObject */
-        private MockObject $mockLogger;
+    /**
+     * Build a RuleCollection mock with the given size and first item.
+     */
+    private function buildCollection(int $size, MockObject $firstItem): MockObject
+    {
+        $collection = $this->getMockBuilder(RuleCollection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $collection->method('addFieldToFilter')->willReturnSelf();
+        $collection->method('getSize')->willReturn($size);
+        $collection->method('getFirstItem')->willReturn($firstItem);
+        return $collection;
+    }
 
-        /** @var RuleInterfaceFactory&MockObject */
-        private MockObject $mockRuleFactory;
+    public function testProcessingEmptyRulesData(): void
+    {
+        $this->mockRuleFactory->expects($this->never())->method('create');
+        $this->mockRuleRepository->expects($this->never())->method('save');
 
-        /** @var CatalogRuleRepositoryInterface&MockObject */
-        private MockObject $mockRuleRepository;
+        $loggedMessages = [];
+        $this->mockLogger->method('logInfo')
+            ->willReturnCallback(function (string $message) use (&$loggedMessages): void {
+                $loggedMessages[] = $message;
+            });
 
-        /** @var Job&MockObject */
-        private MockObject $mockJob;
+        $this->processor->setData([])->process();
 
-        protected function setUp(): void
-        {
-            $this->mockLogger = $this->getMockBuilder(Logging::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->assertContains('Initializing configuration of Catalog Price Rules.', $loggedMessages);
+        $this->assertContains('Catalog price rules configuration completed.', $loggedMessages);
+    }
 
-            $this->mockRuleFactory = $this->getMockBuilder(RuleInterfaceFactory::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['create'])
-                ->getMock();
+    public function testValidRuleProcessing(): void
+    {
+        $rules = [
+            'rule1' => ['name' => 'Test Rule', 'is_active' => 1, 'discount_amount' => 20],
+        ];
 
-            $this->mockRuleRepository = $this->getMockBuilder(CatalogRuleRepositoryInterface::class)
-                ->getMock();
+        // Existing rule (getId returns non-null → update path, no second create() call)
+        $existingRule = $this->getMockBuilder(Rule::class)->disableOriginalConstructor()->getMock();
+        $existingRule->method('getId')->willReturn('1');
+        $existingRule->method('getData')->willReturn([]);
 
-            $this->mockJob = $this->getMockBuilder(Job::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['applyAll'])
-                ->getMock();
+        $collection = $this->buildCollection(1, $existingRule);
+        $ruleForLookup = $this->buildRuleWithCollection($collection);
 
-            $this->processor = new CatalogPriceRulesProcessor(
-                $this->mockLogger,
-                $this->mockRuleFactory,
-                $this->mockRuleRepository,
-                $this->mockJob
-            );
-        }
+        $this->mockRuleFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($ruleForLookup);
 
-        /**
-         * Build a Rule mock that returns the given collection from getCollection().
-         */
-        private function buildRuleWithCollection(MockObject $collection): MockObject
-        {
-            $rule = $this->getMockBuilder(Rule::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-            $rule->method('getCollection')->willReturn($collection);
-            return $rule;
-        }
+        $this->mockRuleRepository->expects($this->once())
+            ->method('save')
+            ->with($existingRule);
 
-        /**
-         * Build a RuleCollection mock with the given size and first item.
-         */
-        private function buildCollection(int $size, MockObject $firstItem): MockObject
-        {
-            $collection = $this->getMockBuilder(RuleCollection::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-            $collection->method('addFieldToFilter')->willReturnSelf();
-            $collection->method('getSize')->willReturn($size);
-            $collection->method('getFirstItem')->willReturn($firstItem);
-            return $collection;
-        }
+        $this->processor->setData($rules)->setConfig([])->process();
+    }
 
-        public function testProcessingEmptyRulesData(): void
-        {
-            $this->mockRuleFactory->expects($this->never())->method('create');
-            $this->mockRuleRepository->expects($this->never())->method('save');
+    public function testProcessLogErrorWhenRuleSaveException(): void
+    {
+        $errMsg = __('some error msg');
+        $rules = ['rule1' => ['name' => 'Test Rule']];
 
-            $loggedMessages = [];
-            $this->mockLogger->method('logInfo')
-                ->willReturnCallback(function (string $message) use (&$loggedMessages): void {
-                    $loggedMessages[] = $message;
-                });
+        $existingRule = $this->getMockBuilder(Rule::class)->disableOriginalConstructor()->getMock();
+        $existingRule->method('getId')->willReturn('1');
+        $existingRule->method('getData')->willReturn([]);
 
-            $this->processor->setData([])->process();
+        $collection = $this->buildCollection(1, $existingRule);
+        $ruleForLookup = $this->buildRuleWithCollection($collection);
 
-            $this->assertContains('Initializing configuration of Catalog Price Rules.', $loggedMessages);
-            $this->assertContains('Catalog price rules configuration completed.', $loggedMessages);
-        }
+        $this->mockRuleFactory->method('create')->willReturn($ruleForLookup);
 
-        public function testValidRuleProcessing(): void
-        {
-            $rules = [
-                'rule1' => ['name' => 'Test Rule', 'is_active' => 1, 'discount_amount' => 20],
-            ];
+        $this->mockRuleRepository->expects($this->once())
+            ->method('save')
+            ->willThrowException(new CouldNotSaveException($errMsg));
 
-            // Existing rule (getId returns non-null → update path, no second create() call)
-            $existingRule = $this->getMockBuilder(Rule::class)->disableOriginalConstructor()->getMock();
-            $existingRule->method('getId')->willReturn('1');
-            $existingRule->method('getData')->willReturn([]);
+        $this->mockLogger->expects($this->atLeastOnce())
+            ->method('logError')
+            ->with((string) $errMsg);
 
-            $collection = $this->buildCollection(1, $existingRule);
-            $ruleForLookup = $this->buildRuleWithCollection($collection);
+        $this->processor->setData($rules)->setConfig([])->process();
+    }
 
-            $this->mockRuleFactory->expects($this->once())
-                ->method('create')
-                ->willReturn($ruleForLookup);
+    public function testApplyingRules(): void
+    {
+        $this->mockJob->expects($this->once())->method('applyAll');
 
-            $this->mockRuleRepository->expects($this->once())
-                ->method('save')
-                ->with($existingRule);
-
-            $this->processor->setData($rules)->setConfig([])->process();
-        }
-
-        public function testProcessLogErrorWhenRuleSaveException(): void
-        {
-            $errMsg = __('some error msg');
-            $rules = ['rule1' => ['name' => 'Test Rule']];
-
-            $existingRule = $this->getMockBuilder(Rule::class)->disableOriginalConstructor()->getMock();
-            $existingRule->method('getId')->willReturn('1');
-            $existingRule->method('getData')->willReturn([]);
-
-            $collection = $this->buildCollection(1, $existingRule);
-            $ruleForLookup = $this->buildRuleWithCollection($collection);
-
-            $this->mockRuleFactory->method('create')->willReturn($ruleForLookup);
-
-            $this->mockRuleRepository->expects($this->once())
-                ->method('save')
-                ->willThrowException(new CouldNotSaveException($errMsg));
-
-            $this->mockLogger->expects($this->atLeastOnce())
-                ->method('logError')
-                ->with((string) $errMsg);
-
-            $this->processor->setData($rules)->setConfig([])->process();
-        }
-
-        public function testApplyingRules(): void
-        {
-            $this->mockJob->expects($this->once())->method('applyAll');
-
-            $this->processor->setData([])->setConfig(['apply_all' => true])->process();
-        }
+        $this->processor->setData([])->setConfig(['apply_all' => true])->process();
     }
 }

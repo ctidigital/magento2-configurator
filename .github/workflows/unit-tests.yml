@@ -1,0 +1,39 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [master, develop, "dev/**"]
+  pull_request:
+    branches: [master, develop]
+
+jobs:
+  unit-tests:
+    name: PHP ${{ matrix.php }} Unit Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.3", "8.4"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # No extensions beyond the PHP defaults are needed.
+          # No composer install is required — tests use a standalone bootstrap
+          # with stub declarations for all Magento / third-party classes.
+          tools: none
+          coverage: none
+
+      - name: Download PHPUnit
+        run: |
+          curl -sL https://phar.phpunit.de/phpunit-10.phar -o phpunit.phar
+          php phpunit.phar --version
+
+      - name: Run unit tests
+        run: php phpunit.phar --configuration phpunit.xml

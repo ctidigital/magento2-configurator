@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Standalone PHPUnit configuration.
+
+    Run with:
+        php phpunit.phar -(- configuration phpunit.xml
+
+    Or, if PHPUnit is installed via Composer:
+        vendor/bin/phpunit
+
+    This config uses Test/bootstrap.php which registers the extension PSR-4
+    autoloader and declares stubs for all Magento / third-party classes. It
+    does NOT require a Magento installation and is the configuration used by
+    GitHub Actions CI.
+
+    The legacy phpunit_config.xml is retained for running inside the Magento
+    dev/tests/unit/ harness (Docker / local Magento install).
+-->
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+    bootstrap="Test/bootstrap.php"
+    colors="true"
+    cacheDirectory=".phpunit.cache"
+>
+    <testsuites>
+        <testsuite name="CtiDigital Configurator Unit Tests">
+            <directory suffix="Test.php">Test/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <ini name="date.timezone" value="Europe/London"/>
+    </php>
+</phpunit>

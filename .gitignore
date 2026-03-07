@@ -1,2 +1,12 @@
+# IDE
 .idea/
+
+# Local dev notes
 TODO.md
+
+# PHPUnit
+.phpunit.cache/
+phpunit.phar
+
+# Composer (no vendor dir expected — extension installs inside Magento as a path repo)
+vendor/

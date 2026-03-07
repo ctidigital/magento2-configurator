@@ -17,40 +17,12 @@ use CtiDigital\Configurator\Api\LoggerInterface;
  */
 class AttributeOption
 {
-    /**
-     * @var ProductAttributeRepositoryInterface
-     */
-    protected ProductAttributeRepositoryInterface $attributeRepository;
-
-    /**
-     * @var AttributeOptionManagementInterface
-     */
-    protected AttributeOptionManagementInterface $attrOptionManagement;
-
-    /**
-     * @var AttributeOptionLabelInterfaceFactory
-     */
-    protected AttributeOptionLabelInterfaceFactory $labelFactory;
-
-    /**
-     * @var AttributeOptionInterfaceFactory
-     */
-    protected AttributeOptionInterfaceFactory $optionFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected LoggerInterface $log;
-
     private array $attributes = [];
 
     private array $attributeValues = [];
 
     private array $allowedInputs = ['select', 'multiselect'];
 
-    /**
-     * @var array
-     */
     private array $ignoreAttributes = [
         'visibility',
         'tax_class_id'
@@ -58,22 +30,13 @@ class AttributeOption
 
     private array $newValues = [];
 
-    /**
-     * AttributeOption constructor.
-     */
     public function __construct(
-        ProductAttributeRepositoryInterface $attributeRepository,
-        AttributeOptionManagementInterface $attrOptionManagement,
-        AttributeOptionLabelInterfaceFactory $labelFactory,
-        AttributeOptionInterfaceFactory $optionFactory,
-        LoggerInterface $log
-    ) {
-        $this->attributeRepository = $attributeRepository;
-        $this->attrOptionManagement = $attrOptionManagement;
-        $this->labelFactory = $labelFactory;
-        $this->optionFactory = $optionFactory;
-        $this->log = $log;
-    }
+        protected readonly ProductAttributeRepositoryInterface $attributeRepository,
+        protected readonly AttributeOptionManagementInterface $attrOptionManagement,
+        protected readonly AttributeOptionLabelInterfaceFactory $labelFactory,
+        protected readonly AttributeOptionInterfaceFactory $optionFactory,
+        protected readonly LoggerInterface $log
+    ) {}
 
     public function processAttributeValues(mixed $code, mixed $value): void
     {

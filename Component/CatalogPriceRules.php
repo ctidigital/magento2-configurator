@@ -21,29 +21,10 @@ class CatalogPriceRules implements ComponentInterface
 
     protected string $description = 'Component to manage Catalog Price Rules';
 
-    /**
-     * @var CatalogPriceRulesProcessor
-     */
-    private CatalogPriceRulesProcessor $processor;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * CatalogPriceRules constructor.
-     *
-     * @param CatalogPriceRulesProcessor $processor
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        CatalogPriceRulesProcessor $processor,
-        LoggerInterface $log
-    ) {
-        $this->processor = $processor;
-        $this->log = $log;
-    }
+        private readonly CatalogPriceRulesProcessor $processor,
+        private readonly LoggerInterface $log
+    ) {}
 
     /**
      * Process the data and populate the Magento Database.

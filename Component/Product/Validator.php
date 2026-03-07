@@ -29,26 +29,13 @@ class Validator
      */
     const IMPORT_DATA_ACTION_NULLIFY = 'nullify';
 
-    /**
-     * @var ImportAdapterFactoryInterface
-     */
-    private ImportAdapterFactoryInterface $importAdapterFactory;
-
-    /**
-     * @var array
-     */
     private array $logs = [];
 
     private array $removedRows = [];
 
-    /**
-     * Validator constructor.
-     */
     public function __construct(
-        ImportAdapterFactoryInterface $importAdapterFactory
-    ) {
-        $this->importAdapterFactory = $importAdapterFactory;
-    }
+        private readonly ImportAdapterFactoryInterface $importAdapterFactory
+    ) {}
 
     public function getLogs(): array
     {

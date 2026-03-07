@@ -24,67 +24,16 @@ class Config implements ComponentInterface
     protected string $name = 'Configuration';
     protected string $description = 'Component to set the store/system configuration values';
 
-    /**
-     * @var ConfigResource
-     */
-    protected ConfigResource $configResource;
-
-    /**
-     * @var ScopeConfig
-     */
-    protected ScopeConfig $scopeConfig;
-
-    /**
-     * @var CollectionFactory
-     */
-    protected CollectionFactory $collectionFactory;
-
-    /**
-     * @var EncryptorInterface
-     */
-    protected EncryptorInterface $encryptor;
-
-    /**
-     * @var WebsiteFactory
-     */
-    protected WebsiteFactory $websiteFactory;
-
-    /**
-     * @var StoreFactory
-     */
-    protected StoreFactory $storeFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * @var ScopeConfig\Initial
-     */
-    private ScopeConfig\Initial $initialConfig;
-
-    /**
-     * Config constructor.
-     */
     public function __construct(
-        ConfigResource $configResource,
-        ScopeConfig $scopeConfig,
-        ScopeConfig\Initial $initialConfig,
-        CollectionFactory $collectionFactory,
-        EncryptorInterface $encryptor,
-        WebsiteFactory $websiteFactory,
-        StoreFactory $storeFactory,
-        LoggerInterface $log
+        protected readonly ConfigResource $configResource,
+        protected readonly ScopeConfig $scopeConfig,
+        private readonly ScopeConfig\Initial $initialConfig,
+        protected readonly CollectionFactory $collectionFactory,
+        protected readonly EncryptorInterface $encryptor,
+        protected readonly WebsiteFactory $websiteFactory,
+        protected readonly StoreFactory $storeFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->configResource = $configResource;
-        $this->scopeConfig = $scopeConfig;
-        $this->initialConfig = $initialConfig;
-        $this->collectionFactory = $collectionFactory;
-        $this->encryptor = $encryptor;
-        $this->websiteFactory = $websiteFactory;
-        $this->storeFactory = $storeFactory;
-        $this->log = $log;
     }
 
     /**

@@ -20,32 +20,11 @@ class AdminRoles implements ComponentInterface
     protected string $name = 'Admin Roles';
     protected string $description = 'Component to create Admin Roles';
 
-    /**
-     * @var RoleFactory
-     */
-    protected RoleFactory $roleFactory;
-
-    /**
-     * @var RulesFactory
-     */
-    protected RulesFactory $rulesFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * AdminRoles constructor.
-     */
     public function __construct(
-        RoleFactory $roleFactory,
-        RulesFactory $rulesFactory,
-        LoggerInterface $log
+        protected readonly RoleFactory $roleFactory,
+        protected readonly RulesFactory $rulesFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->roleFactory = $roleFactory;
-        $this->rulesFactory = $rulesFactory;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

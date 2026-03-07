@@ -8,13 +8,9 @@ use CtiDigital\Configurator\Api\ComponentListInterface;
 
 class ComponentList implements ComponentListInterface
 {
-    private array $components;
-
     public function __construct(
-        array $components = []
-    ) {
-        $this->components = $components;
-    }
+        private readonly array $components = []
+    ) {}
 
     /**
      * @inheritDoc

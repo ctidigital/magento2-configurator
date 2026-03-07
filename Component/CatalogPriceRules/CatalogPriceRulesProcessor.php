@@ -25,45 +25,12 @@ class CatalogPriceRulesProcessor implements ComponentProcessorInterface
 
     private array $config = [];
 
-    /**
-     * @var RuleInterfaceFactory
-     */
-    private RuleInterfaceFactory $ruleFactory;
-
-    /**
-     * @var CatalogRuleRepositoryInterface
-     */
-    private CatalogRuleRepositoryInterface $catalogRuleRepo;
-
-    /**
-     * @var Job
-     */
-    private Job $ruleJob;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $logger;
-
-    /**
-     * CatalogPriceRules constructor.
-     *
-     * @param LoggerInterface $logger
-     * @param RuleInterfaceFactory $ruleFactory
-     * @param CatalogRuleRepositoryInterface $catalogRuleRepo
-     * @param Job $ruleJob
-     */
     public function __construct(
-        LoggerInterface $logger,
-        RuleInterfaceFactory $ruleFactory,
-        CatalogRuleRepositoryInterface $catalogRuleRepo,
-        Job $ruleJob
-    ) {
-        $this->logger = $logger;
-        $this->ruleFactory = $ruleFactory;
-        $this->catalogRuleRepo = $catalogRuleRepo;
-        $this->ruleJob = $ruleJob;
-    }
+        private readonly LoggerInterface $logger,
+        private readonly RuleInterfaceFactory $ruleFactory,
+        private readonly CatalogRuleRepositoryInterface $catalogRuleRepo,
+        private readonly Job $ruleJob
+    ) {}
 
     /**
      * Set the data to process.

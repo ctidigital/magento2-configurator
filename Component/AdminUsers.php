@@ -18,34 +18,11 @@ class AdminUsers implements ComponentInterface
     protected string $name = 'Admin Users';
     protected string $description = 'Component to create Admin Users';
 
-    /**
-     * Factory class for user model.
-     *
-     * @var UserFactory
-     */
-    protected UserFactory $userFactory;
-
-    /**
-     * @var RoleFactory
-     */
-    protected RoleFactory $roleFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * AdminUsers constructor.
-     */
     public function __construct(
-        UserFactory $userFactory,
-        RoleFactory $roleFactory,
-        LoggerInterface $log
+        protected readonly UserFactory $userFactory,
+        protected readonly RoleFactory $roleFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->userFactory = $userFactory;
-        $this->roleFactory = $roleFactory;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

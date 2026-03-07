@@ -27,20 +27,11 @@ class Rewrites implements ComponentInterface
     const REDIRECT_TYPE_CSV_KEY = 'redirectType';
     const DESCRIPTION_CSV_KEY = 'description';
 
-    protected UrlPersistInterface $urlPersist;
-
-    protected UrlRewriteFactory $urlRewriteFactory;
-
-    private LoggerInterface $log;
-
     public function __construct(
-        UrlPersistInterface $urlPersist,
-        UrlRewriteFactory $urlRewriteFactory,
-        LoggerInterface $log
+        protected readonly UrlPersistInterface $urlPersist,
+        protected readonly UrlRewriteFactory $urlRewriteFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->urlPersist = $urlPersist;
-        $this->urlRewriteFactory = $urlRewriteFactory;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

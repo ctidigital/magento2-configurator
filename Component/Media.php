@@ -16,22 +16,10 @@ class Media implements ComponentInterface
     protected string $name = 'Media';
     protected string $description = 'Component to download/maintain media.';
 
-    /**
-     * @var DirectoryList
-     */
-    protected DirectoryList $directoryList;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
     public function __construct(
-        DirectoryList $directoryList,
-        LoggerInterface $log
+        protected readonly DirectoryList $directoryList,
+        private readonly LoggerInterface $log
     ) {
-        $this->directoryList = $directoryList;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

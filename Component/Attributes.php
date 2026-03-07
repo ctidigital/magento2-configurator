@@ -22,39 +22,8 @@ class Attributes implements ComponentInterface
     protected string $name = 'Attributes';
     protected string $description = 'Component to create/maintain attributes.';
 
-    /**
-     * @var EavSetup
-     */
-    protected EavSetup $eavSetup;
-
-    /**
-     * @var array
-     */
     protected array $cachedAttributeConfig;
 
-    /**
-     * @var AttributeRepositoryInterface
-     */
-    protected AttributeRepositoryInterface $attributeRepository;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory
-     */
-    protected \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory;
-
-    /**
-     * @var \Magento\Eav\Model\Config
-     */
-    protected \Magento\Eav\Model\Config $eavConfig;
-
-    /**
-     * @var array
-     */
     protected array $attributeConfigMap = [
         'label' => 'frontend_label',
         'type' => 'backend_type',
@@ -77,9 +46,6 @@ class Attributes implements ComponentInterface
         'used_for_promo_rules' => 'is_used_for_promo_rules'
     ];
 
-    /**
-     * @var array
-     */
     protected array $skipCheck = [
         'option',
         'used_in_forms'
@@ -91,26 +57,15 @@ class Attributes implements ComponentInterface
 
     protected bool $attributeExists = false;
 
-    /**
-     * @var array
-     */
     protected array $swatchMap = [];
 
-    /**
-     * Attributes constructor.
-     */
     public function __construct(
-        EavSetup $eavSetup,
-        AttributeRepositoryInterface $attributeRepository,
-        LoggerInterface $log,
-        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
-        \Magento\Eav\Model\Config $eavConfig
+        protected readonly EavSetup $eavSetup,
+        protected readonly AttributeRepositoryInterface $attributeRepository,
+        private readonly LoggerInterface $log,
+        protected readonly \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
+        protected readonly \Magento\Eav\Model\Config $eavConfig
     ) {
-        $this->eavSetup = $eavSetup;
-        $this->attributeRepository = $attributeRepository;
-        $this->log = $log;
-        $this->attrOptionCollectionFactory = $attrOptionCollectionFactory;
-        $this->eavConfig = $eavConfig;
     }
 
     public function execute(mixed $data = null): void

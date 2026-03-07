@@ -24,22 +24,10 @@ class Sql implements ComponentInterface
 
     protected string $description = 'Component for an execution of custom queries';
 
-    private SqlSplitProcessor $processor;
-
-    private LoggerInterface $log;
-
-    /**
-     * Sql constructor.
-     * @param SqlSplitProcessor $processor
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        SqlSplitProcessor $processor,
-        LoggerInterface $log
-    ) {
-        $this->processor = $processor;
-        $this->log = $log;
-    }
+        private readonly SqlSplitProcessor $processor,
+        private readonly LoggerInterface $log
+    ) {}
 
     /**
      * This method should be used to process the data and populate the Magento Database.

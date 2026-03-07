@@ -54,62 +54,20 @@ class Products implements ComponentInterface
         'short_description'
     ];
 
-    /**
-     * @var ImporterFactory
-     */
-    protected ImporterFactory $importerFactory;
-
-    /**
-     * @var ProductFactory
-     */
-    protected ProductFactory $productFactory;
-
-    /**
-     * @var Image
-     */
-    protected Image $image;
-
-    /**
-     * @var ValidatorFactory
-     */
-    protected ValidatorFactory $validatorFactory;
-
-    /**
-     * @var AttributeOption
-     */
-    protected AttributeOption $attributeOption;
-
-    private LoggerInterface $log;
-
     private array $successProducts = [];
 
     private array $skippedProducts = [];
 
     private int|false $skuColumn;
 
-    /**
-     * Products constructor.
-     * @param ImporterFactory $importerFactory
-     * @param ProductFactory $productFactory
-     * @param Image $image
-     * @param ValidatorFactory $validatorFactory
-     * @param AttributeOption $attributeOption
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        ImporterFactory $importerFactory,
-        ProductFactory $productFactory,
-        Image $image,
-        ValidatorFactory $validatorFactory,
-        AttributeOption $attributeOption,
-        LoggerInterface $log
+        protected readonly ImporterFactory $importerFactory,
+        protected readonly ProductFactory $productFactory,
+        protected readonly Image $image,
+        protected readonly ValidatorFactory $validatorFactory,
+        protected readonly AttributeOption $attributeOption,
+        private readonly LoggerInterface $log
     ) {
-        $this->productFactory= $productFactory;
-        $this->importerFactory = $importerFactory;
-        $this->image = $image;
-        $this->validatorFactory = $validatorFactory;
-        $this->attributeOption = $attributeOption;
-        $this->log = $log;
     }
 
     /**

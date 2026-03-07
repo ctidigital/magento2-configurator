@@ -14,42 +14,14 @@ use Magento\Framework\Webapi\Rest\Request;
 
 class Image
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected LoggerInterface $log;
-
-    /**
-     * @var Filesystem
-     */
-    protected Filesystem $filesystem;
-
-    /**
-     * @var Config
-     */
-    protected Config $importerConfig;
-
     private string $separator = ';';
 
-    private ClientFactory $clientFactory;
-
-    /**
-     * @param Filesystem $filesystem
-     * @param Config $importerConfig
-     * @param ClientFactory $clientFactory
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        Filesystem $filesystem,
-        Config $importerConfig,
-        ClientFactory $clientFactory,
-        LoggerInterface $log
-    ) {
-        $this->filesystem = $filesystem;
-        $this->importerConfig = $importerConfig;
-        $this->clientFactory = $clientFactory;
-        $this->log = $log;
-    }
+        protected readonly Filesystem $filesystem,
+        protected readonly Config $importerConfig,
+        private readonly ClientFactory $clientFactory,
+        protected readonly LoggerInterface $log
+    ) {}
 
     public function setSeparator(string $separator): void
     {

@@ -6,7 +6,6 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\Data\AttributeSetInterface;
 use Magento\Eav\Setup\EavSetup;
@@ -21,32 +20,11 @@ class AttributeSets implements ComponentInterface
     protected string $name = 'Attribute Sets';
     protected string $description = 'Component to create/maintain attribute sets.';
 
-    /**
-     * @var EavSetup
-     */
-    protected EavSetup $eavSetup;
-
-    /**
-     * @var AttributeSetRepository
-     */
-    protected AttributeSetRepository $attributeSetRepository;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * AttributeSets constructor.
-     */
     public function __construct(
-        EavSetup $eavSetup,
-        AttributeSetRepositoryInterface $attributeSetRepository,
-        LoggerInterface $log
+        protected readonly EavSetup $eavSetup,
+        protected readonly AttributeSetRepository $attributeSetRepository,
+        private readonly LoggerInterface $log
     ) {
-        $this->eavSetup = $eavSetup;
-        $this->attributeSetRepository = $attributeSetRepository;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

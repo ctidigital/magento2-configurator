@@ -15,23 +15,14 @@ class ProductLinks implements ComponentInterface
     protected string $name = 'Product Links';
     protected string $description = 'Component to create and maintain product links (related/up-sells/cross-sells)';
 
-    protected ProductLinkInterfaceFactory $productLinkFactory;
-
-    protected ProductRepositoryInterface $productRepository;
-
-    private LoggerInterface $log;
-
     protected array $allowedLinks = ['relation', 'up_sell', 'cross_sell'];
     protected array $linkTypeMap = ['relation' => 'related', 'up_sell' => 'upsell', 'cross_sell' => 'crosssell'];
 
     public function __construct(
-        ProductRepositoryInterface $productRepository,
-        ProductLinkInterfaceFactory $productLinkFactory,
-        LoggerInterface $log
+        protected readonly ProductRepositoryInterface $productRepository,
+        protected readonly ProductLinkInterfaceFactory $productLinkFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->productRepository = $productRepository;
-        $this->productLinkFactory = $productLinkFactory;
-        $this->log = $log;
     }
 
     /**

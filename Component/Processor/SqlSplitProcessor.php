@@ -15,31 +15,12 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 
 class SqlSplitProcessor
 {
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
+    private readonly AdapterInterface $connection;
 
-    /**
-     * @var ResourceConnection
-     */
-    private ResourceConnection $resource;
-
-    /**
-     * @var AdapterInterface
-     */
-    private AdapterInterface $connection;
-
-    /**
-     * @param LoggerInterface $log
-     * @param ResourceConnection $resource
-     */
     public function __construct(
-        LoggerInterface $log,
-        ResourceConnection $resource
+        private readonly LoggerInterface $log,
+        private readonly ResourceConnection $resource
     ) {
-        $this->log = $log;
-        $this->resource = $resource;
         $this->connection = $resource->getConnection();
     }
 

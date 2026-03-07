@@ -21,39 +21,17 @@ class TieredPrices implements ComponentInterface
     protected string $name = 'Tiered Prices';
     protected string $description = 'Component to import tiered prices using a CSV file.';
 
-    /**
-     * @var ImporterFactory
-     */
-    protected ImporterFactory $importerFactory;
-
-    /**
-     * @var AttributeOption
-     */
-    protected AttributeOption $attributeOption;
-
-    private LoggerInterface $log;
-
     private array $successPrices = [];
 
     private array $skippedPrices = [];
 
     private int|false $skuColumn;
 
-    /**
-     * TieredPrices constructor.
-     * @param ImporterFactory $importerFactory
-     * @param AttributeOption $attributeOption
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        ImporterFactory $importerFactory,
-        AttributeOption $attributeOption,
-        LoggerInterface $log
-    ) {
-        $this->importerFactory = $importerFactory;
-        $this->attributeOption = $attributeOption;
-        $this->log = $log;
-    }
+        protected readonly ImporterFactory $importerFactory,
+        protected readonly AttributeOption $attributeOption,
+        private readonly LoggerInterface $log
+    ) {}
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)

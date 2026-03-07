@@ -9,7 +9,6 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Cms\Model\Block;
 use Magento\Cms\Model\ResourceModel\Block\Collection;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\DataObject;
 use Magento\Store\Model\Store;
 
@@ -19,41 +18,11 @@ class Blocks implements ComponentInterface
     protected string $name = 'Blocks';
     protected string $description = 'Component to create/maintain blocks.';
 
-    /**
-     * @var BlockInterfaceFactory
-     */
-    protected BlockInterfaceFactory $blockFactory;
-
-    /**
-     * @var Store
-     */
-    protected Store $storeManager;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    protected SearchCriteriaBuilder $searchBuilder;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * Blocks constructor.
-     *
-     * @param BlockInterfaceFactory $blockFactory
-     * @param Store $store
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        BlockInterfaceFactory $blockFactory,
-        Store $store,
-        LoggerInterface $log
+        protected readonly BlockInterfaceFactory $blockFactory,
+        protected readonly Store $storeManager,
+        private readonly LoggerInterface $log
     ) {
-        $this->blockFactory = $blockFactory;
-        $this->storeManager = $store;
-        $this->log = $log;
     }
 
     /**

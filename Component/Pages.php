@@ -10,7 +10,6 @@ use Magento\Cms\Api\Data\PageInterfaceFactory;
 use Magento\Cms\Api\PageRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Api\StoreRepositoryInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 class Pages implements ComponentInterface
 {
@@ -18,48 +17,16 @@ class Pages implements ComponentInterface
     protected string $name = 'Pages';
     protected string $description = 'Component to create/maintain pages.';
 
-    /**
-     * @var array
-     */
     protected array $requiredFields = ['title'];
 
-    /**
-     * @var array
-     */
     protected array $defaultValues = ['page_layout' => 'empty', 'is_active' => '1'];
 
-    /** @var PageRepositoryInterface */
-    protected PageRepositoryInterface $pageRepository;
-
-    /** @var PageInterfaceFactory */
-    protected PageInterfaceFactory $pageFactory;
-
-    /** @var StoreManagerInterface */
-    protected StoreManagerInterface $storeManager;
-
-    /**
-     * @var StoreRepositoryInterface
-     */
-    private StoreRepositoryInterface $storeRepository;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * Pages constructor.
-     */
     public function __construct(
-        PageRepositoryInterface $pageRepository,
-        PageInterfaceFactory $pageFactory,
-        StoreRepositoryInterface $storeRepository,
-        LoggerInterface $log
+        protected readonly PageRepositoryInterface $pageRepository,
+        protected readonly PageInterfaceFactory $pageFactory,
+        private readonly StoreRepositoryInterface $storeRepository,
+        private readonly LoggerInterface $log
     ) {
-        $this->pageFactory = $pageFactory;
-        $this->pageRepository = $pageRepository;
-        $this->storeRepository = $storeRepository;
-        $this->log = $log;
     }
 
     /**

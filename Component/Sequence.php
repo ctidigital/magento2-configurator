@@ -13,44 +13,16 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 
 class Sequence implements ComponentInterface
 {
-    /**
-     * @var Builder
-     */
-    protected Builder $sequenceBuilder;
-
-    /**
-     * @var EntityPool
-     */
-    protected EntityPool $entityPool;
-
-    /**
-     * @var Config
-     */
-    protected Config $sequenceConfig;
-
-    /**
-     * @var StoreRepositoryInterface
-     */
-    protected StoreRepositoryInterface $storeRepository;
-
-    protected LoggerInterface $logger;
-
     protected string $alias = 'sequence';
     protected string $description = 'Component to allow manual configuring of the sequence tables.';
 
     public function __construct(
-        Builder $sequenceBuilder,
-        EntityPool $entityPool,
-        Config $sequenceConfig,
-        StoreRepositoryInterface $repository,
-        LoggerInterface $logger
-    ) {
-        $this->sequenceBuilder = $sequenceBuilder;
-        $this->entityPool = $entityPool;
-        $this->sequenceConfig = $sequenceConfig;
-        $this->storeRepository = $repository;
-        $this->logger = $logger;
-    }
+        protected readonly Builder $sequenceBuilder,
+        protected readonly EntityPool $entityPool,
+        protected readonly Config $sequenceConfig,
+        protected readonly StoreRepositoryInterface $storeRepository,
+        protected readonly LoggerInterface $logger
+    ) {}
 
     public function execute(mixed $data = null): void
     {

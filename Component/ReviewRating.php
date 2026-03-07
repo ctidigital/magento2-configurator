@@ -29,28 +29,13 @@ class ReviewRating implements ComponentInterface
 
     protected mixed $entityId = null;
 
-    protected RatingFactory $ratingFactory;
-
-    protected StoreRepositoryInterface $storeRepository;
-
-    protected OptionFactory $optionFactory;
-
-    protected EntityFactory $entityFactory;
-
-    private LoggerInterface $log;
-
     public function __construct(
-        RatingFactory $ratingFactory,
-        StoreRepositoryInterface $storeRepository,
-        OptionFactory $optionFactory,
-        EntityFactory $entityFactory,
-        LoggerInterface $log
+        protected readonly RatingFactory $ratingFactory,
+        protected readonly StoreRepositoryInterface $storeRepository,
+        protected readonly OptionFactory $optionFactory,
+        protected readonly EntityFactory $entityFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->ratingFactory = $ratingFactory;
-        $this->storeRepository = $storeRepository;
-        $this->optionFactory = $optionFactory;
-        $this->entityFactory = $entityFactory;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

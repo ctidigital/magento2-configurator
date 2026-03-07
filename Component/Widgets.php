@@ -21,57 +21,14 @@ class Widgets implements ComponentInterface
     protected string $name = 'Widgets';
     protected string $description = 'Component to manage CMS Widgets';
 
-    /**
-     * @var WidgetCollection
-     */
-    private WidgetCollection $widgetCollection;
-
-    /**
-     * @var WidgetInstanceFactory
-     */
-    private WidgetInstanceFactory $widgetFactory;
-
-    /**
-     * @var ThemeCollection
-     */
-    private ThemeCollection $themeCollection;
-
-    /**
-     * @var StoreFactory
-     */
-    private StoreFactory $storeFactory;
-
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    private LoggerInterface $log;
-
-    /**
-     * Widgets constructor.
-     * @param WidgetCollection $collection
-     * @param WidgetInstanceFactory $widgetFactory
-     * @param StoreFactory $storeFactory
-     * @param ThemeCollection $themeCollection
-     * @param SerializerInterface $serializer
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        WidgetCollection $collection,
-        WidgetInstanceFactory $widgetFactory,
-        StoreFactory $storeFactory,
-        ThemeCollection $themeCollection,
-        SerializerInterface $serializer,
-        LoggerInterface $log
-    ) {
-        $this->widgetCollection = $collection;
-        $this->widgetFactory = $widgetFactory;
-        $this->themeCollection = $themeCollection;
-        $this->storeFactory = $storeFactory;
-        $this->serializer = $serializer;
-        $this->log = $log;
-    }
+        private readonly WidgetCollection $widgetCollection,
+        private readonly WidgetInstanceFactory $widgetFactory,
+        private readonly StoreFactory $storeFactory,
+        private readonly ThemeCollection $themeCollection,
+        private readonly SerializerInterface $serializer,
+        private readonly LoggerInterface $log
+    ) {}
 
     public function execute(mixed $data = null): void
     {

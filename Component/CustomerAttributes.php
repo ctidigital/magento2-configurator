@@ -36,24 +36,6 @@ class CustomerAttributes extends Attributes
         'system' => 'is_system'
     ];
 
-    /**
-     * @var CustomerSetupFactory
-     */
-    protected CustomerSetupFactory $customerSetup;
-
-    /**
-     * @var Attribute
-     */
-    protected Attribute $attributeResource;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * @var array
-     */
     protected array $defaultForms = [
         'values' => [
             'customer_account_create',
@@ -63,23 +45,17 @@ class CustomerAttributes extends Attributes
         ]
     ];
 
-    /**
-     * CustomerAttributes constructor.
-     */
     public function __construct(
         EavSetup $eavSetup,
         AttributeRepository $attributeRepository,
-        CustomerSetupFactory $customerSetupFactory,
-        Attribute $attributeResource,
-        LoggerInterface $log,
+        protected readonly CustomerSetupFactory $customerSetup,
+        protected readonly Attribute $attributeResource,
+        private readonly LoggerInterface $log,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
         \Magento\Eav\Model\Config $eavConfig
     ) {
         parent::__construct($eavSetup, $attributeRepository, $log, $attrOptionCollectionFactory, $eavConfig);
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
-        $this->customerSetup = $customerSetupFactory;
-        $this->attributeResource = $attributeResource;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

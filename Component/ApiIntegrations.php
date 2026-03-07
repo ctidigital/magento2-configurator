@@ -21,46 +21,13 @@ class ApiIntegrations implements ComponentInterface
     protected string $name = 'Api Integrations';
     protected string $description = 'Component to create Api Integrations';
 
-    /**
-     * @var IntegrationServiceInterface
-     */
-    protected IntegrationServiceInterface $integrationService;
-
-    /**
-     * @var IntegrationFactory
-     */
-    protected IntegrationFactory $integrationFactory;
-
-    /**
-     * @var AuthorizationService
-     */
-    protected AuthorizationService $authorizationService;
-
-    /**
-     * @var TokenFactory
-     */
-    protected TokenFactory $tokenFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected LoggerInterface $log;
-
-    /**
-     * ApiIntegrations constructor.
-     */
     public function __construct(
-        IntegrationFactory $integrationFactory,
-        IntegrationServiceInterface $integrationService,
-        AuthorizationService $authorizationService,
-        TokenFactory $tokenFactory,
-        LoggerInterface $log
+        protected readonly IntegrationFactory $integrationFactory,
+        protected readonly IntegrationServiceInterface $integrationService,
+        protected readonly AuthorizationService $authorizationService,
+        protected readonly TokenFactory $tokenFactory,
+        protected readonly LoggerInterface $log
     ) {
-        $this->integrationFactory = $integrationFactory;
-        $this->integrationService = $integrationService;
-        $this->authorizationService = $authorizationService;
-        $this->tokenFactory = $tokenFactory;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

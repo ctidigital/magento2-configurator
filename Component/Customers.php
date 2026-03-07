@@ -31,62 +31,20 @@ class Customers implements ComponentInterface
         '_store',
     ];
 
-    /**
-     * @var ImporterFactory
-     */
-    protected ImporterFactory $importerFactory;
-
-    /**
-     * @var GroupRepositoryInterface
-     */
-    protected GroupRepositoryInterface $groupRepository;
-
-    /**
-     * @var GroupManagementInterface
-     */
-    protected GroupManagementInterface $groupManagement;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    protected SearchCriteriaBuilder $criteriaBuilder;
-
-    /**
-     * @var IndexerFactory
-     */
-    protected IndexerFactory $indexerFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * @var array|null
-     */
     protected ?array $customerGroups = null;
 
     protected mixed $groupDefault = null;
 
-    /**
-     * @var array
-     */
     protected array $columnHeaders = [];
 
     public function __construct(
-        ImporterFactory $importerFactory,
-        GroupRepositoryInterface $groupRepository,
-        GroupManagementInterface $groupManagement,
-        SearchCriteriaBuilder $criteriaBuilder,
-        IndexerFactory $indexerFactory,
-        LoggerInterface $log
+        protected readonly ImporterFactory $importerFactory,
+        protected readonly GroupRepositoryInterface $groupRepository,
+        protected readonly GroupManagementInterface $groupManagement,
+        protected readonly SearchCriteriaBuilder $criteriaBuilder,
+        protected readonly IndexerFactory $indexerFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->importerFactory = $importerFactory;
-        $this->groupRepository = $groupRepository;
-        $this->groupManagement = $groupManagement;
-        $this->criteriaBuilder = $criteriaBuilder;
-        $this->indexerFactory = $indexerFactory;
-        $this->log = $log;
     }
 
     /**

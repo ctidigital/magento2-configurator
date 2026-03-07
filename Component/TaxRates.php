@@ -16,30 +16,11 @@ class TaxRates implements FileComponentInterface
     protected string $name = 'Tax Rates';
     protected string $description = 'Component to create Tax Rates';
 
-    /**
-     * @var CsvImportHandler
-     */
-    protected CsvImportHandler $csvImportHandler;
-
-    private LoggerInterface $log;
-
-    private DriverInterface $driver;
-
-    /**
-     * TaxRates constructor.
-     * @param CsvImportHandler $csvImportHandler
-     * @param LoggerInterface $log
-     * @param DriverInterface $driver
-     */
     public function __construct(
-        CsvImportHandler $csvImportHandler,
-        LoggerInterface $log,
-        DriverInterface $driver
-    ) {
-        $this->csvImportHandler = $csvImportHandler;
-        $this->log = $log;
-        $this->driver = $driver;
-    }
+        protected readonly CsvImportHandler $csvImportHandler,
+        private readonly LoggerInterface $log,
+        private readonly DriverInterface $driver
+    ) {}
 
     /**
      * @throws LocalizedException

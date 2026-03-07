@@ -20,52 +20,16 @@ class Websites implements ComponentInterface
     protected string $alias = 'websites';
     protected string $name = 'Websites';
     protected string $description = 'Component to manage Websites, Stores and Store Views';
-    protected IndexerFactory $indexer;
     protected bool $reindex = false;
 
-    protected ManagerInterface $eventManager;
-
-    /**
-     * @var WebsiteFactory
-     */
-    protected WebsiteFactory $websiteFactory;
-
-    /**
-     * @var StoreFactory
-     */
-    protected StoreFactory $storeFactory;
-
-    /**
-     * @var GroupFactory
-     */
-    protected GroupFactory $groupFactory;
-
-    private LoggerInterface $log;
-
-    /**
-     * Websites constructor.
-     * @param IndexerFactory $indexerFactory
-     * @param ManagerInterface $eventManager
-     * @param WebsiteFactory $websiteFactory
-     * @param StoreFactory $storeFactory
-     * @param GroupFactory $groupFactory
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        IndexerFactory $indexerFactory,
-        ManagerInterface $eventManager,
-        WebsiteFactory $websiteFactory,
-        StoreFactory $storeFactory,
-        GroupFactory $groupFactory,
-        LoggerInterface $log
-    ) {
-        $this->indexer = $indexerFactory;
-        $this->eventManager = $eventManager;
-        $this->websiteFactory = $websiteFactory;
-        $this->storeFactory = $storeFactory;
-        $this->groupFactory = $groupFactory;
-        $this->log = $log;
-    }
+        protected readonly IndexerFactory $indexer,
+        protected readonly ManagerInterface $eventManager,
+        protected readonly WebsiteFactory $websiteFactory,
+        protected readonly StoreFactory $storeFactory,
+        protected readonly GroupFactory $groupFactory,
+        private readonly LoggerInterface $log
+    ) {}
 
     public function execute(mixed $data = null): void
     {

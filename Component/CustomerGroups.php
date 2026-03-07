@@ -18,32 +18,11 @@ class CustomerGroups implements ComponentInterface
     protected string $name = 'Customer Groups';
     protected string $description = 'Component to create Customer Groups';
 
-    /**
-     * @var GroupFactory
-     */
-    private GroupFactory $groupFactory;
-
-    /**
-     * @var ClassModelFactory
-     */
-    protected ClassModelFactory $classModelFactory;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $log;
-
-    /**
-     * CustomerGroups constructor.
-     */
     public function __construct(
-        GroupFactory $groupFactory,
-        ClassModelFactory $classModelFactory,
-        LoggerInterface $log
+        private readonly GroupFactory $groupFactory,
+        protected readonly ClassModelFactory $classModelFactory,
+        private readonly LoggerInterface $log
     ) {
-        $this->groupFactory = $groupFactory;
-        $this->classModelFactory = $classModelFactory;
-        $this->log = $log;
     }
 
     public function execute(mixed $data = null): void

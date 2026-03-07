@@ -1,19 +1,55 @@
 <?xml version="1.0"?>
+<!--
+    PHPMD ruleset for magento2-configurator.
+
+    Mirrors the ruleset Magento use in their own core static tests:
+    dev/tests/static/testsuite/Magento/Test/Php/_files/phpmd/ruleset.xml
+
+    Only the specific rules Magento select from each built-in ruleset are
+    included — entire rulesets (e.g. cleancode, full naming) are intentionally
+    avoided, matching Magento's own choices.
+
+    Magento-specific custom rules (AllPurposeAction, CookieAndSessionMisuse,
+    UnusedFormalParameter) require the Magento framework class-path and are
+    enforced by the installed Magento instance's own static test suite rather
+    than here.
+-->
 <ruleset name="CtiDigital Configurator PHPMD Rules"
     xmlns="http://pmd.sf.net/ruleset/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
     xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
 >
-    <description>
-        PHPMD ruleset for magento2-configurator.
-        Enforces the same rulesets used in the initial technical lead review
-        (all violations resolved before this config was committed).
-    </description>
+    <!-- Code Size Rules (selected, matching Magento core) -->
+    <rule ref="rulesets/codesize.xml/CyclomaticComplexity"/>
+    <rule ref="rulesets/codesize.xml/NPathComplexity"/>
+    <rule ref="rulesets/codesize.xml/ExcessiveMethodLength"/>
+    <rule ref="rulesets/codesize.xml/ExcessiveParameterList"/>
+    <rule ref="rulesets/codesize.xml/ExcessivePublicCount"/>
+    <rule ref="rulesets/codesize.xml/TooManyFields"/>
+    <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
+        <properties>
+            <property name="maximum" value="100"/>
+        </properties>
+    </rule>
 
-    <rule ref="rulesets/cleancode.xml"/>
-    <rule ref="rulesets/codesize.xml"/>
-    <rule ref="rulesets/design.xml"/>
-    <rule ref="rulesets/naming.xml"/>
-    <rule ref="rulesets/unusedcode.xml"/>
+    <!-- Unused Code Rules (full set, minus UnusedFormalParameter — Magento
+         use a custom version of this rule that understands plugin signatures) -->
+    <rule ref="rulesets/unusedcode.xml">
+        <exclude name="UnusedFormalParameter"/>
+    </rule>
+
+    <!-- Design Rules (selected, matching Magento core) -->
+    <rule ref="rulesets/design.xml/NumberOfChildren"/>
+    <rule ref="rulesets/design.xml/DepthOfInheritance">
+        <properties>
+            <property name="minimum" value="8"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/design.xml/CouplingBetweenObjects"/>
+
+    <!-- Naming Rules (selected, matching Magento core) -->
+    <rule ref="rulesets/naming.xml/ShortMethodName"/>
+    <rule ref="rulesets/naming.xml/ConstantNamingConventions"/>
+    <rule ref="rulesets/naming.xml/BooleanGetMethodName"/>
 </ruleset>

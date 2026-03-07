@@ -55,7 +55,7 @@ class SqlSplitProcessorTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->mockLogger = $this->getMockBuilder(Logging::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['logInfo', 'logError'])
+            ->onlyMethods(['logInfo', 'logError', 'logComment'])
             ->getMock();
         $this->mockResource = $this->getMockBuilder(ResourceConnection::class)
             ->disableOriginalConstructor()
@@ -86,9 +86,8 @@ class SqlSplitProcessorTest extends TestCase
         ];
     }
 
-    public function testExceptionHandling()
+    public function testExceptionHandling(): void
     {
-        $this->markTestSkipped();
         $name = 'name1';
         $exMsg = 'exception message';
 
@@ -98,7 +97,7 @@ class SqlSplitProcessorTest extends TestCase
             ->willThrowException(new Exception($exMsg));
 
         $this->mockLogger
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('logError')
             ->with($exMsg);
 

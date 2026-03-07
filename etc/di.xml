@@ -80,4 +80,53 @@
         </arguments>
     </type>
 
+    <!--
+        Magento\Framework\Filesystem\DriverInterface has no global preference in the framework's
+        di.xml. In developer mode (non-compiled DI), the ObjectManager cannot resolve an interface
+        to a concrete class without an explicit wiring. Each component that injects DriverInterface
+        must therefore have its `driver` argument specified here.
+        All file-system operations in this extension use the standard local file driver.
+    -->
+    <type name="CtiDigital\Configurator\Component\Blocks">
+        <arguments>
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="CtiDigital\Configurator\Component\Pages">
+        <arguments>
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="CtiDigital\Configurator\Component\Categories">
+        <arguments>
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="CtiDigital\Configurator\Component\Sql">
+        <arguments>
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="CtiDigital\Configurator\Component\Media">
+        <arguments>
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="CtiDigital\Configurator\Component\TaxRates">
+        <arguments>
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="CtiDigital\Configurator\Component\Processor\SqlSplitProcessor">
+        <arguments>
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
 </config>

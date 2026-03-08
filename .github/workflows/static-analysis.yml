@@ -94,7 +94,7 @@ jobs:
       - name: Run phpmd
         run: |
           /tmp/ci-tools/vendor/bin/phpmd \
-            Api,Component,Console,Exception,Model \
+            Api,Component,Console,Exception,Model,Service \
             text \
             phpmd.xml
 

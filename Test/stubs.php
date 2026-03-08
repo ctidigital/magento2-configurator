@@ -227,6 +227,15 @@ namespace Magento\Framework\App {
             public function __construct(?\Magento\Framework\Config\ScopeInterface $scope = null) {}
         }
     }
+
+    if (!class_exists(\Magento\Framework\App\Area::class)) {
+        class Area
+        {
+            public const AREA_ADMINHTML = 'adminhtml';
+            public const AREA_FRONTEND  = 'frontend';
+            public const AREA_GLOBAL    = 'global';
+        }
+    }
 }
 
 namespace Magento\Framework\App\Config {

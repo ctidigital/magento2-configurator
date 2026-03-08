@@ -11,6 +11,16 @@ interface LoggerInterface
     public const LEVEL_ERROR = 'error';
 
     /**
+     * Set the verbosity threshold (Symfony OutputInterface::VERBOSITY_* constant).
+     */
+    public function setLogLevel(int $level);
+
+    /**
+     * Return the current verbosity threshold.
+     */
+    public function getLogLevel(): int;
+
+    /**
      * Log a message at the given level with optional nesting depth.
      */
     public function log(string $message, string $level, int $nest = 0): void;

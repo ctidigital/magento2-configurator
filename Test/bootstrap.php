@@ -26,6 +26,16 @@ declare(strict_types=1);
  * guard in stubs.php is true and the stubs are silently skipped.
  */
 
+// ─── 0. Constants required by production classes ─────────────────────────────
+//
+// BP (Base Path) is defined by Magento's index.php. Service classes use it to
+// resolve local file paths. In standalone tests we point it at a temp directory
+// so file_exists() / fopen() calls can be exercised with real fixture files.
+
+if (!defined('BP')) {
+    define('BP', sys_get_temp_dir());
+}
+
 // ─── 1. Extension PSR-4 autoloader ───────────────────────────────────────────
 //
 // Maps CtiDigital\Configurator\ → the extension root directory.

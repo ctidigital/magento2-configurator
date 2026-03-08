@@ -10,6 +10,12 @@
                 type="CtiDigital\Configurator\Model\Logging"/>
     <preference for="CtiDigital\Configurator\Api\ComponentListInterface"
                 type="CtiDigital\Configurator\Component\ComponentList"/>
+    <preference for="CtiDigital\Configurator\Api\SourceDataParserInterface"
+                type="CtiDigital\Configurator\Service\SourceDataParser"/>
+    <preference for="CtiDigital\Configurator\Api\MasterYamlReaderInterface"
+                type="CtiDigital\Configurator\Service\MasterYamlReader"/>
+    <preference for="CtiDigital\Configurator\Api\ComponentRunnerInterface"
+                type="CtiDigital\Configurator\Service\ComponentRunner"/>
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>

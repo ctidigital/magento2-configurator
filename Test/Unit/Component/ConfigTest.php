@@ -152,4 +152,147 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(3, $this->config->getThemeIdByPath('frontend/test/theme'));
     }
+
+    // ── execute() ─────────────────────────────────────────────────────────────
+
+    public function testExecuteLogsErrorForInvalidScope(): void
+    {
+        $this->log->expects($this->once())
+            ->method('logError')
+            ->with($this->stringContains('invalid_scope'));
+
+        $this->config->execute(['invalid_scope' => []]);
+    }
+
+    public function testExecuteSavesNewGlobalConfig(): void
+    {
+        $this->initialConfig->method('getMetadata')->willReturn([]);
+        $this->scopeConfig->method('getValue')->willReturn('old_value');
+
+        $this->configResource->expects($this->once())
+            ->method('saveConfig')
+            ->with('general/locale/code', 'en_US', 'default', 0);
+
+        $this->config->execute([
+            'global' => [
+                ['path' => 'general/locale/code', 'value' => 'en_US'],
+            ],
+        ]);
+    }
+
+    public function testExecuteSkipsGlobalConfigWhenValueUnchanged(): void
+    {
+        $this->initialConfig->method('getMetadata')->willReturn([]);
+        $this->scopeConfig->method('getValue')->willReturn('en_US');
+
+        $this->configResource->expects($this->never())->method('saveConfig');
+
+        $this->config->execute([
+            'global' => [
+                ['path' => 'general/locale/code', 'value' => 'en_US'],
+            ],
+        ]);
+    }
+
+    public function testExecuteSavesWebsiteConfig(): void
+    {
+        $this->initialConfig->method('getMetadata')->willReturn([]);
+        $this->scopeConfig->method('getValue')->willReturn('old_value');
+
+        $mockWebsite = $this->getMockBuilder(\Magento\Store\Model\Website::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['load', 'getId'])
+            ->getMock();
+        $mockWebsite->method('load')->willReturnSelf();
+        $mockWebsite->method('getId')->willReturn(5);
+        $this->websiteFactory->method('create')->willReturn($mockWebsite);
+
+        $this->configResource->expects($this->once())
+            ->method('saveConfig')
+            ->with('general/locale/code', 'fr_FR', 'websites', 5);
+
+        $this->config->execute([
+            'websites' => [
+                'base' => [
+                    ['path' => 'general/locale/code', 'value' => 'fr_FR'],
+                ],
+            ],
+        ]);
+    }
+
+    public function testExecuteLogsErrorWhenWebsiteNotFound(): void
+    {
+        $this->initialConfig->method('getMetadata')->willReturn([]);
+
+        $mockWebsite = $this->getMockBuilder(\Magento\Store\Model\Website::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['load', 'getId'])
+            ->getMock();
+        $mockWebsite->method('load')->willReturnSelf();
+        $mockWebsite->method('getId')->willReturn(null);
+        $this->websiteFactory->method('create')->willReturn($mockWebsite);
+
+        $this->log->expects($this->once())
+            ->method('logError')
+            ->with($this->stringContains('no website'));
+
+        $this->config->execute([
+            'websites' => [
+                'missing_site' => [
+                    ['path' => 'general/locale/code', 'value' => 'en_US'],
+                ],
+            ],
+        ]);
+    }
+
+    public function testExecuteSavesStoreConfig(): void
+    {
+        $this->initialConfig->method('getMetadata')->willReturn([]);
+        $this->scopeConfig->method('getValue')->willReturn('old_value');
+
+        $mockStore = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['load', 'getId'])
+            ->getMock();
+        $mockStore->method('load')->willReturnSelf();
+        $mockStore->method('getId')->willReturn(3);
+        $this->storeFactory->method('create')->willReturn($mockStore);
+
+        $this->configResource->expects($this->once())
+            ->method('saveConfig')
+            ->with('general/locale/code', 'de_DE', 'stores', 3);
+
+        $this->config->execute([
+            'stores' => [
+                'default' => [
+                    ['path' => 'general/locale/code', 'value' => 'de_DE'],
+                ],
+            ],
+        ]);
+    }
+
+    public function testExecuteLogsErrorWhenStoreNotFound(): void
+    {
+        $this->initialConfig->method('getMetadata')->willReturn([]);
+
+        $mockStore = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['load', 'getId'])
+            ->getMock();
+        $mockStore->method('load')->willReturnSelf();
+        $mockStore->method('getId')->willReturn(null);
+        $this->storeFactory->method('create')->willReturn($mockStore);
+
+        $this->log->expects($this->once())
+            ->method('logError')
+            ->with($this->stringContains('no store view'));
+
+        $this->config->execute([
+            'stores' => [
+                'missing_store' => [
+                    ['path' => 'general/locale/code', 'value' => 'en_US'],
+                ],
+            ],
+        ]);
+    }
 }

@@ -242,6 +242,13 @@ namespace Magento\Framework\App {
 
 namespace Magento\Framework\App\Config {
 
+    if (!interface_exists(\Magento\Framework\App\Config\ScopeConfigInterface::class)) {
+        interface ScopeConfigInterface
+        {
+            public const SCOPE_TYPE_DEFAULT = 'default';
+        }
+    }
+
     if (!class_exists(\Magento\Framework\App\Config\Initial::class)) {
         class Initial {}
     }
@@ -573,6 +580,8 @@ namespace Magento\Catalog\Model {
     if (!class_exists(\Magento\Catalog\Model\Product::class)) {
         class Product
         {
+            const ENTITY = 'catalog_product';
+
             public function hasData(string $key = ''): mixed
             {
                 return false;
@@ -725,6 +734,22 @@ namespace Magento\Eav\Api {
 }
 
 namespace Magento\Eav\Api\Data {
+
+    if (!interface_exists(\Magento\Eav\Api\Data\AttributeSetInterface::class)) {
+        interface AttributeSetInterface
+        {
+            public function getAttributeSetId(): ?int;
+            public function setAttributeSetId(int $id): static;
+            public function getAttributeSetName(): ?string;
+            public function setAttributeSetName(string $attributeSetName): static;
+            public function getSortOrder(): ?int;
+            public function setSortOrder(int $sortOrder): static;
+            public function getEntityTypeId(): ?int;
+            public function setEntityTypeId(int $entityTypeId): static;
+            public function getExtensionAttributes(): mixed;
+            public function setExtensionAttributes(mixed $extensionAttributes): static;
+        }
+    }
 
     if (!class_exists(\Magento\Eav\Api\Data\AttributeOptionInterfaceFactory::class)) {
         class AttributeOptionInterfaceFactory
@@ -1265,6 +1290,16 @@ namespace Magento\Tax\Model {
 
 namespace Magento\Cms\Api\Data {
 
+    if (!class_exists(\Magento\Cms\Api\Data\BlockInterfaceFactory::class)) {
+        class BlockInterfaceFactory
+        {
+            public function create(array $data = []): \Magento\Cms\Model\Block
+            {
+                throw new \LogicException('Stub only — mock BlockInterfaceFactory::create()');
+            }
+        }
+    }
+
     if (!interface_exists(\Magento\Cms\Api\Data\PageInterface::class)) {
         interface PageInterface {}
     }
@@ -1282,6 +1317,14 @@ namespace Magento\Cms\Api\Data {
 
 namespace Magento\Cms\Api {
 
+    if (!interface_exists(\Magento\Cms\Api\BlockRepositoryInterface::class)) {
+        interface BlockRepositoryInterface
+        {
+            public function save(\Magento\Cms\Model\Block $block): \Magento\Cms\Model\Block;
+            public function getById(int $blockId): \Magento\Cms\Model\Block;
+        }
+    }
+
     if (!interface_exists(\Magento\Cms\Api\PageRepositoryInterface::class)) {
         interface PageRepositoryInterface
         {
@@ -1294,6 +1337,26 @@ namespace Magento\Cms\Api {
 }
 
 namespace Magento\Cms\Model {
+
+    if (!class_exists(\Magento\Cms\Model\Block::class)) {
+        class Block
+        {
+            private array $_data = [];
+
+            public function getId(): mixed { return $this->_data['id'] ?? null; }
+            public function getIdentifier(): string { return $this->_data['identifier'] ?? ''; }
+            public function setIdentifier(string $id): static { $this->_data['identifier'] = $id; return $this; }
+            public function getData(string $key = ''): mixed { return $key !== '' ? ($this->_data[$key] ?? null) : $this->_data; }
+            public function setData(string|array $key, mixed $value = null): static { if (is_string($key)) { $this->_data[$key] = $value; } return $this; }
+            public function setStoreId(int $storeId): static { $this->_data['store_id'] = $storeId; return $this; }
+            public function setStores(array $stores): static { $this->_data['stores'] = $stores; return $this; }
+            public function unsetData(string $key): static { unset($this->_data[$key]); return $this; }
+            public function getCollection(): \Magento\Cms\Model\ResourceModel\Block\Collection
+            {
+                throw new \LogicException('Stub only — mock Block::getCollection()');
+            }
+        }
+    }
 
     if (!class_exists(\Magento\Cms\Model\Page::class)) {
         class Page implements \Magento\Cms\Api\Data\PageInterface
@@ -1419,6 +1482,89 @@ namespace Magento\Integration\Model\Oauth {
             {
                 throw new \LogicException('Stub only — mock TokenFactory::create()');
             }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Eav — EavSetup, AttributeSetRepository
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Eav\Setup {
+
+    if (!class_exists(\Magento\Eav\Setup\EavSetup::class)) {
+        class EavSetup
+        {
+            public function addAttributeSet(string $entityType, string $name, mixed $skeleton = null): void {}
+            public function getAttributeSetId(string $entityType, mixed $name): mixed { return null; }
+            public function getAttributeSet(string $entityType, mixed $id): array { return []; }
+            public function getAttributeGroup(string $entityType, mixed $setId, string $code, string $returnField = null): mixed { return false; }
+            public function addAttributeGroup(string $entityType, mixed $setId, string $name, int $sortOrder = null): void {}
+            public function convertToAttributeGroupCode(string $name): string { return strtolower(str_replace(' ', '_', $name)); }
+            public function getAttribute(string $entityType, mixed $id): array { return []; }
+            public function addAttributeToGroup(string $entityType, mixed $setId, mixed $groupId, string $attributeCode, int $sortOrder = null): void {}
+        }
+    }
+}
+
+namespace Magento\Eav\Model {
+
+    if (!class_exists(\Magento\Eav\Model\AttributeSetRepository::class)) {
+        class AttributeSetRepository
+        {
+            public function get(mixed $attributeSetId): \Magento\Eav\Api\Data\AttributeSetInterface
+            {
+                throw new \LogicException('Stub only — mock AttributeSetRepository::get()');
+            }
+
+            public function save(\Magento\Eav\Api\Data\AttributeSetInterface $attributeSet): \Magento\Eav\Api\Data\AttributeSetInterface
+            {
+                return $attributeSet;
+            }
+        }
+    }
+}
+
+namespace Magento\Eav\Model\Entity\Attribute {
+
+    /**
+     * Concrete stub for Magento\Eav\Model\Entity\Attribute\Set.
+     * Implements AttributeSetInterface so it satisfies type hints, and also
+     * declares getId() / initFromSkeleton() which the AttributeSets component
+     * calls on the returned object.
+     */
+    if (!class_exists(\Magento\Eav\Model\Entity\Attribute\Set::class)) {
+        class Set implements \Magento\Eav\Api\Data\AttributeSetInterface
+        {
+            public function getAttributeSetId(): ?int { return null; }
+            public function setAttributeSetId(int $id): static { return $this; }
+            public function getAttributeSetName(): ?string { return null; }
+            public function setAttributeSetName(string $attributeSetName): static { return $this; }
+            public function getSortOrder(): ?int { return null; }
+            public function setSortOrder(int $sortOrder): static { return $this; }
+            public function getEntityTypeId(): ?int { return null; }
+            public function setEntityTypeId(int $entityTypeId): static { return $this; }
+            public function getExtensionAttributes(): mixed { return null; }
+            public function setExtensionAttributes(mixed $extensionAttributes): static { return $this; }
+            public function getId(): mixed { return null; }
+            public function initFromSkeleton(int $skeletonId): static { return $this; }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Cms\Model\ResourceModel\Block
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Cms\Model\ResourceModel\Block {
+
+    if (!class_exists(\Magento\Cms\Model\ResourceModel\Block\Collection::class)) {
+        class Collection
+        {
+            public function addFieldToFilter(string $field, mixed $condition): static { return $this; }
+            public function addStoreFilter(mixed $store, bool $withAdmin = true): static { return $this; }
+            public function count(): int { return 0; }
+            public function getFirstItem(): \Magento\Cms\Model\Block { return new \Magento\Cms\Model\Block(); }
         }
     }
 }

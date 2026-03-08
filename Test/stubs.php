@@ -836,6 +836,114 @@ namespace Magento\Review\Model\Rating {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Tax — Service Contract API (repositories, data interfaces, factories)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Tax\Api\Data {
+
+    if (!interface_exists(\Magento\Tax\Api\Data\TaxRuleInterface::class)) {
+        interface TaxRuleInterface
+        {
+            public function setCode(string $code): static;
+            public function getCode(): string;
+            public function setPriority(int $priority): static;
+            public function setPosition(int $position): static;
+            public function setCalculateSubtotal(bool $calculateSubtotal): static;
+            public function setTaxRateIds(array $taxRateIds): static;
+            public function setCustomerTaxClassIds(array $customerTaxClassIds): static;
+            public function setProductTaxClassIds(array $productTaxClassIds): static;
+        }
+    }
+
+    if (!class_exists(\Magento\Tax\Api\Data\TaxRuleInterfaceFactory::class)) {
+        class TaxRuleInterfaceFactory
+        {
+            public function create(array $data = []): TaxRuleInterface
+            {
+                throw new \LogicException('Stub only — mock TaxRuleInterfaceFactory::create()');
+            }
+        }
+    }
+
+    if (!interface_exists(\Magento\Tax\Api\Data\TaxRateInterface::class)) {
+        interface TaxRateInterface
+        {
+            public function getId(): mixed;
+            public function getCode(): string;
+        }
+    }
+
+    if (!interface_exists(\Magento\Tax\Api\Data\TaxClassInterface::class)) {
+        interface TaxClassInterface
+        {
+            public function getClassId(): int;
+            public function setClassName(string $className): static;
+            public function setClassType(string $classType): static;
+        }
+    }
+
+    if (!class_exists(\Magento\Tax\Api\Data\TaxClassInterfaceFactory::class)) {
+        class TaxClassInterfaceFactory
+        {
+            public function create(array $data = []): TaxClassInterface
+            {
+                throw new \LogicException('Stub only — mock TaxClassInterfaceFactory::create()');
+            }
+        }
+    }
+}
+
+namespace Magento\Tax\Api {
+
+    if (!interface_exists(\Magento\Tax\Api\TaxRuleRepositoryInterface::class)) {
+        interface TaxRuleRepositoryInterface
+        {
+            public function save(\Magento\Tax\Api\Data\TaxRuleInterface $rule): \Magento\Tax\Api\Data\TaxRuleInterface;
+            public function get(int $ruleId): \Magento\Tax\Api\Data\TaxRuleInterface;
+            public function delete(\Magento\Tax\Api\Data\TaxRuleInterface $rule): bool;
+            public function deleteById(int $ruleId): bool;
+            public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria): \Magento\Framework\Api\SearchResults;
+        }
+    }
+
+    if (!interface_exists(\Magento\Tax\Api\TaxRateRepositoryInterface::class)) {
+        interface TaxRateRepositoryInterface
+        {
+            public function save(\Magento\Tax\Api\Data\TaxRateInterface $rate): \Magento\Tax\Api\Data\TaxRateInterface;
+            public function get(int $rateId): \Magento\Tax\Api\Data\TaxRateInterface;
+            public function delete(\Magento\Tax\Api\Data\TaxRateInterface $rate): bool;
+            public function deleteById(int $rateId): bool;
+            public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria): \Magento\Framework\Api\SearchResults;
+        }
+    }
+
+    if (!interface_exists(\Magento\Tax\Api\TaxClassRepositoryInterface::class)) {
+        interface TaxClassRepositoryInterface
+        {
+            public function save(\Magento\Tax\Api\Data\TaxClassInterface $taxClass): \Magento\Tax\Api\Data\TaxClassInterface;
+            public function get(int $taxClassId): \Magento\Tax\Api\Data\TaxClassInterface;
+            public function delete(\Magento\Tax\Api\Data\TaxClassInterface $taxClass): bool;
+            public function deleteById(int $taxClassId): bool;
+            public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria): \Magento\Framework\Api\SearchResults;
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Framework\Event
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Framework\Event {
+
+    if (!interface_exists(\Magento\Framework\Event\ManagerInterface::class)) {
+        interface ManagerInterface
+        {
+            public function dispatch(string $eventName, array $data = []): void;
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // Magento\Store
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -848,10 +956,55 @@ namespace Magento\Store\Api {
 
 namespace Magento\Store\Model {
 
+    if (!class_exists(\Magento\Store\Model\Website::class)) {
+        class Website
+        {
+            public function load(mixed $id, mixed $field = null): static { return $this; }
+            public function getId(): mixed { return null; }
+            public function getData(?string $key = null): mixed { return []; }
+            public function setData(mixed $key, mixed $value = null): static { return $this; }
+            public function setCode(string $code): static { return $this; }
+            public function getResource(): static { return $this; }
+            public function save(mixed $model): void {}
+        }
+    }
+
+    if (!class_exists(\Magento\Store\Model\Store::class)) {
+        class Store
+        {
+            public function load(mixed $id, mixed $field = null): static { return $this; }
+            public function getId(): mixed { return null; }
+            public function getData(?string $key = null): mixed { return []; }
+            public function setData(mixed $key, mixed $value = null): static { return $this; }
+            public function setCode(string $code): static { return $this; }
+            public function setGroup(mixed $group): static { return $this; }
+            public function getStoreGroupId(): mixed { return null; }
+            public function getCode(): string { return ''; }
+            public function getResource(): static { return $this; }
+            public function save(mixed $model): void {}
+        }
+    }
+
+    if (!class_exists(\Magento\Store\Model\Group::class)) {
+        class Group
+        {
+            public function load(mixed $id, mixed $field = null): static { return $this; }
+            public function getId(): mixed { return null; }
+            public function getName(): string { return ''; }
+            public function getData(?string $key = null): mixed { return []; }
+            public function setData(mixed $key, mixed $value = null): static { return $this; }
+            public function setWebsite(mixed $website): static { return $this; }
+            public function getDefaultStoreId(): mixed { return null; }
+            public function setDefaultStoreId(mixed $id): static { return $this; }
+            public function getResource(): static { return $this; }
+            public function save(mixed $model): void {}
+        }
+    }
+
     if (!class_exists(\Magento\Store\Model\StoreFactory::class)) {
         class StoreFactory
         {
-            public function create(array $data = []): object
+            public function create(array $data = []): Store
             {
                 throw new \LogicException('Stub only — mock StoreFactory::create()');
             }
@@ -861,9 +1014,19 @@ namespace Magento\Store\Model {
     if (!class_exists(\Magento\Store\Model\WebsiteFactory::class)) {
         class WebsiteFactory
         {
-            public function create(array $data = []): object
+            public function create(array $data = []): Website
             {
                 throw new \LogicException('Stub only — mock WebsiteFactory::create()');
+            }
+        }
+    }
+
+    if (!class_exists(\Magento\Store\Model\GroupFactory::class)) {
+        class GroupFactory
+        {
+            public function create(array $data = []): Group
+            {
+                throw new \LogicException('Stub only — mock GroupFactory::create()');
             }
         }
     }

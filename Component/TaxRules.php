@@ -6,11 +6,12 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Tax\Model\Calculation\RuleFactory;
-use Magento\Tax\Model\ClassModelFactory;
-use Magento\Tax\Model\ResourceModel\Calculation\Rate\CollectionFactory;
-use Magento\Tax\Model\ResourceModel\Calculation\Rule;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Tax\Api\Data\TaxClassInterfaceFactory;
+use Magento\Tax\Api\Data\TaxRuleInterfaceFactory;
+use Magento\Tax\Api\TaxClassRepositoryInterface;
+use Magento\Tax\Api\TaxRateRepositoryInterface;
+use Magento\Tax\Api\TaxRuleRepositoryInterface;
 
 class TaxRules implements ComponentInterface
 {
@@ -28,25 +29,16 @@ class TaxRules implements ComponentInterface
      */
     const string TAX_CLASS_TYPE_PRODUCT = 'PRODUCT';
 
-    /**
-     * TaxRules constructor.
-     * @param CollectionFactory $taxRateFactory
-     * @param ClassModelFactory $classModelFactory
-     * @param RuleFactory $ruleFactory
-     * @param Rule $ruleResource
-     * @param LoggerInterface $log
-     */
     public function __construct(
-        protected readonly CollectionFactory $taxRateFactory,
-        protected readonly ClassModelFactory $classModelFactory,
-        protected readonly RuleFactory $ruleFactory,
-        protected readonly Rule $ruleResource,
-        protected readonly LoggerInterface $log
+        private readonly TaxRuleRepositoryInterface $taxRuleRepository,
+        private readonly TaxRuleInterfaceFactory $taxRuleDataFactory,
+        private readonly TaxRateRepositoryInterface $taxRateRepository,
+        private readonly TaxClassRepositoryInterface $taxClassRepository,
+        private readonly TaxClassInterfaceFactory $taxClassDataFactory,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
+        private readonly LoggerInterface $log
     ) {}
 
-    /**
-     * @throws LocalizedException
-     */
     public function execute(mixed $data = null): void
     {
         //Check Row Data exists
@@ -97,7 +89,7 @@ class TaxRules implements ComponentInterface
     }
 
     /**
-     * Assign array values to useable keys names for rule creation
+     * Assign array values to useable key names for rule creation
      */
     private function formatArray(array $taxRuleAttributes, array $rule): array
     {
@@ -117,7 +109,6 @@ class TaxRules implements ComponentInterface
 
         $ruleData['tax_rate_ids'] = $this->getRateIdsFromCode($ruleData['tax_rate_ids']);
 
-        //TODO if Tax ID not found, create it
         $ruleData['customer_tax_class_ids'] = $this->taxClassIdsFromName(
             self::TAX_CLASS_TYPE_CUSTOMER,
             $ruleData['customer_tax_class_ids']
@@ -132,67 +123,73 @@ class TaxRules implements ComponentInterface
     }
 
     /**
-     * Use Rate code to get Rate ID
+     * Use Rate code to get Rate ID via TaxRateRepositoryInterface.
      *
      * @param null $rateNames
-     * @throws LocalizedException
      */
     private function getRateIdsFromCode($rateNames = null): array
     {
         $rateIds = [];
-        $rateNamesArray = explode(',', $rateNames);
 
-        foreach ($rateNamesArray as $name) {
-            $rateCollection = $this->taxRateFactory->create()
-                ->addFieldToSelect('tax_calculation_rate_id');
-            $rate = $rateCollection->addFieldToFilter('code', $name)->getFirstItem();
-            $rateIds[] = $rate->getId();
+        foreach (explode(',', (string) $rateNames) as $name) {
+            $criteria = $this->searchCriteriaBuilder
+                ->addFilter('code', trim($name))
+                ->create();
+
+            foreach ($this->taxRateRepository->getList($criteria)->getItems() as $rate) {
+                $rateIds[] = $rate->getId();
+            }
         }
 
         return $rateIds;
     }
 
     /**
-     * Use TaxClass name to get TaxClass Id
+     * Use TaxClass name to get TaxClass Id via TaxClassRepositoryInterface.
+     * Creates a new class if none is found with the given name and type.
      *
      * @param null $names
-     * @throws LocalizedException
      */
     private function taxClassIdsFromName(string $type, $names = null): array
     {
         $taxClassIds = [];
-        $taxClassNamesArray = explode(',', $names);
-        $classModel = $this->classModelFactory->create();
-        $classCollection = $classModel->getCollection();
+        $normalizedType = strtoupper($type);
 
-        foreach ($taxClassNamesArray as $name) {
-            $class = $classCollection->addFieldToFilter('class_name', $name)->getFirstItem();
-            $classId = $class->getId();
+        foreach (explode(',', (string) $names) as $name) {
+            $name = trim($name);
+            $criteria = $this->searchCriteriaBuilder
+                ->addFilter('class_name', $name)
+                ->addFilter('class_type', $normalizedType)
+                ->create();
 
-            if ($classId == 0) {
-                $classModel->setClassName($name)
-                    ->setClassType($type)
-                    ->save();
-                $classId = $classModel->getId();
+            $items = $this->taxClassRepository->getList($criteria)->getItems();
+
+            if (!empty($items)) {
+                $taxClassIds[] = (int) reset($items)->getClassId();
+                continue;
             }
 
-            $taxClassIds[] = $classId;
+            // Class does not exist yet — create it
+            $taxClass = $this->taxClassDataFactory->create();
+            $taxClass->setClassName($name)->setClassType($normalizedType);
+            $saved = $this->taxClassRepository->save($taxClass);
+            $taxClassIds[] = (int) $saved->getClassId();
         }
 
         return $taxClassIds;
     }
 
     /**
-     * Create TaxRule
-     *
-     * @throws LocalizedException
+     * Create TaxRule via TaxRuleRepositoryInterface.
+     * Skips if a rule with the same code already exists.
      */
     private function createTaxRule(array $ruleData): void
     {
-        $rule = $this->ruleFactory->create();
-        $ruleCount = $rule->getCollection()->addFieldToFilter('code', $ruleData['code'])->getSize();
+        $criteria = $this->searchCriteriaBuilder
+            ->addFilter('code', $ruleData['code'])
+            ->create();
 
-        if ($ruleCount > 0) {
+        if (!empty($this->taxRuleRepository->getList($criteria)->getItems())) {
             $this->log->logComment(
                 sprintf('Tax Rule "%s" already exists in database.', $ruleData['code'])
             );
@@ -200,9 +197,16 @@ class TaxRules implements ComponentInterface
             return;
         }
 
-        $rule->setData($ruleData);
+        $rule = $this->taxRuleDataFactory->create();
+        $rule->setCode($ruleData['code'])
+             ->setPriority((int) ($ruleData['priority'] ?? 0))
+             ->setPosition((int) ($ruleData['position'] ?? 0))
+             ->setCalculateSubtotal((bool) ($ruleData['calculate_subtotal'] ?? false))
+             ->setTaxRateIds($ruleData['tax_rate_ids'] ?? [])
+             ->setCustomerTaxClassIds($ruleData['customer_tax_class_ids'] ?? [])
+             ->setProductTaxClassIds($ruleData['product_tax_class_ids'] ?? []);
 
-        $this->ruleResource->save($rule);
+        $this->taxRuleRepository->save($rule);
 
         $this->log->logInfo(
             sprintf('Tax Rule "%s" created.', $ruleData['code'])

@@ -214,4 +214,74 @@ class ComponentRunnerTest extends TestCase
             false
         );
     }
+
+    // ── Env-specific missing-file handling ────────────────────────────────────
+
+    public function testExecuteSkipsMissingEnvFileWhenIgnoreFlagIsTrue(): void
+    {
+        $component = $this->createMock(ComponentInterface::class);
+        $this->componentList->method('getComponent')->willReturn($component);
+
+        $this->parser->method('parse')
+            ->willThrowException(new ComponentException('Could not find env file'));
+
+        $this->log->expects($this->once())
+            ->method('logInfo')
+            ->with($this->stringContains('Skipping file'));
+
+        $component->expects($this->never())->method('execute');
+
+        $this->runner->execute(
+            'config',
+            ['env' => ['staging' => ['sources' => ['missing-env.yaml']]]],
+            'staging',
+            true
+        );
+    }
+
+    public function testExecuteRethrowsForEnvSourceWhenIgnoreFlagIsFalse(): void
+    {
+        $component = $this->createMock(ComponentInterface::class);
+        $this->componentList->method('getComponent')->willReturn($component);
+
+        $this->parser->method('parse')
+            ->willThrowException(new ComponentException('Could not find env file'));
+
+        $this->expectException(ComponentException::class);
+
+        $this->runner->execute(
+            'config',
+            ['env' => ['staging' => ['sources' => ['missing-env.yaml']]]],
+            'staging',
+            false
+        );
+    }
+
+    // ── Env node present but no 'sources' key ─────────────────────────────────
+
+    public function testExecuteLogsCommentWhenEnvSourcesKeyMissing(): void
+    {
+        $component = $this->createMock(ComponentInterface::class);
+        $this->componentList->method('getComponent')->willReturn($component);
+
+        $this->parser->expects($this->never())->method('parse');
+        $component->expects($this->never())->method('execute');
+
+        $loggedComments = [];
+        $this->log->method('logComment')
+            ->willReturnCallback(function (string $msg) use (&$loggedComments) {
+                $loggedComments[] = $msg;
+            });
+
+        $this->runner->execute(
+            'config',
+            ['env' => ['staging' => [/* no 'sources' key */]]],
+            'staging',
+            false
+        );
+
+        $this->assertNotEmpty(
+            array_filter($loggedComments, fn($m) => str_contains($m, "No 'staging' environment specific sources"))
+        );
+    }
 }

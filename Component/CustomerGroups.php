@@ -82,12 +82,12 @@ class CustomerGroups implements ComponentInterface
     private function validateGroupName(array $group): void
     {
         if (!isset($group['name'])) {
-            throw new ComponentException(__('The customer group name is mandatory'));
+            throw new ComponentException((string)__('The customer group name is mandatory'));
         }
 
         if (strlen($group['name'])>32) {
             throw new ComponentException(
-                __('The customer group name "%1" is too long (maximum length is 32 characters)', $group['name'])
+                (string)__('The customer group name "%1" is too long (maximum length is 32 characters)', $group['name'])
             );
         }
     }

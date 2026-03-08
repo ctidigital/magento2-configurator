@@ -37,9 +37,11 @@ declare(strict_types=1);
 
 namespace {
     if (!function_exists('__')) {
-        function __(string $text, mixed ...$args): \Magento\Framework\Phrase
+        // Returns string directly so ComponentException (extends RuntimeException)
+        // can accept it without TypeError in PHP 8 strict-typing environments.
+        function __(string $text, mixed ...$args): string
         {
-            return new \Magento\Framework\Phrase($text, $args);
+            return $text;
         }
     }
 }
@@ -131,7 +133,7 @@ namespace Magento\Framework\Exception {
         class LocalizedException extends \Exception
         {
             public function __construct(
-                \Magento\Framework\Phrase $phrase,
+                string|\Magento\Framework\Phrase $phrase,
                 ?\Throwable $cause = null,
                 int $code = 0
             ) {
@@ -284,6 +286,10 @@ namespace Magento\Framework\Filesystem {
 
             /** @param resource $file */
             public function fileClose(mixed $file): bool;
+
+            public function fileGetContents(string $path, bool $useIncludePath = false, mixed $context = null): string;
+
+            public function isExists(string $path): bool;
         }
     }
 }
@@ -319,6 +325,16 @@ namespace Magento\Framework\Filesystem\Driver {
             public function fileClose(mixed $file): bool
             {
                 return fclose($file);
+            }
+
+            public function fileGetContents(string $path, bool $useIncludePath = false, mixed $context = null): string
+            {
+                return (string) file_get_contents($path, $useIncludePath, $context ?: null);
+            }
+
+            public function isExists(string $path): bool
+            {
+                return file_exists($path);
             }
         }
     }
@@ -769,10 +785,25 @@ namespace Magento\Eav\Model\Entity\Attribute {
 
 namespace Magento\Indexer\Model {
 
+    if (!class_exists(\Magento\Indexer\Model\Indexer::class)) {
+        class Indexer
+        {
+            public function load(string $indexerId): static
+            {
+                throw new \LogicException('Stub only — mock Indexer::load()');
+            }
+
+            public function reindexAll(): void
+            {
+                throw new \LogicException('Stub only — mock Indexer::reindexAll()');
+            }
+        }
+    }
+
     if (!class_exists(\Magento\Indexer\Model\IndexerFactory::class)) {
         class IndexerFactory
         {
-            public function create(array $data = []): object
+            public function create(array $data = []): Indexer
             {
                 throw new \LogicException('Stub only — mock IndexerFactory::create()');
             }
@@ -1159,6 +1190,234 @@ namespace GuzzleHttp\Exception {
                 ?\Throwable $previous = null
             ) {
                 parent::__construct($message, 0, $previous);
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Customer\Api\Data — GroupInterfaceFactory
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Customer\Api\Data {
+
+    if (!class_exists(\Magento\Customer\Api\Data\GroupInterfaceFactory::class)) {
+        class GroupInterfaceFactory
+        {
+            public function create(array $data = []): \Magento\Customer\Model\Data\Group
+            {
+                throw new \LogicException('Stub only — mock GroupInterfaceFactory::create()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Tax\Model — ClassModel + ClassModelFactory (collection-based lookup)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Tax\Model\ResourceModel\TaxClass {
+
+    if (!class_exists(\Magento\Tax\Model\ResourceModel\TaxClass\Collection::class)) {
+        class Collection
+        {
+            public function addFieldToFilter(string $field, mixed $value): static
+            {
+                return $this;
+            }
+
+            public function getFirstItem(): object
+            {
+                return new class {
+                    public function getId(): mixed { return null; }
+                };
+            }
+        }
+    }
+}
+
+namespace Magento\Tax\Model {
+
+    if (!class_exists(\Magento\Tax\Model\ClassModel::class)) {
+        class ClassModel
+        {
+            public function getCollection(): \Magento\Tax\Model\ResourceModel\TaxClass\Collection
+            {
+                throw new \LogicException('Stub only — mock ClassModel::getCollection()');
+            }
+        }
+    }
+
+    if (!class_exists(\Magento\Tax\Model\ClassModelFactory::class)) {
+        class ClassModelFactory
+        {
+            public function create(array $data = []): ClassModel
+            {
+                throw new \LogicException('Stub only — mock ClassModelFactory::create()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Cms — Page, PageRepository, PageInterfaceFactory
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Cms\Api\Data {
+
+    if (!interface_exists(\Magento\Cms\Api\Data\PageInterface::class)) {
+        interface PageInterface {}
+    }
+
+    if (!class_exists(\Magento\Cms\Api\Data\PageInterfaceFactory::class)) {
+        class PageInterfaceFactory
+        {
+            public function create(array $data = []): \Magento\Cms\Model\Page
+            {
+                throw new \LogicException('Stub only — mock PageInterfaceFactory::create()');
+            }
+        }
+    }
+}
+
+namespace Magento\Cms\Api {
+
+    if (!interface_exists(\Magento\Cms\Api\PageRepositoryInterface::class)) {
+        interface PageRepositoryInterface
+        {
+            public function getById(int $pageId): \Magento\Cms\Api\Data\PageInterface;
+            public function save(\Magento\Cms\Api\Data\PageInterface $page): \Magento\Cms\Api\Data\PageInterface;
+            public function delete(\Magento\Cms\Api\Data\PageInterface $page): bool;
+            public function deleteById(int $pageId): bool;
+        }
+    }
+}
+
+namespace Magento\Cms\Model {
+
+    if (!class_exists(\Magento\Cms\Model\Page::class)) {
+        class Page implements \Magento\Cms\Api\Data\PageInterface
+        {
+            private array $_data = [];
+
+            /** Returns 0/false when the page identifier does not exist in the given store. */
+            public function checkIdentifier(string $identifier, int $storeId): int|false
+            {
+                return false;
+            }
+
+            public function getId(): mixed
+            {
+                return $this->_data['id'] ?? null;
+            }
+
+            public function setIdentifier(string $identifier): static
+            {
+                $this->_data['identifier'] = $identifier;
+                return $this;
+            }
+
+            public function getData(string $key = ''): mixed
+            {
+                return $key !== '' ? ($this->_data[$key] ?? null) : $this->_data;
+            }
+
+            public function setData(string|array $key, mixed $value = null): static
+            {
+                if (is_string($key)) {
+                    $this->_data[$key] = $value;
+                }
+                return $this;
+            }
+
+            public function setStores(array $stores): static
+            {
+                $this->_data['stores'] = $stores;
+                return $this;
+            }
+
+            public function unsetData(string $key): static
+            {
+                unset($this->_data[$key]);
+                return $this;
+            }
+
+            public function hasDataChanges(): bool
+            {
+                return false;
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Integration — IntegrationService, AuthorizationService, Token
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Integration\Api\Data {
+
+    if (!interface_exists(\Magento\Integration\Api\Data\IntegrationInterface::class)) {
+        interface IntegrationInterface
+        {
+            public function getId(): mixed;
+            public function getName(): string;
+            public function getConsumerId(): mixed;
+        }
+    }
+}
+
+namespace Magento\Integration\Api {
+
+    if (!interface_exists(\Magento\Integration\Api\IntegrationServiceInterface::class)) {
+        interface IntegrationServiceInterface
+        {
+            public function findByName(string $name): \Magento\Integration\Api\Data\IntegrationInterface;
+            public function create(array $integrationData): \Magento\Integration\Api\Data\IntegrationInterface;
+        }
+    }
+}
+
+namespace Magento\Integration\Model {
+
+    if (!class_exists(\Magento\Integration\Model\AuthorizationService::class)) {
+        class AuthorizationService
+        {
+            public function grantPermissions(mixed $integrationId, ?array $resources): void
+            {
+                throw new \LogicException('Stub only — mock AuthorizationService::grantPermissions()');
+            }
+        }
+    }
+}
+
+namespace Magento\Integration\Model\Oauth {
+
+    if (!class_exists(\Magento\Integration\Model\Oauth\Token::class)) {
+        class Token
+        {
+            public function createVerifierToken(mixed $consumerId): static
+            {
+                return $this;
+            }
+
+            public function setType(string $type): static
+            {
+                return $this;
+            }
+
+            public function save(): static
+            {
+                return $this;
+            }
+        }
+    }
+
+    if (!class_exists(\Magento\Integration\Model\Oauth\TokenFactory::class)) {
+        class TokenFactory
+        {
+            public function create(array $data = []): Token
+            {
+                throw new \LogicException('Stub only — mock TokenFactory::create()');
             }
         }
     }

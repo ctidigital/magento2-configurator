@@ -297,6 +297,15 @@ namespace Magento\Framework\Filesystem {
             public function fileGetContents(string $path, bool $useIncludePath = false, mixed $context = null): string;
 
             public function isExists(string $path): bool;
+
+            /** @param resource $file */
+            public function fileWrite(mixed $file, string $content): int;
+
+            public function filePutContents(string $path, mixed $content): int;
+
+            public function deleteFile(string $path): bool;
+
+            public function createDirectory(string $path, int $permissions = 0777): bool;
         }
     }
 }
@@ -342,6 +351,27 @@ namespace Magento\Framework\Filesystem\Driver {
             public function isExists(string $path): bool
             {
                 return file_exists($path);
+            }
+
+            /** @param resource $file */
+            public function fileWrite(mixed $file, string $content): int
+            {
+                return (int) fwrite($file, $content);
+            }
+
+            public function filePutContents(string $path, mixed $content): int
+            {
+                return (int) file_put_contents($path, $content);
+            }
+
+            public function deleteFile(string $path): bool
+            {
+                return unlink($path);
+            }
+
+            public function createDirectory(string $path, int $permissions = 0777): bool
+            {
+                return mkdir($path, $permissions, true);
             }
         }
     }
@@ -1006,7 +1036,10 @@ namespace Magento\Framework\Event {
 namespace Magento\Store\Api {
 
     if (!interface_exists(\Magento\Store\Api\StoreRepositoryInterface::class)) {
-        interface StoreRepositoryInterface {}
+        interface StoreRepositoryInterface
+        {
+            public function get(string $code): \Magento\Store\Model\Store;
+        }
     }
 }
 
@@ -1565,6 +1598,261 @@ namespace Magento\Cms\Model\ResourceModel\Block {
             public function addStoreFilter(mixed $store, bool $withAdmin = true): static { return $this; }
             public function count(): int { return 0; }
             public function getFirstItem(): \Magento\Cms\Model\Block { return new \Magento\Cms\Model\Block(); }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Framework — ObjectManagerInterface
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Framework {
+
+    if (!interface_exists(\Magento\Framework\ObjectManagerInterface::class)) {
+        interface ObjectManagerInterface {}
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Framework\App\Filesystem — DirectoryList
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Framework\App\Filesystem {
+
+    if (!class_exists(\Magento\Framework\App\Filesystem\DirectoryList::class)) {
+        class DirectoryList
+        {
+            public const MEDIA = 'media';
+            public function getPath(string $code): string
+            {
+                throw new \LogicException('Stub only — mock DirectoryList::getPath()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Authorization\Model
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Authorization\Model {
+
+    if (!class_exists(\Magento\Authorization\Model\Role::class)) {
+        class Role
+        {
+            public function getCollection(): \Magento\Authorization\Model\ResourceModel\Role\Collection
+            {
+                throw new \LogicException('Stub only — mock Role::getCollection()');
+            }
+            public function getId(): mixed { return null; }
+            public function getRoleName(): string { return ''; }
+            public function setRoleName(string $name): static { return $this; }
+            public function setParentId(int $id): static { return $this; }
+            public function setRoleType(string $type): static { return $this; }
+            public function setUserType(int $type): static { return $this; }
+            public function setSortOrder(int $order): static { return $this; }
+            public function save(): static { return $this; }
+        }
+    }
+
+    if (!class_exists(\Magento\Authorization\Model\RoleFactory::class)) {
+        class RoleFactory
+        {
+            public function create(array $data = []): Role
+            {
+                throw new \LogicException('Stub only — mock RoleFactory::create()');
+            }
+        }
+    }
+
+    if (!class_exists(\Magento\Authorization\Model\Rules::class)) {
+        class Rules
+        {
+            public function setRoleId(mixed $id): static { return $this; }
+            public function setResources(mixed $resources): static { return $this; }
+            public function saveRel(): void {}
+        }
+    }
+
+    if (!class_exists(\Magento\Authorization\Model\RulesFactory::class)) {
+        class RulesFactory
+        {
+            public function create(array $data = []): Rules
+            {
+                throw new \LogicException('Stub only — mock RulesFactory::create()');
+            }
+        }
+    }
+
+    if (!interface_exists(\Magento\Authorization\Model\UserContextInterface::class)) {
+        interface UserContextInterface
+        {
+            public const USER_TYPE_ADMIN = 2;
+        }
+    }
+}
+
+namespace Magento\Authorization\Model\ResourceModel\Role {
+
+    if (!class_exists(\Magento\Authorization\Model\ResourceModel\Role\Collection::class)) {
+        class Collection
+        {
+            public function addFieldToFilter(string $field, mixed $condition): static { return $this; }
+            public function getSize(): int { return 0; }
+            public function getFirstItem(): \Magento\Authorization\Model\Role { return new \Magento\Authorization\Model\Role(); }
+        }
+    }
+}
+
+namespace Magento\Authorization\Model\Acl\Role {
+
+    if (!class_exists(\Magento\Authorization\Model\Acl\Role\Group::class)) {
+        class Group
+        {
+            public const ROLE_TYPE = 'G';
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\User\Model
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\User\Model {
+
+    if (!class_exists(\Magento\User\Model\User::class)) {
+        class User
+        {
+            public function getCollection(): \Magento\User\Model\ResourceModel\User\Collection
+            {
+                throw new \LogicException('Stub only — mock User::getCollection()');
+            }
+            public function validate(): bool { return true; }
+            public function setUserName(string $v): static { return $this; }
+            public function setFirstName(string $v): static { return $this; }
+            public function setLastName(string $v): static { return $this; }
+            public function setEmail(string $v): static { return $this; }
+            public function setPassword(string $v): static { return $this; }
+            public function setIsActive(bool $v): static { return $this; }
+            public function setRoleId(mixed $v): static { return $this; }
+            public function setInterfaceLocale(string $v): static { return $this; }
+            public function save(): static { return $this; }
+        }
+    }
+
+    if (!class_exists(\Magento\User\Model\UserFactory::class)) {
+        class UserFactory
+        {
+            public function create(array $data = []): User
+            {
+                throw new \LogicException('Stub only — mock UserFactory::create()');
+            }
+        }
+    }
+}
+
+namespace Magento\User\Model\ResourceModel\User {
+
+    if (!class_exists(\Magento\User\Model\ResourceModel\User\Collection::class)) {
+        class Collection
+        {
+            public function addFieldToFilter(string $field, mixed $condition): static { return $this; }
+            public function getSize(): int { return 0; }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Sales\Model\Order — Status + StatusFactory
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Sales\Model\Order {
+
+    if (!class_exists(\Magento\Sales\Model\Order\Status::class)) {
+        class Status
+        {
+            public function setData(mixed $key, mixed $value = null): static { return $this; }
+            public function assignState(string $state, bool $visibleOnFront = false, bool $isDefault = false): static { return $this; }
+        }
+    }
+
+    if (!class_exists(\Magento\Sales\Model\Order\StatusFactory::class)) {
+        class StatusFactory
+        {
+            public function create(array $data = []): Status
+            {
+                throw new \LogicException('Stub only — mock StatusFactory::create()');
+            }
+        }
+    }
+}
+
+namespace Magento\Sales\Model\ResourceModel\Order {
+
+    if (!class_exists(\Magento\Sales\Model\ResourceModel\Order\Status::class)) {
+        class Status
+        {
+            public function save(\Magento\Sales\Model\Order\Status $status): void {}
+        }
+    }
+
+    if (!class_exists(\Magento\Sales\Model\ResourceModel\Order\StatusFactory::class)) {
+        class StatusFactory
+        {
+            public function create(array $data = []): \Magento\Sales\Model\ResourceModel\Order\Status
+            {
+                throw new \LogicException('Stub only — mock StatusFactory::create()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\SalesSequence\Model
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\SalesSequence\Model {
+
+    if (!class_exists(\Magento\SalesSequence\Model\Builder::class)) {
+        class Builder
+        {
+            public function setPrefix(mixed $prefix): static { return $this; }
+            public function setSuffix(mixed $suffix): static { return $this; }
+            public function setStartValue(mixed $value): static { return $this; }
+            public function setStoreId(mixed $id): static { return $this; }
+            public function setStep(mixed $step): static { return $this; }
+            public function setWarningValue(mixed $value): static { return $this; }
+            public function setMaxValue(mixed $value): static { return $this; }
+            public function setEntityType(string $type): static { return $this; }
+            public function create(): void {}
+        }
+    }
+
+    if (!class_exists(\Magento\SalesSequence\Model\EntityPool::class)) {
+        class EntityPool
+        {
+            public function getEntities(): array { return []; }
+        }
+    }
+
+    if (!class_exists(\Magento\SalesSequence\Model\Config::class)) {
+        class Config
+        {
+            public function get(string $key): mixed { return null; }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\TaxImportExport\Model\Rate — CsvImportHandler
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\TaxImportExport\Model\Rate {
+
+    if (!class_exists(\Magento\TaxImportExport\Model\Rate\CsvImportHandler::class)) {
+        class CsvImportHandler
+        {
+            public function importFromCsvFile(array $file): void {}
         }
     }
 }

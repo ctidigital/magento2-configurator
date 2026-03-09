@@ -32,10 +32,10 @@ class Sequence implements ComponentInterface
 
         foreach ($data['stores'] as $code => $overrides) {
             try {
-                $this->logger->logInfo(__("Starting creating sequence tables for %1", $code));
+                $this->logger->logInfo((string)__("Starting creating sequence tables for %1", $code));
                 $store = $this->storeRepository->get($code);
                 $this->newSequenceTable($store, $overrides);
-                $this->logger->logInfo(__("Finished creating sequence tables for %1", $code));
+                $this->logger->logInfo((string)__("Finished creating sequence tables for %1", $code));
                 // todo handle existing sequence tables
             } catch (\Exception $exception) {
                 $this->logger->logError($exception->getMessage());
@@ -72,7 +72,7 @@ class Sequence implements ComponentInterface
 
         foreach ($this->entityPool->getEntities() as $entityType) {
             try {
-                $this->logger->logComment(__(
+                $this->logger->logComment((string)__(
                     'Store: %1 '.
                     'Prefix: %2, '.
                     'Suffix: %3, '.
@@ -99,7 +99,7 @@ class Sequence implements ComponentInterface
                     ->setMaxValue($configValues['maxValue'])
                     ->setEntityType($entityType)
                     ->create();
-                $this->logger->logInfo(__("Sequence table created for %1", $entityType), 1);
+                $this->logger->logInfo((string)__("Sequence table created for %1", $entityType), 1);
             } catch (\Exception $exception) {
                 $this->logger->logError($exception->getMessage());
             }

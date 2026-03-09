@@ -210,7 +210,17 @@ namespace Magento\Framework\Config {
 namespace Magento\Framework\App {
 
     if (!class_exists(\Magento\Framework\App\Config::class)) {
-        class Config {}
+        class Config
+        {
+            /** Returns a config value for the given path and scope. */
+            public function getValue(
+                string $path,
+                string $scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                mixed $scopeCode = null
+            ): mixed {
+                return null;
+            }
+        }
     }
 
     if (!class_exists(\Magento\Framework\App\ResourceConnection::class)) {
@@ -227,6 +237,12 @@ namespace Magento\Framework\App {
         class State
         {
             public function __construct(?\Magento\Framework\Config\ScopeInterface $scope = null) {}
+
+            /** Runs $callback in a specific area code context. */
+            public function emulateAreaCode(string $areaCode, callable $callback, array $params = []): mixed
+            {
+                return $callback(...$params);
+            }
         }
     }
 
@@ -250,7 +266,11 @@ namespace Magento\Framework\App\Config {
     }
 
     if (!class_exists(\Magento\Framework\App\Config\Initial::class)) {
-        class Initial {}
+        class Initial
+        {
+            /** Returns the default config values keyed by path. */
+            public function getMetadata(): array { return []; }
+        }
     }
 }
 
@@ -706,7 +726,14 @@ namespace Magento\Catalog\Model\ResourceModel\Eav {
 namespace Magento\Config\Model\ResourceModel {
 
     if (!class_exists(\Magento\Config\Model\ResourceModel\Config::class)) {
-        class Config {}
+        class Config
+        {
+            /** Persist a configuration value for the given path/scope. */
+            public function saveConfig(string $path, mixed $value, string $scope, int $scopeId): static
+            {
+                return $this;
+            }
+        }
     }
 }
 
@@ -744,10 +771,10 @@ namespace Magento\Customer\Model\Data {
     if (!class_exists(\Magento\Customer\Model\Data\Group::class)) {
         class Group
         {
-            public function getId(): mixed
-            {
-                return null;
-            }
+            public function getId(): mixed { return null; }
+            // Concrete setters declared on GroupInterface implemented by this model:
+            public function setCode(string $code): static { return $this; }
+            public function setTaxClassId(int $id): static { return $this; }
         }
     }
 }
@@ -1061,7 +1088,8 @@ namespace Magento\Store\Model {
     if (!class_exists(\Magento\Store\Model\Store::class)) {
         class Store
         {
-            public function load(mixed $id, mixed $field = null): static { return $this; }
+            // Return type is Store (not static) so willReturn($anotherStoreMock) works
+            public function load(mixed $id, mixed $field = null): \Magento\Store\Model\Store { return $this; }
             public function getId(): mixed { return null; }
             public function getData(?string $key = null): mixed { return []; }
             public function setData(mixed $key, mixed $value = null): static { return $this; }
@@ -1381,8 +1409,8 @@ namespace Magento\Cms\Model {
             public function setIdentifier(string $id): static { $this->_data['identifier'] = $id; return $this; }
             public function getData(string $key = ''): mixed { return $key !== '' ? ($this->_data[$key] ?? null) : $this->_data; }
             public function setData(string|array $key, mixed $value = null): static { if (is_string($key)) { $this->_data[$key] = $value; } return $this; }
-            public function setStoreId(int $storeId): static { $this->_data['store_id'] = $storeId; return $this; }
-            public function setStores(array $stores): static { $this->_data['stores'] = $stores; return $this; }
+            // setStoreId / setStores are magic __call setters on the real Magento class;
+            // omitting them here keeps addMethods() valid in both standalone and Docker mode.
             public function unsetData(string $key): static { unset($this->_data[$key]); return $this; }
             public function getCollection(): \Magento\Cms\Model\ResourceModel\Block\Collection
             {
@@ -1426,12 +1454,8 @@ namespace Magento\Cms\Model {
                 return $this;
             }
 
-            public function setStores(array $stores): static
-            {
-                $this->_data['stores'] = $stores;
-                return $this;
-            }
-
+            // setStores is a magic __call setter on the real Magento Page class;
+            // omitting it keeps addMethods() valid in both standalone and Docker mode.
             public function unsetData(string $key): static
             {
                 unset($this->_data[$key]);
@@ -1496,11 +1520,8 @@ namespace Magento\Integration\Model\Oauth {
                 return $this;
             }
 
-            public function setType(string $type): static
-            {
-                return $this;
-            }
-
+            // setType is a magic __call setter on the real Magento Token class;
+            // omitting it keeps addMethods() valid in both standalone and Docker mode.
             public function save(): static
             {
                 return $this;
@@ -1532,10 +1553,10 @@ namespace Magento\Eav\Setup {
             public function getAttributeSetId(string $entityType, mixed $name): mixed { return null; }
             public function getAttributeSet(string $entityType, mixed $id): array { return []; }
             public function getAttributeGroup(string $entityType, mixed $setId, string $code, string $returnField = null): mixed { return false; }
-            public function addAttributeGroup(string $entityType, mixed $setId, string $name, int $sortOrder = null): void {}
+            public function addAttributeGroup(string $entityType, mixed $setId, string $name, ?int $sortOrder = null): void {}
             public function convertToAttributeGroupCode(string $name): string { return strtolower(str_replace(' ', '_', $name)); }
             public function getAttribute(string $entityType, mixed $id): array { return []; }
-            public function addAttributeToGroup(string $entityType, mixed $setId, mixed $groupId, string $attributeCode, int $sortOrder = null): void {}
+            public function addAttributeToGroup(string $entityType, mixed $setId, mixed $groupId, string $attributeCode, ?int $sortOrder = null): void {}
         }
     }
 }

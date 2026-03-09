@@ -57,7 +57,20 @@ spl_autoload_register(static function (string $class): void {
     }
 });
 
-// ─── 2. Magento / third-party stubs ──────────────────────────────────────────
+// ─── 2. symfony/yaml autoloader (CI only) ────────────────────────────────────
+//
+// symfony/yaml is a production dependency of this extension. In Docker it is
+// available via the Magento vendor directory. In GitHub Actions the test suite
+// runs without a full Composer install, so we look for a minimal vendor tree
+// installed by the CI workflow into .ci-deps/ at the project root.
+
+$ciDepsAutoload = dirname(__DIR__) . '/.ci-deps/vendor/autoload.php';
+if (file_exists($ciDepsAutoload)) {
+    require_once $ciDepsAutoload;
+}
+unset($ciDepsAutoload);
+
+// ─── 3. Magento / third-party stubs ──────────────────────────────────────────
 //
 // Must be loaded after the extension autoloader so that production classes
 // (which are loaded on demand) can reference stub interfaces in their

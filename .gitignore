@@ -11,3 +11,6 @@ phpunit.phar
 # Composer (no vendor dir expected — extension installs inside Magento as a path repo)
 vendor/
 composer.lock
+
+# CI test dependencies (symfony/yaml installed by unit-tests.yml into .ci-deps/)
+.ci-deps/

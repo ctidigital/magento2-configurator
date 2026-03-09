@@ -24,11 +24,18 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          # No extensions beyond the PHP defaults are needed.
-          # No composer install is required — tests use a standalone bootstrap
-          # with stub declarations for all Magento / third-party classes.
-          tools: none
+          tools: composer
           coverage: none
+
+      - name: Install symfony/yaml (production dependency, public Packagist)
+        # symfony/yaml is a real production requirement of this extension.
+        # We install it into an isolated directory so the test bootstrap can
+        # load its autoloader without touching the project's own composer.json
+        # or pulling in any Magento packages that need repo.magento.com auth.
+        run: |
+          mkdir -p .ci-deps
+          echo '{"require":{"symfony/yaml":"^7.0"}}' > .ci-deps/composer.json
+          composer install --working-dir=.ci-deps --no-interaction --no-scripts --no-plugins
 
       - name: Download PHPUnit
         run: |

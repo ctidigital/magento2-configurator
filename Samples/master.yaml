@@ -71,6 +71,7 @@ taxrates:
   method: code
   sources:
     - ../configurator/TaxRates/taxrates.csv
+    - ../configurator/TaxRates/eu_taxrates.csv
   env:
     local:
       mode: maintain

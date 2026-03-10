@@ -123,11 +123,6 @@
         </arguments>
     </type>
 
-    <type name="CtiDigital\Configurator\Component\TaxRates">
-        <arguments>
-            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
-        </arguments>
-    </type>
 
     <type name="CtiDigital\Configurator\Component\Processor\SqlSplitProcessor">
         <arguments>

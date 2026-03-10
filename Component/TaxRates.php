@@ -5,10 +5,10 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\FileComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
-use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Filesystem\DriverInterface;
-use Magento\TaxImportExport\Model\Rate\CsvImportHandler;
+use Magento\Directory\Model\RegionFactory;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Tax\Api\Data\TaxRateInterfaceFactory;
+use Magento\Tax\Api\TaxRateRepositoryInterface;
 
 class TaxRates implements FileComponentInterface
 {
@@ -17,38 +17,68 @@ class TaxRates implements FileComponentInterface
     protected string $description = 'Component to create Tax Rates';
 
     public function __construct(
-        protected readonly CsvImportHandler $csvImportHandler,
-        private readonly LoggerInterface $log,
-        private readonly DriverInterface $driver
+        private readonly TaxRateRepositoryInterface $taxRateRepository,
+        private readonly TaxRateInterfaceFactory $taxRateFactory,
+        private readonly SearchCriteriaBuilder $searchCriteriaBuilder,
+        private readonly RegionFactory $regionFactory,
+        private readonly LoggerInterface $log
     ) {}
 
     /**
-     * @throws LocalizedException
+     * Process tax rate data from CSV rows.
+     *
+     * The first row must contain column headers. Supported columns:
+     *   code, tax_country_id, tax_region_id, tax_postcode, rate,
+     *   zip_is_range, zip_from, zip_to
+     *
+     * Rates are created when they do not already exist; rates matched by code
+     * are skipped so repeated runs are idempotent.
      */
     public function execute(mixed $data = null): void
     {
-        try {
-            // Sort data into order importExport requires
-            $sortedData = $this->getSortedData($data);
-
-            // Generate sorted csv file
-            $tmpFile = $this->getTmpFile($sortedData);
-
-            // Pass the temporary file name to the import handler
-            $this->csvImportHandler->importFromCsvFile(['tmp_name' => $tmpFile]);
-
-            // Remove the temporary file
-            $this->driver->deleteFile($tmpFile);
-
-            // We don't know how many were successfully imported
-            // so we can't log the number of records imported, but we can log that the import was successful
-            // we could diff the count of the state before and after but it would be expensive
-            $this->log->logInfo(
-                sprintf('Tax rates finished importing, check the rates in the admin panel.')
-            );
-        } catch (ComponentException $e) {
-            $this->log->logError($e->getMessage());
+        if (empty($data) || count($data) < 2) {
+            $this->log->logError('Tax rates: no data found.');
+            return;
         }
+
+        $headers = array_values($data[0]);
+        unset($data[0]);
+
+        $created = 0;
+        $skipped = 0;
+
+        foreach ($data as $row) {
+            $rate = array_combine($headers, array_values($row));
+            $code = (string) ($rate['code'] ?? '');
+
+            if ($code === '') {
+                $this->log->logError('Tax rate skipped: missing code.');
+                continue;
+            }
+
+            try {
+                if ($this->rateExists($code)) {
+                    $this->log->logComment(
+                        sprintf('Tax rate "%s" already exists, skipping.', $code),
+                        1
+                    );
+                    $skipped++;
+                    continue;
+                }
+
+                $this->saveRate($rate);
+                $this->log->logInfo(sprintf('Tax rate "%s" created.', $code), 1);
+                $created++;
+            } catch (\Exception $e) {
+                $this->log->logError(
+                    sprintf('Tax rate "%s" failed: %s', $code, $e->getMessage())
+                );
+            }
+        }
+
+        $this->log->logInfo(
+            sprintf('Tax rates import complete: %d created, %d skipped.', $created, $skipped)
+        );
     }
 
     public function getAlias(): string
@@ -61,66 +91,59 @@ class TaxRates implements FileComponentInterface
         return $this->description;
     }
 
-    protected function getSortedData(array $data): array
+    /**
+     * Return true if a tax rate with the given code already exists.
+     */
+    private function rateExists(string $code): bool
     {
-        $sortedData = [];
+        $criteria = $this->searchCriteriaBuilder
+            ->addFilter('code', $code)
+            ->create();
 
-        foreach ($data as $index => $rate) {
-            if ($index === 0) {
-                $sortedData[] = $rate;
-                continue; // Skip the header row
-            }
-
-            $relativeData = array_combine($data[0], $rate);
-
-            // Reorder the data to match the expected format
-            // Why this is a requirement is not clear
-            $rateData = [
-                $relativeData['code'],
-                $relativeData['tax_country_id'],
-                $relativeData['tax_region_id'],
-                $relativeData['tax_postcode'],
-                $relativeData['rate'],
-                $relativeData['zip_is_range'],
-                $relativeData['zip_from'],
-                $relativeData['zip_to']
-            ];
-            $sortedData[] = $rateData;
-        }
-        return $sortedData;
-    }
-
-    protected function getTmpFile(array $sortedData): string
-    {
-        // Define a temporary file name
-        $tmpFile = sys_get_temp_dir() . '/tax_rates_' . uniqid() . '.csv';
-
-        // Write the CSV data to the temporary file
-        $fileHandle = $this->driver->fileOpen($tmpFile, 'w');
-        foreach ($sortedData as $line) {
-            $this->driver->fileWrite($fileHandle, $this->formatCsvLine($line));
-        }
-        // close stream
-        $this->driver->fileClose($fileHandle);
-
-        // Return the path to the temporary file
-        return $tmpFile;
+        return $this->taxRateRepository->getList($criteria)->getTotalCount() > 0;
     }
 
     /**
-     * Format an array of fields as an RFC 4180 CSV line.
-     * Replicates fputcsv() with escape: '' (no legacy escape character).
+     * Build and persist a single tax rate from an associative row array.
      */
-    private function formatCsvLine(array $fields): string
+    private function saveRate(array $rate): void
     {
-        $csvFields = array_map(static function (mixed $field): string {
-            $field = (string) $field;
-            if (str_contains($field, ',') || str_contains($field, '"') || str_contains($field, "\n")) {
-                return '"' . str_replace('"', '""', $field) . '"';
-            }
-            return $field;
-        }, $fields);
+        $taxRate = $this->taxRateFactory->create();
+        $taxRate->setCode((string) $rate['code']);
+        $taxRate->setTaxCountryId((string) $rate['tax_country_id']);
+        $taxRate->setTaxPostcode((string) ($rate['tax_postcode'] ?: '*'));
+        $taxRate->setRate((float) $rate['rate']);
+        $taxRate->setTaxRegionId(
+            $this->resolveRegionId(
+                (string) ($rate['tax_region_id'] ?? ''),
+                (string) $rate['tax_country_id']
+            )
+        );
 
-        return implode(',', $csvFields) . "\n";
+        $zipIsRange = isset($rate['zip_is_range'])
+            && $rate['zip_is_range'] !== ''
+            && $rate['zip_is_range'] !== '0';
+
+        if ($zipIsRange) {
+            $taxRate->setZipIsRange(1);
+            $taxRate->setZipFrom((int) ($rate['zip_from'] ?? 0));
+            $taxRate->setZipTo((int) ($rate['zip_to'] ?? 0));
+        }
+
+        $this->taxRateRepository->save($taxRate);
+    }
+
+    /**
+     * Resolve a region code (e.g. "CA") or wildcard ("*", "0", "") to its
+     * integer region_id. Returns 0 to indicate "all regions".
+     */
+    private function resolveRegionId(string $regionCode, string $countryId): int
+    {
+        if ($regionCode === '' || $regionCode === '*' || $regionCode === '0') {
+            return 0;
+        }
+
+        $region = $this->regionFactory->create()->loadByCode($regionCode, $countryId);
+        return (int) $region->getId();
     }
 }

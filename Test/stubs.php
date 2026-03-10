@@ -983,6 +983,24 @@ namespace Magento\Tax\Api\Data {
         {
             public function getId(): mixed;
             public function getCode(): string;
+            public function setCode(string $code): static;
+            public function setTaxCountryId(string $taxCountryId): static;
+            public function setTaxRegionId(int $taxRegionId): static;
+            public function setTaxPostcode(string $taxPostCode): static;
+            public function setRate(float $rate): static;
+            public function setZipIsRange(int $zipIsRange): static;
+            public function setZipFrom(int $zipFrom): static;
+            public function setZipTo(int $zipTo): static;
+        }
+    }
+
+    if (!class_exists(\Magento\Tax\Api\Data\TaxRateInterfaceFactory::class)) {
+        class TaxRateInterfaceFactory
+        {
+            public function create(array $data = []): TaxRateInterface
+            {
+                throw new \LogicException('Stub only — mock TaxRateInterfaceFactory::create()');
+            }
         }
     }
 
@@ -1647,6 +1665,33 @@ namespace Magento\Framework\App\Filesystem {
             public function getPath(string $code): string
             {
                 throw new \LogicException('Stub only — mock DirectoryList::getPath()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Directory\Model
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Directory\Model {
+
+    if (!class_exists(\Magento\Directory\Model\Region::class)) {
+        class Region
+        {
+            /** Load a region by its code and country. Returns $this so getId() can be chained. */
+            public function loadByCode(string $code, string $countryId): static { return $this; }
+            /** Returns the region's database ID, or 0 / null if not found. */
+            public function getId(): mixed { return null; }
+        }
+    }
+
+    if (!class_exists(\Magento\Directory\Model\RegionFactory::class)) {
+        class RegionFactory
+        {
+            public function create(array $arguments = []): Region
+            {
+                throw new \LogicException('Stub only — mock RegionFactory::create()');
             }
         }
     }

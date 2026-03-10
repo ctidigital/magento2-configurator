@@ -139,7 +139,7 @@ class Attributes implements ComponentInterface
      */
     private function extractSwatchType(array &$attributeConfig): string|false
     {
-        if (!in_array($attributeConfig['input'], ['swatch_text', 'swatch_visual'])) {
+        if (!in_array($attributeConfig['input'] ?? '', ['swatch_text', 'swatch_visual'])) {
             return false;
         }
 

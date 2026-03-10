@@ -1,47 +1,97 @@
-# How to contribute
+# Contributing
 
-Firstly, thank you for considering contributing!
+Thank you for considering a contribution to magento2-configurator!
 
-When creating the original configurator for Magento 1, we knew it was something that can be valuable to the Magento Communnity.
-Now what Magento 2 is out, it is something we want to do again however this time, we want to get this it out at the earliest stage possible for the Magento community to also build from the ground up.
+## Setting Up for Development
 
-## The Ideal Setup
+The simplest approach is to install the extension as a path repository inside a working Magento 2
+instance, which lets you test your changes against a real store.
 
-Although your setup preferences may differ, the easiest way to get started is by including this project via composer into an fully setup Magento 2 install.
-
-```
-composer require ctidigital/magento2-configurator
-```
-
-Fork the project to your own GitHub Account and then set the remote URLs to point to your fork as detailed here: https://help.github.com/articles/changing-a-remote-s-url/.
-
-### Making use of the sample data
-
-If you symlink the `Samples\Components` directory 1 level outside the Magento Root and symlink the `Samples\master.yaml` file in your Magento's `app/etc` directory.
-
-
-### CLI Based Logging Styles
-@todo
-
-## Pull Requests
-
-Before submitting a pull request there are a few things that you should ensure. These include:
-
-1) Running Code Sniffer / Mess Detector / Duplicate Code Detector test. 
-```
-php vendor/bin/phpcs --standard=PSR2 vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console/ vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Api/ vendor/ctidigital/magento2-configurator/Component/ vendor/ctidigital/magento2-configurator/Exception/
-php vendor/bin/phpmd vendor/ctidigital/magento2-configurator/Model/,vendor/ctidigital/magento2-configurator/Console/,vendor/ctidigital/magento2-configurator/Test/,vendor/ctidigital/magento2-configurator/Api/,vendor/ctidigital/magento2-configurator/Component/,vendor/ctidigital/magento2-configurator/Exception/ text cleancode,codesize,controversial,design,naming,unusedcode
-php vendor/bin/phpcpd vendor/ctidigital/magento2-configurator/Model/ vendor/ctidigital/magento2-configurator/Console vendor/ctidigital/magento2-configurator/Test/ vendor/ctidigital/magento2-configurator/Api/ vendor/ctidigital/magento2-configurator/Component/ vendor/ctidigital/magento2-configurator/Exception/
-```
-2) Include PHP Unit tests. If you're developing a new component, it is important that the component fits the framework by extending `ComponentAbstractTestCase` within `Test\Unit\Component`.
-Then you would have to run the unit tests to ensure there are no failures.
-```
-php vendor/bin/phpunit --coverage-clover build/logs/clover.xml vendor/ctidigital/magento2-configurator/Test/Unit/
+```bash
+# In your Magento root's composer.json, add a path repository pointing to your fork:
+composer config repositories.configurator path /path/to/your/fork/magento2-configurator
+composer require ctidigital/magento2-configurator:@dev
 ```
 
-3) Include Samples. If you have developed/modified a component and it requires a change in the sample data to test the new feature/change this should be included with its corresponding component in the `Samples` directory and `master.yaml` should be updated to reflect this.
+`vendor/ctidigital/magento2-configurator` will then be a symlink to your fork — edits are live
+immediately, no reinstall needed.
 
-4) Run configurator. If you've developed a component ensure it actually works with configurator and shows appropriate CLI based logging to feedback to the user.
+To install the dev tools (phpcs, phpmd, phpunit) without a Magento installation, configure the
+public [Mage-OS mirror] to resolve `magento/magento-coding-standard` without credentials, then
+run composer from inside the extension directory:
+
+```bash
+composer config --global repositories.mage-os composer https://mirror.mage-os.org/
+cd /path/to/your/fork/magento2-configurator
+composer install
 ```
-bin/magento configurator:run --env="<environment>" --components="<your component>"
+
+## Before Submitting a Pull Request
+
+All checks below are run automatically by GitHub Actions on every PR. Passing them locally before
+you push saves round-trips.
+
+### 1 — Unit tests
+
+```bash
+composer test
 ```
+
+This runs 175 unit tests via PHPUnit. No Magento installation is required — the suite uses a
+standalone bootstrap and class stubs. Alternatively, without a `composer install`:
+
+```bash
+curl -sL https://phar.phpunit.de/phpunit-10.phar -o phpunit.phar
+php phpunit.phar --configuration phpunit.xml
+```
+
+**New components must have a corresponding unit test.** Place it in `Test/Unit/Component/`
+following the naming and structure of the existing test files (e.g. `BlocksTest.php`).
+
+### 2 — Static analysis
+
+```bash
+composer cs       # PHP_CodeSniffer — Magento2 standard, errors only
+composer md       # PHP Mess Detector
+composer analyse  # Both together
+```
+
+Current baseline: **0 phpcs errors, 0 phpmd violations.** The CI build will fail if either
+tool reports a new issue against your changes.
+
+### 3 — Sample files
+
+If your change affects accepted YAML fields, column names, or data format for any component,
+update the corresponding file in `Samples/Components/` and ensure `Samples/master.yaml` reflects
+it. Sample files are the contract between the extension and its operators.
+
+### 4 — Manual smoke test
+
+Run the affected component against a real Magento instance to confirm the CLI output and
+behaviour are correct:
+
+```bash
+bin/magento configurator:run --env="<environment>" --component="<your-component>"
+bin/magento configurator:run --env="<environment>" --component="<your-component>" -v
+```
+
+## Coding Standards
+
+- PHP 8.3+, `declare(strict_types=1)` in every file.
+- Constructor property promotion with `readonly` for injected dependencies.
+- Native types on all properties, parameters, and return values.
+- Use Magento service contracts (Repository / API interfaces) in preference to concrete
+  models wherever they exist.
+- No `ObjectManager` usage in components.
+- Suppressed PHPMD warnings (`@SuppressWarnings`) must be specific rule names
+  (e.g. `PHPMD.CyclomaticComplexity`), not blanket `@SuppressWarnings(PHPMD)`.
+
+## Pull Request Checklist
+
+- [ ] `composer test` passes (175 tests, 0 errors)
+- [ ] `composer analyse` passes (0 phpcs errors, 0 phpmd violations)
+- [ ] New/changed component has a unit test
+- [ ] Sample file updated if YAML format changed
+- [ ] Manually verified against a Magento instance
+
+[Mage-OS mirror]: https://mage-os.org/

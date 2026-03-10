@@ -16,6 +16,12 @@
         "magento/magento-coding-standard": ">=36"
     },
     "version": "4.1.0",
+    "scripts": {
+        "test":    "vendor/bin/phpunit --configuration phpunit.xml",
+        "cs":      "vendor/bin/phpcs --standard=phpcs.xml",
+        "md":      "vendor/bin/phpmd Api,Component,Console,Exception,Model,Service text phpmd.xml",
+        "analyse": ["@cs", "@md"]
+    },
     "autoload": {
         "files": [
             "registration.php"

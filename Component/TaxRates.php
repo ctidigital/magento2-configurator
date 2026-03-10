@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace CtiDigital\Configurator\Component;
 
-use CtiDigital\Configurator\Api\FileComponentInterface;
+use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Tax\Api\Data\TaxRateInterfaceFactory;
 use Magento\Tax\Api\TaxRateRepositoryInterface;
 
-class TaxRates implements FileComponentInterface
+class TaxRates implements ComponentInterface
 {
     protected string $alias = 'taxrates';
     protected string $name = 'Tax Rates';

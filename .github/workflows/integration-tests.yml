@@ -57,7 +57,7 @@ jobs:
             project: magento/project-community-edition
             constraint: "2.4.7.*"
             repo-url: "https://mirror.mage-os.org/"
-            php: "8.2"
+            php: "8.3"
 
           - label: "Magento 2.4.8 (mirror)"
             project: magento/project-community-edition

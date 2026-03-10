@@ -62,6 +62,7 @@
                     CtiDigital\Configurator\Component\CustomerAttributes
                 </item>
                 <item name="tiered_prices" xsi:type="object">CtiDigital\Configurator\Component\TieredPrices</item>
+                <item name="order_statuses" xsi:type="object">CtiDigital\Configurator\Component\OrderStatuses</item>
             </argument>
         </arguments>
     </type>

@@ -1,0 +1,210 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [master, develop, "dev/**"]
+  pull_request:
+    branches: [master, develop]
+  schedule:
+    - cron: '0 6 * * 1'   # Monday 06:00 UTC — catches new Magento / Mage-OS releases
+
+jobs:
+  integration:
+    name: ${{ matrix.label }}
+    runs-on: ubuntu-latest
+
+    # Experimental jobs (beta) are allowed to fail without blocking PR status.
+    continue-on-error: ${{ matrix.experimental || false }}
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: magento_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      # OpenSearch 2.11 is supported by Magento 2.4.6 – 2.4.8 and Mage-OS.
+      # Security is disabled so no credentials are needed.
+      opensearch:
+        image: opensearchproject/opensearch:2.11.0
+        env:
+          discovery.type: single-node
+          plugins.security.disabled: "true"
+          OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd="curl -sf http://localhost:9200/_cluster/health"
+          --health-interval=15s
+          --health-timeout=10s
+          --health-retries=10
+          --health-start-period=40s
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # ── Magento via Mage-OS public mirror (no repo.magento.com credentials needed) ──
+
+          - label: "Magento 2.4.7 (mirror)"
+            project: magento/project-community-edition
+            constraint: "2.4.7.*"
+            repo-url: "https://mirror.mage-os.org/"
+            php: "8.2"
+
+          - label: "Magento 2.4.8 (mirror)"
+            project: magento/project-community-edition
+            constraint: "2.4.8.*"
+            repo-url: "https://mirror.mage-os.org/"
+            php: "8.3"
+
+          # Latest beta / RC — update the constraint when a new beta is tagged.
+          # This job is allowed to fail.
+          - label: "Magento beta (mirror)"
+            project: magento/project-community-edition
+            constraint: "~2.4@beta"
+            stability: "beta"
+            repo-url: "https://mirror.mage-os.org/"
+            php: "8.4"
+            experimental: true
+
+          # ── Official Mage-OS distribution ────────────────────────────────────────────
+
+          - label: "Mage-OS latest"
+            project: mage-os/project-community-edition
+            constraint: ""
+            repo-url: "https://repo.mage-os.org/"
+            php: "8.3"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: >-
+            bcmath, ctype, curl, dom, gd, hash, iconv, intl,
+            mbstring, openssl, pdo_mysql, simplexml, soap, sockets, xsl, zip
+          tools: composer:v2
+          coverage: none
+          ini-values: memory_limit=-1
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ matrix.label }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-${{ matrix.label }}-
+
+      # ── Create the Magento / Mage-OS project skeleton ──────────────────────────────
+
+      - name: Create project (no install)
+        run: |
+          ARGS=(
+            --repository-url="${{ matrix.repo-url }}"
+            --no-interaction
+            --no-progress
+            --no-install
+          )
+          if [ -n "${{ matrix.stability }}" ]; then
+            ARGS+=(--stability="${{ matrix.stability }}")
+          fi
+
+          PACKAGE="${{ matrix.project }}"
+          if [ -n "${{ matrix.constraint }}" ]; then
+            PACKAGE="${PACKAGE}:${{ matrix.constraint }}"
+          fi
+
+          composer create-project "${ARGS[@]}" "$PACKAGE" /tmp/magento
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+
+      # ── Wire the configurator extension as a Composer path repository ──────────────
+      # The extension lives at $GITHUB_WORKSPACE; we register it as a path repo so
+      # the exact checked-out code is tested (symlinked into vendor/).
+
+      - name: Register configurator as path repository
+        working-directory: /tmp/magento
+        run: |
+          composer config repositories.configurator \
+            "{\"type\":\"path\",\"url\":\"${GITHUB_WORKSPACE}\",\"options\":{\"symlink\":true}}"
+          composer require ctidigital/magento2-configurator:@dev \
+            --no-update --no-interaction
+
+      - name: Install Composer dependencies
+        working-directory: /tmp/magento
+        run: |
+          composer update \
+            --no-interaction \
+            --no-progress \
+            --prefer-dist \
+            --optimize-autoloader
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+
+      # ── Bootstrap Magento ───────────────────────────────────────────────────────────
+
+      - name: Run setup:install
+        working-directory: /tmp/magento
+        run: |
+          php -d memory_limit=-1 bin/magento setup:install \
+            --db-host="127.0.0.1" \
+            --db-name="magento_test" \
+            --db-user="root" \
+            --db-password="root" \
+            --base-url="http://magento.test/" \
+            --backend-frontname="admin" \
+            --admin-firstname="Admin" \
+            --admin-lastname="Test" \
+            --admin-email="admin@example.com" \
+            --admin-user="admin" \
+            --admin-password="Admin123!" \
+            --language="en_US" \
+            --currency="USD" \
+            --timezone="Europe/London" \
+            --search-engine="opensearch" \
+            --opensearch-host="127.0.0.1" \
+            --opensearch-port="9200" \
+            --no-interaction
+
+      # ── Place integration fixtures ──────────────────────────────────────────────────
+      # SourceDataParser resolves source paths as  BP + '/' + path  where BP is the
+      # Magento root (/tmp/magento).  The master.yaml uses paths of the form
+      # "../configurator/TaxRates/taxrates.csv", which resolves to:
+      #   /tmp/magento/../configurator/TaxRates/taxrates.csv
+      #   = /tmp/configurator/TaxRates/taxrates.csv
+      # Symlinking /tmp/configurator → <workspace>/Samples/Components satisfies this.
+
+      - name: Place master.yaml and sample-data symlink
+        run: |
+          ln -sf "${GITHUB_WORKSPACE}/Samples/Components" /tmp/configurator
+          cp "${GITHUB_WORKSPACE}/.github/integration/master.yaml" \
+             /tmp/magento/app/etc/master.yaml
+
+      # ── Run the configurator ────────────────────────────────────────────────────────
+
+      - name: Run configurator:run
+        working-directory: /tmp/magento
+        run: |
+          php -d memory_limit=-1 bin/magento configurator:run --env=ci -v
+
+      # ── Smoke-test: verify the EU tax rates were actually persisted ─────────────────
+
+      - name: Verify EU tax rates imported
+        run: |
+          COUNT=$(mysql -h 127.0.0.1 -u root -proot magento_test \
+            -se "SELECT COUNT(*) FROM tax_calculation_rate WHERE code LIKE 'EU-%'")
+          echo "EU tax rates in DB: ${COUNT}"
+          # 27 standard rates minimum (one per EU member state)
+          [ "${COUNT}" -ge 27 ] || \
+            { echo "Expected ≥27 EU tax rates, got ${COUNT}"; exit 1; }

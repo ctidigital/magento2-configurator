@@ -1,0 +1,78 @@
+# Integration-test master YAML.
+#
+# Used exclusively by .github/workflows/integration-tests.yml.
+# A symlink is created at /tmp/configurator → <workspace>/Samples/Components,
+# so all "../configurator/..." paths below resolve correctly under Magento's BP
+# (/tmp/magento):
+#
+#   BP + '/' + '../configurator/TaxRates/taxrates.csv'
+#   = /tmp/magento/../configurator/TaxRates/taxrates.csv
+#   = /tmp/configurator/TaxRates/taxrates.csv   ✓
+#
+# Components deliberately excluded:
+#   - attributes / attribute_sets  — EAV complexity, no isolated sample data
+#   - categories                   — tree dependency, ObjectManager anti-pattern
+#   - products / tiered_prices     — require categories + attributes
+#   - adminusers                   — would conflict with the setup:install admin user
+#   - customers                    — imports real user records into the test DB
+#   - media                        — downloads files from the public internet
+#   - rewrites / product_links     — require products to exist first
+#   - customer_attributes          — heavy EAV dependency
+#   - catalog_price_rules          — requires indexer infrastructure
+#   - shippingtablerates           — file-upload only, no plain-YAML path
+#   - sql                          — arbitrary SQL, not suitable for shared CI DB
+
+config:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Configuration/global.yaml
+
+websites:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/websites.yaml
+
+customergroups:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/CustomerGroups/customergroups.yaml
+
+adminroles:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/AdminRoles/adminroles.yaml
+
+taxrates:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/TaxRates/taxrates.csv
+    - ../configurator/TaxRates/eu_taxrates.csv
+
+taxrules:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/TaxRules/taxrules.csv
+
+orderstatuses:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/OrderStatuses/orderstatuses.yaml
+
+blocks:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Blocks/blocks.yaml
+
+pages:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Pages/pages.yaml

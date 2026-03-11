@@ -1106,6 +1106,8 @@ namespace Magento\Store\Model {
     if (!class_exists(\Magento\Store\Model\Store::class)) {
         class Store
         {
+            public const DEFAULT_STORE_ID = 0;
+
             // Return type is Store (not static) so willReturn($anotherStoreMock) works
             public function load(mixed $id, mixed $field = null): \Magento\Store\Model\Store { return $this; }
             public function getId(): mixed { return null; }

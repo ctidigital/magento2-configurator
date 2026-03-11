@@ -111,7 +111,9 @@ class Customers implements ComponentInterface
             $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($importer->getLogTrace());
-        $this->log->logInfo($importer->getErrorMessages());
+        foreach ($importer->getErrorMessages() as $message) {
+            $this->log->logError((string)$message, 1);
+        }
     }
 
     /**

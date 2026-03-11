@@ -47,7 +47,7 @@ class ReviewRating implements ComponentInterface
                 $ratingModel = $this->updateOrCreateRating($ratingModel, $code, $reviewRating);
                 $ratingModel->save();
                 $this->setOptions($ratingModel);
-                $this->log->logInfo(__('Updated review rating "%1"', $code));
+                $this->log->logInfo(sprintf('Updated review rating "%s"', $code));
             } catch (\Exception $exception) {
                 $this->log->logError(
                     sprintf(

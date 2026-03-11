@@ -148,7 +148,9 @@ class Products implements ComponentInterface
             $this->log->logError($e->getMessage());
         }
         $this->log->logInfo($import->getLogTrace());
-        $this->log->logError($import->getErrorMessages());
+        foreach ($import->getErrorMessages() as $message) {
+            $this->log->logError((string)$message, 1);
+        }
     }
 
     /**

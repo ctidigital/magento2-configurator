@@ -121,18 +121,24 @@ class Blocks implements ComponentInterface
                     }
                 }
 
-                // Process stores
-                // @todo compare stores to see if a save is required
-                $block->setStoreId(0);
+                // Process stores.
+                // BlockRepository::save() contains: if (empty($block->getStoreId())) { setStoreId(currentStore) }
+                // Both null and int 0 are "empty" in PHP, so setStoreId(0) or unsetData('store_id')
+                // cause BlockRepository to silently overwrite store_id with the current store ID
+                // (typically 1 = admin/default). That store ID is then used by getIsUniqueBlockToStores()
+                // for its IN check, which finds the previous same-identifier block and throws.
+                // Fix: always call setData('store_id', array) — a non-empty array is never "empty",
+                // so BlockRepository leaves it alone. getIsUniqueBlockToStores reads getData('store_id')
+                // and gets the correct IDs; Block::getStores() falls back to store_id for the SaveHandler.
                 if (isset($data['stores'])) {
-                    $block->unsetData('store_id');
-                    $block->unsetData('store_data');
                     $stores = [];
                     foreach ($data['stores'] as $code) {
                         $stores[] = $this->getStoreByCode($code)->getId();
                     }
-                    $block->setStores($stores);
+                } else {
+                    $stores = [Store::DEFAULT_STORE_ID];
                 }
+                $block->setData('store_id', $stores);
 
                 // If we can save the block
                 if ($canSave) {

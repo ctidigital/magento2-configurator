@@ -59,6 +59,8 @@ class Attributes implements ComponentInterface
 
     protected array $swatchMap = [];
 
+    private array $optionCollection = [];
+
     public function __construct(
         protected readonly EavSetup $eavSetup,
         protected readonly AttributeRepositoryInterface $attributeRepository,

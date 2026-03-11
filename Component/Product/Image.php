@@ -52,7 +52,7 @@ class Image
         $client = $this->clientFactory->create();
 
         try {
-            $response = $client->request(Request::HTTP_METHOD_GET, $value)->getBody();
+            $response = (string)$client->request(Request::HTTP_METHOD_GET, $value)->getBody();
         } catch (GuzzleException $e) {
             $response = '';
             $this->log->logError($e->getMessage());

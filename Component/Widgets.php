@@ -11,6 +11,8 @@ use Magento\Widget\Model\Widget\Instance;
 use Magento\Widget\Model\Widget\InstanceFactory as WidgetInstanceFactory;
 use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use Magento\Store\Model\StoreFactory;
+use Magento\Framework\App\Area as AppArea;
+use Magento\Framework\App\State as AppState;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Serialize\SerializerInterface;
 
@@ -27,6 +29,7 @@ class Widgets implements ComponentInterface
         private readonly StoreFactory $storeFactory,
         private readonly ThemeCollection $themeCollection,
         private readonly SerializerInterface $serializer,
+        private readonly AppState $appState,
         private readonly LoggerInterface $log
     ) {}
 
@@ -74,17 +77,18 @@ class Widgets implements ComponentInterface
                 }
 
                 if ($widget->getData($key) == $value) {
-                    $this->log->logComment(sprintf("Widget %s = %s", $key, $value), 1);
+                    $this->logValue($key, $value, 'logComment', 1);
                     continue;
                 }
 
                 $canSave = true;
                 $widget->setData($key, $value);
-                $this->log->logInfo(sprintf("Widget %s = %s", $key, $value), 1);
+                $this->logValue($key, $value, 'logInfo', 1);
             }
 
             if ($canSave) {
-                $widget->save();
+                // Widget::save() resolves theme_dir which requires a frontend area context.
+                $this->appState->emulateAreaCode(AppArea::AREA_FRONTEND, [$widget, 'save']);
                 $this->log->logInfo(sprintf("Saved Widget %s", $widget->getTitle()), 1);
             }
         } catch (ComponentException $e) {
@@ -178,6 +182,19 @@ class Widgets implements ComponentInterface
             $storeIds[] = $storeView->getId();
         }
         return implode(',', $storeIds);
+    }
+
+    private function logValue(string $key, mixed $value, string $method, int $nest): void
+    {
+        if (!is_array($value)) {
+            $this->log->$method(sprintf('Widget %s = %s', $key, $value), $nest);
+            return;
+        }
+
+        $this->log->$method(sprintf('Widget %s:', $key), $nest);
+        foreach ($value as $subKey => $subValue) {
+            $this->logValue((string)$subKey, $subValue, $method, $nest + 1);
+        }
     }
 
     public function getAlias(): string

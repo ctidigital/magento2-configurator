@@ -58,10 +58,6 @@ jobs:
             constraint: "2.4.7.*"
             repo-url: "https://mirror.mage-os.org/"
             php: "8.3"
-            # 2.4.7 ships paypal/module-braintree* inside the project package and
-            # magento/product-community-edition carries a conflict against paypal/module-braintree >=4.7.0,
-            # so replacing them in the root triggers that conflict. Exclude them here.
-            replace-exclude: '["paypal/module-braintree","paypal/module-braintree-core","paypal/module-braintree-graph-ql"]'
 
           - label: "Magento 2.4.8 (mirror)"
             project: magento/project-community-edition
@@ -154,6 +150,7 @@ jobs:
         working-directory: /tmp/magento
         env:
           REPLACE_EXCLUDE: ${{ matrix.replace-exclude || '[]' }}
+          REPLACE_INCLUDE: ${{ matrix.replace-include || '{}' }}
         run: |
           VENDOR=$(echo "${{ matrix.project }}" | cut -d/ -f1)
           REPLACE=$(sed "s|VENDOR/|${VENDOR}/|g" << 'JSON'
@@ -180,9 +177,6 @@ jobs:
             "klarna/module-kp-graph-ql": "*",
             "klarna/module-onsitemessaging": "*",
             "klarna/module-ordermanagement": "*",
-            "paypal/module-braintree": "*",
-            "paypal/module-braintree-core": "*",
-            "paypal/module-braintree-graph-ql": "*",
             "temando/module-shipping": "*",
             "temando/module-shipping-m2": "*",
             "temando/module-shipping-remover": "*",
@@ -196,6 +190,7 @@ jobs:
             "vertexinc/product-magento-module-commerce": "*",
             "yotpo/magento2-module-yotpo-reviews": "*",
             "yotpo/magento2-module-yotpo-reviews-bundle": "*",
+            "adobe-commerce/os-extensions-metapackage": "*",
             "VENDOR/adobe-stock-integration": "*",
             "VENDOR/google-shopping-ads": "*",
             "VENDOR/inventory-composer-installer": "*",
@@ -422,7 +417,8 @@ jobs:
           )
           jq --argjson rep "$REPLACE" \
             --argjson excl "$REPLACE_EXCLUDE" \
-            '.replace = (((.replace // {}) + $rep) | if ($excl | length) > 0 then del(.[$excl[]]) else . end)' \
+            --argjson incl "$REPLACE_INCLUDE" \
+            '.replace = ((((.replace // {}) + $rep) | if ($excl | length) > 0 then del(.[$excl[]]) else . end) + $incl)' \
             composer.json > composer.json.tmp && mv composer.json.tmp composer.json
 
       - name: Install Composer dependencies

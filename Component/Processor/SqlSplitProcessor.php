@@ -62,36 +62,20 @@ class SqlSplitProcessor
     }
 
     /**
-     * Split file content string into separate queries, allowing for
-     * multi-line queries using preg_match.
+     * Read the entire file and split it into individual queries on the delimiter.
+     * Using fileGetContents avoids relying on fileReadLine line-splitting behaviour,
+     * which varies across Magento / Mage-OS framework versions.
      */
     private function extractQueriesFromFile(string $filePath, string $delimiter = ';'): array
     {
-        $obBaseLevel = ob_get_level();
+        $content = $this->driver->fileGetContents($filePath);
         $queries = [];
-        $file = $this->driver->fileOpen($filePath, 'r');
-        if (is_resource($file) === true) {
-            $query = [];
-            while ($this->driver->endOfFile($file) === false) {
-                $query[] = $this->driver->fileReadLine($file, 4096);
-
-                if (preg_match('~' . preg_quote($delimiter, '~') . '\s*$~iS', end($query)) === 1) {
-                    $query = trim(implode('', $query));
-
-                    $queries[] = $query;
-
-                    while (ob_get_level() > $obBaseLevel) {
-                        ob_end_flush();
-                    }
-                    flush();
-                }
-
-                if (is_string($query) === true) {
-                    $query = [];
-                }
+        foreach (explode($delimiter, $content) as $statement) {
+            $statement = trim($statement);
+            if ($statement !== '') {
+                $queries[] = $statement . $delimiter;
             }
         }
-        $this->driver->fileClose($file);
         return $queries;
     }
 }

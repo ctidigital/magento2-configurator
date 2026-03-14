@@ -6,7 +6,6 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
@@ -35,7 +34,6 @@ class Categories implements ComponentInterface
         protected readonly LoggerInterface $log,
         protected readonly ObjectManagerInterface $objectManager,
         protected readonly CategoryFactory $category,
-        protected readonly CategoryRepositoryInterface $categoryRepository,
         protected readonly GroupFactory $groupFactory,
         protected readonly DirectoryList $dirList,
         protected readonly BlockInterfaceFactory $blockFactory,
@@ -181,7 +179,8 @@ class Categories implements ComponentInterface
             $category->setAttributeSetId($category->getResource()->getEntityType()->getDefaultAttributeSetId());
             $category->setPath($path);
             $category->setParentId($parentCategory->getId());
-            $this->categoryRepository->save($category);
+            $category->setStoreId(0);
+            $category->save();
 
             $this->log->logInfo(
                 sprintf('Updated category %s', $category->getName()),

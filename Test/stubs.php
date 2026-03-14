@@ -406,6 +406,10 @@ namespace Magento\Framework\DB\Adapter {
     if (!interface_exists(\Magento\Framework\DB\Adapter\AdapterInterface::class)) {
         interface AdapterInterface {}
     }
+
+    if (!class_exists(\Magento\Framework\DB\Adapter\DuplicateException::class)) {
+        class DuplicateException extends \Exception {}
+    }
 }
 
 namespace Magento\Framework\DB\Adapter\Pdo {

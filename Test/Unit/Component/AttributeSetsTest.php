@@ -9,6 +9,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\AttributeSetRepository;
 use Magento\Eav\Model\Entity\Attribute\Set as AttributeSetModel;
 use Magento\Eav\Setup\EavSetup;
+use Magento\Framework\DB\Adapter\DuplicateException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -200,6 +201,48 @@ class AttributeSetsTest extends TestCase
                     'name'   => 'My Set',
                     'groups' => [
                         ['name' => 'General', 'attributes' => ['missing_attr']],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function testExecuteLogsDuplicateExceptionFromAddAttributeToGroup(): void
+    {
+        // Simulates the case where EavSetup::addAttributeToGroup fires a SQLSTATE 23000
+        // integrity constraint violation — e.g. an unresolved group name produces
+        // attribute_group_id = 0, causing a FK constraint failure on eav_entity_attribute.
+        $mockSet = $this->attributeSetMock('My Set');
+        $this->eavSetup->method('getAttributeSetId')->willReturn(5);
+        $this->attributeSetRepository->method('get')->willReturn($mockSet);
+
+        $this->eavSetup->method('convertToAttributeGroupCode')->willReturn('general');
+        $this->eavSetup->method('getAttributeGroup')->willReturn(false);
+        $this->eavSetup->method('getAttribute')->willReturn(['attribute_id' => 10]);
+
+        $dbMessage = 'SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row';
+        $this->eavSetup->method('addAttributeToGroup')
+            ->willThrowException(new DuplicateException($dbMessage));
+
+        // Expect three logError calls: hint message, set+group context, raw DB message
+        $this->log->expects($this->exactly(3))
+            ->method('logError')
+            ->willReturnCallback(function (string $message) use ($dbMessage): void {
+                static $calls = 0;
+                $calls++;
+                match ($calls) {
+                    1 => $this->assertStringContainsString('attribute codes', $message),
+                    2 => $this->assertStringContainsString('My Set', $message),
+                    3 => $this->assertSame($dbMessage, $message),
+                };
+            });
+
+        $this->component->execute([
+            'attribute_sets' => [
+                [
+                    'name'   => 'My Set',
+                    'groups' => [
+                        ['name' => 'General', 'attributes' => ['color']],
                     ],
                 ],
             ],

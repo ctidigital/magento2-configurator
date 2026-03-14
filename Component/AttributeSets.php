@@ -10,6 +10,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Eav\Api\Data\AttributeSetInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Model\AttributeSetRepository;
+use Magento\Framework\DB\Adapter\DuplicateException;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -88,7 +89,7 @@ class AttributeSets implements ComponentInterface
 
                 // Attempt to associate the attributes to the group
                 $this->addAttributeGroupAssociations($attributeSetEntity, $group);
-            } catch (\Zend_Db_Statement_Exception $exception) {
+            } catch (DuplicateException $exception) {
                 $this->log->logError(
                     'Magento sometimes uses different attribute codes to attribute names. '
                     .'You may require to specify the code too.',

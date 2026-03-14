@@ -6,18 +6,16 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Categories;
+use CtiDigital\Configurator\Model\CmsBlockResolver;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\ResourceModel\Category as CategoryResource;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
-use Magento\Cms\Api\Data\BlockInterface;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Cms\Model\Block;
-use Magento\Cms\Model\GetBlockByIdentifier;
 use Magento\Cms\Model\ResourceModel\Block\Collection as BlockCollection;
 use Magento\Eav\Model\Entity\Type as EntityType;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\Group;
@@ -54,8 +52,8 @@ class CategoriesTest extends TestCase
     /** @var DriverInterface&MockObject */
     private DriverInterface $driver;
 
-    /** @var GetBlockByIdentifier&MockObject */
-    private GetBlockByIdentifier $blockByIdentifier;
+    /** @var CmsBlockResolver&MockObject */
+    private CmsBlockResolver $cmsBlockResolver;
 
     protected function setUp(): void
     {
@@ -75,7 +73,7 @@ class CategoriesTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
         $this->driver            = $this->createMock(DriverInterface::class);
-        $this->blockByIdentifier = $this->createMock(GetBlockByIdentifier::class);
+        $this->cmsBlockResolver = $this->createMock(CmsBlockResolver::class);
 
         $this->component = new Categories(
             $this->log,
@@ -85,7 +83,7 @@ class CategoriesTest extends TestCase
             $this->dirList,
             $this->blockFactory,
             $this->driver,
-            $this->blockByIdentifier
+            $this->cmsBlockResolver
         );
     }
 
@@ -183,12 +181,12 @@ class CategoriesTest extends TestCase
 
     // ── landing_page: numeric passthrough ─────────────────────────────────────
 
-    public function testLandingPageWithNumericValueSetsIdDirectly(): void
+    public function testLandingPageWithNumericValueDelegatesToResolver(): void
     {
         $dataCalls = [];
-        [$parent, $child] = $this->makeParentAndChildMocks($dataCalls);
+        [$parent] = $this->makeParentAndChildMocks($dataCalls);
 
-        $this->blockByIdentifier->expects($this->never())->method('execute');
+        $this->cmsBlockResolver->method('resolve')->willReturn(42);
 
         $this->component->createOrUpdateCategory($parent, [
             ['name' => 'Test Cat', 'landing_page' => '42'],
@@ -197,12 +195,12 @@ class CategoriesTest extends TestCase
         $this->assertSame(42, $dataCalls['landing_page']);
     }
 
-    public function testLandingPageWithIntegerValueSetsIdDirectly(): void
+    public function testLandingPageWithIntegerValueDelegatesToResolver(): void
     {
         $dataCalls = [];
-        [$parent, $child] = $this->makeParentAndChildMocks($dataCalls);
+        [$parent] = $this->makeParentAndChildMocks($dataCalls);
 
-        $this->blockByIdentifier->expects($this->never())->method('execute');
+        $this->cmsBlockResolver->method('resolve')->willReturn(7);
 
         $this->component->createOrUpdateCategory($parent, [
             ['name' => 'Test Cat', 'landing_page' => 7],
@@ -219,13 +217,10 @@ class CategoriesTest extends TestCase
         [$parent, $child] = $this->makeParentAndChildMocks($dataCalls);
         $child->method('getStoreId')->willReturn(0);
 
-        $block = $this->createMock(BlockInterface::class);
-        $block->method('getId')->willReturn('5');
-
-        $this->blockByIdentifier->expects($this->once())
-            ->method('execute')
+        $this->cmsBlockResolver->expects($this->once())
+            ->method('resolve')
             ->with('my-cms-block', 0)
-            ->willReturn($block);
+            ->willReturn(5);
 
         $this->component->createOrUpdateCategory($parent, [
             ['name' => 'Test Cat', 'landing_page' => 'my-cms-block'],
@@ -242,13 +237,9 @@ class CategoriesTest extends TestCase
         [$parent, $child] = $this->makeParentAndChildMocks($dataCalls);
         $child->method('getStoreId')->willReturn(0);
 
-        $this->blockByIdentifier
-            ->method('execute')
-            ->willThrowException(new NoSuchEntityException(__('No such entity.')));
-
-        $this->log->expects($this->atLeastOnce())
-            ->method('logError')
-            ->with($this->stringContains('unknown-block'));
+        $this->cmsBlockResolver
+            ->method('resolve')
+            ->willReturn(0);
 
         $this->component->createOrUpdateCategory($parent, [
             ['name' => 'Test Cat', 'landing_page' => 'unknown-block'],
@@ -310,10 +301,12 @@ class CategoriesTest extends TestCase
 
         $child = $this->makeCategoryModel(id: null, storeId: 0);
 
-        // Capture every setData() call so tests can inspect the result
+        // Capture every setData() call so tests can inspect the result.
+        // Must return $child to satisfy the `static` return type on the mocked method.
         $child->method('setData')
-            ->willReturnCallback(function (string $key, mixed $value) use (&$dataCalls) {
+            ->willReturnCallback(function (string $key, mixed $value) use (&$dataCalls, $child) {
                 $dataCalls[$key] = $value;
+                return $child;
             });
 
         $collection = $this->getMockBuilder(CategoryCollection::class)

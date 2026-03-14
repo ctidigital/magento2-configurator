@@ -5,17 +5,12 @@ namespace CtiDigital\Configurator\Component;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use Magento\Customer\Model\Customer;
-use Magento\Eav\Api\AttributeOptionUpdateInterface;
-use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
-use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
+use CtiDigital\Configurator\Model\OptionStoreLabelUpdater;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Customer\Setup\CustomerSetupFactory;
-use Magento\Customer\Setup\CustomerSetup;
 use Magento\Customer\Model\ResourceModel\Attribute;
-use Magento\Store\Api\StoreRepositoryInterface;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -29,7 +24,7 @@ class CustomerAttributes extends Attributes
     protected string $name = 'Customer Attributes';
     protected string $description = 'Component to create/maintain customer attributes.';
 
-    protected string $entityTypeId = Customer::ENTITY;
+    protected string $entityTypeId = 'customer';
 
     /**
      * @var array
@@ -57,10 +52,7 @@ class CustomerAttributes extends Attributes
         private readonly LoggerInterface $log,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
         \Magento\Eav\Model\Config $eavConfig,
-        AttributeOptionUpdateInterface $attributeOptionUpdate,
-        AttributeOptionInterfaceFactory $optionFactory,
-        AttributeOptionLabelInterfaceFactory $optionLabelFactory,
-        StoreRepositoryInterface $storeRepository
+        OptionStoreLabelUpdater $optionStoreLabelUpdater
     ) {
         parent::__construct(
             $eavSetup,
@@ -68,10 +60,7 @@ class CustomerAttributes extends Attributes
             $log,
             $attrOptionCollectionFactory,
             $eavConfig,
-            $attributeOptionUpdate,
-            $optionFactory,
-            $optionLabelFactory,
-            $storeRepository
+            $optionStoreLabelUpdater
         );
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
     }
@@ -102,7 +91,6 @@ class CustomerAttributes extends Attributes
             $attributeConfiguration['used_in_forms'] = $this->defaultForms;
         }
 
-        /** @var CustomerSetup $customerSetup */
         $customerSetup = $this->customerSetup->create();
         try {
             $attribute = $customerSetup->getEavConfig()

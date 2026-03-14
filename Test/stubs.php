@@ -1936,6 +1936,23 @@ namespace Magento\TaxImportExport\Model\Rate {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// CtiDigital\Configurator\Model
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace CtiDigital\Configurator\Model {
+
+    if (!class_exists(\CtiDigital\Configurator\Model\CmsBlockResolver::class)) {
+        class CmsBlockResolver
+        {
+            public function resolve(mixed $value, int $storeId = 0): int
+            {
+                throw new \LogicException('Stub only — mock CmsBlockResolver::resolve()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // Magento\Catalog — Category model, factory, resource, and collection
 // ═══════════════════════════════════════════════════════════════════════════════
 

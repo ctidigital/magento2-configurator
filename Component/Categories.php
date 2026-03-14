@@ -6,12 +6,11 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
+use CtiDigital\Configurator\Model\CmsBlockResolver;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
-use Magento\Cms\Model\GetBlockByIdentifier;
 use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\Group;
@@ -40,7 +39,7 @@ class Categories implements ComponentInterface
         protected readonly DirectoryList $dirList,
         protected readonly BlockInterfaceFactory $blockFactory,
         private readonly DriverInterface $driver,
-        private readonly GetBlockByIdentifier $blockByIdentifier
+        private readonly CmsBlockResolver $cmsBlockResolver
     ) {
     }
 
@@ -149,7 +148,7 @@ class Categories implements ComponentInterface
                     case 'landing_page':
                         $category->setData(
                             'landing_page',
-                            $this->getCmsBlockId($value, (int) $category->getStoreId())
+                            $this->cmsBlockResolver->resolve($value, (int) $category->getStoreId())
                         );
                         break;
                     case 'cms_block':
@@ -199,29 +198,6 @@ class Categories implements ComponentInterface
             if (isset($categoryValues['categories'])) {
                 $this->createOrUpdateCategory($category, $categoryValues['categories']);
             }
-        }
-    }
-
-    /**
-     * Resolve a CMS block value to a block ID.
-     *
-     * Accepts either a numeric ID (passed through as-is) or a block identifier
-     * string which is looked up via the CMS block service.
-     */
-    private function getCmsBlockId(mixed $value, int $storeId = 0): int
-    {
-        if (is_numeric($value)) {
-            return (int) $value;
-        }
-
-        try {
-            $block = $this->blockByIdentifier->execute((string) $value, $storeId);
-            return (int) $block->getId();
-        } catch (NoSuchEntityException $e) {
-            $this->log->logError(
-                sprintf('Failed to find CMS block with identifier "%s": %s', $value, $e->getMessage())
-            );
-            return 0;
         }
     }
 

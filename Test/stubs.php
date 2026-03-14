@@ -1137,8 +1137,13 @@ namespace Magento\Store\Model {
             public function setWebsite(mixed $website): static { return $this; }
             public function getDefaultStoreId(): mixed { return null; }
             public function setDefaultStoreId(mixed $id): static { return $this; }
+            public function getRootCategoryId(): mixed { return null; }
             public function getResource(): static { return $this; }
             public function save(mixed $model): void {}
+            public function getCollection(): \Magento\Store\Model\ResourceModel\Group\Collection
+            {
+                throw new \LogicException('Stub only — mock Group::getCollection()');
+            }
         }
     }
 
@@ -1641,6 +1646,7 @@ namespace Magento\Cms\Model\ResourceModel\Block {
         {
             public function addFieldToFilter(string $field, mixed $condition): static { return $this; }
             public function addStoreFilter(mixed $store, bool $withAdmin = true): static { return $this; }
+            public function setPageSize(int $size): static { return $this; }
             public function count(): int { return 0; }
             public function getFirstItem(): \Magento\Cms\Model\Block { return new \Magento\Cms\Model\Block(); }
         }
@@ -1925,6 +1931,142 @@ namespace Magento\TaxImportExport\Model\Rate {
         class CsvImportHandler
         {
             public function importFromCsvFile(array $file): void {}
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Catalog — Category model, factory, resource, and collection
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Catalog\Model {
+
+    if (!class_exists(\Magento\Catalog\Model\Category::class)) {
+        class Category
+        {
+            public function getId(): mixed { return null; }
+            public function getPath(): string { return ''; }
+            public function getStoreId(): mixed { return 0; }
+            public function getName(): string { return ''; }
+            public function getLevel(): int { return 0; }
+            public function setData(string $key, mixed $value = null): static { return $this; }
+            public function getData(string $key = ''): mixed { return null; }
+            public function setIsActive(bool $flag): static { return $this; }
+            public function setImage(string $img): static { return $this; }
+            public function setAttributeSetId(mixed $id): static { return $this; }
+            public function setPath(string $path): static { return $this; }
+            public function setParentId(mixed $id): static { return $this; }
+            public function setStoreId(mixed $id): static { return $this; }
+            public function setCustomAttribute(string $code, mixed $value): static { return $this; }
+            public function getResource(): \Magento\Catalog\Model\ResourceModel\Category
+            {
+                throw new \LogicException('Stub only — mock Category::getResource()');
+            }
+            public function getCollection(): \Magento\Catalog\Model\ResourceModel\Category\Collection
+            {
+                throw new \LogicException('Stub only — mock Category::getCollection()');
+            }
+            public function load(mixed $id, mixed $field = null): static { return $this; }
+            public function save(): static { return $this; }
+        }
+    }
+
+    if (!class_exists(\Magento\Catalog\Model\CategoryFactory::class)) {
+        class CategoryFactory
+        {
+            public function create(array $data = []): Category
+            {
+                throw new \LogicException('Stub only — mock CategoryFactory::create()');
+            }
+        }
+    }
+}
+
+namespace Magento\Catalog\Model\ResourceModel {
+
+    if (!class_exists(\Magento\Catalog\Model\ResourceModel\Category::class)) {
+        class Category
+        {
+            public function getEntityType(): \Magento\Eav\Model\Entity\Type
+            {
+                throw new \LogicException('Stub only — mock CategoryResource::getEntityType()');
+            }
+        }
+    }
+}
+
+namespace Magento\Catalog\Model\ResourceModel\Category {
+
+    if (!class_exists(\Magento\Catalog\Model\ResourceModel\Category\Collection::class)) {
+        class Collection
+        {
+            public function addFieldToFilter(mixed $field, mixed $condition = null): static { return $this; }
+            public function setPageSize(int $size): static { return $this; }
+            public function getFirstItem(): \Magento\Catalog\Model\Category
+            {
+                throw new \LogicException('Stub only — mock CategoryCollection::getFirstItem()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Eav — Entity\Type
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Eav\Model\Entity {
+
+    if (!class_exists(\Magento\Eav\Model\Entity\Type::class)) {
+        class Type
+        {
+            public function getDefaultAttributeSetId(): mixed { return null; }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Cms — BlockInterface and GetBlockByIdentifier
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Cms\Api\Data {
+
+    if (!interface_exists(\Magento\Cms\Api\Data\BlockInterface::class)) {
+        interface BlockInterface
+        {
+            public function getId(): mixed;
+            public function getIdentifier(): string;
+        }
+    }
+}
+
+namespace Magento\Cms\Model {
+
+    if (!class_exists(\Magento\Cms\Model\GetBlockByIdentifier::class)) {
+        class GetBlockByIdentifier
+        {
+            public function execute(string $identifier, int $storeId): \Magento\Cms\Api\Data\BlockInterface
+            {
+                throw new \LogicException('Stub only — mock GetBlockByIdentifier::execute()');
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Store — ResourceModel\Group\Collection
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Store\Model\ResourceModel\Group {
+
+    if (!class_exists(\Magento\Store\Model\ResourceModel\Group\Collection::class)) {
+        class Collection
+        {
+            public function addFieldToFilter(mixed $field, mixed $condition = null): static { return $this; }
+            public function getSize(): int { return 0; }
+            public function getFirstItem(): \Magento\Store\Model\Group
+            {
+                throw new \LogicException('Stub only — mock GroupCollection::getFirstItem()');
+            }
         }
     }
 }

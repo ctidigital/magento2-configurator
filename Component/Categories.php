@@ -9,7 +9,9 @@ use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Cms\Api\Data\BlockInterfaceFactory;
+use Magento\Cms\Model\GetBlockByIdentifier;
 use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\Group;
@@ -37,7 +39,8 @@ class Categories implements ComponentInterface
         protected readonly GroupFactory $groupFactory,
         protected readonly DirectoryList $dirList,
         protected readonly BlockInterfaceFactory $blockFactory,
-        private readonly DriverInterface $driver
+        private readonly DriverInterface $driver,
+        private readonly GetBlockByIdentifier $blockByIdentifier
     ) {
     }
 
@@ -143,21 +146,27 @@ class Categories implements ComponentInterface
                         $category->setImage($img);
                         break;
                     // Attaching cms block
+                    case 'landing_page':
+                        $category->setData(
+                            'landing_page',
+                            $this->getCmsBlockId($value, (int) $category->getStoreId())
+                        );
+                        break;
                     case 'cms_block':
-                        // getting block by name
+                        // Look up by CMS block title (legacy; prefer 'landing_page' with block identifier)
                         $block = $this->blockFactory->create()->getCollection()
                             ->addFieldToFilter('title', $value)
                             ->setPageSize(1)
                             ->getFirstItem();
 
-                        // check if block exist
-                        if (!$block) {
-                            $this->log->logError("Can't find cms block with name '%s'", $value);
+                        if (!$block->getId()) {
+                            $this->log->logError(sprintf("Can't find cms block with title '%s'", $value));
+                            break;
                         }
 
                         // Attach cms block by id
                         $category->setData('landing_page', $block->getId());
-                        // set category display mode to Satic block and products
+                        // Set category display mode to static block and products
                         $category->setData('display_mode', 'PRODUCTS_AND_PAGE');
 
                         break;
@@ -190,6 +199,29 @@ class Categories implements ComponentInterface
             if (isset($categoryValues['categories'])) {
                 $this->createOrUpdateCategory($category, $categoryValues['categories']);
             }
+        }
+    }
+
+    /**
+     * Resolve a CMS block value to a block ID.
+     *
+     * Accepts either a numeric ID (passed through as-is) or a block identifier
+     * string which is looked up via the CMS block service.
+     */
+    private function getCmsBlockId(mixed $value, int $storeId = 0): int
+    {
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        try {
+            $block = $this->blockByIdentifier->execute((string) $value, $storeId);
+            return (int) $block->getId();
+        } catch (NoSuchEntityException $e) {
+            $this->log->logError(
+                sprintf('Failed to find CMS block with identifier "%s": %s', $value, $e->getMessage())
+            );
+            return 0;
         }
     }
 

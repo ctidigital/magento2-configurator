@@ -6,7 +6,12 @@ categories:
         name: Category 1
         description: "A description"
         url_key: "category-1"
-        cms_block: "All stores" # cms block title
+        # Attach a CMS block via its identifier (preferred) or a numeric block ID.
+        # The display_mode attribute can be set separately if needed (e.g. PRODUCTS_AND_PAGE, PAGE, PRODUCTS).
+        landing_page: "all-stores-landing-block" # cms block identifier
+        display_mode: "PRODUCTS_AND_PAGE"
+        # Legacy alternative: look up by block title (sets display_mode automatically)
+        # cms_block: "All stores"
         categories:
           -
             name: "Sub Category 1"

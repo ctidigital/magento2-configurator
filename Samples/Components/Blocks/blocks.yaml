@@ -1,3 +1,9 @@
+all-stores-landing-block:
+  block:
+    -
+      source: ../configurator/Blocks/category-landing.html
+      title: All Stores Landing Block
+      is_active: 1
 all_stores_identifier:
   block:
     -

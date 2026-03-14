@@ -20,6 +20,81 @@ attributes:
         - Pink
         - Orange
         - Brown
+
+  # Demonstrates per-store display labels for attribute options.
+  #
+  # Admin values act as internal codes (e.g. "S", "M", "L") while each store
+  # view can display its own human-readable label (e.g. "Small", "Medium").
+  # Multiple store views are supported — use the store code or a numeric store ID.
+  #
+  # The store_labels block is optional and fully backward compatible: attributes
+  # without it continue to work exactly as before.
+  shirt_size:
+    global: 1
+    label: Shirt Size
+    type: int
+    input: select
+    visible_on_front: 1
+    filterable: 1
+    required: 0
+    searchable: 1
+    visible_in_advanced_search: 0
+    used_in_product_listing: 1
+    product_types:
+      - simple
+      - configurable
+    option:
+      values:
+        - XS
+        - S
+        - M
+        - L
+        - XL
+      store_labels:
+        default:            # store code — matches websites.yaml default store view
+          XS: Extra Small
+          S: Small
+          M: Medium
+          L: Large
+          XL: Extra Large
+        usa_en_us:          # store code — matches websites.yaml USA store view
+          XS: Extra Small
+          S: Small
+          M: Medium
+          L: Large
+          XL: Extra Large
+
+  fabric_colour:
+    global: 1
+    label: Fabric Colour
+    type: int
+    input: select
+    visible_on_front: 1
+    filterable: 1
+    required: 0
+    searchable: 1
+    visible_in_advanced_search: 0
+    used_in_product_listing: 1
+    product_types:
+      - simple
+      - configurable
+    option:
+      values:
+        - WHT
+        - BLK
+        - NVY
+        - RED
+      store_labels:
+        default:
+          WHT: White
+          BLK: Black
+          NVY: Navy Blue
+          RED: Red
+        usa_en_us:
+          WHT: White
+          BLK: Black
+          NVY: Navy Blue
+          RED: Red
   rrp:
     frontend_label: Recommended Retail Price
     frontend_input: price

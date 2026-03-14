@@ -8,9 +8,13 @@ use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Eav\Api\AttributeOptionUpdateInterface;
 use Magento\Eav\Api\AttributeRepositoryInterface;
+use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
+use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Api\StoreRepositoryInterface;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -66,7 +70,11 @@ class Attributes implements ComponentInterface
         protected readonly AttributeRepositoryInterface $attributeRepository,
         private readonly LoggerInterface $log,
         protected readonly \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
-        protected readonly \Magento\Eav\Model\Config $eavConfig
+        protected readonly \Magento\Eav\Model\Config $eavConfig,
+        private readonly AttributeOptionUpdateInterface $attributeOptionUpdate,
+        private readonly AttributeOptionInterfaceFactory $optionFactory,
+        private readonly AttributeOptionLabelInterfaceFactory $optionLabelFactory,
+        private readonly StoreRepositoryInterface $storeRepository
     ) {
     }
 
@@ -94,29 +102,30 @@ class Attributes implements ComponentInterface
             $this->handleExistingAttribute($attributeCode, $attributeArray, $attributeConfig);
         }
 
-        if (!$this->updateAttribute) {
-            return;
+        if ($this->updateAttribute) {
+            if (!array_key_exists('user_defined', $attributeConfig)) {
+                $attributeConfig['user_defined'] = 1;
+            }
+
+            if (isset($attributeConfig['product_types'])) {
+                $attributeConfig['apply_to'] = implode(',', $attributeConfig['product_types']);
+            }
+
+            $swatch = $this->extractSwatchType($attributeConfig);
+
+            $this->eavSetup->addAttribute($this->entityTypeId, $attributeCode, $attributeConfig);
+
+            if ($this->attributeExists) {
+                $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
+            } else {
+                $this->applySwatchConversion($attributeCode, $attributeConfig, $swatch);
+                $this->log->logInfo(sprintf('Attribute %s created.', $attributeCode));
+            }
         }
 
-        if (!array_key_exists('user_defined', $attributeConfig)) {
-            $attributeConfig['user_defined'] = 1;
+        if (isset($attributeConfig['option']['store_labels'])) {
+            $this->processOptionStoreLabels($attributeCode, $attributeConfig['option']['store_labels']);
         }
-
-        if (isset($attributeConfig['product_types'])) {
-            $attributeConfig['apply_to'] = implode(',', $attributeConfig['product_types']);
-        }
-
-        $swatch = $this->extractSwatchType($attributeConfig);
-
-        $this->eavSetup->addAttribute($this->entityTypeId, $attributeCode, $attributeConfig);
-
-        if ($this->attributeExists) {
-            $this->log->logInfo(sprintf('Attribute %s updated.', $attributeCode));
-            return;
-        }
-
-        $this->applySwatchConversion($attributeCode, $attributeConfig, $swatch);
-        $this->log->logInfo(sprintf('Attribute %s created.', $attributeCode));
     }
 
     private function handleExistingAttribute(mixed $attributeCode, array $attributeArray, array &$attributeConfig): void
@@ -134,6 +143,115 @@ class Attributes implements ComponentInterface
             $this->updateAttribute = true;
         }
         $attributeConfig['option']['values'] = $newAttributeOptions;
+    }
+
+    /**
+     * Apply per-store display labels to existing attribute options.
+     *
+     * YAML format:
+     *   option:
+     *     values: [W, B]
+     *     store_labels:
+     *       default:       # store code (or numeric store ID)
+     *         W: White
+     *         B: Black
+     *
+     * Each admin value is looked up by its store-0 label to find the option_id,
+     * then AttributeOptionUpdateInterface::update() is called with all store labels
+     * for that option aggregated into a single call (since the resource model does a
+     * full DELETE + INSERT on eav_attribute_option_value for the option_id).
+     */
+    private function processOptionStoreLabels(string $attributeCode, array $storeLabels): void
+    {
+        try {
+            $attribute = $this->attributeRepository->get($this->entityTypeId, $attributeCode);
+        } catch (NoSuchEntityException $e) {
+            $this->log->logError(sprintf("Attribute %s doesn't exist, skipping store labels.", $attributeCode));
+            return;
+        }
+
+        $this->loadOptionCollection((int) $attribute->getId());
+
+        // Build adminValue => optionId map from the option collection (store_id = 0 labels)
+        $optionIdByAdminValue = [];
+        foreach ($this->optionCollection[(int) $attribute->getId()] as $option) {
+            $optionIdByAdminValue[$option->getValue()] = (int) $option->getId();
+        }
+
+        // Aggregate across all store entries: adminValue => [storeId => label, ...]
+        // This ensures a single update() call per option, preserving all store labels.
+        $labelsByOption = [];
+        foreach ($storeLabels as $storeIdentifier => $optionMap) {
+            $storeId = $this->resolveStoreId((string) $storeIdentifier);
+            if ($storeId === null) {
+                $this->log->logError(sprintf(
+                    'Store "%s" not found, skipping its option labels for attribute %s.',
+                    $storeIdentifier,
+                    $attributeCode
+                ));
+                continue;
+            }
+            foreach ($optionMap as $adminValue => $storeLabel) {
+                $labelsByOption[(string) $adminValue][$storeId] = (string) $storeLabel;
+            }
+        }
+
+        foreach ($labelsByOption as $adminValue => $storeIdLabelMap) {
+            if (!isset($optionIdByAdminValue[$adminValue])) {
+                $this->log->logError(sprintf(
+                    'Option "%s" not found on attribute %s, skipping store labels.',
+                    $adminValue,
+                    $attributeCode
+                ), 1);
+                continue;
+            }
+
+            $optionId = $optionIdByAdminValue[$adminValue];
+
+            $storeOptionLabels = [];
+            foreach ($storeIdLabelMap as $storeId => $label) {
+                $storeOptionLabels[] = $this->optionLabelFactory->create()
+                    ->setStoreId($storeId)
+                    ->setLabel($label);
+            }
+
+            $option = $this->optionFactory->create()
+                ->setLabel($adminValue)
+                ->setStoreLabels($storeOptionLabels);
+
+            try {
+                $this->attributeOptionUpdate->update($this->entityTypeId, $attributeCode, $optionId, $option);
+                $this->log->logComment(sprintf(
+                    'Store labels updated for option "%s" on attribute %s.',
+                    $adminValue,
+                    $attributeCode
+                ), 1);
+            } catch (\Exception $e) {
+                $this->log->logError(sprintf(
+                    'Failed to update store labels for option "%s" on attribute %s: %s',
+                    $adminValue,
+                    $attributeCode,
+                    $e->getMessage()
+                ), 1);
+            }
+        }
+    }
+
+    /**
+     * Resolve a store identifier (store code or numeric store ID) to an integer store ID.
+     * Returns null if the store cannot be found.
+     */
+    private function resolveStoreId(string $storeIdentifier): ?int
+    {
+        if (is_numeric($storeIdentifier)) {
+            return (int) $storeIdentifier;
+        }
+
+        try {
+            return (int) $this->storeRepository->get($storeIdentifier)->getId();
+        } catch (NoSuchEntityException $e) {
+            return null;
+        }
     }
 
     /**
@@ -254,7 +372,7 @@ class Attributes implements ComponentInterface
             $existingAttributeOptions[] = $value;
         }
 
-        $optionsToAdd = array_diff($option['values'], $existingAttributeOptions);
+        $optionsToAdd = array_diff($option['values'] ?? [], $existingAttributeOptions);
         //$optionsToRemove = array_diff($existingAttributeOptions, $option['values']);
 
         return $optionsToAdd;

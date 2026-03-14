@@ -6,12 +6,16 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
 use Magento\Customer\Model\Customer;
+use Magento\Eav\Api\AttributeOptionUpdateInterface;
+use Magento\Eav\Api\Data\AttributeOptionInterfaceFactory;
+use Magento\Eav\Api\Data\AttributeOptionLabelInterfaceFactory;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Customer\Setup\CustomerSetup;
 use Magento\Customer\Model\ResourceModel\Attribute;
+use Magento\Store\Api\StoreRepositoryInterface;
 
 /**
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -52,9 +56,23 @@ class CustomerAttributes extends Attributes
         protected readonly Attribute $attributeResource,
         private readonly LoggerInterface $log,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory $attrOptionCollectionFactory,
-        \Magento\Eav\Model\Config $eavConfig
+        \Magento\Eav\Model\Config $eavConfig,
+        AttributeOptionUpdateInterface $attributeOptionUpdate,
+        AttributeOptionInterfaceFactory $optionFactory,
+        AttributeOptionLabelInterfaceFactory $optionLabelFactory,
+        StoreRepositoryInterface $storeRepository
     ) {
-        parent::__construct($eavSetup, $attributeRepository, $log, $attrOptionCollectionFactory, $eavConfig);
+        parent::__construct(
+            $eavSetup,
+            $attributeRepository,
+            $log,
+            $attrOptionCollectionFactory,
+            $eavConfig,
+            $attributeOptionUpdate,
+            $optionFactory,
+            $optionLabelFactory,
+            $storeRepository
+        );
         $this->attributeConfigMap = array_merge($this->attributeConfigMap, $this->customerConfigMap);
     }
 

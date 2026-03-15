@@ -137,8 +137,11 @@ class Categories implements ComponentInterface
                             $value = BP . '/' . trim((string) $value, '/');
                         }
 
-                        if (!$this->driver->copy($value, $catMediaDir . $img)) {
-                            $this->log->logError('Failed to find image: ' . $value, 1);
+                        try {
+                            $this->driver->createDirectory($catMediaDir);
+                            $this->driver->copy($value, $catMediaDir . $img);
+                        } catch (FileSystemException $e) {
+                            $this->log->logError('Failed to copy image "' . $value . '": ' . $e->getMessage(), 1);
                             break;
                         }
 

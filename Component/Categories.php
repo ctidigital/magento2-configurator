@@ -13,12 +13,14 @@ use Magento\Cms\Api\Data\BlockInterfaceFactory;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Store\Model\Group;
 use Magento\Store\Model\GroupFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 class Categories implements ComponentInterface
 {
+    private const CATEGORY_MEDIA_DB_PATH = '/media/catalog/category/';
+    private const CATEGORY_IMAGE_BACKEND_MODEL = 'Magento\Catalog\Model\Category\Attribute\Backend\Image';
+
     protected string $alias = 'categories';
     protected string $name = 'Categories';
     protected string $description = 'Component to import categories.';
@@ -120,61 +122,53 @@ class Categories implements ComponentInterface
                 ->getFirstItem();
 
             foreach ($categoryValues as $attribute => $value) {
-                switch ($attribute) {
-                    case in_array($attribute, $this->mainAttributes):
-                        $category->setData($attribute, $value);
-                        break;
-                    case 'category':
-                        break;
-                    case 'image':
-                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                        $img = basename((string) $value);
-                        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                        $path = parse_url((string) $value);
-                        $catMediaDir = $this->dirList->getPath('media') . '/' . 'catalog' . '/' . 'category' . '/';
-
-                        if (!array_key_exists('host', $path)) {
-                            $value = BP . '/' . trim((string) $value, '/');
-                        }
-
-                        try {
-                            $this->driver->createDirectory($catMediaDir);
-                            $this->driver->copy($value, $catMediaDir . $img);
-                        } catch (FileSystemException $e) {
-                            $this->log->logError('Failed to copy image "' . $value . '": ' . $e->getMessage(), 1);
-                            break;
-                        }
-
-                        $category->setImage($img);
-                        break;
-                    // Attaching cms block
-                    case 'landing_page':
-                        $category->setData(
-                            'landing_page',
-                            $this->cmsBlockResolver->resolve($value, (int) $category->getStoreId())
-                        );
-                        break;
-                    case 'cms_block':
-                        // Look up by CMS block title (legacy; prefer 'landing_page' with block identifier)
-                        $block = $this->blockFactory->create()->getCollection()
-                            ->addFieldToFilter('title', $value)
-                            ->setPageSize(1)
-                            ->getFirstItem();
-
-                        if (!$block->getId()) {
-                            $this->log->logError(sprintf("Can't find cms block with title '%s'", $value));
-                            break;
-                        }
-
-                        // Attach cms block by id
-                        $category->setData('landing_page', $block->getId());
-                        // Set category display mode to static block and products
-                        $category->setData('display_mode', 'PRODUCTS_AND_PAGE');
-
-                        break;
-                    default:
-                        $category->setCustomAttribute($attribute, $value);
+                if (in_array($attribute, $this->mainAttributes, true)) {
+                    $category->setData($attribute, $value);
+                    continue;
                 }
+
+                if ($attribute === 'category') {
+                    continue;
+                }
+
+                if ($this->isCategoryImageAttribute($category, (string) $attribute)) {
+                    try {
+                        $category->setData($attribute, $this->copyCategoryImage((string) $value));
+                    } catch (FileSystemException $e) {
+                        $this->log->logError('Failed to copy image "' . $value . '": ' . $e->getMessage(), 1);
+                    }
+                    continue;
+                }
+
+                if ($attribute === 'landing_page') {
+                    $category->setData(
+                        'landing_page',
+                        $this->cmsBlockResolver->resolve($value, (int) $category->getStoreId())
+                    );
+                    continue;
+                }
+
+                if ($attribute === 'cms_block') {
+                    // Look up by CMS block title (legacy; prefer 'landing_page' with block identifier)
+                    $block = $this->blockFactory->create()->getCollection()
+                        ->addFieldToFilter('title', $value)
+                        ->setPageSize(1)
+                        ->getFirstItem();
+
+                    if (!$block->getId()) {
+                        $this->log->logError(sprintf("Can't find cms block with title '%s'", $value));
+                        continue;
+                    }
+
+                    // Attach cms block by id
+                    $category->setData('landing_page', $block->getId());
+                    // Set category display mode to static block and products
+                    $category->setData('display_mode', 'PRODUCTS_AND_PAGE');
+
+                    continue;
+                }
+
+                $category->setCustomAttribute($attribute, $value);
             }
 
             // Set the category to be active
@@ -202,6 +196,49 @@ class Categories implements ComponentInterface
                 $this->createOrUpdateCategory($category, $categoryValues['categories']);
             }
         }
+    }
+
+    /**
+     * Copy an imported category image into pub/media/catalog/category and return the DB value.
+     *
+     * @throws FileSystemException
+     */
+    private function copyCategoryImage(string $value): string
+    {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $img = basename($value);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $path = parse_url($value);
+        $catMediaDir = $this->dirList->getPath('media') . '/catalog/category/';
+
+        if (!is_array($path) || !array_key_exists('host', $path)) {
+            $value = BP . '/' . trim($value, '/');
+        }
+
+        $this->driver->createDirectory($catMediaDir);
+        $this->driver->copy($value, $catMediaDir . $img);
+
+        return self::CATEGORY_MEDIA_DB_PATH . $img;
+    }
+
+    /**
+     * Returns true when the given attribute should be handled as a category image:
+     * either the core 'image' attribute or any attribute using Magento's category image
+     * frontend input / backend model.
+     */
+    private function isCategoryImageAttribute(Category $category, string $attribute): bool
+    {
+        if ($attribute === 'image') {
+            return true;
+        }
+
+        $attributeModel = $category->getResource()->getAttribute($attribute);
+        if (!$attributeModel) {
+            return false;
+        }
+
+        return $attributeModel->getFrontendInput() === 'image'
+            || $attributeModel->getBackendModel() === self::CATEGORY_IMAGE_BACKEND_MODEL;
     }
 
     /**

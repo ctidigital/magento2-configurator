@@ -287,6 +287,56 @@ class CategoriesTest extends TestCase
         $this->assertArrayNotHasKey('landing_page', $dataCalls);
     }
 
+    // ── image: core attribute ─────────────────────────────────────────────────
+
+    public function testImageAttributeCopiesIntoCategoryMediaAndStoresMediaPath(): void
+    {
+        $dataCalls = [];
+        [$parent] = $this->makeParentAndChildMocks($dataCalls, ['image']);
+
+        $this->dirList->method('getPath')->with('media')->willReturn('/var/www/html/pub/media');
+        $this->driver->expects($this->once())
+            ->method('createDirectory')
+            ->with('/var/www/html/pub/media/catalog/category/');
+        $this->driver->expects($this->once())
+            ->method('copy')
+            ->with(
+                'https://example.com/media/tmp/category/hero.jpg',
+                '/var/www/html/pub/media/catalog/category/hero.jpg'
+            );
+
+        $this->component->createOrUpdateCategory($parent, [
+            ['name' => 'Test Cat', 'image' => 'https://example.com/media/tmp/category/hero.jpg'],
+        ]);
+
+        $this->assertSame('/media/catalog/category/hero.jpg', $dataCalls['image']);
+    }
+
+    // ── image: additional image EAV attribute ─────────────────────────────────
+
+    public function testAdditionalImageAttributeCopiesIntoCategoryMediaAndStoresMediaPath(): void
+    {
+        $dataCalls = [];
+        [$parent] = $this->makeParentAndChildMocks($dataCalls, ['image', 'lander_image']);
+
+        $this->dirList->method('getPath')->with('media')->willReturn('/var/www/html/pub/media');
+        $this->driver->expects($this->once())
+            ->method('createDirectory')
+            ->with('/var/www/html/pub/media/catalog/category/');
+        $this->driver->expects($this->once())
+            ->method('copy')
+            ->with(
+                'https://example.com/media/tmp/category/lander.jpg',
+                '/var/www/html/pub/media/catalog/category/lander.jpg'
+            );
+
+        $this->component->createOrUpdateCategory($parent, [
+            ['name' => 'Test Cat', 'lander_image' => 'https://example.com/media/tmp/category/lander.jpg'],
+        ]);
+
+        $this->assertSame('/media/catalog/category/lander.jpg', $dataCalls['lander_image']);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /**
@@ -295,11 +345,11 @@ class CategoriesTest extends TestCase
      *
      * @return array{0: Category&MockObject, 1: Category&MockObject}
      */
-    private function makeParentAndChildMocks(array &$dataCalls): array
+    private function makeParentAndChildMocks(array &$dataCalls, array $imageAttributeCodes = ['image']): array
     {
         $parent = $this->makeCategoryModel(id: 2, path: '1/2');
 
-        $child = $this->makeCategoryModel(id: null, storeId: 0);
+        $child = $this->makeCategoryModel(id: null, storeId: 0, imageAttributeCodes: $imageAttributeCodes);
 
         // Capture every setData() call so tests can inspect the result.
         // Must return $child to satisfy the `static` return type on the mocked method.
@@ -334,7 +384,8 @@ class CategoriesTest extends TestCase
     private function makeCategoryModel(
         ?int $id = null,
         string $path = '1/2',
-        int $storeId = 0
+        int $storeId = 0,
+        array $imageAttributeCodes = ['image']
     ): Category&MockObject {
         $entityType = $this->getMockBuilder(EntityType::class)
             ->disableOriginalConstructor()
@@ -342,11 +393,20 @@ class CategoriesTest extends TestCase
             ->getMock();
         $entityType->method('getDefaultAttributeSetId')->willReturn(4);
 
+        $imageAttribute = new class {
+            public function getFrontendInput(): string { return 'image'; }
+            public function getBackendModel(): string { return 'Magento\Catalog\Model\Category\Attribute\Backend\Image'; }
+        };
+
         $resource = $this->getMockBuilder(CategoryResource::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getEntityType'])
+            ->onlyMethods(['getEntityType', 'getAttribute'])
             ->getMock();
         $resource->method('getEntityType')->willReturn($entityType);
+        $resource->method('getAttribute')
+            ->willReturnCallback(
+                static fn (string $code) => in_array($code, $imageAttributeCodes, true) ? $imageAttribute : false
+            );
 
         $mock = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()

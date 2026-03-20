@@ -2028,6 +2028,17 @@ namespace Magento\Catalog\Model\ResourceModel\Category {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// Magento\Catalog\Model\Category\Attribute\Backend — Image
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace Magento\Catalog\Model\Category\Attribute\Backend {
+
+    if (!class_exists(\Magento\Catalog\Model\Category\Attribute\Backend\Image::class)) {
+        class Image {}
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // Magento\Eav — Entity\Type
 // ═══════════════════════════════════════════════════════════════════════════════
 

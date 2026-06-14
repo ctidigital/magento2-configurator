@@ -104,7 +104,7 @@ jobs:
             php: "8.4"
             opensearch-port: "9201"
 
-          - label: "Magento 2.4.9 (mirror, PHP 8.5)"
+          - label: "Magento 2.4.9 (mirror) PHP 8.5"
             project: magento/project-community-edition
             constraint: "2.4.9.*"
             repo-url: "https://mirror.mage-os.org/"
@@ -264,8 +264,6 @@ jobs:
             "VENDOR/module-authorizenet-acceptjs": "*",
             "VENDOR/module-authorizenet-cardinal": "*",
             "VENDOR/module-authorizenet-graph-ql": "*",
-            "VENDOR/module-braintree": "*",
-            "VENDOR/module-braintree-graph-ql": "*",
             "VENDOR/module-bundle-import-export": "*",
             "VENDOR/module-bundle-import-export-staging": "*",
             "VENDOR/module-bundle-sample-data": "*",

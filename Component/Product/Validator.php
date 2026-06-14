@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace CtiDigital\Configurator\Component\Product;
 
 use CtiDigital\Configurator\Component\Products;
-use Firegento\FastSimpleImport\Model\Importer;
-use FireGento\FastSimpleImport\Model\Adapters\ImportAdapterFactoryInterface;
+use CtiDigital\Configurator\Model\Import\Importer;
+use CtiDigital\Configurator\Api\ImportAdapterFactoryInterface;
 
 class Validator
 {

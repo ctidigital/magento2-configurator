@@ -9,7 +9,7 @@ description: Use when the user wants to import customers via the configurator. T
 - **Format**: CSV
 - **Source file**: `Component/Customers.php`
 - **Sample**: `Samples/Components/Customers/customers.csv`
-- **Import library**: FireGento FastSimpleImport (`customer_composite` entity)
+- **Import mechanism**: Magento native import (`customer_composite` entity)
 - **Dependencies**: None (customer groups should exist beforehand if referencing by ID)
 
 ## CSV Headers
@@ -60,7 +60,7 @@ To assign multiple addresses to a single customer, add extra rows immediately af
 - Uses `Import::BEHAVIOR_APPEND` -- existing customers matched by email are updated, new customers are created.
 - Invalid `group_id` values are replaced with the store's default customer group.
 - After import, the `customer_grid` indexer is reindexed automatically.
-- Import errors from FastSimpleImport are logged individually.
+- Import errors are logged individually.
 
 ## Example
 

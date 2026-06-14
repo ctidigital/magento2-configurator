@@ -30,9 +30,11 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-      # OpenSearch 2.11 is supported by Magento 2.4.6 – 2.4.8 and Mage-OS.
-      # Security is disabled so no credentials are needed.
-      opensearch:
+      # Two OpenSearch versions run side by side; each matrix job selects one via
+      # `opensearch-port`. OpenSearch 2.11 (port 9200) covers Magento 2.4.7–2.4.8;
+      # OpenSearch 3.x (port 9201) is required by Magento 2.4.9 and Mage-OS latest.
+      # Security is disabled on both so no credentials are needed.
+      opensearch2:
         image: opensearchproject/opensearch:2.11.0
         env:
           discovery.type: single-node
@@ -47,41 +49,77 @@ jobs:
           --health-retries=10
           --health-start-period=40s
 
+      opensearch3:
+        image: opensearchproject/opensearch:3.1.0
+        env:
+          discovery.type: single-node
+          plugins.security.disabled: "true"
+          OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+        ports:
+          - 9201:9200
+        options: >-
+          --health-cmd="curl -sf http://localhost:9200/_cluster/health"
+          --health-interval=15s
+          --health-timeout=10s
+          --health-retries=10
+          --health-start-period=40s
+
     strategy:
       fail-fast: false
       matrix:
         include:
           # ── Magento via Mage-OS public mirror (no repo.magento.com credentials needed) ──
+          # opensearch-port selects which OpenSearch service the job installs against:
+          #   9200 → OpenSearch 2.11 (Magento 2.4.7–2.4.8)
+          #   9201 → OpenSearch 3.x  (Magento 2.4.9, Mage-OS latest)
 
           - label: "Magento 2.4.7 (mirror)"
             project: magento/project-community-edition
             constraint: "2.4.7.*"
             repo-url: "https://mirror.mage-os.org/"
             php: "8.3"
+            opensearch-port: "9200"
 
           - label: "Magento 2.4.8 (mirror)"
             project: magento/project-community-edition
             constraint: "2.4.8.*"
             repo-url: "https://mirror.mage-os.org/"
             php: "8.3"
+            opensearch-port: "9200"
 
-          # Latest beta / RC — update the constraint when a new beta is tagged.
-          # This job is allowed to fail.
-          - label: "Magento beta (mirror)"
+          # 2.4.9 is the first release supporting PHP 8.5; exercise both 8.4 and 8.5.
+          - label: "Magento 2.4.9 (mirror)"
             project: magento/project-community-edition
-            constraint: "~2.4@beta"
-            stability: "beta"
+            constraint: "2.4.9.*"
             repo-url: "https://mirror.mage-os.org/"
             php: "8.4"
-            experimental: true
+            opensearch-port: "9201"
 
-          # ── Official Mage-OS distribution ────────────────────────────────────────────
+          - label: "Magento 2.4.9 (mirror, PHP 8.5)"
+            project: magento/project-community-edition
+            constraint: "2.4.9.*"
+            repo-url: "https://mirror.mage-os.org/"
+            php: "8.5"
+            opensearch-port: "9201"
+
+          # ── Official Mage-OS distribution (tracks latest; no pinned constraint) ────────
 
           - label: "Mage-OS latest"
             project: mage-os/project-community-edition
             constraint: ""
             repo-url: "https://repo.mage-os.org/"
-            php: "8.3"
+            php: "8.4"
+            opensearch-port: "9201"
+
+          # Mage-OS Minimal Distribution ships only ~98 core packages, so the full
+          # master.yaml can't run. Use a reduced smoke test against the modules present.
+          - label: "Mage-OS latest minimal"
+            project: mage-os/project-minimal-edition
+            constraint: ""
+            repo-url: "https://repo.mage-os.org/"
+            php: "8.4"
+            opensearch-port: "9201"
+            master: master-minimal.yaml
 
     steps:
       - name: Checkout
@@ -454,7 +492,7 @@ jobs:
             --timezone="Europe/London" \
             --search-engine="opensearch" \
             --opensearch-host="127.0.0.1" \
-            --opensearch-port="9200" \
+            --opensearch-port="${{ matrix.opensearch-port }}" \
             --no-interaction
 
       - name: Run setup:di:compile
@@ -472,7 +510,7 @@ jobs:
       - name: Place master.yaml and sample-data symlink
         run: |
           ln -sf "${GITHUB_WORKSPACE}/Samples/Components" /tmp/configurator
-          cp "${GITHUB_WORKSPACE}/.github/integration/master.yaml" \
+          cp "${GITHUB_WORKSPACE}/.github/integration/${{ matrix.master || 'master.yaml' }}" \
              /tmp/magento/app/etc/master.yaml
 
       # ── Run the configurator ────────────────────────────────────────────────────────

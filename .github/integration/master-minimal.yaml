@@ -1,0 +1,57 @@
+# Reduced integration-test master YAML for the Mage-OS Minimal Distribution.
+#
+# Used only by the "Mage-OS latest minimal" job in
+# .github/workflows/integration-tests.yml. The Minimal Distribution ships only
+# the core storefront packages (framework, catalog, customers, CMS, tax,
+# shipping), so the full master.yaml — which exercises products (catalog import),
+# widgets, web API integrations, etc. — cannot run against it.
+#
+# This trimmed set covers only components whose modules are present in the
+# minimal base. taxrates is retained so the workflow's EU tax-rate smoke check
+# (>=27 EU rates) still verifies a real persistence path.
+#
+# Paths resolve the same way as the full master.yaml: a symlink at
+# /tmp/configurator -> <workspace>/Samples/Components is created by the workflow.
+
+config:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Configuration/global.yaml
+
+websites:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/websites.yaml
+
+customergroups:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/CustomerGroups/customergroups.yaml
+
+taxrates:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/TaxRates/taxrates.csv
+    - ../configurator/TaxRates/eu_taxrates.csv
+
+taxrules:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/TaxRules/taxrules.csv
+
+blocks:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Blocks/blocks.yaml
+
+pages:
+  enabled: 1
+  method: code
+  sources:
+    - ../configurator/Pages/pages.yaml

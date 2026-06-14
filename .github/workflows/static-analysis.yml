@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         # Static analysis is version-sensitive for syntax/deprecation checks.
-        php: ["8.3", "8.4"]
+        php: ["8.3", "8.4", "8.5"]
 
     steps:
       - name: Checkout
@@ -103,7 +103,7 @@ jobs:
       # Checks the installed analysis tools (phpcs, phpmd, magento-coding-
       # standard and their dependencies) for known security advisories.
       #
-      # NOTE: Production dependencies (symfony/yaml, firegento/fastsimpleimport)
+      # NOTE: Production dependencies (symfony/yaml, magento/module-catalog-import-export)
       # are NOT audited here because the ci-tools composer.json is intentionally
       # minimal. To audit production dependencies, run `composer audit` inside a
       # Magento installation that has the extension installed as a path repository.

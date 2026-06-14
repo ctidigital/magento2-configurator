@@ -65,7 +65,7 @@ Most components receive parsed YAML/CSV data via `execute(mixed $data)`. Compone
 
 ### PHP Standards
 
-- **PHP 8.3+** with `declare(strict_types=1)` in every file
+- **PHP 8.3+** (verified on 8.3, 8.4 and 8.5) with `declare(strict_types=1)` in every file
 - **Readonly constructor promotion**: `public function __construct(private readonly FooInterface $foo)`
 - **No Zend_ classes** — use Laminas equivalents
 - **String literals** over class constants for entity type IDs when it avoids importing large Magento classes (reduces PHPMD coupling)

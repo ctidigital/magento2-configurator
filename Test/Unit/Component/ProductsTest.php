@@ -2,7 +2,7 @@
 namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\Products;
-use FireGento\FastSimpleImport\Model\ImporterFactory;
+use CtiDigital\Configurator\Model\Import\ImporterFactory;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\Product;
 use CtiDigital\Configurator\Component\Product\Image;

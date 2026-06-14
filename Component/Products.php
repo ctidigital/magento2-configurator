@@ -8,7 +8,7 @@ use Magento\Catalog\Model\ProductFactory;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\Image;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
-use FireGento\FastSimpleImport\Model\ImporterFactory;
+use CtiDigital\Configurator\Model\Import\ImporterFactory;
 use CtiDigital\Configurator\Exception\ComponentException;
 use CtiDigital\Configurator\Component\Product\ValidatorFactory;
 use CtiDigital\Configurator\Component\Product\Validator;

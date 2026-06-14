@@ -7,7 +7,7 @@ use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\AttributeOption;
 use CtiDigital\Configurator\Exception\ComponentException;
-use FireGento\FastSimpleImport\Model\ImporterFactory;
+use CtiDigital\Configurator\Model\Import\ImporterFactory;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

@@ -7,7 +7,7 @@ description: Use when the user wants to import tiered/quantity-based pricing via
 
 Alias: `tiered_prices`
 
-Imports quantity-based tier pricing from a CSV file using FastSimpleImport.
+Imports quantity-based tier pricing from a CSV file using Magento's native advanced-pricing import (`advanced_pricing` entity).
 
 ## CSV Format
 
@@ -32,6 +32,6 @@ SKU2,All Websites [GBP],ALL GROUPS,24,2.99,Fixed
 ## Notes
 
 - File format is CSV (not YAML)
-- Uses FastSimpleImport under the hood for bulk processing
+- Uses Magento's native import framework under the hood for bulk processing
 - Multiple tier rows per SKU are supported for different quantities
 - Website value must match the Magento website name including currency code in brackets

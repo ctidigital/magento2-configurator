@@ -16,6 +16,8 @@
                 type="CtiDigital\Configurator\Service\MasterYamlReader"/>
     <preference for="CtiDigital\Configurator\Api\ComponentRunnerInterface"
                 type="CtiDigital\Configurator\Service\ComponentRunner"/>
+    <preference for="CtiDigital\Configurator\Api\ImportAdapterFactoryInterface"
+                type="CtiDigital\Configurator\Model\Import\Source\ArrayAdapterFactory"/>
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>

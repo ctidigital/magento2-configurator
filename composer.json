@@ -4,7 +4,7 @@
     "type": "magento2-module",
     "require": {
         "symfony/yaml": "^7.0",
-        "firegento/fastsimpleimport": "^2.1.0",
+        "magento/module-catalog-import-export": "^101.0.0",
         "ext-exif": "*",
         "php": "^8.3"
     },
@@ -28,6 +28,12 @@
         ],
         "psr-4": {
             "CtiDigital\\Configurator\\": ""
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "magento/composer-dependency-version-audit-plugin": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }

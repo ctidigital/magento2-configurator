@@ -4,7 +4,6 @@ namespace CtiDigital\Configurator\Test\Unit\Component\Product;
 
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Component\Product\Image;
-use FireGento\FastSimpleImport\Model\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientFactory;
 use GuzzleHttp\Exception\RequestException;
@@ -27,11 +26,6 @@ class ImageTest extends TestCase
     private $fileSystem;
 
     /**
-     * @var Config|MockObject
-     */
-    private $config;
-
-    /**
      * @var ClientFactory|MockObject
      */
     private $clientFactory;
@@ -49,10 +43,6 @@ class ImageTest extends TestCase
     protected function setUp(): void
     {
         $this->fileSystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -75,7 +65,6 @@ class ImageTest extends TestCase
 
         $this->image = new Image(
             $this->fileSystem,
-            $this->config,
             $this->clientFactory,
             $this->log
         );

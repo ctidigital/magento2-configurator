@@ -6,7 +6,7 @@ namespace CtiDigital\Configurator\Component;
 use CtiDigital\Configurator\Api\ComponentInterface;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use CtiDigital\Configurator\Exception\ComponentException;
-use FireGento\FastSimpleImport\Model\ImporterFactory;
+use CtiDigital\Configurator\Model\Import\ImporterFactory;
 use Magento\ImportExport\Model\Import;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Customer\Api\GroupRepositoryInterface;
@@ -100,7 +100,7 @@ class Customers implements ComponentInterface
 
         try {
             /**
-             * @var $importer \FireGento\FastSimpleImport\Model\Importer
+             * @var $importer \CtiDigital\Configurator\Model\Import\Importer
              */
             $importer = $this->importerFactory->create();
             $importer->setEntityCode('customer_composite');

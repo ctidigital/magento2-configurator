@@ -6,7 +6,6 @@ namespace CtiDigital\Configurator\Component\Product;
 use CtiDigital\Configurator\Api\LoggerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use FireGento\FastSimpleImport\Model\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientFactory;
 use GuzzleHttp\Exception\GuzzleException;
@@ -16,9 +15,13 @@ class Image
 {
     private string $separator = ';';
 
+    /**
+     * Media-relative directory product images are downloaded into for import.
+     */
+    private const IMPORT_IMAGE_DIR = 'import';
+
     public function __construct(
         protected readonly Filesystem $filesystem,
-        protected readonly Config $importerConfig,
         private readonly ClientFactory $clientFactory,
         protected readonly LoggerInterface $log
     ) {}
@@ -152,16 +155,11 @@ class Image
     }
 
     /**
-     * Get the file directory from the configuration if set.
+     * Get the media-relative directory product images are imported from.
      */
     public function getFileDirectory(\Magento\Framework\Filesystem\Directory\WriteInterface $file): string
     {
-        try {
-            $configurationValue = $this->importerConfig->getImportFileDir();
-             return $file->getRelativePath($configurationValue);
-        } catch (\TypeError $e) {
-            return $file->getRelativePath('import');
-        }
+        return $file->getRelativePath(self::IMPORT_IMAGE_DIR);
     }
 
     /**

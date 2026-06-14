@@ -3,7 +3,7 @@ namespace CtiDigital\Configurator\Test\Unit\Component;
 
 use CtiDigital\Configurator\Component\Customers;
 use CtiDigital\Configurator\Exception\ComponentException;
-use FireGento\FastSimpleImport\Model\ImporterFactory;
+use CtiDigital\Configurator\Model\Import\ImporterFactory;
 use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;

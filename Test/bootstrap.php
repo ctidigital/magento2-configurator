@@ -16,7 +16,7 @@ declare(strict_types=1);
  *     being tested.
  *
  *  2. Requires Test/stubs.php, which declares minimal stub classes and
- *     interfaces for every Magento, FireGento, GuzzleHttp, PSR-7, and Symfony
+ *     interfaces for every Magento, GuzzleHttp, PSR-7, and Symfony
  *     dependency that the test suite mocks with getMockBuilder(). The stubs
  *     only need to exist — actual logic is never called because the tests
  *     replace every external dependency with a PHPUnit mock object.

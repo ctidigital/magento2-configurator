@@ -15,7 +15,7 @@ If you're interested to find out more about the background of the configurator, 
 ## Getting Started
 
 1. Create a `master.yaml` file in `<mage_root>/app/etc/`. (see `Samples/master.yaml`)
-2. Enable modules: `bin/magento module:enable CtiDigital_Configurator FireGento_FastSimpleImport`
+2. Enable the module: `bin/magento module:enable CtiDigital_Configurator`
 3. Run `bin/magento configurator:run --env="<environment>"`
 
 ### Usage
@@ -28,8 +28,9 @@ If you're interested to find out more about the background of the configurator, 
 
 ### Requirements
 
-- PHP 8.3+
+- PHP 8.3, 8.4 or 8.5
 - Composer 2
+- Magento Open Source 2.4.7 – 2.4.9, or Mage-OS latest (including the Minimal Distribution)
 
 ### Running tools locally
 
@@ -44,7 +45,7 @@ composer install
 Once installed, use the composer scripts:
 
 ```bash
-composer test      # PHPUnit — 175 unit tests, no Magento install needed
+composer test      # PHPUnit — unit tests, no Magento install needed
 composer cs        # PHP_CodeSniffer (Magento2 standard, errors only)
 composer md        # PHP Mess Detector
 composer analyse   # phpcs + phpmd together
@@ -63,8 +64,9 @@ Every push and pull request runs two GitHub Actions workflows automatically:
 
 | Workflow | What it checks | PHP versions |
 |---|---|---|
-| **Unit Tests** | 175 PHPUnit tests via `phpunit.phar` — no Magento install, no credentials | 8.3, 8.4 |
-| **Static Analysis** | phpcs (Magento2 standard) + phpmd + composer audit | 8.3, 8.4 |
+| **Unit Tests** | PHPUnit tests via `phpunit.phar` — no Magento install, no credentials | 8.3, 8.4, 8.5 |
+| **Static Analysis** | phpcs (Magento2 standard) + phpmd + composer audit | 8.3, 8.4, 8.5 |
+| **Integration Tests** | Real `configurator:run` against Magento 2.4.7–2.4.9 & Mage-OS latest (+ minimal) | 8.3 / 8.4 / 8.5 |
 
 All checks must pass before a PR can be merged.
 

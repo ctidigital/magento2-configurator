@@ -11,7 +11,7 @@
             <module name="Magento_Customer" />
             <module name="Magento_Tax" />
             <module name="Magento_Webapi" />
-            <module name="FireGento_FastSimpleImport" />
+            <module name="Magento_ImportExport" />
         </sequence>
     </module>
 </config>

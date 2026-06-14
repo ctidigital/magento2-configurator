@@ -7,7 +7,7 @@ description: Use when the user wants to import products via the configurator. Tr
 
 ## Purpose
 
-Imports products into Magento via CSV using the FastSimpleImport library (which wraps Magento's native import framework). Supports simple and configurable product types. Products are validated before import, and invalid rows are automatically removed.
+Imports products into Magento via CSV using Magento's native import framework (the `catalog_product` entity from Magento_CatalogImportExport). Supports simple and configurable product types. Products are validated before import, and invalid rows are automatically removed.
 
 ## Component Alias
 

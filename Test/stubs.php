@@ -326,6 +326,12 @@ namespace Magento\Framework\Filesystem {
             public function deleteFile(string $path): bool;
 
             public function createDirectory(string $path, int $permissions = 0777): bool;
+
+            public function copy(
+                string $source,
+                string $destination,
+                ?\Magento\Framework\Filesystem\DriverInterface $targetDriver = null
+            ): bool;
         }
     }
 }
@@ -392,6 +398,14 @@ namespace Magento\Framework\Filesystem\Driver {
             public function createDirectory(string $path, int $permissions = 0777): bool
             {
                 return mkdir($path, $permissions, true);
+            }
+
+            public function copy(
+                string $source,
+                string $destination,
+                ?\Magento\Framework\Filesystem\DriverInterface $targetDriver = null
+            ): bool {
+                return copy($source, $destination);
             }
         }
     }
@@ -1232,23 +1246,139 @@ namespace Magento\Framework\Webapi\Rest {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// FireGento\FastSimpleImport
+// Magento\ImportExport — native import engine
 // ═══════════════════════════════════════════════════════════════════════════════
 
-namespace FireGento\FastSimpleImport\Model {
+namespace Magento\ImportExport\Model {
 
-    if (!class_exists(\FireGento\FastSimpleImport\Model\ImporterFactory::class)) {
-        class ImporterFactory
+    if (!class_exists(\Magento\ImportExport\Model\Import::class)) {
+        class Import
         {
-            public function create(array $data = []): object
+            public const BEHAVIOR_APPEND = 'append';
+            public const DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR = ',';
+
+            public function setData($key, $value = null): self
             {
-                throw new \LogicException('Stub only — mock ImporterFactory::create()');
+                return $this;
+            }
+
+            public function validateSource($source): bool
+            {
+                return true;
+            }
+
+            public function importSource(): bool
+            {
+                return true;
+            }
+
+            public function getErrorAggregator()
+            {
+                throw new \LogicException('Stub only — mock Import::getErrorAggregator()');
+            }
+
+            public function getFormatedLogTrace(): string
+            {
+                return '';
+            }
+
+            public function invalidateIndex(): self
+            {
+                return $this;
             }
         }
     }
 
-    if (!class_exists(\FireGento\FastSimpleImport\Model\Config::class)) {
-        class Config {}
+    if (!class_exists(\Magento\ImportExport\Model\ImportFactory::class)) {
+        class ImportFactory
+        {
+            public function create(array $data = []): Import
+            {
+                throw new \LogicException('Stub only — mock ImportFactory::create()');
+            }
+        }
+    }
+}
+
+namespace Magento\ImportExport\Model\Import {
+
+    if (!class_exists(\Magento\ImportExport\Model\Import\AbstractSource::class)) {
+        abstract class AbstractSource
+        {
+            protected array $colNames;
+
+            public function __construct(array $colNames)
+            {
+                $this->colNames = $colNames;
+            }
+        }
+    }
+}
+
+namespace Magento\ImportExport\Model\Import\Entity {
+
+    if (!class_exists(\Magento\ImportExport\Model\Import\Entity\AbstractEntity::class)) {
+        abstract class AbstractEntity
+        {
+            public const ERROR_CODE_SYSTEM_EXCEPTION = 'systemException';
+        }
+    }
+}
+
+namespace Magento\ImportExport\Model\Import\ErrorProcessing {
+
+    if (!interface_exists(\Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface::class)) {
+        interface ProcessingErrorAggregatorInterface
+        {
+            public const VALIDATION_STRATEGY_STOP_ON_ERROR = 'validation-stop-on-errors';
+            public const VALIDATION_STRATEGY_SKIP_ERRORS = 'validation-skip-errors';
+
+            public function hasToBeTerminated(): bool;
+
+            public function getErrorsCount(): int;
+
+            public function getRowsGroupedByErrorCode(
+                array $errorCodes = [],
+                array $excludedCodes = [],
+                $replaceCodeWithMessage = true
+            ): array;
+
+            public function hasFatalExceptions(): bool;
+
+            public function getErrorsByCode(array $codes): array;
+        }
+    }
+
+    if (!class_exists(\Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingError::class)) {
+        class ProcessingError
+        {
+            public function getErrorMessage(): string
+            {
+                return '';
+            }
+
+            public function getErrorDescription(): string
+            {
+                return '';
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CtiDigital\Configurator\Model\Import — auto-generated ImporterFactory
+// ═══════════════════════════════════════════════════════════════════════════════
+
+namespace CtiDigital\Configurator\Model\Import {
+
+    if (!class_exists(\CtiDigital\Configurator\Model\Import\ImporterFactory::class)) {
+        class ImporterFactory
+        {
+            public function create(array $data = []): Importer
+            {
+                throw new \LogicException('Stub only — mock ImporterFactory::create()');
+            }
+        }
     }
 }
 
@@ -2007,6 +2137,11 @@ namespace Magento\Catalog\Model\ResourceModel {
             public function getEntityType(): \Magento\Eav\Model\Entity\Type
             {
                 throw new \LogicException('Stub only — mock CategoryResource::getEntityType()');
+            }
+
+            public function getAttribute($attributeCode): mixed
+            {
+                throw new \LogicException('Stub only — mock CategoryResource::getAttribute()');
             }
         }
     }

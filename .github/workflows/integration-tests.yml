@@ -34,6 +34,14 @@ jobs:
       # `opensearch-port`. OpenSearch 2.11 (port 9200) covers Magento 2.4.7–2.4.8;
       # OpenSearch 3.x (port 9201) is required by Magento 2.4.9 and Mage-OS latest.
       # Security is disabled on both so no credentials are needed.
+      #
+      # OpenSearch >= 2.12 made OPENSEARCH_INITIAL_ADMIN_PASSWORD mandatory: the
+      # image entrypoint runs the security demo-config installer and aborts the
+      # container if it is unset. plugins.security.disabled only changes
+      # opensearch.yml and does NOT stop that installer, so the 3.x service must
+      # disable the security plugin and demo config via the entrypoint env vars
+      # (DISABLE_SECURITY_PLUGIN / DISABLE_INSTALL_DEMO_CONFIG). 2.11 predates the
+      # requirement and starts fine with the original config.
       opensearch2:
         image: opensearchproject/opensearch:2.11.0
         env:
@@ -53,7 +61,8 @@ jobs:
         image: opensearchproject/opensearch:3.1.0
         env:
           discovery.type: single-node
-          plugins.security.disabled: "true"
+          DISABLE_SECURITY_PLUGIN: "true"
+          DISABLE_INSTALL_DEMO_CONFIG: "true"
           OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
         ports:
           - 9201:9200
